@@ -104,6 +104,8 @@
     color:var(--ink-soft); transition:color .3s;
   }
   .nav-links a:hover{color:var(--accent);}
+  .nav-links a.ext{color:var(--accent-2);}
+  .nav-links .divider{width:1px; height:14px; background:var(--line);}
 
   /* mode switch */
   .switch-wrap{display:flex; align-items:center; gap:10px; font-family:var(--util); font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft);}
@@ -239,8 +241,9 @@
       flex-direction:column; align-items:flex-start; gap:0; border-bottom:1px solid var(--line);
       max-height:0; overflow:hidden; transition:max-height .35s ease;
     }
-    .nav-links.open{max-height:320px;}
+    .nav-links.open{max-height:360px;}
     .nav-links a{padding:16px 28px; width:100%; border-top:1px solid var(--line);}
+    .nav-links .divider{display:none;}
     .hamburger{display:flex;}
   }
   @media (max-width:480px){
@@ -252,12 +255,15 @@
 
 <header>
   <nav class="wrap">
-    <a href="#" class="logo">mahardi<span>.com</span></a>
+    <a href="/" class="logo">mahardi<span>.com</span></a>
     <div class="nav-links" id="navLinks">
       <a href="#tentang">Tentang</a>
       <a href="#musik">Musik</a>
       <a href="#keluarga">Keluarga</a>
       <a href="#kontak">Kontak</a>
+      <span class="divider"></span>
+      <a href="tools/" class="ext">Tools</a>
+      <a href="blog/" class="ext">Blog</a>
     </div>
     <div style="display:flex; align-items:center; gap:20px;">
       <div class="switch-wrap" id="switchDesktop">

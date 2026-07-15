@@ -26,6 +26,28 @@
   }
   .wrap{max-width:920px; margin:0 auto;}
 
+  .topnav{
+    position:sticky; top:0; z-index:20; margin:-56px -20px 46px; padding:0 20px;
+    background:color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .topnav-inner{
+    max-width:920px; margin:0 auto; height:64px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .topnav-logo{
+    font-family:var(--f-display); font-weight:700; font-size:1.05rem; color:var(--text);
+    text-decoration:none; letter-spacing:-0.01em;
+  }
+  .topnav-logo span{color:var(--accent);}
+  .topnav-links{display:flex; align-items:center; gap:28px;}
+  .topnav-links a{
+    font-family:var(--f-mono); font-size:.8rem; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--muted); text-decoration:none; transition:color .15s;
+  }
+  .topnav-links a:hover{color:var(--accent);}
+  .topnav-links a.active{color:var(--accent);}
+
   header{margin-bottom:38px;}
   .kicker{
     font-family:var(--f-mono); font-size:12px; color:var(--accent); letter-spacing:.06em;
@@ -101,6 +123,17 @@
 </style>
 </head>
 <body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="/" class="topnav-logo">mahardi<span>.com</span></a>
+    <div class="topnav-links">
+      <a href="tools/" class="active">Tools</a>
+      <a href="blog/">Blog</a>
+    </div>
+  </div>
+</nav>
+
 <div class="wrap">
 
   <header>
