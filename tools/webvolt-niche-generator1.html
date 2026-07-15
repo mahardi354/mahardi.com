@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebVolt — Niche Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0F14;
+    --panel:#111820;
+    --panel-2:#161F29;
+    --border:#212B36;
+    --border-hi:#2E3B48;
+    --text:#E8EDF2;
+    --muted:#7C8B99;
+    --accent:#35D0A6;
+    --accent-dim:#1E7A5E;
+    --warn:#F2A65A;
+    --danger:#E8637A;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:32px 24px 64px;
+  }
+  header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:28px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--border);
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .brand .mark{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--accent);
+    background:rgba(53,208,166,0.1);
+    border:1px solid var(--accent-dim);
+    padding:3px 7px;
+    border-radius:4px;
+    letter-spacing:0.04em;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:22px;
+    font-weight:700;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    color:var(--muted);
+    font-size:13px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:380px 1fr;
+    gap:20px;
+  }
+  @media (max-width:860px){ .grid{grid-template-columns:1fr;} }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:20px;
+  }
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+  label{
+    display:block;
+    font-size:11px;
+    font-family:'JetBrains Mono',monospace;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-bottom:6px;
+  }
+  input[type=text], select, textarea{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 11px;
+    border-radius:7px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+    outline:none;
+    transition:border-color .15s;
+  }
+  textarea{resize:vertical;min-height:56px;font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+  input[type=text]:focus, select:focus, textarea:focus{border-color:var(--accent);}
+  input[type=text]::placeholder{color:#4A5866;}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.4;}
+  .hint b{color:var(--warn);font-weight:600;}
+
+  .chiprow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    padding:5px 9px;
+    border-radius:5px;
+    border:1px solid var(--border);
+    color:var(--muted);
+    cursor:pointer;
+    background:transparent;
+    transition:all .12s;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent);}
+  .chip.active{background:rgba(53,208,166,0.12);border-color:var(--accent);color:var(--accent);}
+
+  .section-title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--accent);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:0 0 12px;
+  }
+  .section-title::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--border);
+  }
+
+  .record{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .record-head{
+    padding:16px 20px;
+    background:var(--panel-2);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .swatch{
+    width:34px;height:34px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:17px;
+    flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .record-head .rtitle{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:16px;
+  }
+  .record-head .rslug{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .record-body{padding:20px;}
+  .rowblock{margin-bottom:18px;}
+  .rowblock:last-child{margin-bottom:0;}
+  .rowblock .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.07em;
+    margin-bottom:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .copybtn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:3px 8px;
+    border-radius:5px;
+    cursor:pointer;
+    text-transform:none;
+    letter-spacing:0;
+  }
+  .copybtn:hover{border-color:var(--accent);color:var(--accent);}
+  .copybtn.copied{border-color:var(--accent);color:var(--accent);background:rgba(53,208,166,0.1);}
+
+  .domainlist{display:flex;flex-direction:column;gap:6px;}
+  .domainitem{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:8px 10px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+  }
+  .domainitem a{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:11px;
+    border:1px solid var(--border);
+    padding:3px 7px;
+    border-radius:5px;
+  }
+  .domainitem a:hover{color:var(--accent);border-color:var(--accent);}
+
+  .kwlist{display:flex;flex-wrap:wrap;gap:6px;}
+  .kw{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    padding:5px 9px;
+    border-radius:5px;
+    color:var(--text);
+  }
+
+  pre.snippet{
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    line-height:1.6;
+    color:#B8E8D8;
+    overflow-x:auto;
+    white-space:pre;
+    margin:0;
+  }
+  .empty{
+    padding:60px 20px;
+    text-align:center;
+    color:var(--muted);
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+  }
+
+  .history{margin-top:20px;}
+  .hist-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 10px;
+    border-radius:7px;
+    cursor:pointer;
+    font-size:13px;
+  }
+  .hist-item:hover{background:var(--panel-2);}
+  .hist-item .hs{width:20px;height:20px;border-radius:5px;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .hist-item .hn{flex:1;}
+  .hist-item .hslug{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:11px;}
+  .note{
+    font-size:11.5px;
+    color:var(--muted);
+    margin-top:14px;
+    line-height:1.5;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>Niche Generator</h1>
+      <span class="mark">webvolt / internal</span>
+    </div>
+    <div class="sub">nama niche → slug, domain, keyword, snippet build_niche_data.py</div>
+  </header>
+
+  <div class="grid">
+    <!-- INPUT PANEL -->
+    <div>
+      <div class="card">
+        <div class="section-title">Input</div>
+        <div class="field">
+          <label>Nama niche (Bahasa Indonesia)</label>
+          <input type="text" id="nicheName" placeholder="mis. Tukang Bangunan" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>Kategori</label>
+          <select id="category">
+            <option value="konstruksi">🏗️ Konstruksi & Bangunan</option>
+            <option value="kebersihan">🧹 Kebersihan & Sanitasi</option>
+            <option value="elektronik">❄️ Elektronik & Pendingin</option>
+            <option value="transportasi">🚗 Transportasi & Rental</option>
+            <option value="acara">🍽️ Catering & Acara</option>
+            <option value="rumahtangga">🏠 Rumah Tangga</option>
+            <option value="otomotif">🔧 Otomotif</option>
+            <option value="kesehatan">💆 Kesehatan & Kecantikan</option>
+            <option value="lainnya">📦 Lainnya</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Sinonim / variasi tambahan (pisahkan koma)</label>
+          <textarea id="synonyms" placeholder="mis. tukang bangun rumah, jasa bangun rumah, kontraktor rumah"></textarea>
+          <div class="hint">Dipakai untuk memperkaya deteksi niche di <b>buat_index.py</b> dan variasi keyword.</div>
+        </div>
+
+        <div class="field">
+          <label>Contoh kecamatan (untuk pratinjau keyword)</label>
+          <input type="text" id="kecamatan" placeholder="mis. Wanareja" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>Gaya nama domain</label>
+          <div class="chiprow" id="domainStyleChips">
+            <button class="chip active" data-v="pro">pro/ahli</button>
+            <button class="chip" data-v="terdekat">terdekat/lokal</button>
+            <button class="chip" data-v="cepat">cepat/express</button>
+            <button class="chip" data-v="nusantara">nusantara/indo</button>
+          </div>
+          <div class="hint">Domain otomatis menghindari kata <b>"murah"</b> — sesuai kebiasaanmu untuk domain pSEO.</div>
+        </div>
+      </div>
+
+      <div class="card history">
+        <div class="section-title">Riwayat sesi ini</div>
+        <div id="historyList" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);">Belum ada niche yang dibuat.</div>
+        <div class="note">Riwayat hanya tersimpan selama tab ini terbuka (tidak disimpan permanen). Salin snippet yang kamu butuhkan sebelum menutup tab.</div>
+      </div>
+    </div>
+
+    <!-- OUTPUT PANEL -->
+    <div id="output"></div>
+  </div>
+</div>
+
+<script>
+const catMeta = {
+  konstruksi:  {icon:'🏗️', hue:28,  prefixes:['tukang','jasa','kontraktor']},
+  kebersihan:  {icon:'🧹', hue:190, prefixes:['jasa','layanan']},
+  elektronik:  {icon:'❄️', hue:200, prefixes:['service','jasa service']},
+  transportasi:{icon:'🚗', hue:210, prefixes:['rental','sewa']},
+  acara:       {icon:'🍽️', hue:340, prefixes:['jasa','catering']},
+  rumahtangga: {icon:'🏠', hue:45,  prefixes:['jasa','layanan']},
+  otomotif:    {icon:'🔧', hue:15,  prefixes:['bengkel','jasa']},
+  kesehatan:   {icon:'💆', hue:280, prefixes:['klinik','jasa']},
+  lainnya:     {icon:'📦', hue:160, prefixes:['jasa','layanan']}
+};
+
+const domainStyleWords = {
+  pro:        ['pro','ahli','terpercaya','handal'],
+  terdekat:   ['terdekat','lokal','sekitar'],
+  cepat:      ['cepat','express','sigap'],
+  nusantara:  ['nusantara','indo','jaya']
+};
+
+let activeDomainStyle = 'pro';
+let history = [];
+
+document.querySelectorAll('#domainStyleChips .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('#domainStyleChips .chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    activeDomainStyle = chip.dataset.v;
+    render();
+  });
+});
+
+function slugify(str){
+  return str.toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-');
+}
+function compactSlug(str){
+  return str.toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+function titleCaseSlug(slug){
+  return slug.split('-').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+}
+function hashHue(str, base){
+  let h = base;
+  for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) % 360; }
+  return Math.abs(h);
+}
+function hslToHex(h,s,l){
+  s/=100; l/=100;
+  const k = n => (n + h/30) % 12;
+  const a = s * Math.min(l, 1-l);
+  const f = n => l - a * Math.max(-1, Math.min(k(n)-3, Math.min(9-k(n), 1)));
+  const toHex = x => Math.round(255*x).toString(16).padStart(2,'0');
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+}
+
+function generateDomains(niche, compact){
+  const words = domainStyleWords[activeDomainStyle];
+  const patterns = [
+    `${compact}${words[0]}.com`,
+    `${words[0]}${compact}.com`,
+    `jasa${compact}.com`,
+    `${compact}${words[1]}.com`,
+    `pusat${compact}.com`,
+    `${compact}${words[2] || words[0]}.com`
+  ];
+  return [...new Set(patterns)].slice(0,6);
+}
+
+function generateKeywords(niche, synonymsRaw, category, kecamatan){
+  const kec = kecamatan.trim() || '[kecamatan]';
+  const prefixes = catMeta[category].prefixes;
+  const syns = synonymsRaw.split(',').map(s=>s.trim()).filter(Boolean);
+  const terms = [niche.toLowerCase(), ...syns];
+  const kws = new Set();
+  terms.forEach(t=>{
+    prefixes.forEach(p=>{
+      kws.add(`${p} ${t} ${kec}`);
+    });
+    kws.add(`${t} terdekat ${kec}`);
+    kws.add(`${t} murah ${kec}`);
+  });
+  return [...kws].slice(0,10);
+}
+
+function pythonSnippet(nicheName, slug, compact, category, synonymsRaw, domains, color){
+  const syns = synonymsRaw.split(',').map(s=>s.trim()).filter(Boolean);
+  const synsPy = syns.length
+    ? syns.map(s=>`        "${s}",`).join('\n')
+    : `        # tambahkan sinonim di sini`;
+  return `NICHE_DATA["${slug}"] = {
+    "nama": "${nicheName}",
+    "slug": "${slug}",
+    "kategori": "${category}",
+    "keywords_deteksi": [
+        "${nicheName.toLowerCase()}",
+${synsPy}
+    ],
+    "domain_kandidat": [
+${domains.map(d=>`        "${d}",`).join('\n')}
+    ],
+    "warna_dashboard": "${color}",
+}`;
+}
+
+function render(){
+  const nicheNameRaw = document.getElementById('nicheName').value;
+  const out = document.getElementById('output');
+
+  if(!nicheNameRaw.trim()){
+    out.innerHTML = `<div class="record"><div class="empty">Ketik nama niche di sebelah kiri untuk mulai generate&hellip;</div></div>`;
+    return;
+  }
+
+  const category = document.getElementById('category').value;
+  const synonymsRaw = document.getElementById('synonyms').value;
+  const kecamatan = document.getElementById('kecamatan').value;
+
+  const slug = slugify(nicheNameRaw);
+  const compact = compactSlug(nicheNameRaw);
+  const meta = catMeta[category];
+  const hue = hashHue(slug, meta.hue);
+  const color = hslToHex(hue, 62, 45);
+
+  const domains = generateDomains(nicheNameRaw, compact);
+  const keywords = generateKeywords(nicheNameRaw, synonymsRaw, category, kecamatan);
+  const snippet = pythonSnippet(nicheNameRaw, slug, compact, category, synonymsRaw, domains, color);
+
+  out.innerHTML = `
+    <div class="record">
+      <div class="record-head">
+        <div class="swatch" style="background:${color}22;color:${color};border-color:${color}55;">${meta.icon}</div>
+        <div>
+          <div class="rtitle">${escapeHtml(titleCaseSlug(slug) || nicheNameRaw)}</div>
+          <div class="rslug">slug: ${slug || '—'}</div>
+        </div>
+      </div>
+      <div class="record-body">
+        <div class="rowblock">
+          <div class="lbl"><span>Domain kandidat (.com, tanpa "murah")</span></div>
+          <div class="domainlist">
+            ${domains.map(d=>`
+              <div class="domainitem">
+                <span>${d}</span>
+                <a href="https://www.namecheap.com/domains/registration/results/?domain=${d}" target="_blank" rel="noopener">cek</a>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="rowblock">
+          <div class="lbl"><span>Keyword pSEO (contoh per kecamatan)</span></div>
+          <div class="kwlist">
+            ${keywords.map(k=>`<span class="kw">${escapeHtml(k)}</span>`).join('')}
+          </div>
+        </div>
+
+        <div class="rowblock">
+          <div class="lbl">
+            <span>Snippet build_niche_data.py</span>
+            <button class="copybtn" onclick="copySnippet(this)">salin</button>
+          </div>
+          <pre class="snippet" id="snippetText">${escapeHtml(snippet)}</pre>
+        </div>
+      </div>
+    </div>
+  `;
+
+  addHistory(nicheNameRaw, slug, meta.icon, color);
+}
+
+function copySnippet(btn){
+  const text = document.getElementById('snippetText').innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = 'tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='salin'; btn.classList.remove('copied'); }, 1600);
+  });
+}
+
+function addHistory(name, slug, icon, color){
+  if(!slug) return;
+  const existingIdx = history.findIndex(h=>h.slug===slug);
+  const entry = {name, slug, icon, color};
+  if(existingIdx>=0){ history[existingIdx]=entry; }
+  else { history.unshift(entry); }
+  history = history.slice(0,12);
+  renderHistory();
+}
+
+function renderHistory(){
+  const el = document.getElementById('historyList');
+  if(history.length===0){ el.innerHTML='Belum ada niche yang dibuat.'; return; }
+  el.innerHTML = history.map(h=>`
+    <div class="hist-item" onclick="document.getElementById('nicheName').value='${escapeHtml(h.name).replace(/'/g,"\\'")}'; render();">
+      <div class="hs" style="background:${h.color}22;color:${h.color};">${h.icon}</div>
+      <div class="hn">${escapeHtml(h.name)}</div>
+      <div class="hslug">${h.slug}</div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+['nicheName','category','synonyms','kecamatan'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', render);
+  document.getElementById(id).addEventListener('change', render);
+});
+
+render();
+</script>
+<footer style="text-align:center;font-size:12px;color:var(--muted,#8a8a8a);padding:22px 16px 8px;">Built by <a href="https://mahardi.com/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Didik Mahardi</a></footer>
+</body>
+</html>

@@ -1,0 +1,698 @@
+<div id="iuran-root"></div>
+<style>
+  #iuran-root {
+    --bg: #0f1216;
+    --panel: #171b21;
+    --panel-2: #1e232b;
+    --border: #2a3038;
+    --text: #e8eaed;
+    --text-dim: #9aa4b2;
+    --gold: #e0a94a;
+    --gold-soft: #3a2f1c;
+    --teal: #4ba894;
+    --danger: #d9695f;
+    --radius: 10px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 28px 20px 60px;
+    border-radius: 14px;
+    max-width: 920px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  #iuran-root * { box-sizing: border-box; }
+  .iuran-header { margin-bottom: 24px; }
+  .iuran-eyebrow {
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold); font-weight: 600; margin-bottom: 6px;
+  }
+  .iuran-title { font-size: 24px; font-weight: 700; color: var(--text); margin: 0 0 4px; }
+  .iuran-sub { font-size: 13px; color: var(--text-dim); margin: 0; }
+
+  .iuran-summary-bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;
+    margin: 20px 0 28px;
+  }
+  .iuran-stat-value.negative { color: var(--danger); }
+  .iuran-stat-value.teal { color: var(--teal); }
+  .iuran-stat {
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .iuran-stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+  .iuran-stat-value { font-size: 19px; font-weight: 700; margin-top: 4px; color: var(--gold); }
+
+  .iuran-section {
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px 18px 20px; margin-bottom: 18px;
+  }
+  .iuran-section-title {
+    font-size: 14px; font-weight: 700; margin: 0 0 4px; display: flex; align-items: center; gap: 8px;
+  }
+  .iuran-section-desc { font-size: 12px; color: var(--text-dim); margin: 0 0 14px; }
+
+  .iuran-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .iuran-input, .iuran-select {
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+    border-radius: 7px; padding: 9px 11px; font-size: 13px; outline: none;
+    font-family: inherit;
+  }
+  .iuran-input:focus, .iuran-select:focus { border-color: var(--gold); }
+  .iuran-input { flex: 1; min-width: 140px; }
+
+  .iuran-btn {
+    background: var(--gold); color: #1a1305; border: none; border-radius: 7px;
+    padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: opacity .15s;
+  }
+  .iuran-btn:hover { opacity: 0.85; }
+  .iuran-btn-ghost {
+    background: transparent; color: var(--text-dim); border: 1px solid var(--border);
+  }
+  .iuran-btn-ghost:hover { color: var(--text); border-color: var(--text-dim); opacity: 1; }
+  .iuran-btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; font-size: 12px; }
+  .iuran-btn-small { padding: 5px 10px; font-size: 12px; }
+
+  .iuran-chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .iuran-chip {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px;
+    padding: 6px 8px 6px 14px; font-size: 13px; display: flex; align-items: center; gap: 8px;
+  }
+  .iuran-chip-x {
+    cursor: pointer; color: var(--text-dim); width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 12px;
+  }
+  .iuran-chip-x:hover { background: var(--danger); color: #fff; }
+
+  .iuran-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .iuran-table th {
+    text-align: left; color: var(--text-dim); font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 10px; border-bottom: 1px solid var(--border);
+  }
+  .iuran-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); }
+  .iuran-table tr:last-child td { border-bottom: none; }
+  .iuran-table input.iuran-amount {
+    width: 100%; background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+    border-radius: 6px; padding: 7px 9px; font-size: 13px; font-family: inherit; outline: none;
+  }
+  .iuran-table input.iuran-amount:focus { border-color: var(--gold); }
+
+  .iuran-empty { color: var(--text-dim); font-size: 13px; padding: 16px 0; text-align: center; }
+  .iuran-name-cell { font-weight: 600; }
+  .iuran-total-cell { color: var(--gold); font-weight: 700; }
+  .iuran-toast {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    background: var(--teal); color: #08211b; padding: 9px 18px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+    z-index: 999;
+  }
+  .iuran-toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+  .iuran-history-month { color: var(--text-dim); font-size: 12px; }
+  .iuran-loading { color: var(--text-dim); font-size: 13px; padding: 30px; text-align: center; }
+</style>
+
+<script>
+(function() {
+  const root = document.getElementById('iuran-root');
+  root.innerHTML = '<div class="iuran-loading">Memuat data...</div>';
+
+  let members = [];   // {id, name}
+  let payments = [];  // {id, memberId, month:'YYYY-MM', amount}
+  let expenses = [];  // {id, date:'YYYY-MM-DD', note, amount}
+
+  const fmt = n => 'Rp' + Math.round(n).toLocaleString('id-ID');
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+  function currentMonth() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+  }
+  function monthLabel(m) {
+    const [y, mo] = m.split('-');
+    const names = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    return names[parseInt(mo, 10) - 1] + ' ' + y;
+  }
+
+  let selectedMonth = currentMonth();
+  let toastTimer = null;
+
+  async function loadData() {
+    try {
+      const m = await window.storage.get('members', false);
+      members = m ? JSON.parse(m.value) : [];
+    } catch (e) { members = []; }
+    try {
+      const p = await window.storage.get('payments', false);
+      payments = p ? JSON.parse(p.value) : [];
+    } catch (e) { payments = []; }
+    try {
+      const ex = await window.storage.get('expenses', false);
+      expenses = ex ? JSON.parse(ex.value) : [];
+    } catch (e) { expenses = []; }
+    render();
+  }
+
+  async function saveMembers() {
+    try { await window.storage.set('members', JSON.stringify(members), false); }
+    catch (e) { console.error('gagal simpan anggota', e); }
+  }
+  async function savePayments() {
+    try { await window.storage.set('payments', JSON.stringify(payments), false); }
+    catch (e) { console.error('gagal simpan iuran', e); }
+  }
+  async function saveExpenses() {
+    try { await window.storage.set('expenses', JSON.stringify(expenses), false); }
+    catch (e) { console.error('gagal simpan pengeluaran', e); }
+  }
+
+  function showToast(msg) {
+    let t = root.querySelector('.iuran-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.className = 'iuran-toast';
+      root.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function totalForMember(memberId) {
+    return payments.filter(p => p.memberId === memberId).reduce((s, p) => s + p.amount, 0);
+  }
+  function monthsPaidCount(memberId) {
+    return payments.filter(p => p.memberId === memberId && p.amount > 0).length;
+  }
+  function grandTotal() {
+    return payments.reduce((s, p) => s + p.amount, 0);
+  }
+  function totalExpenses() {
+    return expenses.reduce((s, e) => s + e.amount, 0);
+  }
+  function saldoKas() {
+    return grandTotal() - totalExpenses();
+  }
+  function allMonthsUsed() {
+    const set = new Set(payments.map(p => p.month));
+    set.add(selectedMonth);
+    return Array.from(set).sort().reverse();
+  }
+
+  async function addMember(name) {
+    name = name.trim();
+    if (!name) return;
+    if (members.some(m => m.name.toLowerCase() === name.toLowerCase())) {
+      showToast('Nama sudah ada di daftar');
+      return;
+    }
+    members.push({ id: uid(), name });
+    await saveMembers();
+    render();
+    showToast('Anggota "' + name + '" ditambahkan');
+  }
+
+  async function removeMember(id) {
+    const mem = members.find(m => m.id === id);
+    members = members.filter(m => m.id !== id);
+    payments = payments.filter(p => p.memberId !== id);
+    await saveMembers();
+    await savePayments();
+    render();
+    showToast('Anggota dihapus');
+  }
+
+  async function saveMonthlyPayments(entries) {
+    // entries: {memberId, amount}[]
+    entries.forEach(({ memberId, amount }) => {
+      const existing = payments.find(p => p.memberId === memberId && p.month === selectedMonth);
+      if (amount > 0) {
+        if (existing) existing.amount = amount;
+        else payments.push({ id: uid(), memberId, month: selectedMonth, amount });
+      } else if (existing) {
+        payments = payments.filter(p => p.id !== existing.id);
+      }
+    });
+    await savePayments();
+    render();
+    showToast('Iuran bulan ' + monthLabel(selectedMonth) + ' disimpan');
+  }
+
+  async function deletePaymentRecord(id) {
+    payments = payments.filter(p => p.id !== id);
+    await savePayments();
+    render();
+    showToast('Catatan dihapus');
+  }
+
+  async function addExpense(date, note, amount) {
+    note = note.trim();
+    if (!note || !amount || amount <= 0) {
+      showToast('Isi keterangan dan nominal dengan benar');
+      return;
+    }
+    expenses.push({ id: uid(), date: date || new Date().toISOString().slice(0, 10), note, amount });
+    await saveExpenses();
+    render();
+    showToast('Pengeluaran dicatat');
+  }
+
+  async function deleteExpense(id) {
+    expenses = expenses.filter(e => e.id !== id);
+    await saveExpenses();
+    render();
+    showToast('Pengeluaran dihapus');
+  }
+
+  function render() {
+    root.innerHTML = '';
+
+    const wrap = document.createElement('div');
+
+    // Header
+    wrap.innerHTML = `
+      <div class="iuran-header">
+        <div class="iuran-eyebrow">Kas Keluarga</div>
+        <h2 class="iuran-title">Pelacak Iuran Keluarga</h2>
+        <p class="iuran-sub">Kelola daftar anggota, catat iuran tiap bulan, dan pantau total setoran masing-masing.</p>
+      </div>
+    `;
+
+    // Summary bar
+    const summaryBar = document.createElement('div');
+    summaryBar.className = 'iuran-summary-bar';
+    summaryBar.innerHTML = `
+      <div class="iuran-stat">
+        <div class="iuran-stat-label">Total Iuran Masuk</div>
+        <div class="iuran-stat-value">${fmt(grandTotal())}</div>
+      </div>
+      <div class="iuran-stat">
+        <div class="iuran-stat-label">Total Pengeluaran</div>
+        <div class="iuran-stat-value negative">${fmt(totalExpenses())}</div>
+      </div>
+      <div class="iuran-stat">
+        <div class="iuran-stat-label">Saldo Kas</div>
+        <div class="iuran-stat-value teal">${fmt(saldoKas())}</div>
+      </div>
+      <div class="iuran-stat">
+        <div class="iuran-stat-label">Jumlah Anggota</div>
+        <div class="iuran-stat-value">${members.length}</div>
+      </div>
+    `;
+    wrap.appendChild(summaryBar);
+
+    // ===== Section: Master Anggota =====
+    const sMembers = document.createElement('div');
+    sMembers.className = 'iuran-section';
+    sMembers.innerHTML = `
+      <div class="iuran-section-title">👥 Master Anggota</div>
+      <div class="iuran-section-desc">Tambahkan nama-nama anggota keluarga yang ikut iuran.</div>
+    `;
+    const addRow = document.createElement('div');
+    addRow.className = 'iuran-row';
+    const nameInput = document.createElement('input');
+    nameInput.className = 'iuran-input';
+    nameInput.placeholder = 'Nama anggota baru...';
+    const addBtn = document.createElement('button');
+    addBtn.className = 'iuran-btn';
+    addBtn.textContent = '+ Tambah';
+    addBtn.onclick = () => { addMember(nameInput.value); nameInput.value = ''; nameInput.focus(); };
+    nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') addBtn.click(); });
+    addRow.appendChild(nameInput);
+    addRow.appendChild(addBtn);
+    sMembers.appendChild(addRow);
+
+    if (members.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'iuran-empty';
+      empty.textContent = 'Belum ada anggota. Tambahkan nama di atas.';
+      sMembers.appendChild(empty);
+    } else {
+      const listTable = document.createElement('table');
+      listTable.className = 'iuran-table';
+      listTable.innerHTML = `<thead><tr><th style="width:40px">No</th><th>Nama Anggota</th><th style="width:70px"></th></tr></thead>`;
+      const tbody = document.createElement('tbody');
+      members.forEach((m, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${idx + 1}</td><td class="iuran-name-cell">${m.name}</td><td></td>`;
+        const delBtn = document.createElement('button');
+        delBtn.className = 'iuran-btn iuran-btn-danger iuran-btn-small';
+        delBtn.textContent = 'Hapus';
+        delBtn.onclick = () => {
+          if (confirm('Hapus "' + m.name + '" beserta seluruh riwayat iurannya?')) removeMember(m.id);
+        };
+        tr.lastElementChild.appendChild(delBtn);
+        tbody.appendChild(tr);
+      });
+      listTable.appendChild(tbody);
+      sMembers.appendChild(listTable);
+    }
+    wrap.appendChild(sMembers);
+
+    // ===== Section: Input Iuran Bulanan =====
+    const sMonthly = document.createElement('div');
+    sMonthly.className = 'iuran-section';
+    const monthOptions = Array.from(new Set([selectedMonth, ...allMonthsUsed()]))
+      .sort().reverse();
+    sMonthly.innerHTML = `
+      <div class="iuran-section-title">🗓️ Input Iuran Bulanan</div>
+      <div class="iuran-section-desc">Pilih bulan, lalu isi nominal iuran untuk tiap anggota. Kosongkan jika belum bayar.</div>
+    `;
+    const monthRow = document.createElement('div');
+    monthRow.className = 'iuran-row';
+    const monthSel = document.createElement('input');
+    monthSel.type = 'month';
+    monthSel.className = 'iuran-select';
+    monthSel.value = selectedMonth;
+    monthSel.onchange = () => { selectedMonth = monthSel.value; render(); };
+    monthRow.appendChild(monthSel);
+    sMonthly.appendChild(monthRow);
+
+    if (members.length === 0) {
+      sMonthly.innerHTML += '<div class="iuran-empty">Tambahkan anggota terlebih dahulu di atas.</div>';
+    } else {
+      const table = document.createElement('table');
+      table.className = 'iuran-table';
+      table.innerHTML = `<thead><tr><th>Nama</th><th style="width:180px">Nominal Iuran (Rp)</th></tr></thead>`;
+      const tbody = document.createElement('tbody');
+      const inputs = {};
+      members.forEach(m => {
+        const existing = payments.find(p => p.memberId === m.id && p.month === selectedMonth);
+        const tr = document.createElement('tr');
+        const tdName = document.createElement('td');
+        tdName.className = 'iuran-name-cell';
+        tdName.textContent = m.name;
+        const tdAmt = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.min = '0';
+        inp.className = 'iuran-amount';
+        inp.placeholder = '0';
+        inp.value = existing ? existing.amount : '';
+        inputs[m.id] = inp;
+        tdAmt.appendChild(inp);
+        tr.appendChild(tdName);
+        tr.appendChild(tdAmt);
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      sMonthly.appendChild(table);
+
+      const saveRow = document.createElement('div');
+      saveRow.style.marginTop = '14px';
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'iuran-btn';
+      saveBtn.textContent = 'Simpan Iuran Bulan ' + monthLabel(selectedMonth);
+      saveBtn.onclick = () => {
+        const entries = members.map(m => ({ memberId: m.id, amount: parseFloat(inputs[m.id].value) || 0 }));
+        saveMonthlyPayments(entries);
+      };
+      saveRow.appendChild(saveBtn);
+      sMonthly.appendChild(saveRow);
+    }
+    wrap.appendChild(sMonthly);
+
+    // ===== Section: Ringkasan Total per Anggota =====
+    const sSummary = document.createElement('div');
+    sSummary.className = 'iuran-section';
+    sSummary.innerHTML = `
+      <div class="iuran-section-title">📊 Ringkasan Total Setoran</div>
+      <div class="iuran-section-desc">Total yang sudah disetorkan tiap anggota, dari seluruh riwayat.</div>
+    `;
+    if (members.length === 0) {
+      sSummary.innerHTML += '<div class="iuran-empty">Belum ada data.</div>';
+    } else {
+      const table = document.createElement('table');
+      table.className = 'iuran-table';
+      table.innerHTML = `<thead><tr><th>Nama</th><th>Bulan Lunas</th><th>Total Disetor</th></tr></thead>`;
+      const tbody = document.createElement('tbody');
+      [...members]
+        .sort((a, b) => totalForMember(b.id) - totalForMember(a.id))
+        .forEach(m => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="iuran-name-cell">${m.name}</td>
+            <td>${monthsPaidCount(m.id)}x</td>
+            <td class="iuran-total-cell">${fmt(totalForMember(m.id))}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      table.appendChild(tbody);
+      sSummary.appendChild(table);
+    }
+    wrap.appendChild(sSummary);
+
+    // ===== Section: Catat Pengeluaran =====
+    const sExpense = document.createElement('div');
+    sExpense.className = 'iuran-section';
+    sExpense.innerHTML = `
+      <div class="iuran-section-title">💸 Catat Pengeluaran</div>
+      <div class="iuran-section-desc">Catat pengeluaran dari kas keluarga, misalnya untuk acara, perlengkapan, atau kebutuhan lain.</div>
+    `;
+    const expRow = document.createElement('div');
+    expRow.className = 'iuran-row';
+    const expDate = document.createElement('input');
+    expDate.type = 'date';
+    expDate.className = 'iuran-select';
+    expDate.value = new Date().toISOString().slice(0, 10);
+    const expNote = document.createElement('input');
+    expNote.className = 'iuran-input';
+    expNote.placeholder = 'Keterangan pengeluaran...';
+    const expAmount = document.createElement('input');
+    expAmount.type = 'number';
+    expAmount.min = '0';
+    expAmount.className = 'iuran-input';
+    expAmount.placeholder = 'Nominal (Rp)';
+    expAmount.style.maxWidth = '160px';
+    const expBtn = document.createElement('button');
+    expBtn.className = 'iuran-btn';
+    expBtn.textContent = '+ Catat';
+    expBtn.onclick = () => {
+      addExpense(expDate.value, expNote.value, parseFloat(expAmount.value) || 0);
+      expNote.value = '';
+      expAmount.value = '';
+    };
+    expRow.appendChild(expDate);
+    expRow.appendChild(expNote);
+    expRow.appendChild(expAmount);
+    expRow.appendChild(expBtn);
+    sExpense.appendChild(expRow);
+
+    if (expenses.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'iuran-empty';
+      empty.textContent = 'Belum ada pengeluaran tercatat.';
+      sExpense.appendChild(empty);
+    } else {
+      const table = document.createElement('table');
+      table.className = 'iuran-table';
+      table.innerHTML = `<thead><tr><th style="width:110px">Tanggal</th><th>Keterangan</th><th style="width:130px">Nominal</th><th style="width:70px"></th></tr></thead>`;
+      const tbody = document.createElement('tbody');
+      [...expenses]
+        .sort((a, b) => b.date.localeCompare(a.date))
+        .forEach(e => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="iuran-history-month">${e.date}</td>
+            <td class="iuran-name-cell">${e.note}</td>
+            <td class="iuran-total-cell" style="color:var(--danger)">${fmt(e.amount)}</td>
+            <td></td>
+          `;
+          const delBtn = document.createElement('button');
+          delBtn.className = 'iuran-btn iuran-btn-danger iuran-btn-small';
+          delBtn.textContent = 'Hapus';
+          delBtn.onclick = () => { if (confirm('Hapus pengeluaran ini?')) deleteExpense(e.id); };
+          tr.lastElementChild.appendChild(delBtn);
+          tbody.appendChild(tr);
+        });
+      table.appendChild(tbody);
+      sExpense.appendChild(table);
+
+      const totalLine = document.createElement('div');
+      totalLine.style.cssText = 'margin-top:10px;font-size:13px;color:var(--text-dim);';
+      totalLine.innerHTML = `Total pengeluaran: <span style="color:var(--danger);font-weight:700">${fmt(totalExpenses())}</span>`;
+      sExpense.appendChild(totalLine);
+    }
+    wrap.appendChild(sExpense);
+
+    // ===== Section: Riwayat Transaksi =====
+    const sHistory = document.createElement('div');
+    sHistory.className = 'iuran-section';
+    sHistory.innerHTML = `
+      <div class="iuran-section-title">🧾 Riwayat Semua Iuran Masuk</div>
+      <div class="iuran-section-desc">Daftar seluruh catatan iuran anggota yang tersimpan, terbaru di atas.</div>
+    `;
+    if (payments.length === 0) {
+      sHistory.innerHTML += '<div class="iuran-empty">Belum ada riwayat iuran.</div>';
+    } else {
+      const table = document.createElement('table');
+      table.className = 'iuran-table';
+      table.innerHTML = `<thead><tr><th>Bulan</th><th>Nama</th><th>Nominal</th><th></th></tr></thead>`;
+      const tbody = document.createElement('tbody');
+      [...payments]
+        .sort((a, b) => b.month.localeCompare(a.month))
+        .forEach(p => {
+          const mem = members.find(m => m.id === p.memberId);
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="iuran-history-month">${monthLabel(p.month)}</td>
+            <td class="iuran-name-cell">${mem ? mem.name : '(dihapus)'}</td>
+            <td class="iuran-total-cell">${fmt(p.amount)}</td>
+            <td></td>
+          `;
+          const delBtn = document.createElement('button');
+          delBtn.className = 'iuran-btn iuran-btn-danger iuran-btn-small';
+          delBtn.textContent = 'Hapus';
+          delBtn.onclick = () => { if (confirm('Hapus catatan ini?')) deletePaymentRecord(p.id); };
+          tr.lastElementChild.appendChild(delBtn);
+          tbody.appendChild(tr);
+        });
+      table.appendChild(tbody);
+      sHistory.appendChild(table);
+    }
+    wrap.appendChild(sHistory);
+
+    // ===== Section: Bagikan Resume =====
+    const sShare = document.createElement('div');
+    sShare.className = 'iuran-section';
+    sShare.innerHTML = `
+      <div class="iuran-section-title">📤 Bagikan ke Anggota Keluarga</div>
+      <div class="iuran-section-desc">Unduh halaman ringkasan (read-only) sebagai file HTML terpisah. File ini bisa dibuka langsung di browser oleh siapa saja — lewat WA, email, atau di-hosting — tanpa perlu login. Unduh ulang tiap kali data diperbarui.</div>
+    `;
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'iuran-btn';
+    shareBtn.textContent = '⬇ Unduh Halaman Resume';
+    shareBtn.onclick = downloadResume;
+    sShare.appendChild(shareBtn);
+    wrap.appendChild(sShare);
+
+    const appFooter = document.createElement('div');
+    appFooter.style.cssText = 'text-align:center;font-size:11px;color:var(--text-dim);margin-top:8px;';
+    appFooter.innerHTML = 'Built by <a href="https://mahardi.com/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Didik Mahardi</a>';
+    wrap.appendChild(appFooter);
+
+    root.appendChild(wrap);
+  }
+
+  function downloadResume() {
+    const html = generateResumeHTML();
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const todayStr = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = 'resume-iuran-keluarga-' + todayStr + '.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Resume berhasil diunduh');
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function generateResumeHTML() {
+    const genDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const sortedMembers = [...members].sort((a, b) => totalForMember(b.id) - totalForMember(a.id));
+    const monthsSorted = allMonthsUsed().filter(m => payments.some(p => p.month === m));
+
+    const memberRows = sortedMembers.map((m, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td class="name">${esc(m.name)}</td>
+        <td>${monthsPaidCount(m.id)}x</td>
+        <td class="total">${esc(fmt(totalForMember(m.id)))}</td>
+      </tr>`).join('');
+
+    const historyRows = [...payments]
+      .sort((a, b) => b.month.localeCompare(a.month))
+      .map(p => {
+        const mem = members.find(mm => mm.id === p.memberId);
+        return `<tr><td class="month">${esc(monthLabel(p.month))}</td><td class="name">${esc(mem ? mem.name : '(dihapus)')}</td><td class="total">${esc(fmt(p.amount))}</td></tr>`;
+      }).join('');
+
+    const expenseRows = [...expenses]
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .map(e => `<tr><td class="month">${esc(e.date)}</td><td class="name">${esc(e.note)}</td><td class="total expense">${esc(fmt(e.amount))}</td></tr>`)
+      .join('');
+
+    return `<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume Iuran Keluarga</title>
+<style>
+  :root {
+    --bg:#0f1216; --panel:#171b21; --panel-2:#1e232b; --border:#2a3038;
+    --text:#e8eaed; --text-dim:#9aa4b2; --gold:#e0a94a; --teal:#4ba894;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--text); margin: 0; padding: 28px 16px 60px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+  h1 { font-size: 24px; margin: 6px 0 4px; }
+  .sub { color: var(--text-dim); font-size: 13px; margin: 0 0 22px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; margin-bottom: 22px; }
+  .stat { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+  .stat-value { font-size: 19px; font-weight: 700; color: var(--gold); margin-top: 4px; }
+  .stat-value.negative { color: #d9695f; }
+  .stat-value.teal { color: var(--teal); }
+  .section { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 18px; }
+  .section h2 { font-size: 14px; margin: 0 0 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--text-dim); font-size: 11px; text-transform: uppercase; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  .name { font-weight: 600; }
+  .total { color: var(--gold); font-weight: 700; }
+  .total.expense { color: #d9695f; }
+  .month { color: var(--text-dim); font-size: 12px; }
+  .empty { color: var(--text-dim); font-size: 13px; padding: 10px 0; }
+  footer { text-align: center; color: var(--text-dim); font-size: 11px; margin-top: 24px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="eyebrow">Kas Keluarga</div>
+    <h1>Resume Iuran Keluarga</h1>
+    <p class="sub">Diperbarui: ${esc(genDate)}</p>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Total Iuran Masuk</div><div class="stat-value">${esc(fmt(grandTotal()))}</div></div>
+      <div class="stat"><div class="stat-label">Total Pengeluaran</div><div class="stat-value negative">${esc(fmt(totalExpenses()))}</div></div>
+      <div class="stat"><div class="stat-label">Saldo Kas</div><div class="stat-value teal">${esc(fmt(saldoKas()))}</div></div>
+      <div class="stat"><div class="stat-label">Jumlah Anggota</div><div class="stat-value">${members.length}</div></div>
+    </div>
+
+    <div class="section">
+      <h2>Daftar Anggota &amp; Total Setoran</h2>
+      ${members.length ? `<table><thead><tr><th>No</th><th>Nama</th><th>Bulan Lunas</th><th>Total Disetor</th></tr></thead><tbody>${memberRows}</tbody></table>` : '<div class="empty">Belum ada anggota.</div>'}
+    </div>
+
+    <div class="section">
+      <h2>Riwayat Iuran Masuk</h2>
+      ${payments.length ? `<table><thead><tr><th>Bulan</th><th>Nama</th><th>Nominal</th></tr></thead><tbody>${historyRows}</tbody></table>` : '<div class="empty">Belum ada riwayat.</div>'}
+    </div>
+
+    <div class="section">
+      <h2>Riwayat Pengeluaran</h2>
+      ${expenses.length ? `<table><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Nominal</th></tr></thead><tbody>${expenseRows}</tbody></table>` : '<div class="empty">Belum ada pengeluaran.</div>'}
+    </div>
+
+    <footer>Halaman ini adalah cuplikan (snapshot) — bukan tampilan langsung. Hubungi pengelola kas untuk data terbaru.<br>Built by <a href="https://mahardi.com/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Didik Mahardi</a></footer>
+  </div>
+</body>
+</html>`;
+  }
+
+  loadData();
+})();
+</script>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Isi — Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0C0E12; --panel:#14171D; --panel-2:#1B1F27; --border:#262B34; --border-hi:#333a46;
+    --text:#E8EAEE; --muted:#8B93A1; --accent:#7C83FD; --accent-dim:#3B3E7A;
+    --f-display:'Space Grotesk',sans-serif; --f-body:'Inter',sans-serif; --f-mono:'JetBrains Mono',monospace;
+    --c1:#6FD6A8; --c2:#F2A65A; --c3:#E8637A; --c4:#63B4E8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(124,131,253,0.10), transparent 45%),
+      var(--bg);
+    color:var(--text); font-family:var(--f-body);
+    -webkit-font-smoothing:antialiased;
+    padding:56px 20px 90px;
+  }
+  .wrap{max-width:920px; margin:0 auto;}
+
+  header{margin-bottom:38px;}
+  .kicker{
+    font-family:var(--f-mono); font-size:12px; color:var(--accent); letter-spacing:.06em;
+    display:flex; align-items:center; gap:8px; margin-bottom:14px;
+  }
+  .kicker::before{content:'$'; color:var(--muted);}
+  h1{
+    font-family:var(--f-display); font-weight:700; font-size:clamp(1.9rem,4.5vw,2.6rem);
+    margin:0 0 8px; letter-spacing:-0.01em;
+  }
+  header p{color:var(--muted); font-size:.98rem; max-width:56ch; line-height:1.6; margin:0;}
+
+  .searchbar{
+    margin-top:28px; display:flex; align-items:center; gap:10px;
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    padding:12px 16px; font-family:var(--f-mono); font-size:13.5px;
+  }
+  .searchbar span{color:var(--accent);}
+  .searchbar input{
+    flex:1; background:transparent; border:none; outline:none; color:var(--text);
+    font-family:var(--f-mono); font-size:13.5px;
+  }
+  .searchbar input::placeholder{color:var(--muted);}
+  .searchbar .count{color:var(--muted); font-size:12px; white-space:nowrap;}
+
+  .group{margin-top:38px;}
+  .group-head{
+    display:flex; align-items:center; gap:12px; margin-bottom:14px;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; flex:none;}
+  .group-head h2{
+    font-family:var(--f-display); font-size:1rem; font-weight:600; margin:0;
+    letter-spacing:.01em;
+  }
+  .group-head .line{flex:1; height:1px; background:var(--border);}
+  .group-head .n{font-family:var(--f-mono); font-size:11.5px; color:var(--muted);}
+
+  .list{display:flex; flex-direction:column; gap:8px;}
+  .item{
+    display:grid; grid-template-columns:34px 1fr auto; align-items:center; gap:16px;
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px; text-decoration:none; color:var(--text);
+    transition:border-color .15s, background .15s, transform .15s;
+  }
+  .item:hover{border-color:var(--border-hi); background:var(--panel-2); transform:translateX(3px);}
+  .idx{font-family:var(--f-mono); font-size:12px; color:var(--muted);}
+  .item:hover .idx{color:var(--accent);}
+  .meta .name{font-weight:600; font-size:.98rem; margin-bottom:3px;}
+  .meta .desc{color:var(--muted); font-size:.85rem; line-height:1.45;}
+  .meta .file{
+    display:inline-block; margin-top:7px; font-family:var(--f-mono); font-size:10.5px;
+    color:var(--muted); background:var(--panel-2); border:1px solid var(--border);
+    padding:2px 7px; border-radius:5px;
+  }
+  .go{font-family:var(--f-mono); font-size:12px; color:var(--muted); white-space:nowrap;}
+  .item:hover .go{color:var(--accent);}
+
+  .empty-state{
+    display:none; text-align:center; padding:50px 20px; color:var(--muted);
+    font-family:var(--f-mono); font-size:13px; border:1px dashed var(--border); border-radius:10px; margin-top:24px;
+  }
+
+  footer{
+    text-align:center; font-size:12px; color:var(--muted); padding:48px 16px 8px;
+  }
+  footer a{color:inherit; text-decoration:underline;}
+
+  @media (max-width:560px){
+    .item{grid-template-columns:26px 1fr; row-gap:6px;}
+    .go{grid-column:2/3; justify-self:start;}
+    .idx{font-size:11px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">ls ./tools</div>
+    <h1>Daftar Isi Toolkit</h1>
+    <p>Kumpulan tools internal — semua berjalan langsung di browser, tanpa server, tanpa login. Klik salah satu untuk membuka.</p>
+
+    <div class="searchbar">
+      <span>›</span>
+      <input type="text" id="searchInput" placeholder="Cari tools... (mis. excel, peta, qr)" autocomplete="off">
+      <span class="count" id="resultCount"></span>
+    </div>
+  </header>
+
+  <div id="groups">
+
+    <div class="group" data-group>
+      <div class="group-head">
+        <div class="dot" style="background:var(--c1)"></div>
+        <h2>Peta &amp; Sebaran Data</h2>
+        <div class="line"></div>
+        <div class="n">2</div>
+      </div>
+      <div class="list">
+        <a class="item" data-name="peta sebaran di atas gambar denah custom" href="peta-gambar-sebaran.html">
+          <div class="idx">001</div>
+          <div class="meta">
+            <div class="name">Peta Sebaran di Atas Gambar</div>
+            <div class="desc">Plot titik sebaran data di atas gambar atau denah custom — bukan peta geografis.</div>
+            <span class="file">peta-gambar-sebaran.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+        <a class="item" data-name="peta sebaran desa koordinat gabung lat lng satu kolom" href="peta-sebaran-desa%20koordinat%20gabung.html">
+          <div class="idx">002</div>
+          <div class="meta">
+            <div class="name">Peta Sebaran Desa — Koordinat Gabung</div>
+            <div class="desc">Peta sebaran desa dari data koordinat, lat &amp; lng dalam satu kolom.</div>
+            <span class="file">peta-sebaran-desa koordinat gabung.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="group" data-group>
+      <div class="group-head">
+        <div class="dot" style="background:var(--c2)"></div>
+        <h2>Excel &amp; Grafik</h2>
+        <div class="line"></div>
+        <div class="n">3</div>
+      </div>
+      <div class="list">
+        <a class="item" data-name="excel chart builder grafik data" href="excel-chart-builder.html">
+          <div class="idx">003</div>
+          <div class="meta">
+            <div class="name">Excel Chart Builder</div>
+            <div class="desc">Upload data Excel, langsung hasilkan grafik siap unduh.</div>
+            <span class="file">excel-chart-builder.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+        <a class="item" data-name="excel dashboard builder banyak grafik" href="excel-dashboard-builder.html">
+          <div class="idx">004</div>
+          <div class="meta">
+            <div class="name">Excel Dashboard Builder</div>
+            <div class="desc">Susun beberapa grafik dari data Excel jadi satu dashboard.</div>
+            <span class="file">excel-dashboard-builder.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+        <a class="item" data-name="fishbone diagram builder ishikawa sebab akibat" href="fishbone-diagram-builder.html">
+          <div class="idx">005</div>
+          <div class="meta">
+            <div class="name">Fishbone Diagram Builder</div>
+            <div class="desc">Bikin diagram tulang ikan (Ishikawa) untuk analisis sebab-akibat.</div>
+            <span class="file">fishbone-diagram-builder.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="group" data-group>
+      <div class="group-head">
+        <div class="dot" style="background:var(--c3)"></div>
+        <h2>Kepegawaian</h2>
+        <div class="line"></div>
+        <div class="n">1</div>
+      </div>
+      <div class="list">
+        <a class="item" data-name="kalkulator masa kerja pns gabungan sk" href="masa-kerja-pns-gabungan.html">
+          <div class="idx">006</div>
+          <div class="meta">
+            <div class="name">Kalkulator Masa Kerja PNS</div>
+            <div class="desc">Hitung masa kerja gabungan dari beberapa periode SK.</div>
+            <span class="file">masa-kerja-pns-gabungan.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="group" data-group>
+      <div class="group-head">
+        <div class="dot" style="background:var(--c4)"></div>
+        <h2>Gambar, File &amp; Utilitas</h2>
+        <div class="line"></div>
+        <div class="n">4</div>
+      </div>
+      <div class="list">
+        <a class="item" data-name="image compressor kompres gambar" href="image-compressor.html">
+          <div class="idx">007</div>
+          <div class="meta">
+            <div class="name">Image Compressor</div>
+            <div class="desc">Kompres &amp; rename banyak gambar sekaligus.</div>
+            <span class="file">image-compressor.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+        <a class="item" data-name="file renamer rename massal prefix suffix slugify" href="file-renamer.html">
+          <div class="idx">008</div>
+          <div class="meta">
+            <div class="name">File Renamer</div>
+            <div class="desc">Rename banyak file sekaligus dengan prefix, suffix, dan slugify.</div>
+            <span class="file">file-renamer.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+        <a class="item" data-name="qr code generator whatsapp link" href="qr-code-generator.html">
+          <div class="idx">009</div>
+          <div class="meta">
+            <div class="name">QR Code Generator</div>
+            <div class="desc">Buat QR code, termasuk untuk link WhatsApp.</div>
+            <span class="file">qr-code-generator.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+        <a class="item" data-name="word character counter hitung kata karakter" href="word-char-counter.html">
+          <div class="idx">010</div>
+          <div class="meta">
+            <div class="name">Word &amp; Character Counter</div>
+            <div class="desc">Hitung jumlah kata dan karakter teks.</div>
+            <span class="file">word-char-counter.html</span>
+          </div>
+          <div class="go">Buka →</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="empty-state" id="emptyState">Tidak ada tools yang cocok dengan pencarian itu.</div>
+
+  <footer>Built by <a href="https://mahardi.com/" target="_blank" rel="noopener">Didik Mahardi</a></footer>
+</div>
+
+<script>
+  const input = document.getElementById('searchInput');
+  const items = Array.from(document.querySelectorAll('.item'));
+  const groups = Array.from(document.querySelectorAll('[data-group]'));
+  const resultCount = document.getElementById('resultCount');
+  const emptyState = document.getElementById('emptyState');
+  const total = items.length;
+
+  function filter(){
+    const q = input.value.trim().toLowerCase();
+    let visible = 0;
+    groups.forEach(g => {
+      let groupVisible = 0;
+      g.querySelectorAll('.item').forEach(it => {
+        const match = it.dataset.name.includes(q);
+        it.style.display = match ? '' : 'none';
+        if(match){ groupVisible++; visible++; }
+      });
+      g.style.display = groupVisible ? '' : 'none';
+    });
+    resultCount.textContent = q ? `${visible}/${total}` : `${total} tools`;
+    emptyState.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  input.addEventListener('input', filter);
+  filter();
+</script>
+
+</body>
+</html>

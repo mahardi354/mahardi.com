@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Lab — Compressor & Renamer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #121212;
+    --panel: #1a1a1a;
+    --panel-2: #212121;
+    --border: #2e2e2e;
+    --accent: #ff6a3d;
+    --accent-dim: #7a3521;
+    --text: #ececec;
+    --text-dim: #9a9a9a;
+    --ok: #6bcf8e;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    padding: 32px 20px 80px;
+    min-height: 100vh;
+  }
+  .wrap{ max-width: 1080px; margin: 0 auto; }
+
+  header{ margin-bottom: 28px; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  header h1{
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: -0.02em;
+  }
+  header h1 span{ color: var(--accent); }
+  header p{ color: var(--text-dim); font-size: 13.5px; }
+
+  .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px){ .grid2{ grid-template-columns: 1fr; } }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .panel h2{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .panel h2::before{
+    content:'';
+    width:6px; height:6px; background:var(--accent); border-radius:1px;
+    display:inline-block;
+  }
+
+  .drop{
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    font-size: 13.5px;
+    color: var(--text-dim);
+  }
+  .drop:hover, .drop.drag{ border-color: var(--accent); background: rgba(255,106,61,0.04); color: var(--text); }
+  .drop strong{ color: var(--text); font-weight: 600; }
+  .drop input{ display:none; }
+
+  .filelist{ margin-top:10px; font-family: var(--font-mono); font-size:11.5px; color: var(--text-dim); }
+  .filelist div{ padding: 3px 0; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; }
+  .filelist div:last-child{ border-bottom:none; }
+
+  label.field{ display:block; font-size:12.5px; color: var(--text-dim); margin-bottom:6px; margin-top:14px; }
+  label.field:first-child{ margin-top:0; }
+  select, input[type=number]{
+    width:100%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 10px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-family: var(--font-body);
+  }
+  select:focus, input:focus{ outline: 1.5px solid var(--accent); border-color: var(--accent); }
+
+  .row{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .slider-row{ display:flex; align-items:center; gap:12px; }
+  input[type=range]{
+    flex:1;
+    accent-color: var(--accent);
+  }
+  .slider-val{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 40px;
+    text-align:right;
+  }
+
+  .checkbox-row{ display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; color: var(--text-dim); }
+  .checkbox-row input{ accent-color: var(--accent); }
+
+  select#excelCol{ margin-top:10px; }
+
+  button{
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 13.5px;
+    border: none;
+    border-radius: 7px;
+    padding: 11px 18px;
+    cursor: pointer;
+    transition: transform .1s, opacity .15s;
+  }
+  button:active{ transform: scale(0.98); }
+  button:disabled{ opacity:0.35; cursor:not-allowed; }
+  .btn-primary{ background: var(--accent); color: #1a0d06; }
+  .btn-primary:hover:not(:disabled){ opacity:0.9; }
+  .btn-secondary{ background: var(--panel-2); color: var(--text); border:1px solid var(--border); }
+  .btn-secondary:hover:not(:disabled){ border-color: var(--accent); }
+  .btn-ghost{ background: transparent; color: var(--text-dim); border:1px solid var(--border); padding:6px 10px; font-size:12px; }
+  .btn-ghost:hover{ color: var(--text); border-color: var(--accent); }
+
+  .actions{ display:flex; gap:10px; margin: 20px 0; flex-wrap:wrap; }
+
+  .status{ font-family: var(--font-mono); font-size:12px; color: var(--text-dim); margin-top:10px; min-height:16px; }
+  .status.ok{ color: var(--ok); }
+
+  .results{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+  }
+  .card{
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow:hidden;
+  }
+  .card img{ width:100%; aspect-ratio: 1/1; object-fit: cover; display:block; background:#000; }
+  .card .meta{ padding: 8px 10px 10px; }
+  .card .fname{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text);
+    word-break: break-all;
+    margin-bottom: 4px;
+  }
+  .card .size{ font-size: 10.5px; color: var(--text-dim); display:flex; justify-content:space-between; }
+  .card .size .saved{ color: var(--ok); }
+  .card .dl{
+    width:100%;
+    margin-top:8px;
+    padding: 6px;
+    font-size: 11px;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    border-radius: 5px;
+  }
+  .card .dl:hover{ background: rgba(255,106,61,0.08); }
+
+  .empty{ color: var(--text-dim); font-size: 13px; text-align:center; padding: 30px 0; }
+  .hint{ font-size: 11.5px; color: var(--text-dim); margin-top:8px; line-height:1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Image <span>Lab</span></h1>
+    <p>Crop tengah · kompres · convert WebP · rename massal dari Excel</p>
+  </header>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>1. Upload Gambar</h2>
+      <div class="drop" id="dropZone">
+        <div><strong>Klik atau drag & drop</strong> gambar di sini</div>
+        <div style="margin-top:4px;">JPG, PNG, WebP — bisa banyak sekaligus</div>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+      </div>
+      <div class="filelist" id="fileList"></div>
+    </div>
+
+    <div class="panel">
+      <h2>2. Pengaturan Output</h2>
+      <label class="field">Rasio crop (center crop)</label>
+      <select id="ratio">
+        <option value="1">1:1 — Persegi</option>
+        <option value="1.3333">4:3 — Landscape</option>
+        <option value="1.7778" selected>16:9 — Wide (hero image)</option>
+        <option value="0.75">3:4 — Portrait</option>
+        <option value="0.5625">9:16 — Story/Reel</option>
+        <option value="0">Original — resize saja, tanpa crop</option>
+        <option value="custom">Custom...</option>
+      </select>
+
+      <div class="row" id="customRatioRow" style="display:none; margin-top:10px;">
+        <div>
+          <label class="field">Rasio Lebar</label>
+          <input type="number" id="customW" value="21" min="1" step="0.1">
+        </div>
+        <div>
+          <label class="field">Rasio Tinggi</label>
+          <input type="number" id="customH" value="9" min="1" step="0.1">
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label class="field">Lebar output (px)</label>
+          <input type="number" id="outWidth" value="1200" min="50" step="10">
+        </div>
+        <div>
+          <label class="field">Tinggi output</label>
+          <input type="number" id="outHeight" value="675" min="50" step="10" disabled>
+        </div>
+      </div>
+
+      <label class="field">Kualitas WebP</label>
+      <div class="slider-row">
+        <input type="range" id="quality" min="10" max="100" value="80">
+        <span class="slider-val" id="qualityVal">80%</span>
+      </div>
+      <div class="hint">Makin rendah, makin kecil ukuran file tapi makin turun kualitas visual. 75-85% biasanya sudah optimal untuk web.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>3. Rename dari Excel (opsional)</h2>
+    <div class="drop" id="excelDrop">
+      <div><strong>Klik atau drag & drop file Excel</strong> (.xlsx / .csv)</div>
+      <div style="margin-top:4px;">Kolom berisi daftar nama file yang diinginkan</div>
+      <input type="file" id="excelInput" accept=".xlsx,.xls,.csv">
+    </div>
+    <select id="excelCol" style="display:none;"></select>
+    <div class="checkbox-row">
+      <input type="checkbox" id="hasHeader" checked>
+      <label for="hasHeader">Baris pertama adalah header (dilewati)</label>
+    </div>
+    <div class="hint" id="excelHint">
+      Kalau nama di Excel lebih banyak dari gambar yang diupload (misal 3 gambar → 10 nama), gambar akan diulang bergiliran (round-robin) supaya tetap menghasilkan 10 file sesuai daftar nama.
+    </div>
+    <div class="status" id="excelStatus"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary" id="processBtn" disabled>Proses Gambar</button>
+    <button class="btn-secondary" id="downloadAllBtn" disabled>Download Semua (.zip)</button>
+    <button class="btn-ghost" id="resetBtn">Reset</button>
+  </div>
+  <div class="status" id="processStatus"></div>
+
+  <div class="panel">
+    <h2>Hasil</h2>
+    <div class="results" id="results">
+      <div class="empty" style="grid-column:1/-1;">Belum ada gambar diproses.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let uploadedImages = []; // {file, name, bitmapPromise}
+let excelNames = [];     // list of strings from excel column
+let outputs = [];        // {blob, filename, origSize}
+
+const fileInput = document.getElementById('fileInput');
+const dropZone = document.getElementById('dropZone');
+const fileList = document.getElementById('fileList');
+const excelInput = document.getElementById('excelInput');
+const excelDrop = document.getElementById('excelDrop');
+const excelColSel = document.getElementById('excelCol');
+const excelStatus = document.getElementById('excelStatus');
+const hasHeaderChk = document.getElementById('hasHeader');
+const ratioSel = document.getElementById('ratio');
+const outWidth = document.getElementById('outWidth');
+const outHeight = document.getElementById('outHeight');
+const quality = document.getElementById('quality');
+const qualityVal = document.getElementById('qualityVal');
+const processBtn = document.getElementById('processBtn');
+const downloadAllBtn = document.getElementById('downloadAllBtn');
+const resetBtn = document.getElementById('resetBtn');
+const processStatus = document.getElementById('processStatus');
+const results = document.getElementById('results');
+
+const customRatioRow = document.getElementById('customRatioRow');
+const customW = document.getElementById('customW');
+const customH = document.getElementById('customH');
+
+function getCurrentRatio(){
+  if(ratioSel.value === 'custom'){
+    const w = parseFloat(customW.value) || 1;
+    const h = parseFloat(customH.value) || 1;
+    return w / h;
+  }
+  return parseFloat(ratioSel.value);
+}
+
+function updateHeightField(){
+  customRatioRow.style.display = ratioSel.value === 'custom' ? 'grid' : 'none';
+  const r = getCurrentRatio();
+  if(r > 0){
+    outHeight.disabled = true;
+    outHeight.value = Math.round(parseInt(outWidth.value || 0) / r);
+  } else {
+    outHeight.disabled = true;
+    outHeight.value = '(mengikuti rasio asli gambar)';
+  }
+}
+ratioSel.addEventListener('change', updateHeightField);
+outWidth.addEventListener('input', updateHeightField);
+customW.addEventListener('input', updateHeightField);
+customH.addEventListener('input', updateHeightField);
+updateHeightField();
+
+quality.addEventListener('input', () => { qualityVal.textContent = quality.value + '%'; });
+
+// --- drag/drop wiring ---
+function wireDrop(zone, input, onFiles){
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag');
+    onFiles(e.dataTransfer.files);
+  });
+  input.addEventListener('change', () => onFiles(input.files));
+}
+
+wireDrop(dropZone, fileInput, (files) => {
+  uploadedImages = Array.from(files).filter(f => f.type.startsWith('image/'));
+  renderFileList();
+  processBtn.disabled = uploadedImages.length === 0;
+});
+
+function renderFileList(){
+  fileList.innerHTML = uploadedImages.map(f =>
+    `<div><span>${escapeHtml(f.name)}</span><span>${(f.size/1024).toFixed(0)} KB</span></div>`
+  ).join('');
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+}
+
+// --- excel handling ---
+wireDrop(excelDrop, excelInput, (files) => {
+  if(!files.length) return;
+  const f = files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try{
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, {type:'array'});
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, {header:1, defval:''});
+      window._excelRows = rows;
+      populateColumnPicker(rows);
+      excelStatus.textContent = `Terbaca: ${f.name} (${rows.length} baris)`;
+      excelStatus.classList.add('ok');
+    } catch(err){
+      excelStatus.textContent = 'Gagal membaca file: ' + err.message;
+      excelStatus.classList.remove('ok');
+    }
+  };
+  reader.readAsArrayBuffer(f);
+});
+
+function populateColumnPicker(rows){
+  const maxCols = Math.max(...rows.map(r => r.length), 1);
+  excelColSel.innerHTML = '';
+  for(let c=0; c<maxCols; c++){
+    const sample = rows[0] ? rows[0][c] : '';
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = `Kolom ${String.fromCharCode(65+c)} (contoh: "${sample}")`;
+    excelColSel.appendChild(opt);
+  }
+  excelColSel.style.display = 'block';
+  updateExcelNames();
+}
+
+excelColSel.addEventListener('change', updateExcelNames);
+hasHeaderChk.addEventListener('change', updateExcelNames);
+
+function updateExcelNames(){
+  const rows = window._excelRows || [];
+  const col = parseInt(excelColSel.value || 0);
+  const start = hasHeaderChk.checked ? 1 : 0;
+  excelNames = rows.slice(start)
+    .map(r => (r[col] !== undefined ? String(r[col]).trim() : ''))
+    .filter(v => v.length > 0);
+  excelStatus.textContent = `${excelNames.length} nama siap dipakai untuk rename.`;
+  excelStatus.classList.add('ok');
+}
+
+// --- processing ---
+function sanitizeName(name){
+  return name.replace(/[^a-z0-9\-_]+/gi, '-').replace(/-+/g,'-').replace(/^-|-$/g,'').toLowerCase();
+}
+
+function loadImage(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => { resolve(img); URL.revokeObjectURL(url); };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function centerCropDraw(img, targetW, targetH, ratio){
+  const canvas = document.createElement('canvas');
+  canvas.width = targetW;
+  canvas.height = targetH;
+  const ctx = canvas.getContext('2d');
+
+  if(ratio > 0){
+    const srcRatio = img.naturalWidth / img.naturalHeight;
+    let sx, sy, sw, sh;
+    if(srcRatio > ratio){
+      // source wider than target -> crop left/right
+      sh = img.naturalHeight;
+      sw = sh * ratio;
+      sx = (img.naturalWidth - sw) / 2;
+      sy = 0;
+    } else {
+      // source taller than target -> crop top/bottom
+      sw = img.naturalWidth;
+      sh = sw / ratio;
+      sx = 0;
+      sy = (img.naturalHeight - sh) / 2;
+    }
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
+  } else {
+    // no crop, just resize maintaining aspect (targetH ignored, computed here)
+    const h = Math.round(targetW * (img.naturalHeight / img.naturalWidth));
+    canvas.height = h;
+    ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, 0, 0, targetW, h);
+  }
+  return canvas;
+}
+
+function canvasToWebp(canvas, q){
+  return new Promise(resolve => {
+    canvas.toBlob(blob => resolve(blob), 'image/webp', q/100);
+  });
+}
+
+processBtn.addEventListener('click', async () => {
+  if(!uploadedImages.length) return;
+  processBtn.disabled = true;
+  processStatus.textContent = 'Memproses...';
+  processStatus.classList.remove('ok');
+  outputs = [];
+  results.innerHTML = '';
+
+  const ratio = getCurrentRatio();
+  const tW = parseInt(outWidth.value);
+  const tH = ratio > 0 ? Math.round(tW / ratio) : 0;
+  const q = parseInt(quality.value);
+
+  const useExcel = excelNames.length > 0;
+  const outCount = useExcel ? excelNames.length : uploadedImages.length;
+
+  for(let i=0; i<outCount; i++){
+    const srcFile = uploadedImages[i % uploadedImages.length];
+    const img = await loadImage(srcFile);
+    const canvas = centerCropDraw(img, tW, tH, ratio);
+    const blob = await canvasToWebp(canvas, q);
+
+    let filename;
+    if(useExcel){
+      filename = sanitizeName(excelNames[i]) + '.webp';
+    } else {
+      const base = srcFile.name.replace(/\.[^/.]+$/, '');
+      filename = sanitizeName(base) + '.webp';
+    }
+
+    outputs.push({ blob, filename, origSize: srcFile.size, dataUrl: canvas.toDataURL('image/webp', q/100) });
+    renderResultCard(outputs[outputs.length-1]);
+    processStatus.textContent = `Memproses... ${i+1}/${outCount}`;
+  }
+
+  processStatus.textContent = `Selesai. ${outputs.length} gambar diproses.`;
+  processStatus.classList.add('ok');
+  processBtn.disabled = false;
+  downloadAllBtn.disabled = outputs.length === 0;
+});
+
+function renderResultCard(out){
+  if(results.querySelector('.empty')) results.innerHTML = '';
+  const card = document.createElement('div');
+  card.className = 'card';
+  const savedPct = Math.max(0, Math.round((1 - out.blob.size / out.origSize) * 100));
+  card.innerHTML = `
+    <img src="${out.dataUrl}" alt="${escapeHtml(out.filename)}">
+    <div class="meta">
+      <div class="fname">${escapeHtml(out.filename)}</div>
+      <div class="size">
+        <span>${(out.blob.size/1024).toFixed(0)} KB</span>
+        <span class="saved">-${savedPct}%</span>
+      </div>
+      <button class="dl">Download</button>
+    </div>
+  `;
+  card.querySelector('.dl').addEventListener('click', () => downloadBlob(out.blob, out.filename));
+  results.appendChild(card);
+}
+
+function downloadBlob(blob, filename){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+downloadAllBtn.addEventListener('click', async () => {
+  if(!outputs.length) return;
+  downloadAllBtn.disabled = true;
+  downloadAllBtn.textContent = 'Membuat ZIP...';
+  const zip = new JSZip();
+  outputs.forEach(o => zip.file(o.filename, o.blob));
+  const content = await zip.generateAsync({type:'blob'});
+  downloadBlob(content, 'images-webp.zip');
+  downloadAllBtn.disabled = false;
+  downloadAllBtn.textContent = 'Download Semua (.zip)';
+});
+
+resetBtn.addEventListener('click', () => {
+  uploadedImages = []; excelNames = []; outputs = []; window._excelRows = null;
+  fileInput.value = ''; excelInput.value = '';
+  fileList.innerHTML = ''; excelColSel.style.display='none'; excelColSel.innerHTML='';
+  excelStatus.textContent = ''; processStatus.textContent = '';
+  results.innerHTML = '<div class="empty" style="grid-column:1/-1;">Belum ada gambar diproses.</div>';
+  processBtn.disabled = true; downloadAllBtn.disabled = true;
+});
+</script>
+<footer style="text-align:center;font-size:12px;color:var(--text-dim,#8a8a8a);padding:22px 16px 8px;">Built by <a href="https://mahardi.com/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Didik Mahardi</a></footer>
+</body>
+</html>

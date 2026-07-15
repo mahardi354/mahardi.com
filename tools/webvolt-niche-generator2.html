@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebVolt — Niche Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0F14;
+    --panel:#111820;
+    --panel-2:#161F29;
+    --border:#212B36;
+    --text:#E8EDF2;
+    --muted:#7C8B99;
+    --accent:#35D0A6;
+    --accent-dim:#1E7A5E;
+    --warn:#F2A65A;
+    --danger:#E8637A;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 24px 64px;}
+  header{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+  .brand{display:flex;align-items:baseline;gap:10px;}
+  .brand .mark{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:rgba(53,208,166,0.1);border:1px solid var(--accent-dim);padding:3px 7px;border-radius:4px;letter-spacing:0.04em;}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin:0;letter-spacing:-0.01em;}
+  .sub{color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;}
+  @media (max-width:900px){ .grid{grid-template-columns:1fr;} }
+  .sticky{position:sticky;top:20px;}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;}
+  .field{margin-bottom:14px;}
+  .field:last-child{margin-bottom:0;}
+  label{display:block;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
+  input[type=text], textarea{width:100%;background:var(--panel-2);border:1px solid var(--border);color:var(--text);padding:9px 10px;border-radius:7px;font-size:13.5px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;}
+  textarea{resize:vertical;min-height:44px;line-height:1.4;}
+  input[type=text]:focus, textarea:focus{border-color:var(--accent);}
+  input[type=text]::placeholder, textarea::placeholder{color:#4A5866;}
+  .hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4;}
+  .derived{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);margin-top:5px;}
+
+  .section-title{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);display:flex;align-items:center;gap:8px;margin:0 0 14px;}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+  .count{color:var(--muted);font-weight:400;}
+
+  .rowset{display:flex;flex-direction:column;gap:10px;}
+  .rowitem{background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:12px;position:relative;}
+  .rowitem .rmv{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;padding:2px 6px;border-radius:4px;}
+  .rowitem .rmv:hover{color:var(--danger);background:rgba(232,99,122,0.1);}
+  .pain-grid{display:grid;grid-template-columns:56px 1fr;gap:8px;margin-bottom:8px;}
+  .pain-grid input{text-align:center;}
+  .faq-grid{display:flex;flex-direction:column;gap:8px;}
+  .rowitem label{margin-bottom:4px;}
+
+  .addbtn{width:100%;padding:9px;border-radius:7px;border:1px dashed var(--border);background:transparent;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;margin-top:10px;}
+  .addbtn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .record{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .record-head{padding:16px 20px;background:var(--panel-2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+  .swatch{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;border:1px solid rgba(255,255,255,0.08);}
+  .record-head .rtitle{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;}
+  .record-head .rslug{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);}
+  .record-body{padding:20px;}
+  .lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+  .copybtn{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:5px;cursor:pointer;}
+  .copybtn:hover{border-color:var(--accent);color:var(--accent);}
+  .copybtn.copied{border-color:var(--accent);color:var(--accent);background:rgba(53,208,166,0.1);}
+  pre.snippet{background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.55;color:#B8E8D8;overflow-x:auto;white-space:pre;margin:0;max-height:520px;overflow-y:auto;}
+  .empty{padding:60px 20px;text-align:center;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:13px;}
+  .rowblock{margin-bottom:18px;}
+  .rowblock:last-child{margin-bottom:0;}
+  .warnbox{font-size:11.5px;color:var(--warn);background:rgba(242,166,90,0.08);border:1px solid rgba(242,166,90,0.25);padding:8px 10px;border-radius:6px;margin-top:10px;display:none;}
+  .warnbox.show{display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>Niche Generator</h1>
+      <span class="mark">webvolt / build_niche_data.py</span>
+    </div>
+    <div class="sub">isi konten niche → langsung jadi dict siap tempel ke NICHES</div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT: identitas -->
+    <div class="sticky">
+      <div class="card">
+        <div class="section-title">Identitas</div>
+        <div class="field">
+          <label>Nama niche</label>
+          <input type="text" id="nama" placeholder="mis. Tukang Bangunan" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Icon (emoji)</label>
+          <input type="text" id="icon" placeholder="🧱" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Contoh nama bisnis</label>
+          <input type="text" id="contoh_nama" placeholder="mis. Bangun Jaya" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Contoh domain</label>
+          <input type="text" id="contoh_domain" placeholder="mis. bangunjaya.id" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Slug halaman (.html)</label>
+          <input type="text" id="slug" placeholder="auto: jasa-website-...">
+          <div class="derived" id="slugDerived"></div>
+        </div>
+        <div class="field">
+          <label>Contoh pillar (.html)</label>
+          <input type="text" id="contoh_pillar" placeholder="auto: ...-banyumas.html">
+        </div>
+        <div class="field">
+          <label>Judul hero</label>
+          <input type="text" id="judul_hero" placeholder="auto: Jasa Bikin Website untuk ...">
+        </div>
+        <div class="field">
+          <label>Sub hero</label>
+          <input type="text" id="sub_hero" placeholder="auto: Lihat ... yang aktif, skor Google 100/100">
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: konten + output -->
+    <div>
+      <div class="card">
+        <div class="section-title">Pain points <span class="count" id="painCount"></span></div>
+        <div class="rowset" id="painList"></div>
+        <button class="addbtn" onclick="addPain()">+ tambah pain point</button>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Fitur <span class="count" id="fiturCount"></span></div>
+        <div class="rowset" id="fiturList"></div>
+        <button class="addbtn" onclick="addFitur()">+ tambah fitur</button>
+      </div>
+
+      <div class="card">
+        <div class="section-title">FAQ <span class="count" id="faqCount"></span></div>
+        <div class="rowset" id="faqList"></div>
+        <button class="addbtn" onclick="addFaq()">+ tambah FAQ</button>
+      </div>
+
+      <div id="output"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let pains = [];
+let fitur = [];
+let faqs = [];
+
+function newPain(){ return {icon:'', title:'', desc:''}; }
+function newFitur(){ return {text:''}; }
+function newFaq(){ return {q:'', a:''}; }
+
+for(let i=0;i<6;i++) pains.push(newPain());
+for(let i=0;i<6;i++) fitur.push(newFitur());
+for(let i=0;i<7;i++) faqs.push(newFaq());
+
+function addPain(){ pains.push(newPain()); renderPains(); render(); }
+function addFitur(){ fitur.push(newFitur()); renderFitur(); render(); }
+function addFaq(){ faqs.push(newFaq()); renderFaqs(); render(); }
+function removePain(i){ pains.splice(i,1); renderPains(); render(); }
+function removeFitur(i){ fitur.splice(i,1); renderFitur(); render(); }
+function removeFaq(i){ faqs.splice(i,1); renderFaqs(); render(); }
+
+function renderPains(){
+  document.getElementById('painCount').textContent = `(${pains.length})`;
+  document.getElementById('painList').innerHTML = pains.map((p,i)=>`
+    <div class="rowitem">
+      <button class="rmv" onclick="removePain(${i})" title="hapus">✕</button>
+      <div class="pain-grid">
+        <input type="text" placeholder="⚡" value="${escAttr(p.icon)}" oninput="pains[${i}].icon=this.value; render();">
+        <input type="text" placeholder="Judul pain point" value="${escAttr(p.title)}" oninput="pains[${i}].title=this.value; render();">
+      </div>
+      <textarea placeholder="Deskripsi pain point (1-2 kalimat, boleh pakai kapital untuk penekanan)" oninput="pains[${i}].desc=this.value; render();">${escHtml(p.desc)}</textarea>
+    </div>
+  `).join('');
+}
+function renderFitur(){
+  document.getElementById('fiturCount').textContent = `(${fitur.length})`;
+  document.getElementById('fiturList').innerHTML = fitur.map((f,i)=>`
+    <div class="rowitem">
+      <button class="rmv" onclick="removeFitur(${i})" title="hapus">✕</button>
+      <input type="text" placeholder="mis. Halaman per kecamatan, daftar harga per layanan" value="${escAttr(f.text)}" oninput="fitur[${i}].text=this.value; render();">
+    </div>
+  `).join('');
+}
+function renderFaqs(){
+  document.getElementById('faqCount').textContent = `(${faqs.length})`;
+  document.getElementById('faqList').innerHTML = faqs.map((f,i)=>`
+    <div class="rowitem faq-grid">
+      <button class="rmv" onclick="removeFaq(${i})" title="hapus">✕</button>
+      <div>
+        <label>Pertanyaan</label>
+        <input type="text" placeholder="Bisa ... ?" value="${escAttr(f.q)}" oninput="faqs[${i}].q=this.value; render();">
+      </div>
+      <div>
+        <label>Jawaban</label>
+        <textarea placeholder="Bisa, kami ..." oninput="faqs[${i}].a=this.value; render();">${escHtml(f.a)}</textarea>
+      </div>
+    </div>
+  `).join('');
+}
+
+function slugify(str){
+  return str.toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-');
+}
+function escHtml(str){ const d=document.createElement('div'); d.textContent=str||''; return d.innerHTML; }
+function escAttr(str){ return (str||'').replace(/"/g,'&quot;'); }
+function pyEsc(str){ return (str||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"'); }
+
+function hashHue(str, base){ let h=base; for(let i=0;i<str.length;i++){ h=(h*31+str.charCodeAt(i))%360; } return Math.abs(h); }
+function hslToHex(h,s,l){ s/=100; l/=100; const k=n=>(n+h/30)%12; const a=s*Math.min(l,1-l); const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1))); const toHex=x=>Math.round(255*x).toString(16).padStart(2,'0'); return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`; }
+
+function render(){
+  const nama = document.getElementById('nama').value.trim();
+  const out = document.getElementById('output');
+
+  const slugBase = slugify(nama);
+  const autoSlug = slugBase ? `jasa-website-${slugBase}.html` : '';
+  document.getElementById('slugDerived').textContent = autoSlug ? `→ ${autoSlug}` : '';
+
+  if(!nama){
+    out.innerHTML = `<div class="record"><div class="empty">Isi nama niche di panel kiri untuk mulai generate&hellip;</div></div>`;
+    return;
+  }
+
+  const icon = document.getElementById('icon').value.trim() || '📦';
+  const contoh_nama = document.getElementById('contoh_nama').value.trim();
+  const contoh_domain = document.getElementById('contoh_domain').value.trim();
+  const slug = document.getElementById('slug').value.trim() || autoSlug;
+  const contoh_pillar = document.getElementById('contoh_pillar').value.trim() || `${slugBase}-banyumas.html`;
+  const judul_hero = document.getElementById('judul_hero').value.trim() || `Jasa Bikin Website untuk ${nama}`;
+  const sub_hero = document.getElementById('sub_hero').value.trim() || (contoh_nama ? `Lihat ${contoh_nama} yang aktif, skor Google 100/100` : '');
+
+  const color = hslToHex(hashHue(slug||nama, 160), 62, 45);
+
+  const validPains = pains.filter(p=>p.title.trim() || p.desc.trim());
+  const validFitur = fitur.filter(f=>f.text.trim());
+  const validFaqs = faqs.filter(f=>f.q.trim() || f.a.trim());
+
+  let warn = '';
+  if(validPains.length < 6) warn += `pain points terisi ${validPains.length}/6. `;
+  if(validFitur.length < 6) warn += `fitur terisi ${validFitur.length}/6. `;
+  if(validFaqs.length < 7) warn += `FAQ terisi ${validFaqs.length}/7. `;
+
+  const painsPy = validPains.length
+    ? validPains.map(p=>`            ("${pyEsc(p.icon)}", "${pyEsc(p.title)}", "${pyEsc(p.desc)}"),`).join('\n')
+    : `            # belum diisi`;
+  const fiturPy = validFitur.length
+    ? validFitur.map(f=>`            "${pyEsc(f.text)}",`).join('\n')
+    : `            # belum diisi`;
+  const faqsPy = validFaqs.length
+    ? validFaqs.map(f=>`            ("${pyEsc(f.q)}", "${pyEsc(f.a)}"),`).join('\n')
+    : `            # belum diisi`;
+
+  const snippet = `    {
+        "slug": "${pyEsc(slug)}",
+        "icon": "${pyEsc(icon)}",
+        "nama": "${pyEsc(nama)}",
+        "contoh_domain": "${pyEsc(contoh_domain)}",
+        "contoh_pillar": "${pyEsc(contoh_pillar)}",
+        "contoh_nama": "${pyEsc(contoh_nama)}",
+        "judul_hero": "${pyEsc(judul_hero)}",
+        "sub_hero": "${pyEsc(sub_hero)}",
+        "pains": [
+${painsPy}
+        ],
+        "fitur": [
+${fiturPy}
+        ],
+        "faqs": [
+${faqsPy}
+        ],
+    },`;
+
+  const navLine = `    ("${pyEsc(icon)}", "${pyEsc(nama)}", "${pyEsc(slug)}"),`;
+
+  out.innerHTML = `
+    <div class="record">
+      <div class="record-head">
+        <div class="swatch" style="background:${color}22;color:${color};border-color:${color}55;">${icon}</div>
+        <div>
+          <div class="rtitle">${escHtml(nama)}</div>
+          <div class="rslug">slug: ${escHtml(slug)}</div>
+        </div>
+      </div>
+      <div class="record-body">
+        <div class="warnbox ${warn ? 'show' : ''}">Belum lengkap: ${warn}Boleh tetap disalin, lengkapi nanti langsung di file.</div>
+
+        <div class="rowblock">
+          <div class="lbl">
+            <span>Entry untuk NICHE_NAV</span>
+            <button class="copybtn" onclick="copyBlock('navText', this)">salin</button>
+          </div>
+          <pre class="snippet" id="navText">${escHtml(navLine)}</pre>
+        </div>
+
+        <div class="rowblock">
+          <div class="lbl">
+            <span>Dict untuk NICHES (tempel di dalam list NICHES = [ ... ])</span>
+            <button class="copybtn" onclick="copyBlock('dictText', this)">salin</button>
+          </div>
+          <pre class="snippet" id="dictText">${escHtml(snippet)}</pre>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function copyBlock(id, btn){
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = 'tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='salin'; btn.classList.remove('copied'); }, 1600);
+  });
+}
+
+['nama','icon','contoh_nama','contoh_domain','slug','contoh_pillar','judul_hero','sub_hero'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', render);
+});
+
+renderPains();
+renderFitur();
+renderFaqs();
+render();
+</script>
+<footer style="text-align:center;font-size:12px;color:var(--muted,#8a8a8a);padding:22px 16px 8px;">Built by <a href="https://mahardi.com/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Didik Mahardi</a></footer>
+</body>
+</html>
