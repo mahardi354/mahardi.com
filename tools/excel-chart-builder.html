@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Chart Builder</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121212; --panel:#1a1a1a; --panel-2:#212121; --border:#2e2e2e;
+    --accent:#ff6a3d; --accent-dim:#7a3521; --text:#ececec; --text-dim:#9a9a9a; --ok:#6bcf8e;
+    --font-display:'Space Grotesk',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--bg); color:var(--text); font-family:var(--font-body); padding:32px 20px 80px; }
+  .wrap{ max-width:1080px; margin:0 auto; }
+  header{ margin-bottom:24px; }
+  header h1{ font-family:var(--font-display); font-size:26px; letter-spacing:-0.02em; }
+  header h1 span{ color:var(--accent); }
+  header p{ color:var(--text-dim); font-size:13.5px; margin-top:4px; }
+
+  .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  @media (max-width:760px){ .grid2{ grid-template-columns:1fr; } }
+
+  .panel{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:20px; margin-bottom:16px; }
+  .panel h2{ font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .panel h2::before{ content:''; width:6px; height:6px; background:var(--accent); border-radius:1px; }
+
+  .drop{ border:1.5px dashed var(--border); border-radius:8px; padding:26px 16px; text-align:center; cursor:pointer; transition:border-color .15s, background .15s; font-size:13.5px; color:var(--text-dim); }
+  .drop:hover, .drop.drag{ border-color:var(--accent); background:rgba(255,106,61,0.04); color:var(--text); }
+  .drop strong{ color:var(--text); font-weight:600; }
+  .drop input{ display:none; }
+
+  label.field{ display:block; font-size:12.5px; color:var(--text-dim); margin-bottom:6px; margin-top:14px; }
+  label.field:first-child{ margin-top:0; }
+  select, input[type=text]{
+    width:100%; background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    padding:9px 10px; border-radius:6px; font-size:13.5px; font-family:var(--font-body);
+  }
+  select:focus, input:focus{ outline:1.5px solid var(--accent); border-color:var(--accent); }
+
+  .ycols{ display:flex; flex-direction:column; gap:6px; margin-top:6px; max-height:160px; overflow-y:auto; padding:8px; background:var(--panel-2); border:1px solid var(--border); border-radius:6px; }
+  .ycols label{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text); cursor:pointer; }
+  .ycols input{ accent-color:var(--accent); }
+  .swatch{ width:10px; height:10px; border-radius:2px; display:inline-block; }
+
+  .checkbox-row{ display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; color:var(--text-dim); }
+  .checkbox-row input{ accent-color:var(--accent); }
+
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  button{ font-family:var(--font-body); font-weight:600; font-size:13.5px; border:none; border-radius:7px; padding:11px 18px; cursor:pointer; transition:transform .1s, opacity .15s; }
+  button:active{ transform:scale(0.98); }
+  button:disabled{ opacity:0.35; cursor:not-allowed; }
+  .btn-primary{ background:var(--accent); color:#1a0d06; }
+  .btn-primary:hover:not(:disabled){ opacity:0.9; }
+  .btn-secondary{ background:var(--panel-2); color:var(--text); border:1px solid var(--border); }
+  .btn-secondary:hover:not(:disabled){ border-color:var(--accent); }
+  .btn-ghost{ background:transparent; color:var(--text-dim); border:1px solid var(--border); padding:6px 10px; font-size:12px; }
+  .btn-ghost:hover{ color:var(--text); border-color:var(--accent); }
+  .actions{ display:flex; gap:10px; margin:18px 0; flex-wrap:wrap; }
+
+  .status{ font-family:var(--font-mono); font-size:12px; color:var(--text-dim); margin-top:10px; min-height:16px; }
+  .status.ok{ color:var(--ok); }
+
+  .chart-wrap{ background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:18px; position:relative; min-height:380px; }
+  .empty{ color:var(--text-dim); font-size:13px; text-align:center; padding:40px 0; }
+  .hint{ font-size:11.5px; color:var(--text-dim); margin-top:8px; line-height:1.5; }
+
+  details{ margin-top:14px; }
+  summary{ cursor:pointer; font-size:12.5px; color:var(--text-dim); font-family:var(--font-mono); }
+  table{ width:100%; border-collapse:collapse; font-size:11.5px; margin-top:10px; }
+  th{ text-align:left; font-family:var(--font-mono); font-size:10px; text-transform:uppercase; color:var(--text-dim); padding:5px 7px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--panel-2); }
+  td{ padding:5px 7px; border-bottom:1px solid var(--border); font-family:var(--font-mono); }
+  .table-scroll{ max-height:220px; overflow:auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Excel <span>Chart</span> Builder</h1>
+    <p>Upload data Excel/CSV, pilih kolom, langsung jadi grafik interaktif.</p>
+  </header>
+
+  <div class="panel">
+    <h2>1. Upload Data</h2>
+    <div class="drop" id="dropZone">
+      <div><strong>Klik atau drag & drop</strong> file Excel/CSV di sini</div>
+      <div style="margin-top:4px;">.xlsx, .xls, atau .csv</div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+    </div>
+    <label class="field" id="sheetLabel" style="display:none;">Pilih Sheet</label>
+    <select id="sheetSel" style="display:none;"></select>
+    <div class="status" id="uploadStatus"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>2. Sumbu & Data</h2>
+      <label class="field" id="xColLabel">Kolom X (kategori/label)</label>
+      <select id="xCol" disabled></select>
+
+      <div id="normalYWrap">
+        <label class="field">Kolom Y (nilai) — bisa pilih lebih dari satu</label>
+        <div class="ycols" id="yCols"><div class="hint">Upload data dulu untuk melihat kolom.</div></div>
+      </div>
+
+      <div id="pyramidYWrap" style="display:none;">
+        <label class="field">Kolom Laki-laki (sisi kiri)</label>
+        <select id="maleCol"></select>
+        <label class="field">Kolom Perempuan (sisi kanan)</label>
+        <select id="femaleCol"></select>
+        <div class="hint">Kolom X di atas dipakai sebagai kelompok umur. Urutkan baris dari kelompok umur tertua (baris paling atas) ke termuda (baris paling bawah) di Excel-nya biar piramida tampil normal.</div>
+      </div>
+
+      <label class="field">Kalau kategori X ada yang duplikat</label>
+      <select id="aggMode">
+        <option value="none">Tampilkan apa adanya (baris asli)</option>
+        <option value="sum" selected>Gabungkan — Jumlah (SUM)</option>
+        <option value="avg">Gabungkan — Rata-rata (AVERAGE)</option>
+        <option value="count">Gabungkan — Hitung (COUNT)</option>
+      </select>
+    </div>
+
+    <div class="panel">
+      <h2>3. Tampilan Chart</h2>
+      <label class="field">Tipe chart</label>
+      <select id="chartType">
+        <option value="bar" selected>Bar (batang)</option>
+        <option value="line">Line (garis)</option>
+        <option value="area">Area (garis terisi)</option>
+        <option value="pie">Pie</option>
+        <option value="doughnut">Doughnut</option>
+        <option value="scatter">Scatter</option>
+        <option value="radar">Radar (sarang laba-laba)</option>
+        <option value="pyramid">Piramida Penduduk</option>
+      </select>
+
+      <label class="field">Judul chart</label>
+      <input type="text" id="chartTitle" placeholder="mis. Progress Niche per Kategori">
+
+      <div class="hint" id="pieHint" style="display:none;">Pie/Doughnut cuma pakai kolom Y pertama yang dicentang, dijumlah per kategori X.</div>
+      <div class="checkbox-row" id="pieCategoryOption" style="display:none;">
+        <input type="checkbox" id="showPieCategory" checked>
+        <label for="showPieCategory">Tampilkan nama kategori di tiap slice</label>
+      </div>
+
+      <label class="field">Warna teks label</label>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <input type="color" id="labelColor" value="#ececec" style="width:44px; height:34px; padding:2px; background:var(--panel-2); border:1px solid var(--border); border-radius:6px; cursor:pointer;">
+        <button type="button" class="btn-ghost" id="colorWhiteBtn">Putih</button>
+        <button type="button" class="btn-ghost" id="colorBlackBtn">Hitam</button>
+      </div>
+
+      <label class="field">Warna teks sumbu / indikator / judul</label>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <input type="color" id="axisColor" value="#ececec" style="width:44px; height:34px; padding:2px; background:var(--panel-2); border:1px solid var(--border); border-radius:6px; cursor:pointer;">
+        <button type="button" class="btn-ghost" id="axisColorWhiteBtn">Putih</button>
+        <button type="button" class="btn-ghost" id="axisColorBlackBtn">Hitam</button>
+      </div>
+      <div class="hint">Kalau chart mau ditaruh di dokumen/laporan berlatar putih, ganti ke Hitam biar nama indikator & judul tetap kebaca.</div>
+
+      <div class="checkbox-row" style="margin-top:16px;">
+        <input type="checkbox" id="showLabels" checked>
+        <label for="showLabels">Tampilkan angka di batang/titik data</label>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="showTable" checked>
+        <label for="showTable">Tampilkan tabel di bawah chart</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary" id="renderBtn" disabled>Buat Chart</button>
+    <button class="btn-secondary" id="downloadPngBtn" disabled>Download PNG</button>
+    <button class="btn-ghost" id="resetBtn">Reset</button>
+  </div>
+  <div class="status" id="renderStatus"></div>
+
+  <div class="panel">
+    <h2>Hasil</h2>
+    <div class="chart-wrap">
+      <canvas id="chartCanvas"></canvas>
+      <div class="empty" id="chartEmpty">Belum ada chart dibuat.</div>
+    </div>
+    <div id="summaryTableWrap" style="margin-top:16px;"></div>
+    <details>
+      <summary>Lihat data mentah (sebelum digabung)</summary>
+      <div class="table-scroll" id="dataPreview"></div>
+    </details>
+  </div>
+
+  <div style="text-align:center;font-size:11px;color:var(--text-dim);margin-top:20px;">Built by Didik Mahardi</div>
+</div>
+
+<script>
+if(window.ChartDataLabels) Chart.register(ChartDataLabels);
+
+let rows = [];        // array of objects, keyed by header
+let headers = [];
+let chartInstance = null;
+
+const COLORS = ['#ff6a3d','#4dabf7','#6bcf8e','#f7c948','#c084fc','#ff8fab','#4ecdc4','#ffa94d','#748ffc','#a9e34b'];
+
+const fileInput = document.getElementById('fileInput');
+const dropZone = document.getElementById('dropZone');
+const sheetLabel = document.getElementById('sheetLabel');
+const sheetSel = document.getElementById('sheetSel');
+const uploadStatus = document.getElementById('uploadStatus');
+const xCol = document.getElementById('xCol');
+const yCols = document.getElementById('yCols');
+const aggMode = document.getElementById('aggMode');
+const chartType = document.getElementById('chartType');
+const chartTitle = document.getElementById('chartTitle');
+const pieHint = document.getElementById('pieHint');
+const showLabelsChk = document.getElementById('showLabels');
+const showTableChk = document.getElementById('showTable');
+const summaryTableWrap = document.getElementById('summaryTableWrap');
+const labelColorInput = document.getElementById('labelColor');
+const colorWhiteBtn = document.getElementById('colorWhiteBtn');
+const colorBlackBtn = document.getElementById('colorBlackBtn');
+let userSetLabelColor = false;
+labelColorInput.addEventListener('input', () => { userSetLabelColor = true; });
+colorWhiteBtn.addEventListener('click', () => { labelColorInput.value = '#ececec'; userSetLabelColor = true; });
+colorBlackBtn.addEventListener('click', () => { labelColorInput.value = '#121212'; userSetLabelColor = true; });
+
+const axisColorInput = document.getElementById('axisColor');
+const axisColorWhiteBtn = document.getElementById('axisColorWhiteBtn');
+const axisColorBlackBtn = document.getElementById('axisColorBlackBtn');
+axisColorWhiteBtn.addEventListener('click', () => { axisColorInput.value = '#ececec'; });
+axisColorBlackBtn.addEventListener('click', () => { axisColorInput.value = '#121212'; });
+const renderBtn = document.getElementById('renderBtn');
+const downloadPngBtn = document.getElementById('downloadPngBtn');
+const resetBtn = document.getElementById('resetBtn');
+const renderStatus = document.getElementById('renderStatus');
+const chartCanvas = document.getElementById('chartCanvas');
+const chartEmpty = document.getElementById('chartEmpty');
+const dataPreview = document.getElementById('dataPreview');
+
+let workbook = null;
+
+function wireDrop(zone, input, onFiles){
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); onFiles(e.dataTransfer.files); });
+  input.addEventListener('change', () => onFiles(input.files));
+}
+
+wireDrop(dropZone, fileInput, (files) => {
+  if(!files.length) return;
+  const f = files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try{
+      const data = new Uint8Array(e.target.result);
+      workbook = XLSX.read(data, {type:'array'});
+      if(workbook.SheetNames.length > 1){
+        sheetSel.innerHTML = workbook.SheetNames.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+        sheetLabel.style.display = 'block';
+        sheetSel.style.display = 'block';
+      } else {
+        sheetLabel.style.display = 'none';
+        sheetSel.style.display = 'none';
+      }
+      loadSheet(workbook.SheetNames[0]);
+      uploadStatus.textContent = `Terbaca: ${f.name} (${workbook.SheetNames.length} sheet)`;
+      uploadStatus.classList.add('ok');
+    } catch(err){
+      uploadStatus.textContent = 'Gagal membaca file: ' + err.message;
+      uploadStatus.classList.remove('ok');
+    }
+  };
+  reader.readAsArrayBuffer(f);
+});
+
+sheetSel.addEventListener('change', () => loadSheet(sheetSel.value));
+
+function loadSheet(name){
+  const sheet = workbook.Sheets[name];
+  const json = XLSX.utils.sheet_to_json(sheet, {defval:''});
+  rows = json;
+  headers = rows.length ? Object.keys(rows[0]) : [];
+  populateColumnPickers();
+  renderDataPreview();
+  renderBtn.disabled = headers.length < 2;
+}
+
+function populateColumnPickers(){
+  xCol.innerHTML = headers.map(h => `<option value="${escapeHtml(h)}">${escapeHtml(h)}</option>`).join('');
+  xCol.disabled = headers.length === 0;
+
+  yCols.innerHTML = headers.map((h, i) => `
+    <label>
+      <input type="checkbox" value="${escapeHtml(h)}" ${i===1 ? 'checked' : ''}>
+      <span class="swatch" style="background:${COLORS[i % COLORS.length]}"></span>
+      ${escapeHtml(h)}
+    </label>
+  `).join('');
+
+  // default: pick first column as X if it looks non-numeric, else keep first
+  xCol.selectedIndex = 0;
+
+  const optsHtml = headers.map(h => `<option value="${escapeHtml(h)}">${escapeHtml(h)}</option>`).join('');
+  document.getElementById('maleCol').innerHTML = optsHtml;
+  document.getElementById('femaleCol').innerHTML = optsHtml;
+  if(headers.length > 2){
+    document.getElementById('maleCol').selectedIndex = 1;
+    document.getElementById('femaleCol').selectedIndex = 2;
+  }
+}
+
+function getSelectedYCols(){
+  return Array.from(yCols.querySelectorAll('input:checked')).map(el => el.value);
+}
+
+function escapeHtml(s){ const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+
+function renderDataPreview(){
+  if(!rows.length){ dataPreview.innerHTML = '<div class="hint">Tidak ada data.</div>'; return; }
+  const shown = rows.slice(0, 50);
+  let thead = '<tr>' + headers.map(h => `<th>${escapeHtml(h)}</th>`).join('') + '</tr>';
+  let tbody = shown.map(r => '<tr>' + headers.map(h => `<td>${escapeHtml(r[h])}</td>`).join('') + '</tr>').join('');
+  dataPreview.innerHTML = `<table><thead>${thead}</thead><tbody>${tbody}</tbody></table>` +
+    (rows.length > 50 ? `<div class="hint">Menampilkan 50 dari ${rows.length} baris.</div>` : '');
+}
+
+chartType.addEventListener('change', () => {
+  const isPie = ['pie','doughnut'].includes(chartType.value);
+  const isPyramid = chartType.value === 'pyramid';
+  pieHint.style.display = isPie ? 'block' : 'none';
+  document.getElementById('pieCategoryOption').style.display = isPie ? 'flex' : 'none';
+  document.getElementById('normalYWrap').style.display = isPyramid ? 'none' : 'block';
+  document.getElementById('pyramidYWrap').style.display = isPyramid ? 'block' : 'none';
+  document.getElementById('xColLabel').textContent = isPyramid ? 'Kolom Kelompok Umur' : 'Kolom X (kategori/label)';
+  if(!userSetLabelColor){
+    labelColorInput.value = isPie ? '#121212' : '#ececec';
+  }
+});
+
+function toNumber(v){
+  if(typeof v === 'number') return v;
+  const n = parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+
+function aggregate(xField, yFields, mode){
+  // returns { labels: [...], series: { field: [values...] } }
+  if(mode === 'none'){
+    const labels = rows.map(r => String(r[xField]));
+    const series = {};
+    yFields.forEach(f => { series[f] = rows.map(r => toNumber(r[f])); });
+    return { labels, series };
+  }
+
+  const order = [];
+  const groups = {};
+  rows.forEach(r => {
+    const key = String(r[xField]);
+    if(!(key in groups)){ groups[key] = []; order.push(key); }
+    groups[key].push(r);
+  });
+
+  const labels = order;
+  const series = {};
+  yFields.forEach(f => {
+    series[f] = order.map(key => {
+      const items = groups[key].map(r => toNumber(r[f]));
+      if(mode === 'sum') return items.reduce((a,b)=>a+b, 0);
+      if(mode === 'avg') return items.reduce((a,b)=>a+b, 0) / items.length;
+      if(mode === 'count') return items.length;
+      return 0;
+    });
+  });
+  return { labels, series };
+}
+
+renderBtn.addEventListener('click', () => {
+  const type = chartType.value;
+
+  if(type === 'pyramid'){
+    renderPyramid();
+    return;
+  }
+
+  const x = xCol.value;
+  const ys = getSelectedYCols().filter(f => f !== x);
+  if(!x || ys.length === 0){
+    renderStatus.textContent = 'Pilih kolom X dan minimal satu kolom Y.';
+    renderStatus.classList.remove('ok');
+    return;
+  }
+
+  const isPie = ['pie','doughnut'].includes(type);
+  const mode = isPie ? 'sum' : aggMode.value;
+  const { labels, series } = aggregate(x, isPie ? [ys[0]] : ys, mode);
+
+  let datasets;
+  if(isPie){
+    datasets = [{
+      label: ys[0],
+      data: series[ys[0]],
+      backgroundColor: labels.map((_, i) => COLORS[i % COLORS.length]),
+      borderColor: '#121212',
+      borderWidth: 2,
+    }];
+  } else if(type === 'scatter'){
+    datasets = ys.map((f, i) => ({
+      label: f,
+      data: labels.map((lab, idx) => ({ x: idx, y: series[f][idx] })),
+      backgroundColor: COLORS[i % COLORS.length],
+    }));
+  } else {
+    datasets = ys.map((f, i) => ({
+      label: f,
+      data: series[f],
+      backgroundColor: (type === 'area' || type === 'radar') ? COLORS[i % COLORS.length] + '40' : COLORS[i % COLORS.length],
+      borderColor: COLORS[i % COLORS.length],
+      fill: type === 'area' || type === 'radar',
+      tension: type === 'area' || type === 'line' ? 0.3 : 0,
+      borderWidth: 2,
+      pointBackgroundColor: COLORS[i % COLORS.length],
+    }));
+  }
+
+  const showLabels = showLabelsChk.checked;
+  const formatNum = (v) => Number(v).toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  const maxLen = Math.max(0, ...ys.flatMap(f => series[f].map(v => formatNum(v).length)));
+  const rotateVertical = type === 'bar' && maxLen > 5;
+
+  const showPieCategory = document.getElementById('showPieCategory').checked;
+  const labelColor = labelColorInput.value;
+  const datalabelsCfg = {
+    display: showLabels || (isPie && showPieCategory),
+    color: labelColor,
+    anchor: isPie ? 'center' : 'end',
+    align: isPie ? 'center' : (type === 'bar' ? 'end' : 'top'),
+    rotation: rotateVertical ? -90 : 0,
+    offset: rotateVertical ? 6 : 3,
+    clip: false,
+    font: { family: 'JetBrains Mono', size: 10, weight: '600' },
+    textAlign: 'center',
+    formatter: (value, context) => {
+      if(isPie){
+        const lab = context.chart.data.labels[context.dataIndex];
+        const val = formatNum(value);
+        if(showLabels && showPieCategory) return [lab, val];
+        if(showLabels) return val;
+        if(showPieCategory) return lab;
+        return '';
+      }
+      return formatNum(type === 'scatter' ? value.y : value);
+    },
+  };
+
+  const axisColor = axisColorInput.value;
+  const isRadar = type === 'radar';
+
+  const cfg = {
+    type: type === 'area' ? 'line' : type,
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      layout: { padding: { top: (showLabels && !isPie) ? (rotateVertical ? 36 : 20) : 4 } },
+      plugins: {
+        title: { display: !!chartTitle.value, text: chartTitle.value, color: axisColor, font: { size: 15, family: 'Space Grotesk' } },
+        legend: { labels: { color: labelColor } },
+        datalabels: datalabelsCfg,
+      },
+      scales: isPie ? {} : isRadar ? {
+        r: {
+          ticks: { color: axisColor, backdropColor: 'transparent' },
+          grid: { color: '#2e2e2e' },
+          angleLines: { color: '#2e2e2e' },
+          pointLabels: { color: axisColor, font: { size: 11 } },
+        },
+      } : {
+        x: { ticks: { color: axisColor }, grid: { display: false, drawTicks: false } },
+        y: { ticks: { color: axisColor }, grid: { color: '#2e2e2e' }, beginAtZero: true, grace: '10%' },
+      },
+    },
+  };
+
+  if(chartInstance) chartInstance.destroy();
+  chartEmpty.style.display = 'none';
+  chartInstance = new Chart(chartCanvas, cfg);
+
+  if(showTableChk.checked){
+    renderSummaryTable(labels, isPie ? [ys[0]] : ys, series, formatNum);
+  } else {
+    summaryTableWrap.innerHTML = '';
+  }
+
+  renderStatus.textContent = `Chart dibuat dari ${labels.length} kategori, ${ys.length} seri data.`;
+  renderStatus.classList.add('ok');
+  downloadPngBtn.disabled = false;
+});
+
+function renderSummaryTable(labels, ys, series, formatNum){
+  let thead = '<tr><th>Kategori</th>' + ys.map(f => `<th>${escapeHtml(f)}</th>`).join('') + '</tr>';
+  let tbody = labels.map((lab, idx) => {
+    const cells = ys.map(f => `<td>${escapeHtml(formatNum(series[f][idx]))}</td>`).join('');
+    return `<tr><td>${escapeHtml(lab)}</td>${cells}</tr>`;
+  }).join('');
+  summaryTableWrap.innerHTML = `<div class="table-scroll"><table><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`;
+}
+
+function renderPyramid(){
+  const x = xCol.value;
+  const maleField = document.getElementById('maleCol').value;
+  const femaleField = document.getElementById('femaleCol').value;
+  if(!x || !maleField || !femaleField || maleField === femaleField){
+    renderStatus.textContent = 'Pilih kolom umur (X), kolom Laki-laki, dan kolom Perempuan yang berbeda.';
+    renderStatus.classList.remove('ok');
+    return;
+  }
+
+  const { labels, series } = aggregate(x, [maleField, femaleField], aggMode.value);
+  const formatNum = (v) => Number(v).toLocaleString('id-ID', { maximumFractionDigits: 0 });
+  const labelColor = labelColorInput.value;
+  const axisColor = axisColorInput.value;
+  const showLabels = showLabelsChk.checked;
+
+  const datasets = [
+    { label: maleField, data: series[maleField].map(v => -Math.abs(v)), backgroundColor: COLORS[0], borderColor: COLORS[0], borderWidth: 1 },
+    { label: femaleField, data: series[femaleField].map(v => Math.abs(v)), backgroundColor: COLORS[1], borderColor: COLORS[1], borderWidth: 1 },
+  ];
+
+  const maxAbs = Math.max(1, ...series[maleField].map(Math.abs), ...series[femaleField].map(Math.abs));
+
+  const cfg = {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        title: { display: !!chartTitle.value, text: chartTitle.value, color: axisColor, font: { size: 15, family: 'Space Grotesk' } },
+        legend: { labels: { color: labelColor } },
+        datalabels: {
+          display: showLabels,
+          color: labelColor,
+          anchor: 'end',
+          align: 'end',
+          clip: false,
+          font: { family: 'JetBrains Mono', size: 10, weight: '600' },
+          formatter: (value) => formatNum(Math.abs(value)),
+        },
+      },
+      scales: {
+        x: {
+          stacked: true,
+          min: -maxAbs * 1.15,
+          max: maxAbs * 1.15,
+          ticks: { color: axisColor, callback: (v) => formatNum(Math.abs(v)) },
+          grid: { color: '#2e2e2e' },
+        },
+        y: {
+          stacked: true,
+          ticks: { color: axisColor },
+          grid: { display: false },
+        },
+      },
+    },
+  };
+
+  if(chartInstance) chartInstance.destroy();
+  chartEmpty.style.display = 'none';
+  chartInstance = new Chart(chartCanvas, cfg);
+
+  if(showTableChk.checked){
+    renderSummaryTable(labels, [maleField, femaleField], series, formatNum);
+  } else {
+    summaryTableWrap.innerHTML = '';
+  }
+
+  renderStatus.textContent = `Piramida dibuat dari ${labels.length} kelompok umur.`;
+  renderStatus.classList.add('ok');
+  downloadPngBtn.disabled = false;
+}
+
+downloadPngBtn.addEventListener('click', () => {
+  if(!chartInstance) return;
+  const a = document.createElement('a');
+  a.href = chartInstance.toBase64Image('image/png', 1);
+  a.download = (chartTitle.value ? chartTitle.value.replace(/[^a-z0-9\-_]+/gi,'-').toLowerCase() : 'chart') + '.png';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+});
+
+resetBtn.addEventListener('click', () => {
+  rows = []; headers = []; workbook = null;
+  fileInput.value = '';
+  sheetLabel.style.display = 'none'; sheetSel.style.display = 'none'; sheetSel.innerHTML = '';
+  xCol.innerHTML = ''; xCol.disabled = true;
+  yCols.innerHTML = '<div class="hint">Upload data dulu untuk melihat kolom.</div>';
+  document.getElementById('maleCol').innerHTML = ''; document.getElementById('femaleCol').innerHTML = '';
+  document.getElementById('normalYWrap').style.display = 'block';
+  document.getElementById('pyramidYWrap').style.display = 'none';
+  document.getElementById('xColLabel').textContent = 'Kolom X (kategori/label)';
+  chartTitle.value = '';
+  labelColorInput.value = '#ececec'; userSetLabelColor = false;
+  axisColorInput.value = '#ececec';
+  uploadStatus.textContent = ''; renderStatus.textContent = '';
+  dataPreview.innerHTML = ''; summaryTableWrap.innerHTML = '';
+  if(chartInstance){ chartInstance.destroy(); chartInstance = null; }
+  chartEmpty.style.display = 'block';
+  renderBtn.disabled = true; downloadPngBtn.disabled = true;
+});
+</script>
+</body>
+</html>

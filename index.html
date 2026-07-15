@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahardi — Profil Pribadi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Literata:wght@400;500&family=Bebas+Neue&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ===== MODE JAZZ (default) ===== */
+    --bg: #F2E8D5;
+    --bg-alt: #E8D9BC;
+    --ink: #2B1B1F;
+    --ink-soft: #5C463F;
+    --accent: #B5471B;
+    --accent-2: #8E6A2F;
+    --line: rgba(43,27,31,0.18);
+    --card: #FBF4E4;
+    --display: 'Fraunces', serif;
+    --display-style: italic;
+    --body-font: 'Literata', serif;
+    --util: 'JetBrains Mono', monospace;
+    --radius: 22px;
+    --tracking: 0em;
+    --transition: 700ms cubic-bezier(.65,0,.35,1);
+  }
+
+  body.mode-metal{
+    /* ===== MODE METAL ===== */
+    --bg: #0A0A0C;
+    --bg-alt: #131316;
+    --ink: #E9E7E2;
+    --ink-soft: #9A979E;
+    --accent: #C21F1F;
+    --accent-2: #7C7C86;
+    --line: rgba(233,231,226,0.14);
+    --card: #17171B;
+    --display: 'Bebas Neue', sans-serif;
+    --display-style: normal;
+    --body-font: 'JetBrains Mono', monospace;
+    --util: 'JetBrains Mono', monospace;
+    --radius: 4px;
+    --tracking: 0.04em;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--body-font);
+    transition:background var(--transition), color var(--transition);
+    overflow-x:hidden;
+  }
+
+  /* subtle background texture: vinyl grooves (jazz) / static grain (metal) */
+  body::before{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    opacity:.5;
+    transition:opacity var(--transition), background var(--transition);
+    background:
+      repeating-radial-gradient(circle at 50% 50%,
+        transparent 0, transparent 38px, var(--line) 39px, var(--line) 40px);
+    background-position:80% -10%;
+    background-size: 900px 900px;
+  }
+  body.mode-metal::before{
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 34px 34px;
+    background-position: 0 0;
+    opacity:.35;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 28px; position:relative; z-index:1;}
+  h1,h2,h3{font-family:var(--display); font-style:var(--display-style); letter-spacing:var(--tracking); transition:all var(--transition);}
+  body.mode-metal h1, body.mode-metal h2, body.mode-metal h3{text-transform:uppercase;}
+
+  /* ===== NAV ===== */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+    transition:background var(--transition), border-color var(--transition);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:76px;
+  }
+  .logo{
+    font-family:var(--display); font-style:var(--display-style);
+    font-size:1.5rem; letter-spacing:var(--tracking);
+  }
+  .logo span{color:var(--accent);}
+  .nav-links{display:flex; align-items:center; gap:34px;}
+  .nav-links a{
+    font-family:var(--util); font-size:.78rem; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); transition:color .3s;
+  }
+  .nav-links a:hover{color:var(--accent);}
+
+  /* mode switch */
+  .switch-wrap{display:flex; align-items:center; gap:10px; font-family:var(--util); font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft);}
+  .switch{
+    position:relative; width:56px; height:28px; border-radius:999px;
+    background:var(--card); border:1px solid var(--line); cursor:pointer;
+    transition:background .3s;
+  }
+  .switch .knob{
+    position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%;
+    background:var(--accent); transition:transform var(--transition), background var(--transition);
+  }
+  body.mode-metal .switch .knob{transform:translateX(28px); border-radius:3px;}
+
+  .hamburger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .hamburger span{width:24px; height:2px; background:var(--ink);}
+
+  /* ===== HERO ===== */
+  .hero{
+    padding:110px 0 90px;
+    display:grid; grid-template-columns:1.1fr .9fr; gap:60px; align-items:center;
+  }
+  .eyebrow{
+    font-family:var(--util); font-size:.75rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:18px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:""; width:26px; height:1px; background:var(--accent);}
+  .hero h1{font-size:clamp(2.8rem, 6vw, 4.6rem); line-height:1.02; margin-bottom:22px;}
+  .hero p.lead{
+    font-size:1.08rem; color:var(--ink-soft); max-width:46ch; line-height:1.65; margin-bottom:30px;
+  }
+  .mode-tag{
+    display:inline-flex; gap:8px; font-family:var(--util); font-size:.72rem;
+    text-transform:uppercase; letter-spacing:.1em; padding:9px 16px;
+    border:1px solid var(--line); border-radius:var(--radius); color:var(--ink-soft);
+  }
+  .mode-tag b{color:var(--accent); font-weight:600;}
+
+  .portrait{
+    aspect-ratio:4/5; border-radius:var(--radius); overflow:hidden; position:relative;
+    background:var(--card); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .portrait img{width:100%; height:100%; object-fit:cover; display:block;}
+  .portrait .placeholder{
+    text-align:center; padding:30px; color:var(--ink-soft); font-family:var(--util); font-size:.75rem; line-height:1.6;
+  }
+  .portrait .placeholder svg{width:72px; height:72px; margin-bottom:14px; opacity:.5;}
+
+  /* ===== SECTION generic ===== */
+  section{padding:80px 0; border-top:1px solid var(--line); transition:border-color var(--transition);}
+  .section-head{margin-bottom:48px;}
+  .section-head .eyebrow{margin-bottom:10px;}
+  .section-head h2{font-size:clamp(2rem, 4vw, 2.8rem);}
+
+  /* ===== TENTANG ===== */
+  .about-grid{display:grid; grid-template-columns:.9fr 1.1fr; gap:50px;}
+  .about-grid p{color:var(--ink-soft); line-height:1.75; margin-bottom:18px; font-size:1.02rem;}
+  .stat-list{display:grid; gap:22px;}
+  .stat{border-left:2px solid var(--accent); padding-left:16px;}
+  .stat .num{font-family:var(--display); font-style:var(--display-style); font-size:1.9rem; color:var(--accent);}
+  .stat .label{font-family:var(--util); font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft);}
+
+  /* ===== MUSIK dua sisi ===== */
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:26px;}
+  .duo-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:34px; transition:transform .35s, border-color var(--transition);
+  }
+  .duo-card:hover{transform:translateY(-4px);}
+  .duo-card h3{font-size:1.6rem; margin-bottom:6px;}
+  .duo-card .sub{font-family:var(--util); font-size:.75rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.08em; margin-bottom:20px; display:block;}
+  .duo-card ul{list-style:none; display:grid; gap:10px;}
+  .duo-card li{
+    display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px dashed var(--line);
+    font-size:.95rem; color:var(--ink-soft);
+  }
+  .duo-card li b{color:var(--ink); font-weight:600;}
+  .duo-card li span{font-family:var(--util); font-size:.7rem; color:var(--accent);}
+
+  /* ===== KELUARGA ===== */
+  .family-lead{color:var(--ink-soft); max-width:60ch; line-height:1.7; margin-bottom:40px;}
+  .family-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:20px;}
+  .fam-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+    text-align:center;
+  }
+  .fam-photo{
+    aspect-ratio:1/1; background:var(--bg-alt); display:flex; align-items:center; justify-content:center;
+    color:var(--ink-soft); position:relative; overflow:hidden;
+  }
+  .fam-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+  .fam-photo svg{width:38%; height:38%; opacity:.4;}
+  .fam-info{padding:16px 12px 20px;}
+  .fam-info .name{font-family:var(--display); font-style:var(--display-style); font-size:1.15rem;}
+  .fam-info .role{font-family:var(--util); font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-top:4px;}
+  .family-note{
+    margin-top:26px; padding:16px 18px; border:1px dashed var(--line); border-radius:var(--radius);
+    font-family:var(--util); font-size:.78rem; color:var(--ink-soft); line-height:1.7;
+  }
+  .family-note code{color:var(--accent);}
+
+  /* ===== KONTAK ===== */
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;}
+  .contact-list{display:grid; gap:16px;}
+  .contact-list a{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 20px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    transition:border-color .3s, transform .3s;
+  }
+  .contact-list a:hover{border-color:var(--accent); transform:translateX(4px);}
+  .contact-list .k{font-family:var(--util); font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft);}
+  .contact-list .v{font-weight:600;}
+  .quote-block{
+    font-family:var(--display); font-style:var(--display-style); font-size:1.6rem; line-height:1.4;
+    border-left:2px solid var(--accent); padding-left:22px; color:var(--ink);
+  }
+  .quote-block cite{display:block; margin-top:14px; font-family:var(--util); font-style:normal; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft);}
+
+  footer{
+    padding:34px 0 50px; text-align:center; font-family:var(--util); font-size:.72rem;
+    color:var(--ink-soft); letter-spacing:.05em; border-top:1px solid var(--line);
+  }
+
+  /* ===== responsive ===== */
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr; padding-top:70px;}
+    .portrait{order:-1; max-width:340px; margin:0 auto;}
+    .about-grid, .duo, .contact-grid{grid-template-columns:1fr;}
+    .family-grid{grid-template-columns:repeat(2,1fr);}
+    .nav-links{
+      position:fixed; top:76px; left:0; right:0; background:var(--bg);
+      flex-direction:column; align-items:flex-start; gap:0; border-bottom:1px solid var(--line);
+      max-height:0; overflow:hidden; transition:max-height .35s ease;
+    }
+    .nav-links.open{max-height:320px;}
+    .nav-links a{padding:16px 28px; width:100%; border-top:1px solid var(--line);}
+    .hamburger{display:flex;}
+  }
+  @media (max-width:480px){
+    .family-grid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="#" class="logo">mahardi<span>.com</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#tentang">Tentang</a>
+      <a href="#musik">Musik</a>
+      <a href="#keluarga">Keluarga</a>
+      <a href="#kontak">Kontak</a>
+    </div>
+    <div style="display:flex; align-items:center; gap:20px;">
+      <div class="switch-wrap" id="switchDesktop">
+        <span id="modeLabelDesktop">Jazz</span>
+        <div class="switch" id="modeSwitch2"><div class="knob"></div></div>
+        <span>Metal</span>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Buka menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero wrap" style="border:none;">
+  <div>
+    <div class="eyebrow">Profil Pribadi</div>
+    <h1>Mahardi.</h1>
+    <p class="lead">Dua telinga, dua dunia. Yang satu berjalan pelan di atas walking bass dan sapuan brush drum, yang satu lagi menghantam lewat distorsi dan blast beat. Ini halaman tentang saya, keluarga, dan playlist yang tidak pernah kompromi.</p>
+    <div class="mode-tag">Mode saat ini &nbsp;<b id="modeTagText">JAZZ</b></div>
+  </div>
+  <div class="portrait">
+    <img src="foto-profil.jpg" alt="Foto profil Mahardi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="placeholder" style="display:none; flex-direction:column; align-items:center;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+      Ganti file <code style="color:var(--accent)">foto-profil.jpg</code><br>dengan foto asli kamu
+    </div>
+  </div>
+</section>
+
+<section id="tentang">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">01 — Perkenalan</div>
+      <h2>Tentang Saya</h2>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p>Saya Mahardi. Sehari-hari kerja di depan layar, membangun hal-hal digital — tapi begitu jam kerja selesai, dunia saya berubah total lewat musik. Playlist saya adalah tempat dua kepribadian bertemu: satu yang tenang menikmati akor-akor jazz sambil ngopi, satu lagi yang butuh volume kencang dan riff gitar yang berat.</p>
+        <p>Bagi saya jazz dan metal sebenarnya tidak sejauh yang orang kira. Keduanya soal teknik, soal improvisasi, soal berani keluar dari pakem. Yang satu berbisik, yang satu berteriak — tapi sama-sama jujur.</p>
+      </div>
+      <div class="stat-list">
+        <div class="stat"><div class="num">15+ th</div><div class="label">Mendengarkan &amp; koleksi musik</div></div>
+        <div class="stat"><div class="num">2 genre</div><div class="label">Yang tidak pernah bisa dipilih salah satu</div></div>
+        <div class="stat"><div class="num">3 anak</div><div class="label">Calon penerus playlist ini</div></div>
+        <div class="stat"><div class="num">1 istri</div><div class="label">Yang sabar dengar volume naik-turun</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="musik">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">02 — Dua Sisi</div>
+      <h2>Musik yang Saya Dengarkan</h2>
+    </div>
+    <div class="duo">
+      <div class="duo-card">
+        <h3>Sisi Jazz</h3>
+        <span class="sub">Tenang, mengalir, penuh improvisasi</span>
+        <ul>
+          <li><b>Miles Davis</b><span>Kind of Blue</span></li>
+          <li><b>John Coltrane</b><span>A Love Supreme</span></li>
+          <li><b>Bill Evans Trio</b><span>Waltz for Debby</span></li>
+          <li><b>Herbie Hancock</b><span>Maiden Voyage</span></li>
+          <li><b>Chet Baker</b><span>Trumpet &amp; Vokal</span></li>
+        </ul>
+      </div>
+      <div class="duo-card">
+        <h3>Sisi Metal</h3>
+        <span class="sub">Berat, cepat, tanpa ampun</span>
+        <ul>
+          <li><b>Metallica</b><span>Master of Puppets</span></li>
+          <li><b>Iron Maiden</b><span>The Number of the Beast</span></li>
+          <li><b>Meshuggah</b><span>Progresif &amp; Djent</span></li>
+          <li><b>Slayer</b><span>Reign in Blood</span></li>
+          <li><b>Opeth</b><span>Progressive Death Metal</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="keluarga">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">03 — Rumah</div>
+      <h2>Keluarga</h2>
+    </div>
+    <p class="family-lead">Di luar musik, ini alasan utama saya pulang tepat waktu — istri saya dan tiga anak yang tumbuh dengan playlist campur aduk di rumah.</p>
+    <div class="family-grid">
+      <div class="fam-card">
+        <div class="fam-photo">
+          <img src="foto-istri.jpg" alt="Foto istri" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <svg style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </div>
+        <div class="fam-info">
+          <div class="name">Istri</div>
+          <div class="role">Partner hidup</div>
+        </div>
+      </div>
+      <div class="fam-card">
+        <div class="fam-photo">
+          <img src="foto-anak1.jpg" alt="Foto anak pertama" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <svg style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </div>
+        <div class="fam-info">
+          <div class="name">Anak Pertama</div>
+          <div class="role">Si sulung</div>
+        </div>
+      </div>
+      <div class="fam-card">
+        <div class="fam-photo">
+          <img src="foto-anak2.jpg" alt="Foto anak kedua" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <svg style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </div>
+        <div class="fam-info">
+          <div class="name">Anak Kedua</div>
+          <div class="role">Si tengah</div>
+        </div>
+      </div>
+      <div class="fam-card">
+        <div class="fam-photo">
+          <img src="foto-anak3.jpg" alt="Foto anak ketiga" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <svg style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </div>
+        <div class="fam-info">
+          <div class="name">Anak Ketiga</div>
+          <div class="role">Si bungsu</div>
+        </div>
+      </div>
+    </div>
+    <div class="family-note">
+      Catatan: foto masih placeholder. Simpan file foto asli di folder yang sama dengan <code>index.html</code>, lalu beri nama <code>foto-profil.jpg</code>, <code>foto-istri.jpg</code>, <code>foto-anak1.jpg</code>, <code>foto-anak2.jpg</code>, <code>foto-anak3.jpg</code> — foto akan otomatis muncul menggantikan ikon. Nama masing-masing juga bisa langsung diganti di kode HTML.
+    </div>
+  </div>
+</section>
+
+<section id="kontak">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">04 — Terhubung</div>
+      <h2>Kontak</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-list">
+        <a href="mailto:halo@mahardi.com"><span class="k">Email</span><span class="v">halo@mahardi.com</span></a>
+        <a href="https://wa.me/6280000000000" target="_blank" rel="noopener"><span class="k">WhatsApp</span><span class="v">+62 800-0000-0000</span></a>
+        <a href="#"><span class="k">Instagram</span><span class="v">@mahardi</span></a>
+      </div>
+      <div class="quote-block">
+        “Volume rendah untuk jazz, volume maksimal untuk metal — dua-duanya tetap rumah.”
+        <cite>— Mahardi</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © <span id="year"></span> mahardi.com — dibuat dengan dua playlist yang tidak pernah akur.
+</footer>
+
+<script>
+  const body = document.body;
+  const switches = [document.getElementById('modeSwitch2')];
+  const labels = [document.getElementById('modeLabelDesktop')];
+  const modeTagText = document.getElementById('modeTagText');
+
+  function setMode(metal){
+    body.classList.toggle('mode-metal', metal);
+    modeTagText.textContent = metal ? 'METAL' : 'JAZZ';
+    labels.forEach(l => l.style.color = metal ? 'var(--ink-soft)' : 'var(--accent)');
+  }
+
+  switches.forEach(sw => {
+    sw.addEventListener('click', () => setMode(!body.classList.contains('mode-metal')));
+  });
+  setMode(false);
+
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

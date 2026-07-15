@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peta Sebaran di Atas Gambar</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121212; --panel:#1a1a1a; --panel-2:#212121; --border:#2e2e2e;
+    --accent:#ff6a3d; --accent-dim:#7a3521; --text:#ececec; --text-dim:#9a9a9a; --ok:#6bcf8e;
+    --font-display:'Space Grotesk',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--bg); color:var(--text); font-family:var(--font-body); padding:32px 20px 80px; }
+  .wrap{ max-width:1080px; margin:0 auto; }
+  header{ margin-bottom:24px; }
+  header h1{ font-family:var(--font-display); font-size:26px; letter-spacing:-0.02em; }
+  header h1 span{ color:var(--accent); }
+  header p{ color:var(--text-dim); font-size:13.5px; margin-top:4px; }
+
+  .panel{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:20px; margin-bottom:16px; }
+  .panel h2{ font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .panel h2::before{ content:''; width:6px; height:6px; background:var(--accent); border-radius:1px; }
+
+  .tabs{ display:flex; gap:8px; margin-bottom:14px; }
+  .tab-btn{ background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim); padding:8px 14px; border-radius:6px; font-size:12.5px; cursor:pointer; font-weight:600; }
+  .tab-btn.active{ background:var(--accent); color:#1a0d06; border-color:var(--accent); }
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  .drop{ border:1.5px dashed var(--border); border-radius:8px; padding:26px 16px; text-align:center; cursor:pointer; transition:border-color .15s, background .15s; font-size:13.5px; color:var(--text-dim); }
+  .drop:hover, .drop.drag{ border-color:var(--accent); background:rgba(255,106,61,0.04); color:var(--text); }
+  .drop strong{ color:var(--text); font-weight:600; }
+  .drop input{ display:none; }
+  .hint{ font-size:11.5px; color:var(--text-dim); margin-top:8px; line-height:1.5; }
+  code{ font-family:var(--font-mono); color:var(--accent); }
+
+  label.field{ display:block; font-size:12.5px; color:var(--text-dim); margin-bottom:6px; margin-top:14px; }
+  label.field:first-child{ margin-top:0; }
+  select, input[type=text]{
+    width:100%; background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    padding:9px 10px; border-radius:6px; font-size:13.5px; font-family:var(--font-body);
+  }
+  select:focus, input:focus{ outline:1.5px solid var(--accent); border-color:var(--accent); }
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .ycols{ display:flex; flex-direction:column; gap:6px; margin-top:6px; max-height:160px; overflow-y:auto; padding:8px; background:var(--panel-2); border:1px solid var(--border); border-radius:6px; }
+  .ycols label{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text); cursor:pointer; }
+  .ycols input{ accent-color:var(--accent); width:auto; }
+  .swatch{ width:10px; height:10px; border-radius:2px; display:inline-block; flex-shrink:0; }
+
+  table.datatbl{ width:100%; border-collapse:collapse; font-size:12.5px; margin-top:8px; }
+  table.datatbl th{ text-align:left; font-family:var(--font-mono); font-size:10px; text-transform:uppercase; color:var(--text-dim); padding:6px; border-bottom:1px solid var(--border); }
+  table.datatbl td{ padding:5px 6px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  table.datatbl input{ padding:6px 8px; font-size:12px; }
+  .status-pill{ font-family:var(--font-mono); font-size:10.5px; padding:3px 8px; border-radius:4px; display:inline-block; }
+  .status-pill.placed{ background:rgba(107,207,142,0.15); color:var(--ok); }
+  .status-pill.pending{ background:rgba(154,154,154,0.15); color:var(--text-dim); }
+  .status-pill.active{ background:rgba(255,106,61,0.2); color:var(--accent); }
+  .place-btn{ padding:5px 10px; font-size:11px; }
+
+  button{ font-family:var(--font-body); font-weight:600; font-size:13.5px; border:none; border-radius:7px; padding:11px 18px; cursor:pointer; transition:transform .1s, opacity .15s; }
+  button:active{ transform:scale(0.98); }
+  button:disabled{ opacity:0.35; cursor:not-allowed; }
+  .btn-primary{ background:var(--accent); color:#1a0d06; }
+  .btn-primary:hover:not(:disabled){ opacity:0.9; }
+  .btn-secondary{ background:var(--panel-2); color:var(--text); border:1px solid var(--border); }
+  .btn-secondary:hover:not(:disabled){ border-color:var(--accent); }
+  .btn-ghost{ background:transparent; color:var(--text-dim); border:1px solid var(--border); padding:6px 10px; font-size:12px; }
+  .btn-ghost:hover{ color:var(--text); border-color:var(--accent); }
+  .btn-sm{ padding:6px 10px; font-size:11.5px; }
+  .actions{ display:flex; gap:10px; margin:18px 0; flex-wrap:wrap; }
+
+  .status{ font-family:var(--font-mono); font-size:12px; color:var(--text-dim); margin-top:10px; min-height:16px; }
+  .status.ok{ color:var(--ok); }
+
+  #mapImageArea{
+    position:relative;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    overflow:hidden;
+    min-height:200px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #mapImageArea.empty{ padding:60px 20px; color:var(--text-dim); font-size:13px; text-align:center; }
+  #mapImg{ display:block; width:100%; height:auto; cursor:crosshair; user-select:none; }
+  #markerLayer{ position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+  .pin{
+    position:absolute;
+    transform:translate(-50%,-100%);
+    display:flex; flex-direction:column; align-items:center;
+    pointer-events:none;
+  }
+  .pin-dot{
+    width:18px; height:18px; border-radius:50% 50% 50% 0;
+    transform:rotate(-45deg);
+    border:2px solid rgba(0,0,0,0.6);
+    box-shadow:0 1px 3px rgba(0,0,0,0.5);
+  }
+  .pin-label{
+    margin-top:2px;
+    background:rgba(18,18,18,0.88);
+    color:#fff;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    padding:2px 6px;
+    border-radius:4px;
+    white-space:nowrap;
+    border:1px solid rgba(255,255,255,0.15);
+  }
+
+  .legend-box{ background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:12px 14px; margin-top:12px; font-size:12px; display:none; }
+  .legend-row{ display:flex; align-items:center; gap:8px; margin-top:6px; }
+  .legend-dot{ width:14px; height:14px; border-radius:50%; flex-shrink:0; }
+
+  .banner{ background:rgba(255,106,61,0.1); border:1px solid var(--accent-dim); border-radius:8px; padding:10px 14px; font-size:12.5px; color:var(--text); margin-bottom:14px; display:none; }
+  .banner strong{ color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Peta Sebaran <span>di Atas Gambar</span></h1>
+    <p>Upload gambar peta wilayah kerja, tandai lokasi tiap desa, otomatis muncul angka & warna sesuai indikator.</p>
+  </header>
+
+  <div class="panel">
+    <h2>1. Upload Gambar Peta Wilayah</h2>
+    <div class="drop" id="dropZoneImg">
+      <div><strong>Klik atau drag & drop</strong> gambar peta di sini</div>
+      <div style="margin-top:4px;">JPG/PNG hasil scan atau screenshot peta wilayah kerja</div>
+      <input type="file" id="imgInput" accept="image/*">
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Data Desa & Indikator</h2>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="excel">Upload Excel</button>
+      <button class="tab-btn" data-tab="manual">Input Manual</button>
+    </div>
+
+    <div class="tab-content active" id="tab-excel">
+      <div class="drop" id="dropZoneXlsx">
+        <div><strong>Klik atau drag & drop</strong> file Excel/CSV di sini</div>
+        <input type="file" id="xlsxInput" accept=".xlsx,.xls,.csv">
+      </div>
+      <div class="hint">Cukup kolom <code>Nama Desa</code> + kolom angka indikator (bisa lebih dari satu, misal beberapa jenis penyakit — semuanya bisa ditampilkan sekaligus di label). Tidak perlu koordinat — lokasi ditentukan dengan klik di gambar.</div>
+      <label class="field" id="sheetLabel" style="display:none;">Pilih Sheet</label>
+      <select id="sheetSel" style="display:none;"></select>
+      <label class="field" id="colNameLabel" style="display:none;">Kolom Nama Desa</label>
+      <select id="colName" style="display:none;"></select>
+
+      <label class="field" id="indicatorsLabel" style="display:none;">Kolom Indikator yang ditampilkan (centang, bisa lebih dari satu)</label>
+      <div class="ycols" id="indicatorChecks" style="display:none;"></div>
+
+      <label class="field" id="colorByLabel" style="display:none;">Warna & ukuran pin berdasarkan</label>
+      <select id="colorBySel" style="display:none;"></select>
+      <div class="status" id="uploadStatus"></div>
+    </div>
+
+    <div class="tab-content" id="tab-manual">
+      <label class="field">Nama Indikator (label yang tampil, mis. "Kasus DBD")</label>
+      <input type="text" id="manualIndicatorLabel" value="Nilai" placeholder="Kasus DBD">
+      <table class="datatbl" id="manualTable">
+        <thead><tr><th>Nama Desa</th><th>Nilai</th><th></th></tr></thead>
+        <tbody id="manualBody"></tbody>
+      </table>
+      <button class="btn-secondary btn-sm" id="addRowBtn" style="margin-top:10px;">+ Tambah Baris</button>
+    </div>
+  </div>
+
+  <div class="banner" id="placeBanner">Mode tempel aktif: <strong id="activeVillageName"></strong> — klik lokasinya di gambar peta di bawah.</div>
+
+  <div class="panel">
+    <h2>3. Tempatkan Desa di Peta</h2>
+    <table class="datatbl" id="villageListTbl" style="display:none;">
+      <thead><tr><th>Desa</th><th>Nilai</th><th>Status</th><th></th></tr></thead>
+      <tbody id="villageListBody"></tbody>
+    </table>
+    <div class="hint" id="noDataHint">Isi data desa di langkah 2 dulu, daftar penempatan akan muncul di sini.</div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-secondary" id="downloadPngBtn" disabled>Download Gambar (.png)</button>
+    <button class="btn-ghost" id="resetBtn">Reset</button>
+  </div>
+  <div class="status" id="renderStatus"></div>
+
+  <div class="panel">
+    <h2>Hasil</h2>
+    <div id="mapImageArea" class="empty">Belum ada gambar peta diupload.</div>
+    <div class="legend-box" id="legendBox"></div>
+  </div>
+
+  <div style="text-align:center;font-size:11px;color:var(--text-dim);margin-top:20px;">Built by Didik Mahardi</div>
+</div>
+
+<script>
+let villages = []; // {id, name, value, x, y, placed}
+let workbook = null;
+let rows = [];
+let headers = [];
+let activeVillageId = null;
+let imgLoaded = false;
+
+const dropZoneImg = document.getElementById('dropZoneImg');
+const imgInput = document.getElementById('imgInput');
+const mapImageArea = document.getElementById('mapImageArea');
+
+const dropZoneXlsx = document.getElementById('dropZoneXlsx');
+const xlsxInput = document.getElementById('xlsxInput');
+const sheetLabel = document.getElementById('sheetLabel');
+const sheetSel = document.getElementById('sheetSel');
+const colNameLabel = document.getElementById('colNameLabel');
+const colName = document.getElementById('colName');
+const indicatorsLabel = document.getElementById('indicatorsLabel');
+const indicatorChecks = document.getElementById('indicatorChecks');
+const colorByLabel = document.getElementById('colorByLabel');
+const colorBySel = document.getElementById('colorBySel');
+const uploadStatus = document.getElementById('uploadStatus');
+
+const manualIndicatorLabel = document.getElementById('manualIndicatorLabel');
+
+const manualBody = document.getElementById('manualBody');
+const addRowBtn = document.getElementById('addRowBtn');
+
+const villageListTbl = document.getElementById('villageListTbl');
+const villageListBody = document.getElementById('villageListBody');
+const noDataHint = document.getElementById('noDataHint');
+const placeBanner = document.getElementById('placeBanner');
+const activeVillageName = document.getElementById('activeVillageName');
+
+const downloadPngBtn = document.getElementById('downloadPngBtn');
+const resetBtn = document.getElementById('resetBtn');
+const renderStatus = document.getElementById('renderStatus');
+const legendBox = document.getElementById('legendBox');
+
+function escapeHtml(s){ const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+function wireDrop(zone, input, onFiles){
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); onFiles(e.dataTransfer.files); });
+  input.addEventListener('change', () => onFiles(input.files));
+}
+
+// --- tabs ---
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// --- image upload ---
+wireDrop(dropZoneImg, imgInput, (files) => {
+  if(!files.length) return;
+  const f = files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    mapImageArea.classList.remove('empty');
+    mapImageArea.innerHTML = `<img id="mapImg" src="${e.target.result}"><div id="markerLayer"></div>`;
+    const img = document.getElementById('mapImg');
+    img.addEventListener('click', onImageClick);
+    imgLoaded = true;
+    redrawMarkers();
+  };
+  reader.readAsDataURL(f);
+});
+
+function onImageClick(e){
+  if(!activeVillageId) {
+    renderStatus.textContent = 'Pilih dulu desa mana yang mau ditempel (klik tombol "Tempel" di daftar desa).';
+    renderStatus.classList.remove('ok');
+    return;
+  }
+  const img = e.target;
+  const rect = img.getBoundingClientRect();
+  const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+  const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+  const v = villages.find(v => v.id === activeVillageId);
+  if(v){ v.x = xPct; v.y = yPct; v.placed = true; }
+  activeVillageId = null;
+  placeBanner.style.display = 'none';
+  renderVillageList();
+  redrawMarkers();
+  renderStatus.textContent = `"${v.name}" ditempatkan.`;
+  renderStatus.classList.add('ok');
+}
+
+// --- excel upload ---
+wireDrop(dropZoneXlsx, xlsxInput, (files) => {
+  if(!files.length) return;
+  const f = files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try{
+      const data = new Uint8Array(e.target.result);
+      workbook = XLSX.read(data, {type:'array'});
+      if(workbook.SheetNames.length > 1){
+        sheetSel.innerHTML = workbook.SheetNames.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+        sheetLabel.style.display = 'block';
+        sheetSel.style.display = 'block';
+      } else {
+        sheetLabel.style.display = 'none'; sheetSel.style.display = 'none';
+      }
+      loadSheet(workbook.SheetNames[0]);
+      uploadStatus.textContent = `Terbaca: ${f.name} (${rows.length} baris)`;
+      uploadStatus.classList.add('ok');
+    } catch(err){
+      uploadStatus.textContent = 'Gagal membaca file: ' + err.message;
+      uploadStatus.classList.remove('ok');
+    }
+  };
+  reader.readAsArrayBuffer(f);
+});
+sheetSel.addEventListener('change', () => loadSheet(sheetSel.value));
+
+function loadSheet(name){
+  const sheet = workbook.Sheets[name];
+  rows = XLSX.utils.sheet_to_json(sheet, {defval:''});
+  headers = rows.length ? Object.keys(rows[0]) : [];
+  const opts = headers.map(h => `<option value="${escapeHtml(h)}">${escapeHtml(h)}</option>`).join('');
+  colName.innerHTML = opts;
+  guessSelect(colName, ['desa','kelurahan','nama']);
+
+  const COLORS = ['#ff6a3d','#4dabf7','#f7c948','#c084fc','#ff8fab','#4ecdc4'];
+  indicatorChecks.innerHTML = headers.map((h, i) => {
+    const isNum = isNumericColumn(h) && h !== colName.value;
+    return `
+      <label>
+        <input type="checkbox" class="ind-check" value="${escapeHtml(h)}" ${isNum ? 'checked' : ''}>
+        <span class="swatch" style="background:${COLORS[i % COLORS.length]}"></span>
+        ${escapeHtml(h)}
+      </label>
+    `;
+  }).join('');
+
+  colNameLabel.style.display = 'block'; colName.style.display = 'block';
+  indicatorsLabel.style.display = 'block'; indicatorChecks.style.display = 'flex';
+  colorByLabel.style.display = 'block'; colorBySel.style.display = 'block';
+
+  updateColorBySelect();
+  buildVillagesFromExcel();
+}
+colName.addEventListener('change', () => { updateColorBySelect(); buildVillagesFromExcel(); });
+
+function isNumericColumn(header){
+  const sample = rows.slice(0, 20).map(r => r[header]).filter(v => v !== '' && v !== undefined && v !== null);
+  if(!sample.length) return false;
+  const numericCount = sample.filter(v => !isNaN(parseFloat(v))).length;
+  return numericCount / sample.length > 0.6;
+}
+
+function guessSelect(selectEl, keywords){
+  for(let i=0; i<selectEl.options.length; i++){
+    const val = selectEl.options[i].value.toLowerCase();
+    if(keywords.some(k => val.includes(k))){ selectEl.selectedIndex = i; return; }
+  }
+}
+
+function getCheckedIndicators(){
+  return Array.from(indicatorChecks.querySelectorAll('.ind-check:checked')).map(el => el.value);
+}
+
+function updateColorBySelect(){
+  const checked = getCheckedIndicators().filter(h => h !== colName.value);
+  const prev = colorBySel.value;
+  colorBySel.innerHTML = checked.map(h => `<option value="${escapeHtml(h)}">${escapeHtml(h)}</option>`).join('');
+  if(checked.includes(prev)) colorBySel.value = prev;
+}
+
+indicatorChecks.addEventListener('change', () => { updateColorBySelect(); buildVillagesFromExcel(); });
+colorBySel.addEventListener('change', buildVillagesFromExcel);
+
+function buildVillagesFromExcel(){
+  if(!rows.length || !colName.value) return;
+  const indicatorCols = getCheckedIndicators().filter(h => h !== colName.value);
+  if(!indicatorCols.length) return;
+  const colorCol = colorBySel.value || indicatorCols[0];
+
+  const existingPlacements = {};
+  villages.forEach(v => { if(v.placed) existingPlacements[v.name] = {x:v.x, y:v.y}; });
+
+  villages = rows.map((r, i) => {
+    const name = String(r[colName.value] || '').trim();
+    const indicators = {};
+    indicatorCols.forEach(col => {
+      const n = parseFloat(r[col]);
+      indicators[col] = isNaN(n) ? 0 : n;
+    });
+    const colorValue = indicators[colorCol] !== undefined ? indicators[colorCol] : 0;
+    const prev = existingPlacements[name];
+    return {
+      id: 'v' + i, name, indicators, colorValue,
+      x: prev ? prev.x : null, y: prev ? prev.y : null, placed: !!prev,
+    };
+  }).filter(v => v.name);
+  renderVillageList();
+  redrawMarkers();
+}
+
+// --- manual input ---
+function addManualRow(vals){
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" class="m-name" value="${vals ? escapeHtml(vals.name) : ''}" placeholder="Desa A"></td>
+    <td><input type="text" class="m-value" value="${vals ? escapeHtml(vals.value) : ''}" placeholder="12"></td>
+    <td><button class="btn-ghost btn-sm remove-row">×</button></td>
+  `;
+  tr.querySelector('.remove-row').addEventListener('click', () => { tr.remove(); buildVillagesFromManual(); });
+  tr.querySelectorAll('input').forEach(inp => inp.addEventListener('input', buildVillagesFromManual));
+  manualBody.appendChild(tr);
+}
+addRowBtn.addEventListener('click', () => { addManualRow(); });
+for(let i=0; i<10; i++) addManualRow();
+manualIndicatorLabel.addEventListener('input', buildVillagesFromManual);
+
+function buildVillagesFromManual(){
+  const label = manualIndicatorLabel.value.trim() || 'Nilai';
+  const existingPlacements = {};
+  villages.forEach(v => { if(v.placed) existingPlacements[v.name] = {x:v.x, y:v.y}; });
+
+  villages = Array.from(manualBody.querySelectorAll('tr')).map((tr, i) => {
+    const name = tr.querySelector('.m-name').value.trim();
+    const value = parseFloat(tr.querySelector('.m-value').value);
+    if(!name) return null;
+    const prev = existingPlacements[name];
+    const v = isNaN(value) ? 0 : value;
+    return {
+      id: 'm' + i, name, indicators: { [label]: v }, colorValue: v,
+      x: prev ? prev.x : null, y: prev ? prev.y : null, placed: !!prev,
+    };
+  }).filter(Boolean);
+  renderVillageList();
+  redrawMarkers();
+}
+buildVillagesFromManual();
+
+// switch tabs also rebuilds from active tab's data
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if(btn.dataset.tab === 'manual') buildVillagesFromManual();
+    else if(rows.length) buildVillagesFromExcel();
+  });
+});
+
+// --- village list / placement UI ---
+function renderVillageList(){
+  if(!villages.length){
+    villageListTbl.style.display = 'none';
+    noDataHint.style.display = 'block';
+    return;
+  }
+  villageListTbl.style.display = 'table';
+  noDataHint.style.display = 'none';
+  villageListBody.innerHTML = villages.map(v => {
+    let pillClass = 'pending', pillText = 'Belum ditempel';
+    if(v.id === activeVillageId){ pillClass = 'active'; pillText = 'Klik di gambar...'; }
+    else if(v.placed){ pillClass = 'placed'; pillText = 'Sudah ditempel'; }
+    const valText = Object.entries(v.indicators || {}).map(([k,val]) => `${k}: ${val}`).join(', ');
+    return `
+      <tr>
+        <td>${escapeHtml(v.name)}</td>
+        <td>${escapeHtml(valText)}</td>
+        <td><span class="status-pill ${pillClass}">${pillText}</span></td>
+        <td><button class="btn-secondary btn-sm place-btn" data-id="${v.id}">${v.placed ? 'Pindah' : 'Tempel'}</button></td>
+      </tr>
+    `;
+  }).join('');
+  villageListBody.querySelectorAll('.place-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(!imgLoaded){
+        renderStatus.textContent = 'Upload gambar peta dulu di langkah 1.';
+        renderStatus.classList.remove('ok');
+        return;
+      }
+      activeVillageId = btn.dataset.id;
+      const v = villages.find(v => v.id === activeVillageId);
+      activeVillageName.textContent = v.name;
+      placeBanner.style.display = 'block';
+      renderVillageList();
+    });
+  });
+}
+
+// --- color scale ---
+function colorForValue(v, min, max){
+  if(min === max) return '#4dabf7';
+  const t = (v - min) / (max - min);
+  if(t < 0.5) return interpolateColor('#6bcf8e', '#ffd166', t / 0.5);
+  return interpolateColor('#ffd166', '#ff5757', (t - 0.5) / 0.5);
+}
+function interpolateColor(c1, c2, t){
+  const p1 = hexToRgb(c1), p2 = hexToRgb(c2);
+  const r = Math.round(p1.r + (p2.r - p1.r) * t);
+  const g = Math.round(p1.g + (p2.g - p1.g) * t);
+  const b = Math.round(p1.b + (p2.b - p1.b) * t);
+  return `rgb(${r},${g},${b})`;
+}
+function hexToRgb(hex){
+  const n = parseInt(hex.slice(1), 16);
+  return { r: (n>>16)&255, g: (n>>8)&255, b: n&255 };
+}
+
+// --- markers ---
+function redrawMarkers(){
+  const layer = document.getElementById('markerLayer');
+  if(!layer) return;
+  const placed = villages.filter(v => v.placed);
+  if(!placed.length){ layer.innerHTML = ''; legendBox.style.display = 'none'; downloadPngBtn.disabled = true; return; }
+
+  const values = placed.map(v => v.colorValue);
+  const min = Math.min(...values), max = Math.max(...values);
+
+  layer.innerHTML = placed.map(v => {
+    const color = colorForValue(v.colorValue, min, max);
+    const lines = Object.entries(v.indicators || {}).map(([k,val]) => `${escapeHtml(k)}: ${escapeHtml(val)}`).join('<br>');
+    return `
+      <div class="pin" style="left:${v.x}%; top:${v.y}%;">
+        <div class="pin-label"><strong>${escapeHtml(v.name)}</strong><br>${lines}</div>
+        <div class="pin-dot" style="background:${color};"></div>
+      </div>
+    `;
+  }).join('');
+
+  legendBox.style.display = 'block';
+  legendBox.innerHTML = `
+    <div style="font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px;">Legenda (${escapeHtml(colorBySel.value || 'Indikator')})</div>
+    <div class="legend-row"><span class="legend-dot" style="background:${colorForValue(min,min,max)}"></span> Rendah (${min})</div>
+    <div class="legend-row"><span class="legend-dot" style="background:${colorForValue((min+max)/2,min,max)}"></span> Sedang</div>
+    <div class="legend-row"><span class="legend-dot" style="background:${colorForValue(max,min,max)}"></span> Tinggi (${max})</div>
+  `;
+  downloadPngBtn.disabled = false;
+}
+
+downloadPngBtn.addEventListener('click', async () => {
+  downloadPngBtn.disabled = true;
+  downloadPngBtn.textContent = 'Membuat gambar...';
+  try{
+    const canvas = await html2canvas(mapImageArea, { backgroundColor: '#1a1a1a', scale: 2 });
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = 'peta-sebaran.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch(err){
+    renderStatus.textContent = 'Gagal export: ' + err.message;
+    renderStatus.classList.remove('ok');
+  }
+  downloadPngBtn.disabled = false;
+  downloadPngBtn.textContent = 'Download Gambar (.png)';
+});
+
+resetBtn.addEventListener('click', () => {
+  villages = []; workbook = null; rows = []; headers = []; activeVillageId = null; imgLoaded = false;
+  imgInput.value = ''; xlsxInput.value = '';
+  mapImageArea.className = 'empty';
+  mapImageArea.innerHTML = 'Belum ada gambar peta diupload.';
+  sheetLabel.style.display = 'none'; sheetSel.style.display = 'none'; sheetSel.innerHTML = '';
+  colNameLabel.style.display = 'none'; colName.style.display = 'none'; colName.innerHTML = '';
+  indicatorsLabel.style.display = 'none'; indicatorChecks.style.display = 'none'; indicatorChecks.innerHTML = '';
+  colorByLabel.style.display = 'none'; colorBySel.style.display = 'none'; colorBySel.innerHTML = '';
+  uploadStatus.textContent = ''; renderStatus.textContent = '';
+  manualBody.innerHTML = ''; manualIndicatorLabel.value = 'Nilai';
+  for(let i=0; i<10; i++) addManualRow();
+  buildVillagesFromManual();
+  placeBanner.style.display = 'none';
+  legendBox.style.display = 'none';
+  renderVillageList();
+  downloadPngBtn.disabled = true;
+});
+
+renderVillageList();
+</script>
+</body>
+</html>
