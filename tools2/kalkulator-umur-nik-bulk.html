@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Umur dari NIK — Bulk</title>
+<style>
+  :root{
+    --bg:#0f1115;
+    --panel:#171a21;
+    --panel-2:#1e222b;
+    --border:#2a2f3a;
+    --text:#e8eaed;
+    --muted:#9aa1ac;
+    --accent:#4ade80;
+    --accent-2:#22c55e;
+    --danger:#f87171;
+    --info:#60a5fa;
+    --pink:#f472b6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(circle at top,#151920,#0b0d11);
+    color:var(--text);
+    min-height:100vh;
+    padding:32px 16px;
+  }
+  .wrap{width:100%;max-width:920px;margin:0 auto;}
+  h1{
+    font-size:22px;
+    margin:0 0 4px;
+    display:flex;align-items:center;gap:8px;
+  }
+  p.sub{color:var(--muted);margin:0 0 24px;font-size:13.5px;}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 4px 24px rgba(0,0,0,.25);
+  }
+  label{
+    display:block;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  textarea{
+    width:100%;
+    min-height:160px;
+    padding:12px 14px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);
+    font-size:14px;
+    font-family:'Consolas',monospace;
+    outline:none;
+    resize:vertical;
+    line-height:1.6;
+  }
+  textarea:focus{border-color:var(--accent);}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5;}
+  .btnrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  button{
+    padding:11px 18px;
+    border:none;
+    border-radius:10px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    transition:transform .1s, opacity .15s;
+  }
+  button:active{transform:scale(.98);}
+  button:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#08120a;
+    flex:1;
+    min-width:140px;
+  }
+  .btn-secondary{
+    background:var(--panel-2);
+    color:var(--text);
+    border:1px solid var(--border) !important;
+  }
+  .summary{
+    display:flex;
+    gap:10px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .stat{
+    flex:1;
+    min-width:110px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    text-align:center;
+  }
+  .stat .n{font-size:22px;font-weight:800;}
+  .stat .l{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .stat.ok .n{color:var(--accent);}
+  .stat.err .n{color:var(--danger);}
+  .table-wrap{
+    overflow-x:auto;
+    border:1px solid var(--border);
+    border-radius:10px;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  thead th{
+    background:var(--panel-2);
+    color:var(--muted);
+    text-align:left;
+    padding:10px 12px;
+    font-weight:600;
+    white-space:nowrap;
+    border-bottom:1px solid var(--border);
+  }
+  tbody td{
+    padding:9px 12px;
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(255,255,255,.02);}
+  tbody tr.row-error{background:rgba(248,113,113,.06);}
+  .badge{
+    display:inline-block;
+    padding:2px 9px;
+    border-radius:999px;
+    font-size:11.5px;
+    font-weight:700;
+  }
+  .badge.pria{background:rgba(96,165,250,.15);color:var(--info);}
+  .badge.wanita{background:rgba(244,114,182,.15);color:var(--pink);}
+  .badge.error{background:rgba(248,113,113,.15);color:var(--danger);}
+  .result{display:none;}
+  .result.show{display:block;}
+  .note{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.5;
+    margin-top:18px;
+  }
+  .footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:11.5px;
+    margin-top:24px;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>🪪 Kalkulator Umur dari NIK — Bulk</h1>
+  <p class="sub">Tempel banyak NIK sekaligus (satu per baris) untuk menghitung umur, jenis kelamin, dan tanggal lahir secara massal.</p>
+
+  <div class="card">
+    <label for="bulkInput">Daftar NIK (satu baris = satu orang)</label>
+    <textarea id="bulkInput" placeholder="Format bebas, satu baris per orang:
+
+3301011234560001
+Siti Aminah, 3301415678900002
+Budi Santoso	3301021234560003"></textarea>
+    <div class="hint">
+      Boleh NIK saja, atau <strong>Nama, NIK</strong> / <strong>Nama&nbsp;&nbsp;NIK</strong> (dipisah koma atau tab). Sistem otomatis mengambil 16 digit angka pada tiap baris sebagai NIK.
+    </div>
+    <div class="btnrow">
+      <button class="btn-primary" id="btnProses">Proses Semua</button>
+      <button class="btn-secondary" id="btnContoh">Isi Contoh</button>
+      <button class="btn-secondary" id="btnClear">Bersihkan</button>
+    </div>
+  </div>
+
+  <div class="result" id="resultBlock">
+    <div class="summary">
+      <div class="stat ok"><div class="n" id="sTotal">0</div><div class="l">Total Diproses</div></div>
+      <div class="stat ok"><div class="n" id="sValid">0</div><div class="l">Valid</div></div>
+      <div class="stat err"><div class="n" id="sError">0</div><div class="l">Gagal / Tidak Valid</div></div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nama</th>
+              <th>NIK</th>
+              <th>Jenis Kelamin</th>
+              <th>Tgl Lahir</th>
+              <th>Umur</th>
+              <th>Umur Detail</th>
+              <th>Umur (hari)</th>
+              <th>Wilayah (P/K/K)</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn-secondary" id="btnExport">⬇️ Export ke CSV</button>
+      <button class="btn-secondary" id="btnExportExcel">⬇️ Export ke Excel (.xlsx)</button>
+    </div>
+  </div>
+
+  <div class="note">
+    Catatan: Kode wilayah ditampilkan sebagai angka mentah (Provinsi/Kabupaten/Kecamatan), tidak diterjemahkan ke nama wilayah. Tahun 2 digit pada NIK diasumsikan tahun terdekat dengan tahun berjalan. Semua perhitungan dilakukan di browser Anda — data NIK tidak dikirim ke server mana pun, sehingga aman untuk data pasien/warga.
+  </div>
+
+  <div class="footer">Alat lokal • proses sepenuhnya di browser • tidak menyimpan data</div>
+</div>
+
+<script>
+const bulkInput = document.getElementById('bulkInput');
+const btnProses = document.getElementById('btnProses');
+const btnContoh = document.getElementById('btnContoh');
+const btnClear = document.getElementById('btnClear');
+const btnExport = document.getElementById('btnExport');
+const btnExportExcel = document.getElementById('btnExportExcel');
+const resultBlock = document.getElementById('resultBlock');
+const tblBody = document.getElementById('tblBody');
+
+let lastResults = [];
+
+btnContoh.addEventListener('click', () => {
+  bulkInput.value = `Siti Aminah, 3301415678900002
+Budi Santoso, 3301021234560003
+3273081505990004
+Rina Wulandari	3204446712080005`;
+});
+
+btnClear.addEventListener('click', () => {
+  bulkInput.value = '';
+  resultBlock.classList.remove('show');
+});
+
+btnProses.addEventListener('click', prosesSemua);
+btnExport.addEventListener('click', exportCSV);
+btnExportExcel.addEventListener('click', exportExcel);
+
+function parseNikDariNIK(nik){
+  const provKode = nik.substring(0,2);
+  const kabKode = nik.substring(2,4);
+  const kecKode = nik.substring(4,6);
+  let dd = parseInt(nik.substring(6,8), 10);
+  const mm = parseInt(nik.substring(8,10), 10);
+  const yy = parseInt(nik.substring(10,12), 10);
+  const urut = nik.substring(12,16);
+
+  let gender = 'Laki-laki';
+  if (dd > 40){
+    gender = 'Perempuan';
+    dd -= 40;
+  }
+
+  if (mm < 1 || mm > 12){
+    return { error: 'Bulan tidak valid' };
+  }
+
+  const currentYearFull = new Date().getFullYear();
+  const currentYY = currentYearFull % 100;
+  const century = (yy <= currentYY) ? 2000 : 1900;
+  const fullYear = century + yy;
+
+  const testDate = new Date(fullYear, mm - 1, dd);
+  const isValidDate = testDate.getFullYear() === fullYear &&
+                       testDate.getMonth() === mm - 1 &&
+                       testDate.getDate() === dd;
+
+  if (!isValidDate){
+    return { error: 'Tanggal lahir tidak valid' };
+  }
+
+  const today = new Date();
+  if (testDate > today){
+    return { error: 'Tanggal lahir di masa depan' };
+  }
+
+  let years = today.getFullYear() - testDate.getFullYear();
+  let months = today.getMonth() - testDate.getMonth();
+  let days = today.getDate() - testDate.getDate();
+
+  if (days < 0){
+    months -= 1;
+    const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if (months < 0){
+    years -= 1;
+    months += 12;
+  }
+
+  const totalDays = Math.floor((today - testDate) / (1000 * 60 * 60 * 24));
+
+  const bulanNama = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const tglFormatted = dd + ' ' + bulanNama[mm-1] + ' ' + fullYear;
+
+  return {
+    gender, tglFormatted, years, months, days, totalDays,
+    wilayah: provKode + '/' + kabKode + '/' + kecKode,
+    urut
+  };
+}
+
+function extractNamaNik(line){
+  const trimmed = line.trim();
+  if (!trimmed) return null;
+
+  // cari token 16 digit angka berurutan di dalam baris
+  const match = trimmed.match(/\d{16}/);
+  if (!match){
+    return { nama: trimmed, nik: null, raw: trimmed };
+  }
+  const nik = match[0];
+  let nama = trimmed.replace(nik, '').replace(/[,\t]+/g, ' ').trim();
+  if (!nama) nama = '-';
+  return { nama, nik, raw: trimmed };
+}
+
+function prosesSemua(){
+  const lines = bulkInput.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+  if (lines.length === 0){
+    alert('Masukkan minimal satu baris NIK terlebih dahulu.');
+    return;
+  }
+
+  lastResults = [];
+  tblBody.innerHTML = '';
+
+  let validCount = 0;
+  let errorCount = 0;
+
+  lines.forEach((line, idx) => {
+    const extracted = extractNamaNik(line);
+    let row = {
+      no: idx + 1,
+      nama: extracted ? extracted.nama : '-',
+      nik: extracted && extracted.nik ? extracted.nik : (extracted ? extracted.raw : '-'),
+      gender: '-', tgl: '-', umur: '-', detail: '-', hariTotal: '-', wilayah: '-', ket: '', isError: false
+    };
+
+    if (!extracted || !extracted.nik){
+      row.ket = 'Tidak ditemukan 16 digit NIK pada baris ini';
+      row.isError = true;
+      errorCount++;
+    } else {
+      const res = parseNikDariNIK(extracted.nik);
+      if (res.error){
+        row.ket = res.error;
+        row.isError = true;
+        errorCount++;
+      } else {
+        row.gender = res.gender;
+        row.tgl = res.tglFormatted;
+        row.umur = res.years + ' tahun';
+        row.detail = res.years + 'th ' + res.months + 'bl ' + res.days + 'hr';
+        row.hariTotal = res.totalDays.toLocaleString('id-ID') + ' hari';
+        row.wilayah = res.wilayah;
+        row.ket = 'Valid';
+        validCount++;
+      }
+    }
+
+    lastResults.push(row);
+
+    const tr = document.createElement('tr');
+    if (row.isError) tr.classList.add('row-error');
+
+    const genderBadge = row.isError
+      ? '<span class="badge error">-</span>'
+      : '<span class="badge ' + (row.gender === 'Laki-laki' ? 'pria' : 'wanita') + '">' + row.gender + '</span>';
+
+    const ketDisplay = row.isError
+      ? '<span class="badge error">' + row.ket + '</span>'
+      : row.ket;
+
+    tr.innerHTML = `
+      <td>${row.no}</td>
+      <td>${escapeHtml(row.nama)}</td>
+      <td>${escapeHtml(row.nik)}</td>
+      <td>${genderBadge}</td>
+      <td>${row.tgl}</td>
+      <td>${row.umur}</td>
+      <td>${row.detail}</td>
+      <td>${row.hariTotal}</td>
+      <td>${row.wilayah}</td>
+      <td>${ketDisplay}</td>
+    `;
+    tblBody.appendChild(tr);
+  });
+
+  document.getElementById('sTotal').textContent = lines.length;
+  document.getElementById('sValid').textContent = validCount;
+  document.getElementById('sError').textContent = errorCount;
+
+  resultBlock.classList.add('show');
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function exportCSV(){
+  if (lastResults.length === 0){
+    alert('Belum ada data untuk diekspor. Proses NIK terlebih dahulu.');
+    return;
+  }
+
+  const header = ['No','Nama','NIK','Jenis Kelamin','Tanggal Lahir','Umur','Umur Detail','Umur (hari)','Wilayah (Prov/Kab/Kec)','Keterangan'];
+  const rows = lastResults.map(r => [
+    r.no, r.nama, r.nik, r.gender, r.tgl, r.umur, r.detail, r.hariTotal, r.wilayah, r.ket
+  ]);
+
+  let csvContent = header.join(';') + '\n';
+  rows.forEach(row => {
+    const escapedRow = row.map(cell => {
+      const val = String(cell).replace(/"/g, '""');
+      return /[;"\n]/.test(val) ? '"' + val + '"' : val;
+    });
+    csvContent += escapedRow.join(';') + '\n';
+  });
+
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const now = new Date();
+  const stamp = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+  link.href = url;
+  link.download = 'hasil-umur-nik-' + stamp + '.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function exportExcel(){
+  if (lastResults.length === 0){
+    alert('Belum ada data untuk diekspor. Proses NIK terlebih dahulu.');
+    return;
+  }
+
+  if (typeof XLSX === 'undefined'){
+    alert('Library Excel gagal dimuat (butuh koneksi internet saat pertama kali membuka file ini). Silakan gunakan Export CSV sebagai alternatif.');
+    return;
+  }
+
+  const header = ['No','Nama','NIK','Jenis Kelamin','Tanggal Lahir','Umur','Umur Detail','Umur (hari)','Wilayah (Prov/Kab/Kec)','Keterangan'];
+  const dataAoa = [header];
+  lastResults.forEach(r => {
+    dataAoa.push([r.no, r.nama, r.nik, r.gender, r.tgl, r.umur, r.detail, r.hariTotal, r.wilayah, r.ket]);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(dataAoa);
+
+  // Lebar kolom biar rapi
+  ws['!cols'] = [
+    { wch: 4 },  // No
+    { wch: 22 }, // Nama
+    { wch: 18 }, // NIK
+    { wch: 13 }, // Gender
+    { wch: 16 }, // Tgl Lahir
+    { wch: 10 }, // Umur
+    { wch: 16 }, // Umur Detail
+    { wch: 14 }, // Umur (hari)
+    { wch: 16 }, // Wilayah
+    { wch: 26 }  // Keterangan
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Hasil Umur NIK');
+
+  const now = new Date();
+  const stamp = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+  XLSX.writeFile(wb, 'hasil-umur-nik-' + stamp + '.xlsx');
+}
+</script>
+</body>
+</html>

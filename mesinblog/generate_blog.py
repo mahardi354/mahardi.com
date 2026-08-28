@@ -2,6 +2,8 @@
 """
 generate_blog.py — Warung Piksel blog generator
 
+Saran ukuran gambar biar nggak berat: cover ~1200×675px, sisipan ~1000×700px, format JPG kualitas 80-85%.
+
 Cara pakai:
     1. Edit articles.xlsx (sheet "Artikel") — tambah/ubah baris artikel.
     2. Jalankan: python generate_blog.py
@@ -14,6 +16,7 @@ import os
 import re
 import random
 import html
+import shutil
 from datetime import datetime
 import openpyxl
 
@@ -45,11 +48,31 @@ def esc(text):
     return html.escape(str(text or ""), quote=False)
 
 
-def isi_to_html(isi_text):
+def build_inline_image(directive):
+    """directive = teks setelah 'gambar:' , format: nama-file.jpg atau nama-file.jpg | Keterangan"""
+    if "|" in directive:
+        filename, caption = directive.split("|", 1)
+        filename, caption = filename.strip(), caption.strip()
+    else:
+        filename, caption = directive.strip(), ""
+    fig = (
+        '      <figure class="inline-img">\n'
+        f'        <img src="images/{esc(filename)}" alt="{esc(caption or filename)}" loading="lazy">\n'
+    )
+    if caption:
+        fig += f'        <figcaption>{esc(caption)}</figcaption>\n'
+    fig += "      </figure>"
+    return fig, filename
+
+
+def isi_to_html(isi_text, image_refs):
     """
     Ubah isi artikel (plain text) jadi HTML.
     - Baris kosong = pemisah paragraf baru
     - Baris diawali '## ' = jadi <h2>
+    - Baris diawali 'gambar:' = jadi gambar sisipan, format:
+      gambar: nama-file.jpg   ATAU   gambar: nama-file.jpg | Keterangan gambar
+    image_refs: list yang akan diisi nama file gambar yang dipakai (buat validasi ada/tidaknya file)
     """
     if not isi_text:
         return ""
@@ -59,8 +82,17 @@ def isi_to_html(isi_text):
         lines = [l for l in block.split("\n") if l.strip()]
         if not lines:
             continue
-        if lines[0].strip().startswith("## "):
-            out.append(f"      <h2>{esc(lines[0].strip()[3:].strip())}</h2>")
+        first = lines[0].strip()
+        if first.lower().startswith("gambar:"):
+            fig_html, filename = build_inline_image(first[len("gambar:"):].strip())
+            out.append(fig_html)
+            image_refs.append(filename)
+            sisa = lines[1:]
+            if sisa:
+                paragraf = " ".join(l.strip() for l in sisa)
+                out.append(f"      <p>{esc(paragraf)}</p>")
+        elif first.startswith("## "):
+            out.append(f"      <h2>{esc(first[3:].strip())}</h2>")
             sisa = lines[1:]
             if sisa:
                 paragraf = " ".join(l.strip() for l in sisa)
@@ -69,6 +101,22 @@ def isi_to_html(isi_text):
             paragraf = " ".join(l.strip() for l in lines)
             out.append(f"      <p>{esc(paragraf)}</p>")
     return "\n".join(out)
+
+
+def build_cover_html(article):
+    fn = article.get("gambar_cover")
+    if not fn or not str(fn).strip():
+        return ""
+    fn = str(fn).strip()
+    return f'    <img class="cover-img" src="images/{esc(fn)}" alt="{esc(article["judul"])}" loading="lazy">'
+
+
+def build_thumb_html(article):
+    fn = article.get("gambar_cover")
+    if not fn or not str(fn).strip():
+        return ""
+    fn = str(fn).strip()
+    return f'      <img class="thumb" src="images/{esc(fn)}" alt="{esc(article["judul"])}" loading="lazy">\n'
 
 
 def hitung_read_time(isi_text):
@@ -148,6 +196,7 @@ def build_post_card(article):
     return (
         f'    <a class="post-card" href="artikel-{article["slug"]}.html" data-category="{esc(article["kategori"])}">\n'
         f'      <div class="commit">\n'
+        f'{build_thumb_html(article)}'
         f'        <span class="hash">#{article["hash"]}</span>\n'
         f'        <span class="date">{esc(article["tanggal"])}</span>\n'
         f'      </div>\n'
@@ -210,8 +259,16 @@ def main():
     with open(TEMPLATE_INDEX, "r", encoding="utf-8") as f:
         template_index = f.read()
 
+    semua_gambar_dipakai = []  # buat validasi file ada/tidak di akhir
+
     # ---- generate tiap halaman artikel ----
     for article in articles:
+        image_refs = []
+        isi_html = isi_to_html(article.get("isi"), image_refs)
+        semua_gambar_dipakai.extend(image_refs)
+        if article.get("gambar_cover") and str(article["gambar_cover"]).strip():
+            semua_gambar_dipakai.append(str(article["gambar_cover"]).strip())
+
         page = template_artikel
         page = page.replace("{{JUDUL}}", esc(article["judul"]))
         page = page.replace("{{META_DESC}}", esc(article.get("meta_deskripsi", "")))
@@ -219,7 +276,8 @@ def main():
         page = page.replace("{{HASH}}", article["hash"])
         page = page.replace("{{TANGGAL}}", esc(article["tanggal"]))
         page = page.replace("{{READ_TIME}}", esc(article["read_time"]))
-        page = page.replace("{{ISI_HTML}}", isi_to_html(article.get("isi")))
+        page = page.replace("{{COVER_HTML}}", build_cover_html(article))
+        page = page.replace("{{ISI_HTML}}", isi_html)
         page = page.replace("{{PULLQUOTE_BLOCK}}", build_pullquote_block(article.get("pull_quote")))
         page = page.replace("{{DIFFNOTE_BLOCK}}", build_diffnote_block(article.get("diff_minus"), article.get("diff_plus")))
         page = page.replace("{{RELATED_HTML}}", build_related_html(article, by_slug, articles))
@@ -240,6 +298,26 @@ def main():
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(index_page)
     print(f"  -> {index_path}")
+
+    # ---- salin folder images/ ke output/images/ ----
+    if os.path.isdir("images"):
+        shutil.copytree("images", os.path.join(OUTPUT_DIR, "images"), dirs_exist_ok=True)
+        print("  -> disalin folder images/ ke output/images/")
+    else:
+        if semua_gambar_dipakai:
+            print("\nPERINGATAN: ada artikel yang pakai gambar, tapi folder 'images/' belum ada.")
+            print("  Buat folder 'images' di tempat yang sama dengan generate_blog.py, isi dengan file gambarnya.")
+
+    # ---- cek file gambar yang direferensi tapi belum ada ----
+    if semua_gambar_dipakai:
+        hilang = []
+        for fn in set(semua_gambar_dipakai):
+            if not os.path.isfile(os.path.join("images", fn)):
+                hilang.append(fn)
+        if hilang:
+            print("\nPERINGATAN: file gambar berikut disebut di Excel tapi belum ditemukan di folder images/:")
+            for fn in sorted(hilang):
+                print(f"  - {fn}")
 
     print(f"\nSelesai! {len(articles)} artikel ter-generate ke folder '{OUTPUT_DIR}/'.")
     print("Upload semua isi folder itu ke hosting kamu.")

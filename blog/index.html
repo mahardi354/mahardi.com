@@ -44,6 +44,7 @@
   .post-list{display:flex;flex-direction:column;}
   .post-card{display:grid;grid-template-columns:150px 1fr;gap:28px;padding:28px 0;border-bottom:1px solid var(--line);text-decoration:none;color:inherit;transition:opacity .2s ease;}
   .post-card.hidden{display:none;}
+  .thumb{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:6px;margin-bottom:12px;border:1px solid var(--line);display:block;}
   .commit{font-family:var(--mono);font-size:0.78rem;color:var(--ink-soft);padding-top:4px;}
   .commit .hash{display:inline-block;background:var(--code-bg);color:var(--code-text);padding:2px 7px;border-radius:4px;font-size:0.75rem;margin-bottom:8px;}
   .commit .date{display:block;margin-top:6px;color:var(--ink-soft);}
@@ -90,6 +91,7 @@
   <div class="post-list" id="postList">
     <a class="post-card" href="artikel-warung-bakso-4-halaman.html" data-category="umkm-digital">
       <div class="commit">
+      <img class="thumb" src="images/cover-warung-bakso.jpg" alt="Kenapa Warung Bakso Butuh Website 4 Halaman, Bukan Iklan Lebih Banyak" loading="lazy">
         <span class="hash">#a1f92c</span>
         <span class="date">14 Jul 2026</span>
       </div>
@@ -165,6 +167,7 @@
 
     <a class="post-card" href="artikel-katalog-whatsapp.html" data-category="umkm-digital">
       <div class="commit">
+      <img class="thumb" src="images/cover-katalog-whatsapp.jpg" alt="Katalog WhatsApp Itu Bukan Fitur Mewah, Itu Kebutuhan Dasar" loading="lazy">
         <span class="hash">#0d5a3e</span>
         <span class="date">02 Jun 2026</span>
       </div>

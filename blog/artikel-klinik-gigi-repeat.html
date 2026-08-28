@@ -60,6 +60,10 @@
   .back-link{font-family:var(--mono);font-size:0.85rem;color:var(--teal-deep);text-decoration:none;display:inline-block;margin-bottom:26px;}
   .back-link:hover{text-decoration:underline;}
   footer{border-top:1px solid var(--line);padding:30px 0 50px;font-family:var(--mono);font-size:0.78rem;color:var(--ink-soft);}
+  .cover-img{width:100%;max-height:420px;object-fit:cover;border-radius:8px;margin:0 0 32px;border:1px solid var(--line);display:block;}
+  .prose figure.inline-img{margin:32px 0;}
+  .prose figure.inline-img img{width:100%;border-radius:8px;display:block;border:1px solid var(--line);}
+  .prose figure.inline-img figcaption{font-family:var(--mono);font-size:0.78rem;color:var(--ink-soft);margin-top:8px;text-align:center;}
   @media (max-width:800px){
     .layout{grid-template-columns:1fr;gap:36px;}
     aside{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:24px;position:static;}
@@ -93,6 +97,7 @@
         <span>5 menit baca</span>
       </div>
     </header>
+
 
     <div class="prose">
       <p>Demo pertama saya kirim, jawabannya cuma "nanti dipikirkan dulu ya". Klasik. Tapi tiga minggu kemudian mereka balik lagi, minta revisi warna.</p>
