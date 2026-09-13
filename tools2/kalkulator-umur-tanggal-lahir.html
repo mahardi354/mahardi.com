@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Umur dari Tanggal Lahir</title>
+<style>
+  :root{
+    --bg:#0f1115;
+    --panel:#171a21;
+    --panel-2:#1e222b;
+    --border:#2a2f3a;
+    --text:#e8eaed;
+    --muted:#9aa1ac;
+    --accent:#4ade80;
+    --accent-2:#22c55e;
+    --danger:#f87171;
+    --info:#60a5fa;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(circle at top,#151920,#0b0d11);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .wrap{width:100%;max-width:520px;}
+  h1{
+    font-size:22px;
+    margin:0 0 4px;
+    display:flex;align-items:center;gap:8px;
+  }
+  p.sub{color:var(--muted);margin:0 0 24px;font-size:13.5px;}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 4px 24px rgba(0,0,0,.25);
+  }
+  label{
+    display:block;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  input[type=date]{
+    width:100%;
+    padding:12px 14px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);
+    font-size:16px;
+    outline:none;
+    transition:border .15s;
+    color-scheme:dark;
+  }
+  input[type=date]:focus{border-color:var(--accent);}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;}
+  button{
+    margin-top:14px;
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#08120a;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    transition:transform .1s, opacity .15s;
+  }
+  button:active{transform:scale(.98);}
+  .result{display:none;}
+  .result.show{display:block;}
+  .row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+    font-size:14px;
+  }
+  .row:last-child{border-bottom:none;}
+  .row .k{color:var(--muted);}
+  .row .v{font-weight:600;text-align:right;}
+  .age-big{
+    text-align:center;
+    padding:18px 0 6px;
+  }
+  .age-big .num{
+    font-size:38px;
+    font-weight:800;
+    background:linear-gradient(135deg,var(--accent),var(--info));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .age-big .lbl{color:var(--muted);font-size:12.5px;margin-top:2px;}
+  .error{
+    display:none;
+    background:rgba(248,113,113,.1);
+    border:1px solid rgba(248,113,113,.3);
+    color:var(--danger);
+    padding:12px 14px;
+    border-radius:10px;
+    font-size:13.5px;
+    margin-top:14px;
+  }
+  .error.show{display:block;}
+  .zodiak{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(96,165,250,.1);
+    color:var(--info);
+    padding:2px 10px;
+    border-radius:999px;
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:11.5px;
+    margin-top:24px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎂 Kalkulator Umur dari Tanggal Lahir</h1>
+  <p class="sub">Masukkan tanggal lahir untuk menghitung umur, hari ulang tahun berikutnya, dan detail lainnya.</p>
+
+  <div class="card">
+    <label for="tglLahir">Tanggal Lahir</label>
+    <input type="date" id="tglLahir">
+    <div class="hint">Format otomatis mengikuti pengaturan browser Anda.</div>
+    <button id="btnHitung">Hitung Umur</button>
+    <div class="error" id="errBox"></div>
+  </div>
+
+  <div class="card result" id="resultCard">
+    <div class="age-big">
+      <div class="num" id="ageMain">-</div>
+      <div class="lbl">umur saat ini</div>
+    </div>
+    <div class="row"><div class="k">Tanggal Lahir</div><div class="v" id="rTgl">-</div></div>
+    <div class="row"><div class="k">Umur Detail</div><div class="v" id="rDetail">-</div></div>
+    <div class="row"><div class="k">Total Umur (hari)</div><div class="v" id="rHari">-</div></div>
+    <div class="row"><div class="k">Total Umur (bulan)</div><div class="v" id="rBulan">-</div></div>
+    <div class="row"><div class="k">Total Umur (minggu)</div><div class="v" id="rMinggu">-</div></div>
+    <div class="row"><div class="k">Hari Lahir</div><div class="v" id="rHariLahir">-</div></div>
+    <div class="row"><div class="k">Zodiak</div><div class="v" id="rZodiak">-</div></div>
+    <div class="row"><div class="k">Ulang Tahun Berikutnya</div><div class="v" id="rUltahBerikutnya">-</div></div>
+  </div>
+
+  <div class="footer">Alat lokal • perhitungan dilakukan sepenuhnya di browser Anda</div>
+  <div class="footer">Built by <a href="https://mahardi.com/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Didik Mahardi</a></div>
+</div>
+
+<script>
+const tglInput = document.getElementById('tglLahir');
+const btn = document.getElementById('btnHitung');
+const errBox = document.getElementById('errBox');
+const resultCard = document.getElementById('resultCard');
+
+tglInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') hitung();
+});
+btn.addEventListener('click', hitung);
+
+function showError(msg){
+  errBox.textContent = msg;
+  errBox.classList.add('show');
+  resultCard.classList.remove('show');
+}
+function clearError(){
+  errBox.classList.remove('show');
+  errBox.textContent = '';
+}
+
+const bulanNama = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const hariNama = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+function getZodiak(dd, mm){
+  const z = [
+    [20,'Capricorn ♑'], [19,'Aquarius ♒'], [21,'Pisces ♓'], [20,'Aries ♈'],
+    [21,'Taurus ♉'], [21,'Gemini ♊'], [23,'Cancer ♋'], [23,'Leo ♌'],
+    [23,'Virgo ♍'], [23,'Libra ♎'], [22,'Scorpio ♏'], [22,'Sagittarius ♐']
+  ];
+  const zodiakList = ['Capricorn ♑','Aquarius ♒','Pisces ♓','Aries ♈','Taurus ♉','Gemini ♊','Cancer ♋','Leo ♌','Virgo ♍','Libra ♎','Scorpio ♏','Sagittarius ♐','Capricorn ♑'];
+  const batas = [20,19,21,20,21,21,23,23,23,23,22,22];
+  const idx = dd < batas[mm-1] ? mm - 1 : mm;
+  return zodiakList[idx];
+}
+
+function hitung(){
+  clearError();
+  if (!tglInput.value){
+    showError('Silakan pilih tanggal lahir terlebih dahulu.');
+    return;
+  }
+
+  const [y, m, d] = tglInput.value.split('-').map(Number);
+  const lahir = new Date(y, m - 1, d);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  if (lahir > today){
+    showError('Tanggal lahir tidak boleh di masa depan.');
+    return;
+  }
+
+  let years = today.getFullYear() - lahir.getFullYear();
+  let months = today.getMonth() - lahir.getMonth();
+  let days = today.getDate() - lahir.getDate();
+
+  if (days < 0){
+    months -= 1;
+    const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if (months < 0){
+    years -= 1;
+    months += 12;
+  }
+
+  const totalDays = Math.floor((today - lahir) / (1000 * 60 * 60 * 24));
+  const totalWeeks = Math.floor(totalDays / 7);
+  const totalMonths = years * 12 + months;
+
+  // Ulang tahun berikutnya
+  let nextBday = new Date(today.getFullYear(), lahir.getMonth(), lahir.getDate());
+  if (nextBday < today){
+    nextBday = new Date(today.getFullYear() + 1, lahir.getMonth(), lahir.getDate());
+  }
+  const daysToNext = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
+  const nextBdayText = daysToNext === 0
+    ? 'Hari ini! 🎉'
+    : nextBday.getDate() + ' ' + bulanNama[nextBday.getMonth()] + ' ' + nextBday.getFullYear() + ' (' + daysToNext + ' hari lagi)';
+
+  document.getElementById('ageMain').textContent = years + ' tahun';
+  document.getElementById('rTgl').textContent = d + ' ' + bulanNama[m-1] + ' ' + y;
+  document.getElementById('rDetail').textContent = years + ' tahun, ' + months + ' bulan, ' + days + ' hari';
+  document.getElementById('rHari').textContent = totalDays.toLocaleString('id-ID') + ' hari';
+  document.getElementById('rBulan').textContent = totalMonths.toLocaleString('id-ID') + ' bulan';
+  document.getElementById('rMinggu').textContent = totalWeeks.toLocaleString('id-ID') + ' minggu';
+  document.getElementById('rHariLahir').textContent = hariNama[lahir.getDay()];
+  document.getElementById('rZodiak').innerHTML = '<span class="zodiak">' + getZodiak(d, m) + '</span>';
+  document.getElementById('rUltahBerikutnya').textContent = nextBdayText;
+
+  resultCard.classList.add('show');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Umur dari NIK</title>
+<style>
+  :root{
+    --bg:#0f1115;
+    --panel:#171a21;
+    --panel-2:#1e222b;
+    --border:#2a2f3a;
+    --text:#e8eaed;
+    --muted:#9aa1ac;
+    --accent:#4ade80;
+    --accent-2:#22c55e;
+    --danger:#f87171;
+    --info:#60a5fa;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(circle at top,#151920,#0b0d11);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .wrap{width:100%;max-width:520px;}
+  h1{
+    font-size:22px;
+    margin:0 0 4px;
+    display:flex;align-items:center;gap:8px;
+  }
+  p.sub{color:var(--muted);margin:0 0 24px;font-size:13.5px;}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 4px 24px rgba(0,0,0,.25);
+  }
+  label{
+    display:block;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  input[type=text]{
+    width:100%;
+    padding:12px 14px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);
+    font-size:16px;
+    letter-spacing:1px;
+    outline:none;
+    transition:border .15s;
+  }
+  input[type=text]:focus{border-color:var(--accent);}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;}
+  button{
+    margin-top:14px;
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#08120a;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    transition:transform .1s, opacity .15s;
+  }
+  button:active{transform:scale(.98);}
+  button:disabled{opacity:.4;cursor:not-allowed;}
+  .result{display:none;}
+  .result.show{display:block;}
+  .row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+    font-size:14px;
+  }
+  .row:last-child{border-bottom:none;}
+  .row .k{color:var(--muted);}
+  .row .v{font-weight:600;text-align:right;}
+  .badge{
+    display:inline-block;
+    padding:3px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:700;
+  }
+  .badge.pria{background:rgba(96,165,250,.15);color:var(--info);}
+  .badge.wanita{background:rgba(244,114,182,.15);color:#f472b6;}
+  .age-big{
+    text-align:center;
+    padding:18px 0 6px;
+  }
+  .age-big .num{
+    font-size:38px;
+    font-weight:800;
+    background:linear-gradient(135deg,var(--accent),var(--info));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .age-big .lbl{color:var(--muted);font-size:12.5px;margin-top:2px;}
+  .error{
+    display:none;
+    background:rgba(248,113,113,.1);
+    border:1px solid rgba(248,113,113,.3);
+    color:var(--danger);
+    padding:12px 14px;
+    border-radius:10px;
+    font-size:13.5px;
+    margin-top:14px;
+  }
+  .error.show{display:block;}
+  .note{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.5;
+    margin-top:18px;
+  }
+  .footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:11.5px;
+    margin-top:24px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🪪 Kalkulator Umur dari NIK</h1>
+  <p class="sub">Deteksi tanggal lahir, jenis kelamin, dan umur otomatis dari 16 digit NIK KTP.</p>
+
+  <div class="card">
+    <label for="nik">Nomor Induk Kependudukan (NIK)</label>
+    <input type="text" id="nik" inputmode="numeric" maxlength="16" placeholder="Contoh: 3301xxxxxxxxxxxx" autocomplete="off">
+    <div class="hint">16 digit angka, tanpa spasi atau tanda baca.</div>
+    <button id="btnHitung">Hitung Umur</button>
+    <div class="error" id="errBox"></div>
+  </div>
+
+  <div class="card result" id="resultCard">
+    <div class="age-big">
+      <div class="num" id="ageMain">-</div>
+      <div class="lbl">umur saat ini</div>
+    </div>
+    <div class="row"><div class="k">Jenis Kelamin</div><div class="v" id="rGender">-</div></div>
+    <div class="row"><div class="k">Tanggal Lahir</div><div class="v" id="rTgl">-</div></div>
+    <div class="row"><div class="k">Umur Detail</div><div class="v" id="rDetail">-</div></div>
+    <div class="row"><div class="k">Umur (hari)</div><div class="v" id="rHari">-</div></div>
+    <div class="row"><div class="k">Kode Wilayah (Prov/Kab/Kec)</div><div class="v" id="rWilayah">-</div></div>
+    <div class="row"><div class="k">Nomor Urut</div><div class="v" id="rUrut">-</div></div>
+  </div>
+
+  <div class="note">
+    Catatan: Kode provinsi/kabupaten/kecamatan hanya ditampilkan sebagai angka mentah (tidak diterjemahkan ke nama wilayah). Untuk NIK dengan 2 digit tahun yang ambigu, sistem mengasumsikan tahun kelahiran terdekat dengan tahun berjalan (misal "26" dibaca 2026, "85" dibaca 1985). Semua perhitungan dilakukan di browser Anda — NIK tidak dikirim ke server mana pun.
+  </div>
+
+  <div class="footer">Alat lokal • tidak menyimpan atau mengirim data NIK</div>
+  <div class="footer">Built by <a href="https://mahardi.com/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Didik Mahardi</a></div>
+</div>
+
+<script>
+const nikInput = document.getElementById('nik');
+const btn = document.getElementById('btnHitung');
+const errBox = document.getElementById('errBox');
+const resultCard = document.getElementById('resultCard');
+
+nikInput.addEventListener('input', () => {
+  nikInput.value = nikInput.value.replace(/\D/g, '').slice(0,16);
+});
+
+nikInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') hitung();
+});
+
+btn.addEventListener('click', hitung);
+
+function showError(msg){
+  errBox.textContent = msg;
+  errBox.classList.add('show');
+  resultCard.classList.remove('show');
+}
+
+function clearError(){
+  errBox.classList.remove('show');
+  errBox.textContent = '';
+}
+
+function hitung(){
+  clearError();
+  const nik = nikInput.value.trim();
+
+  if (nik.length !== 16){
+    showError('NIK harus terdiri dari tepat 16 digit angka.');
+    return;
+  }
+
+  const provKode = nik.substring(0,2);
+  const kabKode = nik.substring(2,4);
+  const kecKode = nik.substring(4,6);
+  let dd = parseInt(nik.substring(6,8), 10);
+  const mm = parseInt(nik.substring(8,10), 10);
+  const yy = parseInt(nik.substring(10,12), 10);
+  const urut = nik.substring(12,16);
+
+  let gender = 'Laki-laki';
+  if (dd > 40){
+    gender = 'Perempuan';
+    dd -= 40;
+  }
+
+  if (mm < 1 || mm > 12){
+    showError('Digit bulan lahir pada NIK tidak valid (posisi 9-10).');
+    return;
+  }
+
+  const currentYearFull = new Date().getFullYear();
+  const currentYY = currentYearFull % 100;
+  const century = (yy <= currentYY) ? 2000 : 1900;
+  const fullYear = century + yy;
+
+  const testDate = new Date(fullYear, mm - 1, dd);
+  const isValidDate = testDate.getFullYear() === fullYear &&
+                       testDate.getMonth() === mm - 1 &&
+                       testDate.getDate() === dd;
+
+  if (!isValidDate){
+    showError('Tanggal lahir hasil parsing NIK tidak valid: ' + dd + '-' + mm + '-' + fullYear + '. Periksa kembali NIK yang dimasukkan.');
+    return;
+  }
+
+  const today = new Date();
+  if (testDate > today){
+    showError('Tanggal lahir hasil parsing berada di masa depan (' + dd + '-' + mm + '-' + fullYear + '). Kemungkinan NIK tidak valid.');
+    return;
+  }
+
+  let years = today.getFullYear() - testDate.getFullYear();
+  let months = today.getMonth() - testDate.getMonth();
+  let days = today.getDate() - testDate.getDate();
+
+  if (days < 0){
+    months -= 1;
+    const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if (months < 0){
+    years -= 1;
+    months += 12;
+  }
+
+  const totalDays = Math.floor((today - testDate) / (1000 * 60 * 60 * 24));
+
+  const bulanNama = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const tglFormatted = dd + ' ' + bulanNama[mm-1] + ' ' + fullYear;
+
+  document.getElementById('ageMain').textContent = years + ' tahun';
+  document.getElementById('rGender').innerHTML = '<span class="badge ' + (gender==='Laki-laki'?'pria':'wanita') + '">' + gender + '</span>';
+  document.getElementById('rTgl').textContent = tglFormatted;
+  document.getElementById('rDetail').textContent = years + ' tahun, ' + months + ' bulan, ' + days + ' hari';
+  document.getElementById('rHari').textContent = totalDays.toLocaleString('id-ID') + ' hari';
+  document.getElementById('rWilayah').textContent = provKode + ' / ' + kabKode + ' / ' + kecKode;
+  document.getElementById('rUrut').textContent = urut;
+
+  resultCard.classList.add('show');
+}
+</script>
+</body>
+</html>

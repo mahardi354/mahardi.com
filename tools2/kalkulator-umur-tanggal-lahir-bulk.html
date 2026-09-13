@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Umur dari Tanggal Lahir — Bulk</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg:#0f1115;
+    --panel:#171a21;
+    --panel-2:#1e222b;
+    --border:#2a2f3a;
+    --text:#e8eaed;
+    --muted:#9aa1ac;
+    --accent:#4ade80;
+    --accent-2:#22c55e;
+    --danger:#f87171;
+    --info:#60a5fa;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(circle at top,#151920,#0b0d11);
+    color:var(--text);
+    min-height:100vh;
+    padding:32px 16px;
+  }
+  .wrap{width:100%;max-width:960px;margin:0 auto;}
+  h1{
+    font-size:22px;
+    margin:0 0 4px;
+    display:flex;align-items:center;gap:8px;
+  }
+  p.sub{color:var(--muted);margin:0 0 24px;font-size:13.5px;}
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 4px 24px rgba(0,0,0,.25);
+  }
+  label{
+    display:block;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  textarea{
+    width:100%;
+    min-height:160px;
+    padding:12px 14px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);
+    font-size:14px;
+    font-family:'Consolas',monospace;
+    outline:none;
+    resize:vertical;
+    line-height:1.6;
+  }
+  textarea:focus{border-color:var(--accent);}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5;}
+  .btnrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  button{
+    padding:11px 18px;
+    border:none;
+    border-radius:10px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    transition:transform .1s, opacity .15s;
+  }
+  button:active{transform:scale(.98);}
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#08120a;
+    flex:1;
+    min-width:140px;
+  }
+  .btn-secondary{
+    background:var(--panel-2);
+    color:var(--text);
+    border:1px solid var(--border) !important;
+  }
+  .summary{
+    display:flex;
+    gap:10px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .stat{
+    flex:1;
+    min-width:110px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    text-align:center;
+  }
+  .stat .n{font-size:22px;font-weight:800;}
+  .stat .l{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .stat.ok .n{color:var(--accent);}
+  .stat.err .n{color:var(--danger);}
+  .table-wrap{
+    overflow-x:auto;
+    border:1px solid var(--border);
+    border-radius:10px;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  thead th{
+    background:var(--panel-2);
+    color:var(--muted);
+    text-align:left;
+    padding:10px 12px;
+    font-weight:600;
+    white-space:nowrap;
+    border-bottom:1px solid var(--border);
+  }
+  tbody td{
+    padding:9px 12px;
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(255,255,255,.02);}
+  tbody tr.row-error{background:rgba(248,113,113,.06);}
+  .badge{
+    display:inline-block;
+    padding:2px 9px;
+    border-radius:999px;
+    font-size:11.5px;
+    font-weight:700;
+  }
+  .badge.error{background:rgba(248,113,113,.15);color:var(--danger);}
+  .badge.info{background:rgba(96,165,250,.1);color:var(--info);}
+  .result{display:none;}
+  .result.show{display:block;}
+  .note{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.5;
+    margin-top:18px;
+  }
+  .footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:11.5px;
+    margin-top:24px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎂 Kalkulator Umur dari Tanggal Lahir — Bulk</h1>
+  <p class="sub">Tempel banyak tanggal lahir sekaligus (satu per baris) untuk menghitung umur secara massal.</p>
+
+  <div class="card">
+    <label for="bulkInput">Daftar Tanggal Lahir (satu baris = satu orang)</label>
+    <textarea id="bulkInput" placeholder="Format bebas, satu baris per orang:
+
+Siti Aminah, 17-08-1990
+Budi Santoso, 1985-04-22
+1999/12/03
+Rina Wulandari	05/01/2001"></textarea>
+    <div class="hint">
+      Boleh <strong>Tanggal saja</strong> atau <strong>Nama, Tanggal</strong> (dipisah koma atau tab). Format tanggal yang dikenali: <strong>DD-MM-YYYY</strong>, <strong>DD/MM/YYYY</strong>, atau <strong>YYYY-MM-DD</strong>.
+    </div>
+    <div class="btnrow">
+      <button class="btn-primary" id="btnProses">Proses Semua</button>
+      <button class="btn-secondary" id="btnContoh">Isi Contoh</button>
+      <button class="btn-secondary" id="btnClear">Bersihkan</button>
+    </div>
+  </div>
+
+  <div class="result" id="resultBlock">
+    <div class="summary">
+      <div class="stat ok"><div class="n" id="sTotal">0</div><div class="l">Total Diproses</div></div>
+      <div class="stat ok"><div class="n" id="sValid">0</div><div class="l">Valid</div></div>
+      <div class="stat err"><div class="n" id="sError">0</div><div class="l">Gagal / Tidak Valid</div></div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nama</th>
+              <th>Tanggal Lahir</th>
+              <th>Umur</th>
+              <th>Umur Detail</th>
+              <th>Umur (hari)</th>
+              <th>Hari Lahir</th>
+              <th>Zodiak</th>
+              <th>Ultah Berikutnya</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn-secondary" id="btnExport">⬇️ Export ke CSV</button>
+      <button class="btn-secondary" id="btnExportExcel">⬇️ Export ke Excel (.xlsx)</button>
+    </div>
+  </div>
+
+  <div class="note">
+    Catatan: Export Excel (.xlsx) membutuhkan koneksi internet saat file ini pertama kali dibuka (memuat library dari CDN). Jika sedang offline, gunakan Export CSV yang tetap bisa dibuka dengan baik di Excel. Semua perhitungan dilakukan di browser Anda — data tidak dikirim ke server mana pun.
+  </div>
+
+  <div class="footer">Alat lokal • proses sepenuhnya di browser • tidak menyimpan data</div>
+  <div class="footer">Built by <a href="https://mahardi.com/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Didik Mahardi</a></div>
+</div>
+
+<script>
+const bulkInput = document.getElementById('bulkInput');
+const btnProses = document.getElementById('btnProses');
+const btnContoh = document.getElementById('btnContoh');
+const btnClear = document.getElementById('btnClear');
+const btnExport = document.getElementById('btnExport');
+const btnExportExcel = document.getElementById('btnExportExcel');
+const resultBlock = document.getElementById('resultBlock');
+const tblBody = document.getElementById('tblBody');
+
+let lastResults = [];
+
+const bulanNama = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const hariNama = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+btnContoh.addEventListener('click', () => {
+  bulkInput.value = `Siti Aminah, 17-08-1990
+Budi Santoso, 1985-04-22
+1999/12/03
+Rina Wulandari	05/01/2001`;
+});
+
+btnClear.addEventListener('click', () => {
+  bulkInput.value = '';
+  resultBlock.classList.remove('show');
+});
+
+btnProses.addEventListener('click', prosesSemua);
+btnExport.addEventListener('click', exportCSV);
+btnExportExcel.addEventListener('click', exportExcel);
+
+function getZodiak(dd, mm){
+  const zodiakList = ['Capricorn ♑','Aquarius ♒','Pisces ♓','Aries ♈','Taurus ♉','Gemini ♊','Cancer ♋','Leo ♌','Virgo ♍','Libra ♎','Scorpio ♏','Sagittarius ♐','Capricorn ♑'];
+  const batas = [20,19,21,20,21,21,23,23,23,23,22,22];
+  const idx = dd < batas[mm-1] ? mm - 1 : mm;
+  return zodiakList[idx];
+}
+
+// Coba parse tanggal dalam beberapa format umum: YYYY-MM-DD, DD-MM-YYYY, DD/MM/YYYY
+function parseTanggalFleksibel(str){
+  const s = str.trim();
+
+  // YYYY-MM-DD atau YYYY/MM/DD
+  let m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
+  if (m){
+    const y = parseInt(m[1],10), mo = parseInt(m[2],10), d = parseInt(m[3],10);
+    return buildDate(y, mo, d);
+  }
+
+  // DD-MM-YYYY atau DD/MM/YYYY
+  m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+  if (m){
+    const d = parseInt(m[1],10), mo = parseInt(m[2],10), y = parseInt(m[3],10);
+    return buildDate(y, mo, d);
+  }
+
+  return null;
+}
+
+function buildDate(y, mo, d){
+  if (mo < 1 || mo > 12) return null;
+  const dt = new Date(y, mo - 1, d);
+  const valid = dt.getFullYear() === y && dt.getMonth() === mo - 1 && dt.getDate() === d;
+  if (!valid) return null;
+  return dt;
+}
+
+function extractNamaTanggal(line){
+  const trimmed = line.trim();
+  if (!trimmed) return null;
+
+  // pisahkan berdasar koma atau tab jika ada
+  let parts;
+  if (trimmed.includes(',')){
+    parts = trimmed.split(',');
+  } else if (trimmed.includes('\t')){
+    parts = trimmed.split('\t');
+  } else {
+    parts = [trimmed];
+  }
+
+  parts = parts.map(p => p.trim()).filter(p => p.length > 0);
+
+  if (parts.length === 1){
+    return { nama: '-', tanggalStr: parts[0] };
+  }
+
+  // asumsikan bagian terakhir yang mengandung pola tanggal adalah tanggal
+  const tglRegex = /\d{1,4}[-\/]\d{1,2}[-\/]\d{1,4}/;
+  let tanggalStr = null;
+  let namaParts = [];
+  parts.forEach(p => {
+    if (tglRegex.test(p) && !tanggalStr){
+      tanggalStr = p;
+    } else {
+      namaParts.push(p);
+    }
+  });
+
+  return {
+    nama: namaParts.length > 0 ? namaParts.join(' ') : '-',
+    tanggalStr: tanggalStr || parts[parts.length - 1]
+  };
+}
+
+function prosesSemua(){
+  const lines = bulkInput.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+  if (lines.length === 0){
+    alert('Masukkan minimal satu baris tanggal lahir terlebih dahulu.');
+    return;
+  }
+
+  lastResults = [];
+  tblBody.innerHTML = '';
+
+  let validCount = 0;
+  let errorCount = 0;
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  lines.forEach((line, idx) => {
+    const extracted = extractNamaTanggal(line);
+    let row = {
+      no: idx + 1,
+      nama: extracted ? extracted.nama : '-',
+      tglRaw: extracted ? extracted.tanggalStr : line,
+      tgl: '-', umur: '-', detail: '-', hariTotal: '-', hariLahir: '-', zodiak: '-', ultahBerikutnya: '-',
+      ket: '', isError: false
+    };
+
+    const lahir = extracted ? parseTanggalFleksibel(extracted.tanggalStr) : null;
+
+    if (!lahir){
+      row.ket = 'Format tanggal tidak dikenali';
+      row.isError = true;
+      errorCount++;
+    } else if (lahir > today){
+      row.ket = 'Tanggal lahir di masa depan';
+      row.isError = true;
+      errorCount++;
+    } else {
+      let years = today.getFullYear() - lahir.getFullYear();
+      let months = today.getMonth() - lahir.getMonth();
+      let days = today.getDate() - lahir.getDate();
+
+      if (days < 0){
+        months -= 1;
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+      if (months < 0){
+        years -= 1;
+        months += 12;
+      }
+
+      const totalDays = Math.floor((today - lahir) / (1000 * 60 * 60 * 24));
+
+      let nextBday = new Date(today.getFullYear(), lahir.getMonth(), lahir.getDate());
+      if (nextBday < today){
+        nextBday = new Date(today.getFullYear() + 1, lahir.getMonth(), lahir.getDate());
+      }
+      const daysToNext = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
+      const nextBdayText = daysToNext === 0
+        ? 'Hari ini!'
+        : nextBday.getDate() + ' ' + bulanNama[nextBday.getMonth()] + ' (' + daysToNext + ' hr lagi)';
+
+      row.tgl = lahir.getDate() + ' ' + bulanNama[lahir.getMonth()] + ' ' + lahir.getFullYear();
+      row.umur = years + ' tahun';
+      row.detail = years + 'th ' + months + 'bl ' + days + 'hr';
+      row.hariTotal = totalDays.toLocaleString('id-ID') + ' hari';
+      row.hariLahir = hariNama[lahir.getDay()];
+      row.zodiak = getZodiak(lahir.getDate(), lahir.getMonth() + 1);
+      row.ultahBerikutnya = nextBdayText;
+      row.ket = 'Valid';
+      validCount++;
+    }
+
+    lastResults.push(row);
+
+    const tr = document.createElement('tr');
+    if (row.isError) tr.classList.add('row-error');
+
+    const ketDisplay = row.isError
+      ? '<span class="badge error">' + row.ket + '</span>'
+      : row.ket;
+
+    tr.innerHTML = `
+      <td>${row.no}</td>
+      <td>${escapeHtml(row.nama)}</td>
+      <td>${row.tgl}</td>
+      <td>${row.umur}</td>
+      <td>${row.detail}</td>
+      <td>${row.hariTotal}</td>
+      <td>${row.hariLahir}</td>
+      <td>${row.zodiak !== '-' ? '<span class="badge info">'+row.zodiak+'</span>' : '-'}</td>
+      <td>${row.ultahBerikutnya}</td>
+      <td>${ketDisplay}</td>
+    `;
+    tblBody.appendChild(tr);
+  });
+
+  document.getElementById('sTotal').textContent = lines.length;
+  document.getElementById('sValid').textContent = validCount;
+  document.getElementById('sError').textContent = errorCount;
+
+  resultBlock.classList.add('show');
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function exportCSV(){
+  if (lastResults.length === 0){
+    alert('Belum ada data untuk diekspor. Proses tanggal lahir terlebih dahulu.');
+    return;
+  }
+
+  const header = ['No','Nama','Tanggal Lahir','Umur','Umur Detail','Umur (hari)','Hari Lahir','Zodiak','Ultah Berikutnya','Keterangan'];
+  const rows = lastResults.map(r => [
+    r.no, r.nama, r.tgl, r.umur, r.detail, r.hariTotal, r.hariLahir, r.zodiak, r.ultahBerikutnya, r.ket
+  ]);
+
+  let csvContent = header.join(';') + '\n';
+  rows.forEach(row => {
+    const escapedRow = row.map(cell => {
+      const val = String(cell).replace(/"/g, '""');
+      return /[;"\n]/.test(val) ? '"' + val + '"' : val;
+    });
+    csvContent += escapedRow.join(';') + '\n';
+  });
+
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const now = new Date();
+  const stamp = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+  link.href = url;
+  link.download = 'hasil-umur-tanggal-lahir-' + stamp + '.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function exportExcel(){
+  if (lastResults.length === 0){
+    alert('Belum ada data untuk diekspor. Proses tanggal lahir terlebih dahulu.');
+    return;
+  }
+
+  if (typeof XLSX === 'undefined'){
+    alert('Library Excel gagal dimuat (butuh koneksi internet saat pertama kali membuka file ini). Silakan gunakan Export CSV sebagai alternatif.');
+    return;
+  }
+
+  const header = ['No','Nama','Tanggal Lahir','Umur','Umur Detail','Umur (hari)','Hari Lahir','Zodiak','Ultah Berikutnya','Keterangan'];
+  const dataAoa = [header];
+  lastResults.forEach(r => {
+    dataAoa.push([r.no, r.nama, r.tgl, r.umur, r.detail, r.hariTotal, r.hariLahir, r.zodiak, r.ultahBerikutnya, r.ket]);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(dataAoa);
+
+  ws['!cols'] = [
+    { wch: 4 },
+    { wch: 22 },
+    { wch: 16 },
+    { wch: 10 },
+    { wch: 16 },
+    { wch: 14 },
+    { wch: 10 },
+    { wch: 16 },
+    { wch: 20 },
+    { wch: 26 }
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Hasil Umur');
+
+  const now = new Date();
+  const stamp = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+  XLSX.writeFile(wb, 'hasil-umur-tanggal-lahir-' + stamp + '.xlsx');
+}
+</script>
+</body>
+</html>
