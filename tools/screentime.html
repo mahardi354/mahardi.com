@@ -136,21 +136,16 @@
     }catch(e){}
   }
 
-  async function apiGet(action){
-    const res = await fetch(API_URL + '?action=' + encodeURIComponent(action));
+  // Semua aksi lewat GET dengan parameter di query string — Apps Script /exec
+  // selalu redirect (302), dan browser mengubah POST jadi GET saat mengikuti
+  // redirect itu, jadi POST tidak bisa diandalkan di sini.
+  async function apiCall(action, params){
+    const qs = new URLSearchParams(Object.assign({ action }, params || {}));
+    const res = await fetch(API_URL + '?' + qs.toString());
     if(!res.ok) throw new Error('HTTP ' + res.status);
     return res.json();
   }
-  async function apiPost(action, payload){
-    const body = Object.assign({ action }, payload || {});
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(body)
-    });
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    return res.json();
-  }
+  async function apiGet(action){ return apiCall(action); }
 
   function fmtClock(sec){
     const m = Math.floor(sec/60), s = sec%60;
@@ -356,28 +351,28 @@
     async doRequest(){
       const v = parseFloat(document.getElementById('reqInput').value);
       if(!v || v<=0){ alert('Masukkan jumlah menit yang valid.'); return; }
-      const r = await apiPost('requestTime', { child: currentChild==='aizar'?'Aizar':'Dyandra', minutes: v });
+      const r = await apiCall('requestTime', { child: currentChild==='aizar'?'Aizar':'Dyandra', minutes: v });
       if(r.error) alert(r.error);
       state = r; renderChild();
     },
     async quick(m){
-      const r = await apiPost('requestTime', { child: currentChild==='aizar'?'Aizar':'Dyandra', minutes: m });
+      const r = await apiCall('requestTime', { child: currentChild==='aizar'?'Aizar':'Dyandra', minutes: m });
       if(r.error) alert(r.error);
       state = r; renderChild();
     },
     async endSession(){
-      const r = await apiPost('endSession', { child: currentChild==='aizar'?'Aizar':'Dyandra' });
+      const r = await apiCall('endSession', { child: currentChild==='aizar'?'Aizar':'Dyandra' });
       state = r; renderChild();
     },
     async reset(){
       const name = currentChild==='aizar'?'Aizar':'Dyandra';
       if(!confirm('Reset catatan hari ini untuk ' + name + '?')) return;
-      const r = await apiPost('resetToday', { child: name });
+      const r = await apiCall('resetToday', { child: name });
       state = r; renderChild();
     },
     async changeBudget(v){
       const name = currentChild==='aizar'?'Aizar':'Dyandra';
-      const r = await apiPost('setBudget', { child: name, value: parseFloat(v) });
+      const r = await apiCall('setBudget', { child: name, value: parseFloat(v) });
       state = r; renderChild();
     },
     enableNotif(){ ensureNotifyPermission(); alert('Izin notifikasi diminta.'); },
