@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen Time — Aizar &amp; Dyandra</title>
+<style>
+  :root{
+    --bg:#f5f3ee; --card:#ffffff; --ink:#20241f; --sub:#6b6f68;
+    --line:#e6e2d8; --accent:#2f6b4f; --accent2:#c96a2e; --warn:#c1401f;
+    --pill:#eef1ea; --radius:16px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#15171a; --card:#1e2124; --ink:#eceae4; --sub:#9a9d98;
+      --line:#2c2f32; --accent:#5fae86; --accent2:#e08a52; --warn:#e2664a;
+      --pill:#262a25;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:20px 14px 60px;min-height:100vh;}
+  .wrap{max-width:640px;margin:0 auto;}
+  h1{font-size:1.3rem;margin:0 0 4px;letter-spacing:-0.01em;}
+  .sub{color:var(--sub);font-size:0.9rem;margin-bottom:18px;}
+  .setup{background:var(--pill);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px;}
+  .setup input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:0.85rem;margin:8px 0;}
+  .setup .row{display:flex;gap:8px;}
+  .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .tab-btn{flex:1;min-width:120px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600;cursor:pointer;font-size:0.95rem;}
+  .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
+  .card h2{font-size:1.05rem;margin:0 0 10px;}
+  .ring-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  .ring{position:relative;width:110px;height:110px;flex:0 0 auto;}
+  .ring svg{transform:rotate(-90deg);width:110px;height:110px;}
+  .ring .bg{fill:none;stroke:var(--pill);stroke-width:10;}
+  .ring .fg{fill:none;stroke:var(--accent);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .4s;}
+  .ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .ring .num b{font-size:1.3rem;}
+  .ring .num span{font-size:0.7rem;color:var(--sub);}
+  .stat-list{flex:1;min-width:160px;font-size:0.9rem;color:var(--sub);}
+  .stat-list div{display:flex;justify-content:space-between;padding:3px 0;}
+  .stat-list b{color:var(--ink);}
+  .req-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .req-row input{width:90px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:1rem;}
+  .quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  .chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--pill);color:var(--ink);font-size:0.85rem;cursor:pointer;}
+  button.primary{padding:10px 18px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;font-size:0.95rem;}
+  button.ghost{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--sub);cursor:pointer;font-size:0.85rem;}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  .active-session{margin-top:14px;padding:14px;border-radius:12px;background:var(--pill);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .active-session .time{font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums;}
+  .log{margin-top:10px;font-size:0.85rem;color:var(--sub);}
+  .log-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);}
+  .log-row:last-child{border-bottom:none;}
+  .settings-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;}
+  .settings-row label{font-size:0.85rem;color:var(--sub);}
+  .settings-row input{width:70px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);}
+  table.sched{width:100%;border-collapse:collapse;font-size:0.85rem;}
+  table.sched th{text-align:left;color:var(--sub);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--line);}
+  table.sched td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.sched td.time{white-space:nowrap;color:var(--sub);font-variant-numeric:tabular-nums;}
+  .day-tabs{display:flex;gap:5px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;}
+  .day-tabs button{flex:0 0 auto;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--pill);color:var(--ink);font-size:0.8rem;cursor:pointer;}
+  .day-tabs button.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+  .footnote{color:var(--sub);font-size:0.78rem;margin-top:16px;line-height:1.5;}
+  .hidden{display:none !important;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--pill);font-size:0.72rem;color:var(--sub);margin-left:6px;}
+  .err{color:var(--warn);font-size:0.85rem;margin-top:8px;}
+  .status{font-size:0.75rem;color:var(--sub);margin-bottom:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⏱️ Screen Time Tracker</h1>
+  <div class="sub">Aizar (9 th) &amp; Dyandra (13 th) — tersimpan di Google Sheet, sinkron lintas perangkat.</div>
+
+  <div class="setup" id="setupBox">
+    <b>Setup awal (sekali saja)</b>
+    <div style="font-size:0.85rem;color:var(--sub);margin-top:4px;">
+      Deploy Code.gs sebagai Web App di Google Apps Script, lalu tempel URL-nya di sini. URL akan disimpan di browser ini.
+    </div>
+    <input type="text" id="urlInput" placeholder="https://script.google.com/macros/s/XXXXXXX/exec">
+    <div class="row">
+      <button class="primary" onclick="App.saveUrl()">Simpan &amp; Sambungkan</button>
+    </div>
+    <div class="err" id="setupErr"></div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="status" id="statusLine"></div>
+    <div class="tabs">
+      <button class="tab-btn" data-child="aizar">Aizar</button>
+      <button class="tab-btn" data-child="dyandra">Dyandra</button>
+    </div>
+    <div id="childPanel"></div>
+
+    <div class="card">
+      <h2>📅 Jadwal Non-Screen Time</h2>
+      <div class="sub" style="margin-bottom:10px;">Aktivitas penunjang prestasi di luar jam gadget.</div>
+      <div class="day-tabs" id="dayTabs"></div>
+      <table class="sched" id="schedTable"><tbody></tbody></table>
+    </div>
+
+    <button class="ghost" onclick="App.changeUrl()">⚙️ Ganti URL Apps Script</button>
+  </div>
+
+  <div class="footnote">
+    Data tersimpan di Google Sheet kamu sendiri lewat Apps Script — bisa diakses dari perangkat manapun asal halaman ini dibuka dan URL sudah tersambung. Halaman ini di-refresh otomatis tiap 20 detik supaya sinkron kalau diubah dari perangkat lain.
+  </div>
+</div>
+
+<script>
+(function(){
+  const URL_KEY = 'screentime_apps_script_url';
+  let API_URL = localStorage.getItem(URL_KEY) || '';
+  let currentChild = 'aizar';
+  let state = null;
+  let tickTimer = null;
+  let pollTimer = null;
+
+  function ensureNotifyPermission(){
+    if(!('Notification' in window)) return;
+    if(Notification.permission === 'default'){ Notification.requestPermission().catch(()=>{}); }
+  }
+  function notify(title, body){
+    try{
+      if('Notification' in window && Notification.permission === 'granted'){ new Notification(title, { body }); }
+    }catch(e){}
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880; g.gain.value = 0.08;
+      o.start(); setTimeout(()=>{ o.stop(); ctx.close(); }, 350);
+    }catch(e){}
+  }
+
+  async function apiGet(action){
+    const res = await fetch(API_URL + '?action=' + encodeURIComponent(action));
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+  async function apiPost(action, payload){
+    const body = Object.assign({ action }, payload || {});
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+
+  function fmtClock(sec){
+    const m = Math.floor(sec/60), s = sec%60;
+    return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  }
+
+  async function refresh(showStatus){
+    try{
+      state = await apiGet('state');
+      document.getElementById('statusLine').textContent = 'Tersambung — terakhir sinkron ' + new Date().toLocaleTimeString('id-ID');
+      renderChild();
+    }catch(e){
+      document.getElementById('statusLine').textContent = 'Gagal sinkron: ' + e.message;
+    }
+  }
+
+  function renderChild(){
+    if(!state) return;
+    const c = state[currentChild];
+    const name = currentChild === 'aizar' ? 'Aizar' : 'Dyandra';
+    const age = currentChild === 'aizar' ? 9 : 13;
+    const remaining = Math.max(0, c.budget - c.used);
+    const pct = c.budget>0 ? Math.min(1, c.used/c.budget) : 0;
+    const R = 45, C = 2*Math.PI*R;
+    const offset = C * (1-pct);
+
+    let activeHtml = '';
+    if(c.activeStart){
+      const elapsed = Math.floor((Date.now()-c.activeStart)/1000);
+      const total = c.activeMinutes*60;
+      const left = Math.max(0, total-elapsed);
+      activeHtml = `
+        <div class="active-session">
+          <div>
+            <div style="font-size:.8rem;color:var(--sub);">Sesi berjalan (${c.activeMinutes} menit)</div>
+            <div class="time" id="liveClock">${fmtClock(left)}</div>
+          </div>
+          <button class="ghost" onclick="App.endSession()">Selesaikan</button>
+        </div>`;
+    }
+
+    let sessionsHtml = (c.sessions && c.sessions.length) ? c.sessions.map(s=>`
+      <div class="log-row"><span>${s.time}</span><span>${s.minutes} menit</span></div>
+    `).join('') : '<div class="log-row"><span>Belum ada permintaan hari ini</span><span></span></div>';
+
+    document.getElementById('childPanel').innerHTML = `
+      <div class="card">
+        <h2>${name} <span class="badge">${age} th</span></h2>
+        <div class="ring-row">
+          <div class="ring">
+            <svg viewBox="0 0 110 110">
+              <circle class="bg" cx="55" cy="55" r="${R}"></circle>
+              <circle class="fg" cx="55" cy="55" r="${R}" stroke-dasharray="${C}" stroke-dashoffset="${offset}"></circle>
+            </svg>
+            <div class="num"><b>${remaining}</b><span>menit sisa</span></div>
+          </div>
+          <div class="stat-list">
+            <div><span>Jatah harian</span><b>${c.budget} menit</b></div>
+            <div><span>Sudah dipakai</span><b>${c.used} menit</b></div>
+            <div><span>Sisa</span><b>${remaining} menit</b></div>
+          </div>
+        </div>
+        ${activeHtml}
+        <div class="req-row">
+          <input type="number" id="reqInput" min="1" max="180" placeholder="menit" value="10">
+          <button class="primary" onclick="App.doRequest()">Minta waktu</button>
+          <button class="ghost" onclick="App.enableNotif()">🔔 Aktifkan notifikasi</button>
+        </div>
+        <div class="quick">
+          <span class="chip" onclick="App.quick(5)">5 mnt</span>
+          <span class="chip" onclick="App.quick(10)">10 mnt</span>
+          <span class="chip" onclick="App.quick(15)">15 mnt</span>
+          <span class="chip" onclick="App.quick(30)">30 mnt</span>
+        </div>
+        <div class="log">${sessionsHtml}</div>
+        <div class="settings-row">
+          <label>Ubah jatah harian (menit)</label>
+          <input type="number" value="${c.budget}" onchange="App.changeBudget(this.value)">
+        </div>
+        <div class="settings-row">
+          <label>Reset catatan hari ini</label>
+          <button class="ghost" onclick="App.reset()">Reset</button>
+        </div>
+      </div>
+    `;
+
+    document.querySelectorAll('.tab-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.child===currentChild);
+    });
+
+    clearInterval(tickTimer);
+    if(c.activeStart){ tickTimer = setInterval(tick, 1000); }
+  }
+
+  function tick(){
+    const c = state[currentChild];
+    if(!c || !c.activeStart) return;
+    const elapsed = Math.floor((Date.now()-c.activeStart)/1000);
+    const total = c.activeMinutes*60;
+    const left = Math.max(0, total-elapsed);
+    const el = document.getElementById('liveClock');
+    if(el) el.textContent = fmtClock(left);
+    if(left<=0){
+      clearInterval(tickTimer);
+      notify('Waktu habis — ' + (currentChild==='aizar'?'Aizar':'Dyandra'), c.activeMinutes + ' menit screen time sudah selesai.');
+      alert('⏰ Waktu sudah habis (' + c.activeMinutes + ' menit). Saatnya berhenti main HP.');
+      App.endSession();
+    }
+  }
+
+  // ---- Jadwal (schedule) — sama seperti versi sebelumnya ----
+  const DAYS = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+  const SCHEDULES = {
+    aizar: {
+      weekday: [
+        ['06:00–07:00','Sholat Subuh, mandi, sarapan'],
+        ['07:00–12:30','Sekolah'],
+        ['12:30–13:30','Makan siang, istirahat'],
+        ['13:30–14:30','Tidur siang / me time'],
+        ['14:30–15:30','Mengaji / hafalan surat pendek'],
+        ['15:30–16:30','Main fisik di luar (sepeda, bola, dsb.)'],
+        ['16:30–17:15','Screen time (sesuai jatah harian)'],
+        ['17:15–18:00','Mandi sore, sholat Maghrib'],
+        ['18:00–19:00','Belajar / kerjakan PR bareng ortu'],
+        ['19:00–19:30','Makan malam keluarga'],
+        ['19:30–20:00','Membaca buku cerita'],
+        ['20:00','Tidur'],
+      ],
+      weekend: [
+        ['06:00–07:00','Sholat Subuh, olahraga ringan bareng ayah/ibu'],
+        ['07:00–08:00','Sarapan, bersih rumah (bantu-bantu)'],
+        ['08:00–10:00','Aktivitas keluarga / eksplorasi (alam, kunjungan)'],
+        ['10:00–11:00','Hobi kreatif (gambar, lego, craft)'],
+        ['11:00–12:00','Screen time (sesuai jatah harian)'],
+        ['12:00–13:00','Makan siang & istirahat'],
+        ['13:00–15:00','Main dengan teman / olahraga'],
+        ['15:00–16:00','Mengaji'],
+        ['16:00–17:30','Waktu bebas terstruktur (baca, puzzle)'],
+        ['Malam','Kegiatan keluarga, tidur lebih awal'],
+      ]
+    },
+    dyandra: {
+      weekday: [
+        ['05:00–06:00','Sholat Subuh, olahraga ringan / jalan pagi'],
+        ['06:00–07:00','Mandi, sarapan, berangkat sekolah'],
+        ['07:00–15:00','Sekolah (+ ekstrakurikuler bila ada)'],
+        ['15:00–15:30','Istirahat, mandi'],
+        ['15:30–16:30','Mengaji / kajian ringan'],
+        ['16:30–17:30','Olahraga / ekskul pilihan (bulutangkis, renang, dsb.)'],
+        ['17:30–18:15','Screen time (sesuai jatah harian)'],
+        ['18:15–19:00','Sholat Maghrib, makan malam keluarga'],
+        ['19:00–20:30','Belajar mandiri / PR / persiapan ujian'],
+        ['20:30–21:00','Membaca buku non-pelajaran (minat bebas)'],
+        ['21:00–21:30','Sholat Isya, persiapan tidur'],
+        ['22:00','Tidur'],
+      ],
+      weekend: [
+        ['06:00–07:00','Sholat Subuh, olahraga'],
+        ['07:00–08:00','Sarapan, bantu pekerjaan rumah'],
+        ['08:00–10:00','Kegiatan minat/bakat (les, klub, proyek pribadi)'],
+        ['10:00–11:30','Screen time (sesuai jatah harian)'],
+        ['11:30–13:00','Makan siang, istirahat'],
+        ['13:00–15:00','Waktu sosial (teman, kegiatan komunitas/masjid)'],
+        ['15:00–16:00','Mengaji'],
+        ['16:00–18:00','Proyek pribadi / hobi mendalam (yang menunjang cita-cita)'],
+        ['Malam','Evaluasi & rencana minggu depan bareng ortu, tidur cukup'],
+      ]
+    }
+  };
+
+  let currentDayIdx = new Date().getDay();
+  currentDayIdx = (currentDayIdx===0) ? 6 : currentDayIdx-1;
+
+  function renderDayTabs(){
+    document.getElementById('dayTabs').innerHTML = DAYS.map((d,i)=>
+      `<button class="${i===currentDayIdx?'active':''}" onclick="App.setDay(${i})">${d}</button>`
+    ).join('');
+  }
+  function renderSchedule(){
+    const isWeekend = currentDayIdx>=5;
+    const sched = SCHEDULES[currentChild][isWeekend?'weekend':'weekday'];
+    const tbody = document.querySelector('#schedTable tbody');
+    tbody.innerHTML = sched.map(([time,act])=>`<tr><td class="time">${time}</td><td>${act}</td></tr>`).join('');
+  }
+
+  window.App = {
+    saveUrl(){
+      const v = document.getElementById('urlInput').value.trim();
+      if(!v.startsWith('https://script.google.com/')){
+        document.getElementById('setupErr').textContent = 'URL sepertinya bukan URL Apps Script yang valid.';
+        return;
+      }
+      API_URL = v;
+      localStorage.setItem(URL_KEY, v);
+      boot();
+    },
+    changeUrl(){
+      localStorage.removeItem(URL_KEY);
+      API_URL = '';
+      document.getElementById('app').classList.add('hidden');
+      document.getElementById('setupBox').classList.remove('hidden');
+    },
+    async doRequest(){
+      const v = parseFloat(document.getElementById('reqInput').value);
+      if(!v || v<=0){ alert('Masukkan jumlah menit yang valid.'); return; }
+      const r = await apiPost('requestTime', { child: currentChild==='aizar'?'Aizar':'Dyandra', minutes: v });
+      if(r.error) alert(r.error);
+      state = r; renderChild();
+    },
+    async quick(m){
+      const r = await apiPost('requestTime', { child: currentChild==='aizar'?'Aizar':'Dyandra', minutes: m });
+      if(r.error) alert(r.error);
+      state = r; renderChild();
+    },
+    async endSession(){
+      const r = await apiPost('endSession', { child: currentChild==='aizar'?'Aizar':'Dyandra' });
+      state = r; renderChild();
+    },
+    async reset(){
+      const name = currentChild==='aizar'?'Aizar':'Dyandra';
+      if(!confirm('Reset catatan hari ini untuk ' + name + '?')) return;
+      const r = await apiPost('resetToday', { child: name });
+      state = r; renderChild();
+    },
+    async changeBudget(v){
+      const name = currentChild==='aizar'?'Aizar':'Dyandra';
+      const r = await apiPost('setBudget', { child: name, value: parseFloat(v) });
+      state = r; renderChild();
+    },
+    enableNotif(){ ensureNotifyPermission(); alert('Izin notifikasi diminta.'); },
+    setDay(i){ currentDayIdx = i; renderDayTabs(); renderSchedule(); }
+  };
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentChild = btn.dataset.child;
+      renderChild(); renderDayTabs(); renderSchedule();
+    });
+  });
+
+  async function boot(){
+    if(!API_URL){
+      document.getElementById('setupBox').classList.remove('hidden');
+      document.getElementById('app').classList.add('hidden');
+      return;
+    }
+    document.getElementById('setupBox').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    await refresh();
+    renderDayTabs();
+    renderSchedule();
+    clearInterval(pollTimer);
+    pollTimer = setInterval(refresh, 20000);
+    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) refresh(); });
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
