@@ -1,409 +1,548 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Screen Time — Aizar &amp; Dyandra</title>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Layar Keluarga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+:root{
+  --kertas:#F3F5F9; --permukaan:#FFFFFF; --tinta:#1B2A41; --tinta-2:#55647B; --garis:#D9DFEA;
+  --terpakai:#D3D9E4; --bahaya:#C43D3D; --baik:#2B8A5E;
+  --warna:#F2A900; --warna-teks:#1B2A41;
+  --f-judul:'Fredoka',ui-rounded,'Nunito','Trebuchet MS',system-ui,sans-serif;
+  --f-isi:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
   :root{
-    --bg:#f5f3ee; --card:#ffffff; --ink:#20241f; --sub:#6b6f68;
-    --line:#e6e2d8; --accent:#2f6b4f; --accent2:#c96a2e; --warn:#c1401f;
-    --pill:#eef1ea; --radius:16px;
+    --kertas:#0F1520; --permukaan:#182131; --tinta:#E8EDF5; --tinta-2:#9FADC2; --garis:#2B384D;
+    --terpakai:#2C3849; --bahaya:#FF7A7A; --baik:#4CC38A;
+    --warna-teks:#1B2A41;
   }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --bg:#15171a; --card:#1e2124; --ink:#eceae4; --sub:#9a9d98;
-      --line:#2c2f32; --accent:#5fae86; --accent2:#e08a52; --warn:#e2664a;
-      --pill:#262a25;
-    }
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:20px 14px 60px;min-height:100vh;}
-  .wrap{max-width:640px;margin:0 auto;}
-  h1{font-size:1.3rem;margin:0 0 4px;letter-spacing:-0.01em;}
-  .sub{color:var(--sub);font-size:0.9rem;margin-bottom:18px;}
-  .setup{background:var(--pill);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px;}
-  .setup input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:0.85rem;margin:8px 0;}
-  .setup .row{display:flex;gap:8px;}
-  .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
-  .tab-btn{flex:1;min-width:120px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600;cursor:pointer;font-size:0.95rem;}
-  .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
-  .card h2{font-size:1.05rem;margin:0 0 10px;}
-  .ring-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-  .ring{position:relative;width:110px;height:110px;flex:0 0 auto;}
-  .ring svg{transform:rotate(-90deg);width:110px;height:110px;}
-  .ring .bg{fill:none;stroke:var(--pill);stroke-width:10;}
-  .ring .fg{fill:none;stroke:var(--accent);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .4s;}
-  .ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-  .ring .num b{font-size:1.3rem;}
-  .ring .num span{font-size:0.7rem;color:var(--sub);}
-  .stat-list{flex:1;min-width:160px;font-size:0.9rem;color:var(--sub);}
-  .stat-list div{display:flex;justify-content:space-between;padding:3px 0;}
-  .stat-list b{color:var(--ink);}
-  .req-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
-  .req-row input{width:90px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:1rem;}
-  .quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
-  .chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--pill);color:var(--ink);font-size:0.85rem;cursor:pointer;}
-  button.primary{padding:10px 18px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;font-size:0.95rem;}
-  button.ghost{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--sub);cursor:pointer;font-size:0.85rem;}
-  button:disabled{opacity:.5;cursor:not-allowed;}
-  .active-session{margin-top:14px;padding:14px;border-radius:12px;background:var(--pill);display:flex;justify-content:space-between;align-items:center;gap:10px;}
-  .active-session .time{font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums;}
-  .log{margin-top:10px;font-size:0.85rem;color:var(--sub);}
-  .log-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);}
-  .log-row:last-child{border-bottom:none;}
-  .settings-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;}
-  .settings-row label{font-size:0.85rem;color:var(--sub);}
-  .settings-row input{width:70px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);}
-  table.sched{width:100%;border-collapse:collapse;font-size:0.85rem;}
-  table.sched th{text-align:left;color:var(--sub);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--line);}
-  table.sched td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:top;}
-  table.sched td.time{white-space:nowrap;color:var(--sub);font-variant-numeric:tabular-nums;}
-  .day-tabs{display:flex;gap:5px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;}
-  .day-tabs button{flex:0 0 auto;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--pill);color:var(--ink);font-size:0.8rem;cursor:pointer;}
-  .day-tabs button.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
-  .footnote{color:var(--sub);font-size:0.78rem;margin-top:16px;line-height:1.5;}
-  .hidden{display:none !important;}
-  .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--pill);font-size:0.72rem;color:var(--sub);margin-left:6px;}
-  .err{color:var(--warn);font-size:0.85rem;margin-top:8px;}
-  .status{font-size:0.75rem;color:var(--sub);margin-bottom:10px;}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--kertas);color:var(--tinta);font-family:var(--f-isi);font-size:16px;line-height:1.45}
+#app{max-width:560px;margin:0 auto;padding:16px 16px 104px}
+h1,h2,h3{font-family:var(--f-judul);font-weight:600;margin:0}
+h1{font-size:22px}
+h2{font-size:18px;margin:0 0 10px}
+h3{font-size:16px;margin:0 0 6px}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--tinta);outline-offset:2px}
+
+.kepala{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.tgl{margin-top:2px;color:var(--tinta-2);font-size:14px}
+.tag{font-size:13px;background:var(--permukaan);border:1px solid var(--garis);padding:4px 10px;border-radius:99px;color:var(--tinta-2);white-space:nowrap}
+
+.anak{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.pilih{cursor:pointer;text-align:left;border:2px solid var(--garis);background:var(--permukaan);border-radius:18px;padding:10px 12px;
+  display:grid;grid-template-columns:auto 1fr;grid-template-areas:"em nm" "em sm";column-gap:10px;align-items:center}
+.pilih .em{grid-area:em;font-size:30px;line-height:1}
+.pilih .nm{grid-area:nm;font-family:var(--f-judul);font-weight:600;font-size:18px;line-height:1.2}
+.pilih .sm{grid-area:sm;font-size:13px;color:var(--tinta-2)}
+.pilih.aktif{background:var(--w);border-color:var(--w);color:var(--wt)}
+.pilih.aktif .sm{color:inherit;opacity:.9}
+
+.kartu{background:var(--permukaan);border:1px solid var(--garis);border-radius:24px;padding:20px;margin-bottom:14px}
+.kartu.datar{border-radius:16px;padding:16px}
+
+.sisa{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.angka{font-family:var(--f-judul);font-weight:600;font-size:88px;line-height:.95;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.satuan{font-size:18px;color:var(--tinta-2)}
+.lewatnya .angka,.lewatnya .satuan{color:var(--bahaya)}
+.rincian{margin-top:6px;color:var(--tinta-2);font-size:14px}
+.kotak{display:flex;gap:4px;margin:16px 0 6px}
+.kotak i{flex:1;height:34px;border-radius:8px;min-width:0;background:var(--warna);box-shadow:inset 0 0 0 1px var(--garis)}
+.kotak.merah i{outline:2px solid var(--bahaya);outline-offset:-2px}
+.legenda{font-size:13px;color:var(--tinta-2)}
+
+.label{font-size:14px;color:var(--tinta-2);margin-bottom:8px}
+.berjalan .label{display:flex;align-items:center;gap:8px}
+.titik{width:10px;height:10px;border-radius:50%;background:var(--baik);animation:kedip 1.6s ease-in-out infinite}
+@keyframes kedip{50%{opacity:.25}}
+.timer{font-family:var(--f-judul);font-weight:600;font-size:76px;line-height:1;font-variant-numeric:tabular-nums;margin:6px 0 8px}
+.timer.lewat{color:var(--bahaya)}
+.ket{color:var(--tinta-2);font-size:15px;margin-bottom:16px}
+.aksi{display:flex;gap:10px;flex-wrap:wrap}
+
+.btn{border-radius:14px;border:2px solid var(--tinta);background:transparent;padding:12px 18px;min-height:48px;font-weight:600;cursor:pointer}
+.btn.utama{background:var(--warna);border-color:var(--warna);color:var(--warna-teks)}
+.btn.besar{width:100%;font-size:18px;min-height:58px;margin-top:18px}
+.btn.kecil{padding:6px 12px;min-height:36px;font-size:14px;border-width:1.5px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{border:2px solid var(--garis);background:var(--kertas);border-radius:12px;padding:10px 14px;min-height:44px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--tinta);background:var(--warna);color:var(--warna-teks);font-weight:600}
+.lain{display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:15px;color:var(--tinta-2)}
+input[type=number],input[type=text],input[type=password],select{font:inherit;color:var(--tinta);background:var(--permukaan);border:2px solid var(--garis);border-radius:12px;padding:10px 12px;min-height:44px;width:100%}
+.lain input{width:92px}
+.petunjuk{font-size:14px;color:var(--tinta-2);margin-top:10px}
+.petunjuk.salah{color:var(--bahaya)}
+
+.jd{display:grid;grid-template-columns:58px 1fr 34px;gap:12px;padding:12px 8px 12px 12px;border-bottom:1px solid var(--garis);align-items:start}
+.jd:last-child{border-bottom:0}
+.jd.kini{background:var(--kertas);box-shadow:inset 5px 0 0 var(--warna);border-radius:8px}
+.jd .jam{font-family:var(--f-judul);font-weight:500;font-size:15px;line-height:1.25;color:var(--tinta-2)}
+.jd .jam b{display:block;color:var(--tinta);font-weight:600}
+.jd .nm{font-weight:600}
+.jd .cat{font-size:14px;color:var(--tinta-2);margin-top:2px}
+.jd .sekarang{display:none;font-size:13px;font-weight:600;margin-top:2px}
+.jd.kini .sekarang{display:block}
+.jd.selesai .nm{text-decoration:line-through;color:var(--tinta-2)}
+.cek{width:32px;height:32px;border-radius:50%;border:2px solid var(--tinta-2);background:transparent;cursor:pointer;display:grid;place-items:center;font-size:17px;line-height:1;padding:0}
+.cek[aria-pressed="true"]{background:var(--warna);border-color:var(--warna);color:var(--warna-teks)}
+.hari{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px}
+.hari button{border:2px solid var(--garis);background:var(--permukaan);border-radius:12px;padding:9px 0;min-height:44px;cursor:pointer;font-weight:500;font-size:14px}
+.hari button.ini{border-color:var(--tinta-2)}
+.hari button[aria-pressed="true"]{background:var(--warna);border-color:var(--warna);color:var(--warna-teks);font-weight:600}
+.progres{height:10px;border-radius:99px;background:var(--terpakai);overflow:hidden;margin:8px 0 4px}
+.progres i{display:block;height:100%;background:var(--warna)}
+
+.baris{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--garis)}
+.baris:last-child{border-bottom:0}
+.baris .sub{font-size:13px;color:var(--tinta-2)}
+.status{font-size:13px;padding:2px 10px;border-radius:99px;background:var(--kertas);border:1px solid var(--garis);white-space:nowrap}
+.status.jalan{border-color:var(--baik);color:var(--baik)}
+.status.batal{text-decoration:line-through}
+
+.area{position:relative;height:110px}
+.plot{display:flex;gap:8px;margin:14px 0 4px}
+.kol{flex:1;min-width:0}
+.bt{position:absolute;bottom:0;left:0;right:0;border-radius:8px 8px 0 0;background:var(--warna)}
+.bt.lebih{background:var(--bahaya)}
+.gj{position:absolute;left:-3px;right:-3px;border-top:2px dashed var(--tinta)}
+.kol .lb{font-size:12px;text-align:center;color:var(--tinta-2);margin-top:4px;line-height:1.2}
+.kol .nl{font-size:13px;font-weight:600;text-align:center}
+
+.form{display:grid;gap:10px}
+.dua{display:grid;grid-template-columns:110px 1fr;gap:10px}
+.kosong{color:var(--tinta-2);font-size:15px;padding:8px 0}
+
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--permukaan);border-top:1px solid var(--garis);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:10}
+.nav .isi{display:grid;grid-template-columns:repeat(4,1fr);width:100%;max-width:560px}
+.nav button{border:0;background:transparent;padding:10px 4px 9px;cursor:pointer;display:grid;gap:2px;justify-items:center;font-size:12.5px;color:var(--tinta-2)}
+.nav button .ic{font-size:22px;line-height:1}
+.nav button[aria-current="page"]{color:var(--tinta);font-weight:600;box-shadow:inset 0 3px 0 var(--tinta)}
+
+.alarm{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;justify-content:center;padding:28px;background:var(--warna);color:var(--warna-teks)}
+.alarm[hidden]{display:none}
+.alarm .besar-em{font-size:64px;line-height:1}
+.alarm h2{font-size:34px;margin:14px 0 8px}
+.alarm p{font-size:18px;margin-bottom:24px;max-width:26em}
+.alarm .btn{border-color:var(--warna-teks);width:100%;max-width:420px;margin-bottom:10px;font-size:18px;min-height:56px}
+.alarm .btn.solid{background:var(--warna-teks);color:var(--warna)}
+
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--tinta);color:var(--permukaan);padding:10px 16px;border-radius:12px;font-size:15px;z-index:60;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.tampil{opacity:1}
+.muat{padding:60px 0;text-align:center;color:var(--tinta-2)}
+
+@media (prefers-reduced-motion:reduce){.titik{animation:none}.toast{transition:none}}
+@media (max-width:380px){.angka{font-size:72px}.timer{font-size:62px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>⏱️ Screen Time Tracker</h1>
-  <div class="sub">Aizar (9 th) &amp; Dyandra (13 th) — tersimpan di Google Sheet, sinkron lintas perangkat.</div>
-
-  <div class="setup" id="setupBox">
-    <b>Setup awal (sekali saja)</b>
-    <div style="font-size:0.85rem;color:var(--sub);margin-top:4px;">
-      Deploy Code.gs sebagai Web App di Google Apps Script, lalu tempel URL-nya di sini. URL akan disimpan di browser ini.
-    </div>
-    <input type="text" id="urlInput" placeholder="https://script.google.com/macros/s/XXXXXXX/exec">
-    <div class="row">
-      <button class="primary" onclick="App.saveUrl()">Simpan &amp; Sambungkan</button>
-    </div>
-    <div class="err" id="setupErr"></div>
-  </div>
-
-  <div id="app" class="hidden">
-    <div class="status" id="statusLine"></div>
-    <div class="tabs">
-      <button class="tab-btn" data-child="aizar">Aizar</button>
-      <button class="tab-btn" data-child="dyandra">Dyandra</button>
-    </div>
-    <div id="childPanel"></div>
-
-    <div class="card">
-      <h2>📅 Jadwal Non-Screen Time</h2>
-      <div class="sub" style="margin-bottom:10px;">Aktivitas penunjang prestasi di luar jam gadget.</div>
-      <div class="day-tabs" id="dayTabs"></div>
-      <table class="sched" id="schedTable"><tbody></tbody></table>
-    </div>
-
-    <button class="ghost" onclick="App.changeUrl()">⚙️ Ganti URL Apps Script</button>
-  </div>
-
-  <div class="footnote">
-    Data tersimpan di Google Sheet kamu sendiri lewat Apps Script — bisa diakses dari perangkat manapun asal halaman ini dibuka dan URL sudah tersambung. Halaman ini di-refresh otomatis tiap 20 detik supaya sinkron kalau diubah dari perangkat lain.
-  </div>
-</div>
+<div id="app"><div class="muat">Memuat data…</div></div>
+<div id="alarm" class="alarm" hidden role="alertdialog" aria-live="assertive"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
+/* Mode hosting: bila halaman TIDAK dibuka dari Apps Script, sediakan google.script.run tiruan
+   yang memanggil URL web app (/exec) lewat fetch. Di dalam Apps Script, bagian ini dilewati. */
 (function(){
-  const URL_KEY = 'screentime_apps_script_url';
-  let API_URL = localStorage.getItem(URL_KEY) || '';
-  let currentChild = 'aizar';
-  let state = null;
-  let tickTimer = null;
-  let pollTimer = null;
-
-  function ensureNotifyPermission(){
-    if(!('Notification' in window)) return;
-    if(Notification.permission === 'default'){ Notification.requestPermission().catch(()=>{}); }
+  if (typeof google !== 'undefined' && google.script && google.script.run) return;
+  const KEY = 'layar.apiUrl';
+  const URL_TETAP = ''; // opsional: isi URL /exec di sini agar tidak perlu ditempel manual di tiap perangkat
+  const ambil = () => { try { return URL_TETAP || localStorage.getItem(KEY) || ''; } catch (e) { return URL_TETAP; } };
+  function runner(sh, fh){
+    return new Proxy({}, { get(_, nama){
+      if (nama === 'withSuccessHandler') return f => runner(f, fh);
+      if (nama === 'withFailureHandler') return f => runner(sh, f);
+      return function(){
+        const args = Array.prototype.slice.call(arguments);
+        const url = ambil();
+        if (!url){ fh && fh(new Error('Alamat Apps Script belum diisi.')); return; }
+        fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: nama, args: args }) })
+          .then(r => r.text())
+          .then(t => {
+            let j; try { j = JSON.parse(t); } catch (e) { throw new Error('Balasan bukan JSON. Pastikan deployment "Who has access: Anyone" dan URL berakhiran /exec.'); }
+            if (j.error) throw new Error(j.error);
+            sh && sh(j.hasil);
+          })
+          .catch(e => { fh && fh(e); });
+      };
+    }});
   }
-  function notify(title, body){
-    try{
-      if('Notification' in window && Notification.permission === 'granted'){ new Notification(title, { body }); }
-    }catch(e){}
-    try{
-      const ctx = new (window.AudioContext||window.webkitAudioContext)();
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = 880; g.gain.value = 0.08;
-      o.start(); setTimeout(()=>{ o.stop(); ctx.close(); }, 350);
-    }catch(e){}
-  }
-
-  // Semua aksi lewat GET dengan parameter di query string — Apps Script /exec
-  // selalu redirect (302), dan browser mengubah POST jadi GET saat mengikuti
-  // redirect itu, jadi POST tidak bisa diandalkan di sini.
-  async function apiCall(action, params){
-    const qs = new URLSearchParams(Object.assign({ action }, params || {}));
-    const res = await fetch(API_URL + '?' + qs.toString());
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    return res.json();
-  }
-  async function apiGet(action){ return apiCall(action); }
-
-  function fmtClock(sec){
-    const m = Math.floor(sec/60), s = sec%60;
-    return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  }
-
-  async function refresh(showStatus){
-    try{
-      state = await apiGet('state');
-      document.getElementById('statusLine').textContent = 'Tersambung — terakhir sinkron ' + new Date().toLocaleTimeString('id-ID');
-      renderChild();
-    }catch(e){
-      document.getElementById('statusLine').textContent = 'Gagal sinkron: ' + e.message;
-    }
-  }
-
-  function renderChild(){
-    if(!state) return;
-    const c = state[currentChild];
-    const name = currentChild === 'aizar' ? 'Aizar' : 'Dyandra';
-    const age = currentChild === 'aizar' ? 9 : 13;
-    const remaining = Math.max(0, c.budget - c.used);
-    const pct = c.budget>0 ? Math.min(1, c.used/c.budget) : 0;
-    const R = 45, C = 2*Math.PI*R;
-    const offset = C * (1-pct);
-
-    let activeHtml = '';
-    if(c.activeStart){
-      const elapsed = Math.floor((Date.now()-c.activeStart)/1000);
-      const total = c.activeMinutes*60;
-      const left = Math.max(0, total-elapsed);
-      activeHtml = `
-        <div class="active-session">
-          <div>
-            <div style="font-size:.8rem;color:var(--sub);">Sesi berjalan (${c.activeMinutes} menit)</div>
-            <div class="time" id="liveClock">${fmtClock(left)}</div>
-          </div>
-          <button class="ghost" onclick="App.endSession()">Selesaikan</button>
-        </div>`;
-    }
-
-    let sessionsHtml = (c.sessions && c.sessions.length) ? c.sessions.map(s=>`
-      <div class="log-row"><span>${s.time}</span><span>${s.minutes} menit</span></div>
-    `).join('') : '<div class="log-row"><span>Belum ada permintaan hari ini</span><span></span></div>';
-
-    document.getElementById('childPanel').innerHTML = `
-      <div class="card">
-        <h2>${name} <span class="badge">${age} th</span></h2>
-        <div class="ring-row">
-          <div class="ring">
-            <svg viewBox="0 0 110 110">
-              <circle class="bg" cx="55" cy="55" r="${R}"></circle>
-              <circle class="fg" cx="55" cy="55" r="${R}" stroke-dasharray="${C}" stroke-dashoffset="${offset}"></circle>
-            </svg>
-            <div class="num"><b>${remaining}</b><span>menit sisa</span></div>
-          </div>
-          <div class="stat-list">
-            <div><span>Jatah harian</span><b>${c.budget} menit</b></div>
-            <div><span>Sudah dipakai</span><b>${c.used} menit</b></div>
-            <div><span>Sisa</span><b>${remaining} menit</b></div>
-          </div>
-        </div>
-        ${activeHtml}
-        <div class="req-row">
-          <input type="number" id="reqInput" min="1" max="180" placeholder="menit" value="10">
-          <button class="primary" onclick="App.doRequest()">Minta waktu</button>
-          <button class="ghost" onclick="App.enableNotif()">🔔 Aktifkan notifikasi</button>
-        </div>
-        <div class="quick">
-          <span class="chip" onclick="App.quick(5)">5 mnt</span>
-          <span class="chip" onclick="App.quick(10)">10 mnt</span>
-          <span class="chip" onclick="App.quick(15)">15 mnt</span>
-          <span class="chip" onclick="App.quick(30)">30 mnt</span>
-        </div>
-        <div class="log">${sessionsHtml}</div>
-        <div class="settings-row">
-          <label>Ubah jatah harian (menit)</label>
-          <input type="number" value="${c.budget}" onchange="App.changeBudget(this.value)">
-        </div>
-        <div class="settings-row">
-          <label>Reset catatan hari ini</label>
-          <button class="ghost" onclick="App.reset()">Reset</button>
-        </div>
-      </div>
-    `;
-
-    document.querySelectorAll('.tab-btn').forEach(b=>{
-      b.classList.toggle('active', b.dataset.child===currentChild);
-    });
-
-    clearInterval(tickTimer);
-    if(c.activeStart){ tickTimer = setInterval(tick, 1000); }
-  }
-
-  function tick(){
-    const c = state[currentChild];
-    if(!c || !c.activeStart) return;
-    const elapsed = Math.floor((Date.now()-c.activeStart)/1000);
-    const total = c.activeMinutes*60;
-    const left = Math.max(0, total-elapsed);
-    const el = document.getElementById('liveClock');
-    if(el) el.textContent = fmtClock(left);
-    if(left<=0){
-      clearInterval(tickTimer);
-      notify('Waktu habis — ' + (currentChild==='aizar'?'Aizar':'Dyandra'), c.activeMinutes + ' menit screen time sudah selesai.');
-      alert('⏰ Waktu sudah habis (' + c.activeMinutes + ' menit). Saatnya berhenti main HP.');
-      App.endSession();
-    }
-  }
-
-  // ---- Jadwal (schedule) — sama seperti versi sebelumnya ----
-  const DAYS = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
-  const SCHEDULES = {
-    aizar: {
-      weekday: [
-        ['06:00–07:00','Sholat Subuh, mandi, sarapan'],
-        ['07:00–12:30','Sekolah'],
-        ['12:30–13:30','Makan siang, istirahat'],
-        ['13:30–14:30','Tidur siang / me time'],
-        ['14:30–15:30','Mengaji / hafalan surat pendek'],
-        ['15:30–16:30','Main fisik di luar (sepeda, bola, dsb.)'],
-        ['16:30–17:15','Screen time (sesuai jatah harian)'],
-        ['17:15–18:00','Mandi sore, sholat Maghrib'],
-        ['18:00–19:00','Belajar / kerjakan PR bareng ortu'],
-        ['19:00–19:30','Makan malam keluarga'],
-        ['19:30–20:00','Membaca buku cerita'],
-        ['20:00','Tidur'],
-      ],
-      weekend: [
-        ['06:00–07:00','Sholat Subuh, olahraga ringan bareng ayah/ibu'],
-        ['07:00–08:00','Sarapan, bersih rumah (bantu-bantu)'],
-        ['08:00–10:00','Aktivitas keluarga / eksplorasi (alam, kunjungan)'],
-        ['10:00–11:00','Hobi kreatif (gambar, lego, craft)'],
-        ['11:00–12:00','Screen time (sesuai jatah harian)'],
-        ['12:00–13:00','Makan siang & istirahat'],
-        ['13:00–15:00','Main dengan teman / olahraga'],
-        ['15:00–16:00','Mengaji'],
-        ['16:00–17:30','Waktu bebas terstruktur (baca, puzzle)'],
-        ['Malam','Kegiatan keluarga, tidur lebih awal'],
-      ]
-    },
-    dyandra: {
-      weekday: [
-        ['05:00–06:00','Sholat Subuh, olahraga ringan / jalan pagi'],
-        ['06:00–07:00','Mandi, sarapan, berangkat sekolah'],
-        ['07:00–15:00','Sekolah (+ ekstrakurikuler bila ada)'],
-        ['15:00–15:30','Istirahat, mandi'],
-        ['15:30–16:30','Mengaji / kajian ringan'],
-        ['16:30–17:30','Olahraga / ekskul pilihan (bulutangkis, renang, dsb.)'],
-        ['17:30–18:15','Screen time (sesuai jatah harian)'],
-        ['18:15–19:00','Sholat Maghrib, makan malam keluarga'],
-        ['19:00–20:30','Belajar mandiri / PR / persiapan ujian'],
-        ['20:30–21:00','Membaca buku non-pelajaran (minat bebas)'],
-        ['21:00–21:30','Sholat Isya, persiapan tidur'],
-        ['22:00','Tidur'],
-      ],
-      weekend: [
-        ['06:00–07:00','Sholat Subuh, olahraga'],
-        ['07:00–08:00','Sarapan, bantu pekerjaan rumah'],
-        ['08:00–10:00','Kegiatan minat/bakat (les, klub, proyek pribadi)'],
-        ['10:00–11:30','Screen time (sesuai jatah harian)'],
-        ['11:30–13:00','Makan siang, istirahat'],
-        ['13:00–15:00','Waktu sosial (teman, kegiatan komunitas/masjid)'],
-        ['15:00–16:00','Mengaji'],
-        ['16:00–18:00','Proyek pribadi / hobi mendalam (yang menunjang cita-cita)'],
-        ['Malam','Evaluasi & rencana minggu depan bareng ortu, tidur cukup'],
-      ]
-    }
+  window.google = {
+    script: { run: runner() }, hosted: true,
+    apiUrl: ambil,
+    setApiUrl: v => { try { localStorage.setItem(KEY, v); } catch (e) {} },
+    clearApiUrl: () => { try { localStorage.removeItem(KEY); } catch (e) {} }
   };
-
-  let currentDayIdx = new Date().getDay();
-  currentDayIdx = (currentDayIdx===0) ? 6 : currentDayIdx-1;
-
-  function renderDayTabs(){
-    document.getElementById('dayTabs').innerHTML = DAYS.map((d,i)=>
-      `<button class="${i===currentDayIdx?'active':''}" onclick="App.setDay(${i})">${d}</button>`
-    ).join('');
-  }
-  function renderSchedule(){
-    const isWeekend = currentDayIdx>=5;
-    const sched = SCHEDULES[currentChild][isWeekend?'weekend':'weekday'];
-    const tbody = document.querySelector('#schedTable tbody');
-    tbody.innerHTML = sched.map(([time,act])=>`<tr><td class="time">${time}</td><td>${act}</td></tr>`).join('');
-  }
-
-  window.App = {
-    saveUrl(){
-      const v = document.getElementById('urlInput').value.trim();
-      if(!v.startsWith('https://script.google.com/')){
-        document.getElementById('setupErr').textContent = 'URL sepertinya bukan URL Apps Script yang valid.';
-        return;
-      }
-      API_URL = v;
-      localStorage.setItem(URL_KEY, v);
-      boot();
-    },
-    changeUrl(){
-      localStorage.removeItem(URL_KEY);
-      API_URL = '';
-      document.getElementById('app').classList.add('hidden');
-      document.getElementById('setupBox').classList.remove('hidden');
-    },
-    async doRequest(){
-      const v = parseFloat(document.getElementById('reqInput').value);
-      if(!v || v<=0){ alert('Masukkan jumlah menit yang valid.'); return; }
-      const r = await apiCall('requestTime', { child: currentChild==='aizar'?'Aizar':'Dyandra', minutes: v });
-      if(r.error) alert(r.error);
-      state = r; renderChild();
-    },
-    async quick(m){
-      const r = await apiCall('requestTime', { child: currentChild==='aizar'?'Aizar':'Dyandra', minutes: m });
-      if(r.error) alert(r.error);
-      state = r; renderChild();
-    },
-    async endSession(){
-      const r = await apiCall('endSession', { child: currentChild==='aizar'?'Aizar':'Dyandra' });
-      state = r; renderChild();
-    },
-    async reset(){
-      const name = currentChild==='aizar'?'Aizar':'Dyandra';
-      if(!confirm('Reset catatan hari ini untuk ' + name + '?')) return;
-      const r = await apiCall('resetToday', { child: name });
-      state = r; renderChild();
-    },
-    async changeBudget(v){
-      const name = currentChild==='aizar'?'Aizar':'Dyandra';
-      const r = await apiCall('setBudget', { child: name, value: parseFloat(v) });
-      state = r; renderChild();
-    },
-    enableNotif(){ ensureNotifyPermission(); alert('Izin notifikasi diminta.'); },
-    setDay(i){ currentDayIdx = i; renderDayTabs(); renderSchedule(); }
-  };
-
-  document.querySelectorAll('.tab-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      currentChild = btn.dataset.child;
-      renderChild(); renderDayTabs(); renderSchedule();
-    });
-  });
-
-  async function boot(){
-    if(!API_URL){
-      document.getElementById('setupBox').classList.remove('hidden');
-      document.getElementById('app').classList.add('hidden');
-      return;
-    }
-    document.getElementById('setupBox').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-    await refresh();
-    renderDayTabs();
-    renderSchedule();
-    clearInterval(pollTimer);
-    pollTimer = setInterval(refresh, 20000);
-    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) refresh(); });
-  }
-
-  boot();
 })();
+</script>
+<script>
+const S = {
+  st: null, kunciData: '', offset: 0,
+  idx: 0, tab: 'layar', menit: 10, perlu: null,
+  pin: null, pinDefault: false,
+  alarmed: {}, alarmNama: null, lastBeep: 0, audio: null
+};
+try { const i = localStorage.getItem('layar.idx'); if (i !== null) S.idx = Number(i) || 0; } catch (e) {}
+
+const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const IKON = { belajar:'📚', ibadah:'🕌', sosial:'🤝', fisik:'🏃', layar:'📱', keluarga:'🏠', rumah:'🧹', istirahat:'🍚', minat:'🎨', tidur:'🌙' };
+const NAMA_KAT = { belajar:'Belajar', ibadah:'Ibadah', sosial:'Sosial', fisik:'Gerak', layar:'Layar', keluarga:'Keluarga', rumah:'Rumah', istirahat:'Istirahat', minat:'Bakat', tidur:'Tidur' };
+
+/* ---------- util ---------- */
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nowMs = () => Date.now() + S.offset;
+const cur = () => S.st && S.st.anak[S.idx];
+const byNama = n => S.st && S.st.anak.find(a => a.nama === n);
+function kontras(hex){
+  const h = hex.replace('#',''); const n = parseInt(h.length === 3 ? h.split('').map(x=>x+x).join('') : h, 16);
+  const [r,g,b] = [(n>>16)&255,(n>>8)&255,n&255].map(v => { v/=255; return v <= .03928 ? v/12.92 : Math.pow((v+.055)/1.055,2.4); });
+  const L = .2126*r + .7152*g + .0722*b;
+  return L > .35 ? '#1B2A41' : '#FFFFFF';
+}
+function mmss(ms, naik){
+  const t = Math.max(0, naik ? Math.floor(ms/1000) : Math.ceil(ms/1000));
+  return String(Math.floor(t/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0');
+}
+function tglPendek(t){ const [y,m,d] = t.split('-'); return Number(d) + ' ' + BULAN[Number(m)-1]; }
+function jamWIB(){
+  const p = new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(nowMs()));
+  return p.replace(/^24/, '00');
+}
+function sedangBerlangsung(mulai, selesai, t){
+  return mulai <= selesai ? (t >= mulai && t < selesai) : (t >= mulai || t < selesai);
+}
+function toast(msg){
+  const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('tampil');
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('tampil'), 3200);
+}
+function sisaTeks(c){ return c.berjalan ? 'sedang main' : (c.sisa < 0 ? 'lewat ' + (-c.sisa) + ' menit' : 'sisa ' + c.sisa + ' menit'); }
+
+/* ---------- server ---------- */
+function panggil(fn, args, ok){
+  const r = google.script.run
+    .withSuccessHandler(res => {
+      if (res && res.ok === false) { toast(res.pesan); return; }
+      if (res && res.state) setState(res.state, true);
+      if (ok) ok(res);
+    })
+    .withFailureHandler(e => toast('Gagal terhubung ke Google Sheet: ' + ((e && e.message) || e)));
+  r[fn].apply(r, args);
+}
+function pesanMuat(html){ document.getElementById('app').innerHTML = '<div class="muat">' + html + '</div>'; }
+function tampilSetup(pesan){
+  document.getElementById('app').innerHTML =
+    '<section class="kartu datar"><h2>Sambungkan ke Google Sheet</h2>' +
+    '<p class="petunjuk" style="margin:0 0 12px">Tempel URL web app Apps Script (berakhiran /exec). URL disimpan di browser ini saja.</p>' +
+    '<div class="form"><input type="text" id="urlInput" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off" inputmode="url" value="' + esc(google.apiUrl ? google.apiUrl() : '') + '">' +
+    '<button class="btn utama" data-act="simpanUrl">Simpan dan sambungkan</button></div>' +
+    (pesan ? '<p class="petunjuk salah">' + esc(pesan) + '</p>' : '') + '</section>';
+}
+function gagalMuat(pesan){
+  if (google.hosted) tampilSetup(pesan + ' Cek URL /exec dan pastikan deployment memakai "Who has access: Anyone".');
+  else pesanMuat('Data belum bisa dimuat.<br>Pastikan setup() sudah dijalankan.<br><small>' + esc(pesan) + '</small>');
+}
+function muat(paksa){
+  if (google.hosted && !google.apiUrl()){ if (!S.st) tampilSetup(); return; }
+  google.script.run
+    .withSuccessHandler(st => {
+      if (!st) { if (!S.st) gagalMuat('Server mengembalikan data kosong.'); return; }
+      setState(st, !!paksa);
+    })
+    .withFailureHandler(e => { if (!S.st) gagalMuat((e && e.message) || String(e)); })
+    .getState();
+}
+function setState(st, paksa){
+  S.offset = st.sekarang - Date.now();
+  const k = JSON.stringify(st.anak) + st.tanggal;
+  const berubah = k !== S.kunciData;
+  S.st = st; S.kunciData = k;
+  if (S.idx >= st.anak.length) S.idx = 0;
+  if (!S.perlu) S.perlu = st.keperluan.daftar[0];
+  // Tutup alarm bila sesinya sudah selesai atau diperpanjang dari perangkat lain
+  if (S.alarmNama){
+    const c = byNama(S.alarmNama);
+    if (!c || !c.berjalan || nowMs() < c.berjalan.rencana) tutupAlarm();
+  }
+  const mengetik = document.activeElement && /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName);
+  if (paksa || (berubah && !mengetik)) render();
+}
+
+/* ---------- tampilan ---------- */
+function render(){
+  const st = S.st; if (!st) return;
+  const c = cur();
+  const wt = kontras(c.warna);
+  const isi = S.tab === 'layar' ? viewLayar(c) : S.tab === 'jadwal' ? viewJadwal(c) : S.tab === 'riwayat' ? viewRiwayat(c) : viewOrangTua(c);
+  document.getElementById('app').innerHTML =
+    '<header class="kepala"><div><h1>Layar Keluarga</h1><p class="tgl">' + esc(st.hari) + ', ' + tglPendek(st.tanggal) + '</p></div>' +
+    '<span class="tag">' + (st.akhirPekan ? 'Jatah akhir pekan' : 'Jatah hari sekolah') + '</span></header>' +
+    '<nav class="anak" aria-label="Pilih anak">' + st.anak.map((a,i) =>
+      '<button class="pilih' + (i === S.idx ? ' aktif' : '') + '" style="--w:' + esc(a.warna) + ';--wt:' + kontras(a.warna) + '" data-act="anak" data-i="' + i + '" aria-pressed="' + (i === S.idx) + '">' +
+      '<span class="em">' + esc(a.emoji) + '</span><span class="nm">' + esc(a.nama) + '</span><span class="sm">' + esc(sisaTeks(a)) + '</span></button>').join('') + '</nav>' +
+    '<main style="--warna:' + esc(c.warna) + ';--warna-teks:' + wt + '">' + isi + '</main>' +
+    '<div class="nav"><div class="isi">' + [['layar','⏱️','Layar'],['jadwal','🗓️','Jadwal'],['riwayat','📊','Riwayat'],['ortu','🔑','Orang tua']].map(t =>
+      '<button data-act="tab" data-t="' + t[0] + '"' + (S.tab === t[0] ? ' aria-current="page"' : '') + '><span class="ic">' + t[1] + '</span>' + t[2] + '</button>').join('') + '</div></div>';
+  tick();
+}
+
+function kotakWaktu(c){
+  const total = Math.max(c.jatah + c.bonus, 1);
+  const u = total > 90 ? 10 : 5;
+  const n = Math.ceil(total / u);
+  let h = '';
+  for (let i = 0; i < n; i++){
+    const p = Math.min(1, Math.max(0, (c.terpakai - i*u) / u)) * 100;
+    h += '<i style="background:linear-gradient(90deg,var(--terpakai) ' + p + '%,var(--warna) ' + p + '%)"></i>';
+  }
+  return '<div class="kotak' + (c.sisa < 0 ? ' merah' : '') + '" aria-hidden="true">' + h + '</div><div class="legenda">Setiap kotak = ' + u + ' menit. Kotak abu-abu sudah terpakai.</div>';
+}
+
+function viewLayar(c){
+  const habis = c.sisa < 0;
+  const adj = c.bonus ? ' ' + (c.bonus > 0 ? '+' : '−') + Math.abs(c.bonus) + ' penyesuaian' : '';
+  let h = '<section class="kartu' + (habis ? ' lewatnya' : '') + '"><div class="sisa"><span class="angka">' + Math.abs(c.sisa) + '</span><span class="satuan">' +
+    (habis ? 'menit melebihi jatah' : 'menit tersisa') + '</span></div>' +
+    '<p class="rincian">Jatah hari ini ' + c.jatah + ' menit' + adj + '. Terpakai ' + c.terpakai + ' menit.</p>' + kotakWaktu(c) + '</section>';
+
+  if (c.berjalan){
+    const b = c.berjalan;
+    h += '<section class="kartu berjalan"><div class="label"><span class="titik"></span>' + esc(c.nama) + ' sedang: ' + esc(b.keperluan) + '</div>' +
+      '<div class="timer" id="timer">--:--</div><p class="ket" id="timerKet">Ambil ' + b.diambil + ' menit, mulai pukul ' + esc(b.jam) + '.' + (b.hitung ? '' : ' Tidak memotong jatah.') + '</p>' +
+      '<div class="aksi"><button class="btn utama" data-act="selesai">Selesai sekarang</button><button class="btn" data-act="tambah">Tambah 5 menit</button></div>' +
+      '<p class="petunjuk">Berhenti lebih cepat? Sisa menit otomatis kembali ke jatah.</p></section>';
+  } else {
+    const opsi = [5,10,15,20,30].filter(m => m <= c.maks);
+    if (!S.menitBebas && opsi.indexOf(S.menit) < 0) S.menit = opsi.indexOf(10) >= 0 ? 10 : opsi[opsi.length - 1];
+    h += '<section class="kartu"><h2>' + esc(c.nama) + ' mau ambil berapa menit?</h2><div class="chips">' +
+      opsi.map(m => '<button class="chip" data-act="menit" data-m="' + m + '" aria-pressed="' + (S.menit === m) + '">' + m + ' menit</button>').join('') + '</div>' +
+      '<label class="lain">atau ketik sendiri <input type="number" id="menitLain" inputmode="numeric" min="1" max="' + c.maks + '" placeholder="menit" value="' + (opsi.indexOf(S.menit) < 0 ? S.menit : '') + '"></label>' +
+      '<h2>Untuk apa?</h2><div class="chips">' +
+      S.st.keperluan.daftar.map(k => '<button class="chip" data-act="perlu" data-k="' + esc(k) + '" aria-pressed="' + (S.perlu === k) + '">' + esc(k) + '</button>').join('') + '</div>' +
+      '<button class="btn utama besar" id="btnMulai" data-act="mulai"></button><p class="petunjuk" id="petunjukMulai"></p></section>';
+  }
+  setTimeout(perbaruiMulai, 0);
+  return h;
+}
+
+function perbaruiMulai(){
+  const c = cur(); const b = document.getElementById('btnMulai'); if (!c || !b) return;
+  const belajar = S.perlu === S.st.keperluan.belajar;
+  const m = Math.round(Number(S.menit));
+  const p = document.getElementById('petunjukMulai');
+  let salah = '';
+  if (!(m >= 1)) salah = 'Pilih atau ketik jumlah menit.';
+  else if (m > c.maks) salah = 'Sekali ambil maksimal ' + c.maks + ' menit.';
+  else if (!belajar && m > c.sisa) salah = 'Sisa jatah hanya ' + Math.max(c.sisa,0) + ' menit.';
+  b.disabled = !!salah;
+  b.textContent = m >= 1 ? 'Mulai ' + m + ' menit' : 'Mulai';
+  p.className = 'petunjuk' + (salah ? ' salah' : '');
+  p.textContent = salah || (belajar ? 'Waktu belajar tidak memotong jatah hiburan.' : 'Setelah ' + m + ' menit, pengingat akan berbunyi dan dikirim ke HP orang tua.');
+}
+
+const URUT_HARI = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+const SINGKAT = { Senin:'Sen', Selasa:'Sel', Rabu:'Rab', Kamis:'Kam', Jumat:'Jum', Sabtu:'Sab', Minggu:'Min' };
+
+function viewJadwal(c){
+  const hariIni = S.st.hari;
+  const pilih = URUT_HARI.indexOf(S.hariJadwal) >= 0 ? S.hariJadwal : hariIni;
+  const iniHariIni = pilih === hariIni;
+  const t = jamWIB(); S.jamRender = t;
+  const daftar = iniHariIni ? c.jadwal : ((c.jadwalPekan && c.jadwalPekan[pilih]) || []);
+
+  let h = '<div class="hari" role="group" aria-label="Pilih hari">' + URUT_HARI.map(d =>
+    '<button class="' + (d === hariIni ? 'ini' : '') + '" data-act="hari" data-h="' + d + '" aria-pressed="' + (d === pilih) + '" aria-label="' + d + (d === hariIni ? ' (hari ini)' : '') + '">' + SINGKAT[d] + '</button>').join('') + '</div>';
+
+  if (iniHariIni){
+    const dapat = daftar.filter(j => j.kategori !== 'tidur' && j.kategori !== 'layar');
+    const done = dapat.filter(j => j.centang).length;
+    const pct = dapat.length ? Math.round(done / dapat.length * 100) : 0;
+    h += '<section class="kartu datar"><h2>Kegiatan ' + esc(c.nama) + ' hari ini</h2>' +
+      '<div class="progres" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + pct + '%"></i></div>' +
+      '<p class="petunjuk" style="margin-top:4px">' + done + ' dari ' + dapat.length + ' kegiatan sudah dicentang</p></section>';
+  } else {
+    h += '<section class="kartu datar"><h2>Jadwal ' + esc(c.nama) + ' hari ' + esc(pilih) + '</h2>' +
+      '<p class="petunjuk" style="margin-top:0">Hanya untuk dilihat. Centang kegiatan bisa dilakukan pada hari yang bersangkutan.</p></section>';
+  }
+  if (!daftar.length) return h + '<p class="kosong">Belum ada jadwal untuk hari ini. Isi di sheet "Jadwal".</p>';
+
+  h += '<section class="kartu datar" style="padding:8px 8px">' + daftar.map(j => {
+    const kini = iniHariIni && sedangBerlangsung(j.mulai, j.selesai, t);
+    const bisa = iniHariIni && j.kategori !== 'tidur' && j.kategori !== 'layar';
+    return '<div class="jd' + (kini ? ' kini' : '') + (j.centang ? ' selesai' : '') + '"' + (iniHariIni ? ' data-m="' + esc(j.mulai) + '" data-s="' + esc(j.selesai) + '"' : '') + '>' +
+      '<div class="jam"><b>' + esc(j.mulai) + '</b>' + esc(j.selesai) + '</div>' +
+      '<div><div class="nm">' + esc(j.kegiatan) + '</div>' +
+      '<div class="cat">' + (IKON[j.kategori] || '') + ' ' + esc(NAMA_KAT[j.kategori] || j.kategori) + '</div>' +
+      '<div class="sekarang">Sedang berlangsung</div>' +
+      (j.catatan ? '<div class="cat" style="margin-top:6px">' + esc(j.catatan) + '</div>' : '') + '</div>' +
+      (bisa ? '<button class="cek" data-act="cek" data-k="' + esc(j.kunci) + '" data-n="' + esc(j.kegiatan) + '" aria-pressed="' + j.centang + '" aria-label="Tandai ' + esc(j.kegiatan) + ' selesai">' + (j.centang ? '✓' : '') + '</button>' : '<span></span>') +
+      '</div>';
+  }).join('') + '</section>';
+  return h;
+}
+
+function perbaruiKini(){
+  const t = jamWIB(); S.jamRender = t;
+  document.querySelectorAll('.jd[data-m]').forEach(e => e.classList.toggle('kini', sedangBerlangsung(e.dataset.m, e.dataset.s, t)));
+}
+
+function viewRiwayat(c){
+  const maks = Math.max.apply(null, c.riwayat.map(r => Math.max(r.total, r.terpakai)).concat([10]));
+  let h = '<section class="kartu datar"><h2>7 hari terakhir</h2><div class="plot">' + c.riwayat.map(r => {
+    const tp = r.terpakai / maks * 100, tj = r.total / maks * 100;
+    return '<div class="kol"><div class="area"><div class="bt' + (r.terpakai > r.total ? ' lebih' : '') + '" style="height:' + tp + '%"></div>' +
+      '<div class="gj" style="bottom:' + tj + '%"></div></div><div class="lb">' + esc(r.label) + '<br>' + esc(r.tgl) + '</div><div class="nl">' + r.terpakai + '</div></div>';
+  }).join('') + '</div><p class="legenda">Batang = menit terpakai. Garis putus-putus = jatah hari itu. Merah = melebihi jatah.</p></section>';
+
+  h += '<section class="kartu datar"><h2>Sesi hari ini</h2>';
+  if (!c.sesi.length) h += '<p class="kosong">Belum ada sesi layar hari ini.</p>';
+  h += c.sesi.map(s => {
+    const jalan = s.status === 'Berjalan', batal = s.status === 'Dibatalkan';
+    return '<div class="baris"><div><div>' + esc(s.jam) + ', ' + esc(s.keperluan) + '</div><div class="sub">' +
+      (jalan ? 'Ambil ' + s.diambil + ' menit' : (batal ? 'Ambil ' + s.diambil + ' menit' : 'Ambil ' + s.diambil + ', terpakai ' + s.terpakai + ' menit')) +
+      (s.hitung ? '' : ', tidak memotong jatah') + '</div></div><span class="status' + (jalan ? ' jalan' : '') + (batal ? ' batal' : '') + '">' + esc(s.status) + '</span></div>';
+  }).join('') + '</section>';
+  return h;
+}
+
+function viewOrangTua(c){
+  if (!S.pin){
+    return '<section class="kartu datar"><h2>Panel orang tua</h2><p class="petunjuk" style="margin:0 0 12px">Masukkan PIN untuk memberi bonus, memotong, atau membatalkan sesi.</p>' +
+      '<div class="form"><input type="password" id="pinInput" inputmode="numeric" placeholder="PIN" autocomplete="off"><button class="btn utama" data-act="buka">Buka panel</button></div></section>';
+  }
+  let h = '';
+  if (S.pinDefault) h += '<section class="kartu datar"><p><b>PIN masih 1234.</b> Ganti di sheet "Pengaturan" (baris PIN).</p></section>';
+  h += '<section class="kartu datar"><h2>Bonus atau potongan menit</h2><div class="chips">' +
+    [[15,'Nilai bagus / prestasi'],[10,'Membantu pekerjaan rumah'],[10,'Olahraga ekstra'],[-10,'Lewat waktu / melanggar aturan']].map(p =>
+      '<button class="chip" data-act="preset" data-m="' + p[0] + '" data-a="' + esc(p[1]) + '">' + (p[0] > 0 ? '+' : '−') + Math.abs(p[0]) + ' ' + esc(p[1]) + '</button>').join('') + '</div>' +
+    '<div class="form"><div class="dua"><input type="number" id="bonusMenit" inputmode="numeric" placeholder="± menit"><input type="text" id="bonusAlasan" maxlength="120" placeholder="Alasan"></div>' +
+    '<button class="btn utama" data-act="bonus">Simpan untuk ' + esc(c.nama) + '</button></div></section>';
+  h += '<section class="kartu datar"><h2>Batalkan sesi salah tekan</h2>';
+  const bisa = c.sesi.filter(s => s.status !== 'Dibatalkan');
+  if (!bisa.length) h += '<p class="kosong">Tidak ada sesi hari ini.</p>';
+  h += bisa.map(s => '<div class="baris"><div>' + esc(s.jam) + ', ' + esc(s.keperluan) + '<div class="sub">' + s.diambil + ' menit, ' + esc(s.status) + '</div></div>' +
+    '<button class="btn kecil" data-act="batal" data-id="' + esc(s.id) + '">Batalkan</button></div>').join('') + '</section>';
+  h += '<p class="petunjuk">Jatah harian, jadwal, PIN, dan pengaturan notifikasi diubah langsung di Google Sheet.</p>';
+  if (google.hosted) h += '<button class="btn kecil" style="margin-top:12px" data-act="gantiUrl">Ganti alamat Apps Script</button>';
+  return h;
+}
+
+/* ---------- timer & alarm ---------- */
+function tick(){
+  if (!S.st) return;
+  const now = nowMs();
+  S.st.anak.forEach(a => {
+    if (a.berjalan && now >= a.berjalan.rencana){
+      const key = a.berjalan.id + ':' + a.berjalan.rencana;
+      if (!S.alarmed[key]){ S.alarmed[key] = true; bukaAlarm(a); }
+    }
+  });
+  if (S.alarmNama && Date.now() - S.lastBeep > 20000){ S.lastBeep = Date.now(); bunyi(); }
+  if (S.tab === 'jadwal' && jamWIB() !== S.jamRender) perbaruiKini();
+
+  const c = cur(); const el = document.getElementById('timer');
+  if (c && c.berjalan && el){
+    const sisaMs = c.berjalan.rencana - now;
+    const ket = document.getElementById('timerKet');
+    if (sisaMs > 0){ el.textContent = mmss(sisaMs); el.classList.remove('lewat'); }
+    else { el.textContent = '+' + mmss(-sisaMs, true); el.classList.add('lewat'); if (ket) ket.textContent = 'Waktu habis. Saatnya berhenti.'; }
+  }
+}
+function bunyi(){
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC){
+      const ctx = S.audio || (S.audio = new AC()); if (ctx.resume) ctx.resume();
+      const t0 = ctx.currentTime;
+      [0, .5, 1].forEach(o => {
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = 'sine'; osc.frequency.value = 880; osc.connect(g); g.connect(ctx.destination);
+        g.gain.setValueAtTime(.0001, t0+o); g.gain.exponentialRampToValueAtTime(.4, t0+o+.02); g.gain.exponentialRampToValueAtTime(.0001, t0+o+.35);
+        osc.start(t0+o); osc.stop(t0+o+.4);
+      });
+    }
+    if (navigator.vibrate) navigator.vibrate([300,150,300,150,300]);
+  } catch (e) {}
+}
+function bukaAlarm(a){
+  S.alarmNama = a.nama; S.lastBeep = Date.now(); bunyi();
+  try { if (window.Notification && Notification.permission === 'granted') new Notification('Waktu layar ' + a.nama + ' habis', { body: 'Saatnya berhenti.' }); } catch (e) {}
+  const el = document.getElementById('alarm');
+  el.style.setProperty('--warna', a.warna); el.style.setProperty('--warna-teks', kontras(a.warna));
+  const bisaTambah = !a.berjalan.hitung || a.sisa >= 5;
+  el.innerHTML = '<div class="besar-em">⏰</div><h2>Waktu ' + esc(a.nama) + ' sudah habis</h2><p>' + a.berjalan.diambil + ' menit untuk ' + esc(a.berjalan.keperluan) + ' sudah selesai. Simpan HP dan lanjut ke kegiatan berikutnya.</p>' +
+    '<button class="btn solid" data-act="alarmSelesai">Oke, selesai</button>' +
+    (bisaTambah ? '<button class="btn" data-act="alarmTambah">Minta tambah 5 menit</button>' : '');
+  el.hidden = false;
+}
+function tutupAlarm(){ S.alarmNama = null; const el = document.getElementById('alarm'); el.hidden = true; el.innerHTML = ''; }
+
+/* ---------- interaksi ---------- */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const c = cur(); const d = el.dataset;
+  switch (d.act){
+    case 'simpanUrl': {
+      const v = (document.getElementById('urlInput').value || '').trim();
+      if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(v)){ tampilSetup('URL harus berawalan https://script.google.com/ dan berakhiran /exec.'); break; }
+      google.setApiUrl(v); S.st = null; S.kunciData = ''; pesanMuat('Menyambungkan…'); muat(true); break;
+    }
+    case 'gantiUrl': google.clearApiUrl(); S.st = null; S.kunciData = ''; S.pin = null; tampilSetup(); break;
+    case 'anak': S.idx = Number(d.i); try { localStorage.setItem('layar.idx', S.idx); } catch (x) {} S.menitBebas = false; render(); break;
+    case 'tab': S.tab = d.t; render(); break;
+    case 'hari': S.hariJadwal = d.h; render(); break;
+    case 'menit': S.menit = Number(d.m); S.menitBebas = false; render(); break;
+    case 'perlu': S.perlu = d.k; render(); break;
+    case 'mulai':
+      try { if (window.Notification && Notification.permission === 'default') Notification.requestPermission(); } catch (x) {}
+      try { const AC = window.AudioContext || window.webkitAudioContext; if (AC){ S.audio = S.audio || new AC(); if (S.audio.resume) S.audio.resume(); } } catch (x) {}
+      el.disabled = true; panggil('mulaiSesi', [c.nama, S.menit, S.perlu], () => { toast('Tercatat ' + S.menit + ' menit untuk ' + c.nama); }); break;
+    case 'selesai': el.disabled = true; panggil('hentikanSesi', [c.berjalan.id], () => toast('Selesai. Sisa menit sudah dihitung ulang.')); break;
+    case 'tambah': el.disabled = true; panggil('tambahMenit', [c.berjalan.id, 5]); break;
+    case 'alarmSelesai': { const a = byNama(S.alarmNama); if (a && a.berjalan) panggil('hentikanSesi', [a.berjalan.id], tutupAlarm); else tutupAlarm(); break; }
+    case 'alarmTambah': { const a = byNama(S.alarmNama); if (a && a.berjalan) panggil('tambahMenit', [a.berjalan.id, 5], tutupAlarm); break; }
+    case 'cek': {
+      const j = c.jadwal.find(x => x.kunci === d.k); const baru = !(j && j.centang);
+      if (j) j.centang = baru; render();
+      panggil('centang', [c.nama, d.k, d.n, baru]); break;
+    }
+    case 'buka': {
+      const v = document.getElementById('pinInput').value;
+      google.script.run.withSuccessHandler(r => { if (r.ok){ S.pin = v; S.pinDefault = r.pinDefault; render(); } else toast('PIN salah.'); })
+        .withFailureHandler(x => toast('Gagal terhubung.')).cekPin(v); break;
+    }
+    case 'preset': document.getElementById('bonusMenit').value = d.m; document.getElementById('bonusAlasan').value = d.a; break;
+    case 'bonus': {
+      const m = document.getElementById('bonusMenit').value, a = document.getElementById('bonusAlasan').value;
+      panggil('beriPenyesuaian', [S.pin, c.nama, m, a], () => toast('Tersimpan untuk ' + c.nama)); break;
+    }
+    case 'batal': if (confirm('Batalkan sesi ini? Menitnya kembali ke jatah.')) panggil('batalkanSesi', [S.pin, d.id], () => toast('Sesi dibatalkan.')); break;
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'menitLain'){
+    S.menit = Number(e.target.value) || 0; S.menitBebas = true;
+    document.querySelectorAll('[data-act="menit"]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    perbaruiMulai();
+  }
+});
+document.addEventListener('visibilitychange', () => { if (!document.hidden) muat(false); });
+
+muat(true);
+setInterval(tick, 500);
+setInterval(() => { if (!document.hidden) muat(false); }, 15000);
+setTimeout(() => { if (!S.st) { const m = document.querySelector('#app .muat'); if (m) m.innerHTML += '<br><small>Belum ada respons dari server. Cek Apps Script &gt; Executions, lalu deploy ulang versi terbaru.</small>'; } }, 12000);
 </script>
 </body>
 </html>
