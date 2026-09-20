@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Panduan langkah demi langkah memakai aplikasi Layar Keluarga di HP dan komputer.">
+<title>Layar Keluarga: Panduan Penggunaan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --kertas:#F3F5F9; --permukaan:#FFFFFF; --tinta:#1B2A41; --tinta-2:#4F5E75; --garis:#D9DFEA;
+  --aizar:#F2A900; --aizar-teks:#1B2A41; --dyandra:#6C4CF1; --dyandra-teks:#FFFFFF;
+  --terpakai:#D3D9E4; --bahaya:#C43D3D; --baik:#25805A; --sorot:#FFF3D1; --sorot-garis:#E0A100;
+  --f-judul:'Fredoka',ui-rounded,'Nunito','Trebuchet MS',system-ui,sans-serif;
+  --f-isi:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --kertas:#0F1520; --permukaan:#182131; --tinta:#E8EDF5; --tinta-2:#A5B2C6; --garis:#2B384D;
+    --terpakai:#2C3849; --bahaya:#FF7A7A; --baik:#4CC38A; --sorot:#2A2410; --sorot-garis:#C79A1B;
+  }
+}
+:root[data-theme="dark"]{
+  --kertas:#0F1520; --permukaan:#182131; --tinta:#E8EDF5; --tinta-2:#A5B2C6; --garis:#2B384D;
+  --terpakai:#2C3849; --bahaya:#FF7A7A; --baik:#4CC38A; --sorot:#2A2410; --sorot-garis:#C79A1B;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--kertas);color:var(--tinta);font-family:var(--f-isi);font-size:18px;line-height:1.65}
+.wrap{max-width:44rem;margin:0 auto;padding:28px 20px 80px}
+h1,h2,h3{font-family:var(--f-judul);font-weight:600;line-height:1.2;margin:0}
+h1{font-size:clamp(34px,7vw,52px);letter-spacing:-.01em}
+h2{font-size:clamp(24px,4.6vw,30px);margin:56px 0 14px;scroll-margin-top:16px}
+h3{font-size:20px;margin:30px 0 8px}
+p{margin:0 0 14px}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--tinta);outline-offset:2px}
+.lead{font-size:clamp(19px,3.4vw,22px);color:var(--tinta-2);margin:14px 0 26px;max-width:34em}
+.muted{color:var(--tinta-2)}
+small,.kecil{font-size:15px}
+
+.isi{background:var(--permukaan);border:1px solid var(--garis);border-radius:16px;padding:16px 20px;margin:26px 0 0}
+.isi b{font-family:var(--f-judul);font-weight:600}
+.isi ol{margin:8px 0 0;padding-left:1.3em;columns:2;column-gap:28px}
+.isi li{break-inside:avoid;margin:3px 0}
+@media (max-width:560px){.isi ol{columns:1}}
+
+/* pil nama anak */
+.a,.d{display:inline-block;padding:0 10px;border-radius:99px;font-weight:600;font-size:.9em;line-height:1.5}
+.a{background:var(--aizar);color:var(--aizar-teks)}
+.d{background:var(--dyandra);color:var(--dyandra-teks)}
+
+/* daftar fitur */
+.fitur{margin:0;padding:0}
+.fitur > div{display:grid;grid-template-columns:11.5rem 1fr;gap:6px 26px;padding:18px 0;border-top:1px solid var(--garis)}
+.fitur > div:last-child{border-bottom:1px solid var(--garis)}
+.fitur dt{font-family:var(--f-judul);font-weight:600;font-size:19px;line-height:1.3}
+.fitur dd{margin:0}
+.fitur dd p:last-child{margin-bottom:0}
+.contoh{display:block;margin-top:8px;color:var(--tinta-2);font-size:16px}
+@media (max-width:640px){.fitur > div{grid-template-columns:1fr;gap:4px}}
+
+/* kotak penekanan */
+.catatan{border-left:6px solid var(--sorot-garis);background:var(--sorot);border-radius:0 14px 14px 0;padding:16px 20px;margin:22px 0}
+.catatan h3{margin:0 0 6px;font-size:19px}
+.catatan p:last-child,.catatan ul:last-child{margin-bottom:0}
+.catatan ul{margin:6px 0 0;padding-left:1.2em}
+.catatan li{margin:4px 0}
+
+/* tabel */
+.tabel{width:100%;border-collapse:collapse;font-size:16.5px;margin:12px 0}
+.tabel th,.tabel td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--garis);vertical-align:top}
+.tabel th{font-family:var(--f-judul);font-weight:600;font-size:16px;color:var(--tinta-2)}
+.gulir{overflow-x:auto}
+
+/* langkah berurutan */
+.langkah{list-style:none;counter-reset:l;margin:14px 0;padding:0}
+.langkah > li{counter-increment:l;position:relative;padding:4px 0 16px 58px;min-height:44px}
+.langkah > li::before{content:counter(l);position:absolute;left:0;top:2px;width:40px;height:40px;border-radius:50%;
+  background:var(--tinta);color:var(--kertas);font-family:var(--f-judul);font-weight:600;font-size:20px;display:grid;place-items:center}
+.langkah > li::after{content:"";position:absolute;left:19px;top:46px;bottom:2px;width:2px;background:var(--garis)}
+.langkah > li:last-child::after{display:none}
+.langkah b{font-weight:600}
+.langkah .kutip{display:block;color:var(--tinta-2);font-size:16.5px}
+
+/* detail / tanya jawab */
+details{background:var(--permukaan);border:1px solid var(--garis);border-radius:14px;margin:10px 0;padding:0}
+summary{cursor:pointer;padding:14px 18px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center;min-height:52px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--f-judul);font-size:26px;line-height:1;color:var(--tinta-2)}
+details[open] summary::after{content:"\2212"}
+details > div{padding:0 18px 16px}
+details > div p:last-child{margin-bottom:0}
+
+/* blok perangkat */
+.perangkat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+.perangkat > section{background:var(--permukaan);border:1px solid var(--garis);border-radius:18px;padding:16px 18px}
+.perangkat h3{margin:0 0 8px;font-size:19px}
+.perangkat ol{margin:0;padding-left:1.25em}
+.perangkat li{margin:5px 0;font-size:16.5px;line-height:1.5}
+@media (max-width:760px){.perangkat{grid-template-columns:1fr}}
+
+/* ====== tiruan tampilan aplikasi ====== */
+.hp{width:100%;max-width:330px;background:var(--kertas);border:2px solid var(--tinta-2);border-radius:26px;padding:14px;margin:0;font-size:14px;line-height:1.4}
+.hp *{box-sizing:border-box}
+.pasang{display:grid;grid-template-columns:330px 1fr;gap:26px;align-items:start;margin:18px 0}
+.pasang figure{margin:0}
+.pasang figcaption{font-size:15px;color:var(--tinta-2);margin-top:8px;max-width:330px}
+@media (max-width:760px){.pasang{grid-template-columns:1fr}.hp{margin:0 auto}.pasang figcaption{margin-left:auto;margin-right:auto}}
+.rel{position:relative}
+.no{position:absolute;right:-8px;top:-8px;width:24px;height:24px;border-radius:50%;background:var(--bahaya);color:#fff;font-style:normal;font-weight:700;font-size:13px;display:grid;place-items:center;font-family:var(--f-isi);z-index:2;border:2px solid var(--kertas)}
+.legenda{margin:0;padding:0;list-style:none}
+.legenda li{display:grid;grid-template-columns:30px 1fr;gap:10px;margin:0 0 12px;align-items:start}
+.legenda i{width:24px;height:24px;border-radius:50%;background:var(--bahaya);color:#fff;font-style:normal;font-weight:700;font-size:13px;display:grid;place-items:center;margin-top:3px}
+.hp-anak{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.hp-anak .p{border:2px solid var(--garis);background:var(--permukaan);border-radius:14px;padding:6px 10px;display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center}
+.hp-anak .p span{grid-row:1 / 3;font-size:22px}
+.hp-anak .p b{font-family:var(--f-judul);font-weight:600;font-size:15px;line-height:1.2}
+.hp-anak .p small{font-size:11.5px;color:var(--tinta-2)}
+.hp-anak .p.on{background:var(--aizar);border-color:var(--aizar);color:var(--aizar-teks)}
+.hp-anak .p.on small{color:inherit;opacity:.9}
+.hp-kartu{background:var(--permukaan);border:1px solid var(--garis);border-radius:18px;padding:14px;margin-bottom:10px}
+.hp-sisa{display:flex;align-items:baseline;gap:6px}
+.hp-sisa b{font-family:var(--f-judul);font-weight:600;font-size:54px;line-height:1}
+.hp-sisa span{color:var(--tinta-2)}
+.hp-info{color:var(--tinta-2);font-size:12px;margin-top:2px}
+.hp-kotak{display:flex;gap:3px;margin:10px 0 6px}
+.hp-kotak i{flex:1;height:22px;border-radius:6px;background:var(--aizar)}
+.hp-kotak i.x{background:var(--terpakai)}
+.hp-judul{font-family:var(--f-judul);font-weight:600;font-size:15px;margin:12px 0 6px}
+.hp-chips{display:flex;flex-wrap:wrap;gap:5px}
+.hp-chips span{border:2px solid var(--garis);background:var(--kertas);border-radius:9px;padding:4px 9px;font-size:12.5px}
+.hp-chips span.on{background:var(--aizar);border-color:var(--tinta);color:var(--aizar-teks);font-weight:600}
+.hp-tombol{margin-top:12px;background:var(--aizar);color:var(--aizar-teks);border-radius:12px;text-align:center;font-weight:600;padding:11px;font-size:15px}
+.hp-tombol.garis{background:transparent;border:2px solid var(--tinta);color:var(--tinta)}
+.hp-baris{display:flex;gap:8px;margin-top:12px}
+.hp-baris > div{flex:1}
+.hp-timer{font-family:var(--f-judul);font-weight:600;font-size:58px;line-height:1;margin:8px 0 6px}
+.hp-label{display:flex;align-items:center;gap:6px;color:var(--tinta-2);font-size:12.5px}
+.hp-label i{width:9px;height:9px;border-radius:50%;background:var(--baik)}
+.hp-alarm{background:var(--aizar);color:var(--aizar-teks);border-radius:18px;padding:22px 16px;text-align:left}
+.hp-alarm .em{font-size:44px;line-height:1}
+.hp-alarm h4{font-family:var(--f-judul);font-weight:600;font-size:24px;margin:10px 0 6px;line-height:1.15}
+.hp-alarm p{font-size:13px;margin:0 0 14px}
+.hp-alarm .t{border-radius:12px;padding:10px;text-align:center;font-weight:600;margin-top:8px}
+.hp-alarm .t.s{background:var(--aizar-teks);color:var(--aizar)}
+.hp-alarm .t.k{border:2px solid var(--aizar-teks)}
+.hp-hari{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+.hp-hari span{border:2px solid var(--garis);background:var(--permukaan);border-radius:9px;padding:5px 0;text-align:center;font-size:11.5px}
+.hp-hari span.on{background:var(--aizar);border-color:var(--aizar);color:var(--aizar-teks);font-weight:600}
+.hp-jd{display:grid;grid-template-columns:46px 1fr 26px;gap:8px;padding:8px 6px;border-bottom:1px solid var(--garis);align-items:center;font-size:12.5px}
+.hp-jd:last-child{border-bottom:0}
+.hp-jd .j{font-family:var(--f-judul);color:var(--tinta-2);line-height:1.2;font-size:12px}
+.hp-jd .j b{display:block;color:var(--tinta)}
+.hp-jd.kini{background:var(--kertas);box-shadow:inset 4px 0 0 var(--aizar);border-radius:6px}
+.hp-jd small{display:block;color:var(--tinta-2);font-size:11px}
+.hp-jd .c{width:24px;height:24px;border-radius:50%;border:2px solid var(--tinta-2);display:grid;place-items:center;font-size:13px}
+.hp-jd .c.y{background:var(--aizar);border-color:var(--aizar);color:var(--aizar-teks)}
+.hp-nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--garis);margin:12px -14px -14px;padding:8px 0 10px;text-align:center;font-size:10.5px;color:var(--tinta-2);background:var(--permukaan);border-radius:0 0 24px 24px}
+.hp-nav b{display:block;font-size:17px;line-height:1.2}
+.hp-nav .on{color:var(--tinta);font-weight:600}
+
+.hero{background:var(--permukaan);border:1px solid var(--garis);border-radius:24px;padding:22px;margin:8px 0 6px;max-width:30rem}
+.hero .atas{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.hero .angka{font-family:var(--f-judul);font-weight:600;font-size:clamp(64px,16vw,92px);line-height:.95}
+.hero .satuan{font-size:20px;color:var(--tinta-2);margin-left:8px}
+.hero .kotak{display:flex;gap:5px;margin:16px 0 8px}
+.hero .kotak i{flex:1;height:36px;border-radius:9px;background:var(--aizar)}
+.hero .kotak i.x{background:var(--terpakai)}
+.hero p{margin:0;font-size:15.5px;color:var(--tinta-2)}
+
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--garis);color:var(--tinta-2);font-size:15.5px}
+@media print{
+  body{font-size:15px;background:#fff}
+  .wrap{padding:0}
+  .langkah > li,.pasang,.catatan,details,.fitur > div{break-inside:avoid}
+  details:not([open]) > div{display:block}
+  .isi{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Panduan Penggunaan Layar Keluarga</h1>
+  <p class="lead">Langkah demi langkah memakai aplikasi di <b>HP</b> dan di <b>komputer</b>. Tidak perlu paham teknis, ikuti saja urutannya.</p>
+  <nav class="isi" aria-label="Isi panduan">
+    <b>Isi panduan</b>
+    <ol>
+      <li><a href="#siap">Sebelum mulai</a></li>
+      <li><a href="#buka">Membuka aplikasi dan memasang pintasan</a></li>
+      <li><a href="#layar">Mengenal layar utama</a></li>
+      <li><a href="#mulai">Mengambil waktu</a></li>
+      <li><a href="#timer">Saat timer berjalan</a></li>
+      <li><a href="#habis">Saat waktu habis</a></li>
+      <li><a href="#jadwal">Jadwal kegiatan</a></li>
+      <li><a href="#riwayat">Riwayat</a></li>
+      <li><a href="#ortu">Panel orang tua</a></li>
+      <li><a href="#sheet">Mengubah pengaturan di Google Sheet</a></li>
+      <li><a href="#masalah">Kalau ada masalah</a></li>
+      <li><a href="#contekan">Contekan sehari-hari</a></li>
+    </ol>
+  </nav>
+</header>
+
+<h2 id="siap">Sebelum mulai</h2>
+<p>Yang dibutuhkan:</p>
+<ul>
+  <li>HP atau komputer yang tersambung internet.</li>
+  <li>Alamat aplikasi, yang dikirim lewat WhatsApp. Simpan di tempat yang mudah dicari.</li>
+  <li>PIN orang tua, untuk memberi bonus, memotong menit, atau membatalkan sesi.</li>
+</ul>
+<div class="catatan">
+  <h3>Kalau muncul kotak "Sambungkan ke Google Sheet"</h3>
+  <p>Itu berarti alamat aplikasi belum tersimpan di HP atau komputer ini. Tempel alamat yang dikirim lewat WhatsApp, lalu tekan <b>Simpan dan sambungkan</b>. Ini hanya perlu dilakukan sekali di tiap perangkat.</p>
+</div>
+
+<h2 id="buka">Membuka aplikasi dan memasang pintasan</h2>
+<p>Pintasan membuat aplikasi bisa dibuka dengan satu ketukan, seperti aplikasi biasa. Pilih yang sesuai perangkatmu.</p>
+<div class="perangkat">
+  <section>
+    <h3>📱 HP Android (Chrome)</h3>
+    <ol>
+      <li>Buka alamat aplikasi di Chrome.</li>
+      <li>Ketuk tanda tiga titik (⋮) di pojok kanan atas.</li>
+      <li>Pilih <b>Tambahkan ke layar utama</b>.</li>
+      <li>Ketuk <b>Tambahkan</b>. Ikonnya muncul di layar utama.</li>
+    </ol>
+  </section>
+  <section>
+    <h3>📱 iPhone (Safari)</h3>
+    <ol>
+      <li>Buka alamat aplikasi di Safari.</li>
+      <li>Ketuk tombol Bagikan (kotak dengan panah ke atas).</li>
+      <li>Gulir dan pilih <b>Tambahkan ke Layar Utama</b>.</li>
+      <li>Ketuk <b>Tambah</b>. Ikonnya muncul di layar utama.</li>
+    </ol>
+  </section>
+  <section>
+    <h3>💻 Komputer (Chrome atau Edge)</h3>
+    <ol>
+      <li>Buka alamat aplikasi di browser.</li>
+      <li>Tekan <b>Ctrl+D</b> (di Mac: <b>Cmd+D</b>) untuk menyimpannya sebagai bookmark.</li>
+      <li>Tampilan yang sempit di tengah layar itu normal, karena aplikasi dibuat untuk HP.</li>
+    </ol>
+  </section>
+</div>
+<p class="muted kecil">Aplikasi bisa dibuka di beberapa perangkat sekaligus. Semua menampilkan data yang sama.</p>
+
+<h2 id="layar">Mengenal layar utama</h2>
+<p>Ini tampilan tab <b>Layar</b>, yang pertama muncul saat aplikasi dibuka. Angka merah di gambar dijelaskan di sebelahnya.</p>
+<div class="pasang">
+  
+<figure class="hp" role="img" aria-label="Contoh layar utama dengan enam bagian bernomor">
+  <div class="hp-anak">
+      <div class="p on rel"><span>🚀</span><b>Aizar</b><small>sisa 35 menit</small><i class="no">1</i></div>
+      <div class="p"><span>🌟</span><b>Dyandra</b><small>sisa 60 menit</small></div></div>
+  <div class="hp-kartu">
+    <div class="hp-sisa rel"><b>35</b><span>menit tersisa</span><i class="no">2</i></div>
+    <div class="hp-info">Jatah hari ini 45 menit. Terpakai 10 menit.</div>
+    <div class="hp-kotak rel"><i class="x"></i><i class="x"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="no" style="top:-14px">3</i></div>
+    <div class="hp-judul">Aizar mau ambil berapa menit?</div>
+    <div class="hp-chips rel"><span>5 menit</span><span class="on">10 menit</span><span>15 menit</span><span>20 menit</span><i class="no">4</i></div>
+    <div class="hp-judul">Untuk apa?</div>
+    <div class="hp-chips rel"><span class="on">Game</span><span>YouTube</span><span>Chat / medsos</span><span>Lainnya</span><span>Belajar / tugas</span><i class="no">5</i></div>
+    <div class="hp-tombol rel">Mulai 10 menit<i class="no">6</i></div>
+  </div>
+  <div class="hp-nav"><div class="on"><b>⏱️</b>Layar</div><div class=""><b>🗓️</b>Jadwal</div><div class=""><b>📊</b>Riwayat</div><div class=""><b>🔑</b>Orang tua</div></div>
+</figure>
+  <ol class="legenda">
+    <li><i>1</i><span><b>Pilih anak.</b> Ketuk nama Aizar atau Dyandra. Nama yang berwarna adalah yang sedang dipilih. Di bawah nama tertulis sisa waktu, atau "sedang main" kalau sesinya berjalan.</span></li>
+    <li><i>2</i><span><b>Sisa waktu hari ini</b> dalam menit. Berubah merah kalau jatah sudah terlewati.</span></li>
+    <li><i>3</i><span><b>Kotak menit.</b> Satu kotak sama dengan 5 menit. Kotak abu-abu sudah dipakai.</span></li>
+    <li><i>4</i><span><b>Pilih berapa menit</b> yang diminta anak. Kalau angkanya tidak ada, ketik sendiri di kolom "atau ketik sendiri" di bawahnya.</span></li>
+    <li><i>5</i><span><b>Pilih untuk apa.</b> "Belajar / tugas" tidak mengurangi jatah.</span></li>
+    <li><i>6</i><span><b>Tombol Mulai.</b> Tulisannya menunjukkan berapa menit yang akan dicatat.</span></li>
+  </ol>
+</div>
+<p>Di bagian bawah layar ada empat tab: <b>Layar</b>, <b>Jadwal</b>, <b>Riwayat</b>, dan <b>Orang tua</b>.</p>
+
+<h2 id="mulai">Mengambil waktu</h2>
+<p>Lakukan ini setiap kali anak meminta waktu bermain.</p>
+<ol class="langkah">
+  <li><b>Pilih anak</b> di bagian atas. Pastikan namanya benar sebelum lanjut.</li>
+  <li><b>Pilih jumlah menit.</b> Ketuk salah satu tombol menit, atau ketik sendiri.</li>
+  <li><b>Pilih keperluan</b>: Game, YouTube, Chat / medsos, Lainnya, atau Belajar / tugas.</li>
+  <li><b>Tekan Mulai.</b> Sebuah pesan singkat muncul, misalnya "Tercatat 10 menit untuk Aizar". Sisa jatah langsung berkurang, dan timer mulai berjalan.</li>
+</ol>
+<div class="catatan">
+  <h3>Tombol Mulai tidak bisa ditekan?</h3>
+  <p>Baca tulisan merah di bawah tombol. Misalnya "Sisa jatah hanya 5 menit" berarti pilih menit yang lebih kecil. "Sekali ambil maksimal 20 menit" berarti jumlahnya melewati batas sekali ambil.</p>
+</div>
+
+<h2 id="timer">Saat timer berjalan</h2>
+<div class="pasang">
+  
+<figure class="hp" role="img" aria-label="Contoh layar saat timer berjalan">
+  <div class="hp-anak">
+      <div class="p on rel"><span>🚀</span><b>Aizar</b><small>sedang main</small></div>
+      <div class="p"><span>🌟</span><b>Dyandra</b><small>sisa 60 menit</small></div></div>
+  <div class="hp-kartu">
+    <div class="hp-label"><i></i>Aizar sedang: Game</div>
+    <div class="hp-timer rel">07:42<i class="no" style="top:0">1</i></div>
+    <div class="hp-info">Ambil 10 menit, mulai pukul 16:00.</div>
+    <div class="hp-baris">
+      <div class="hp-tombol rel" style="padding:10px 4px">Selesai sekarang<i class="no">2</i></div>
+      <div class="hp-tombol garis rel" style="padding:8px 4px">Tambah 5 menit<i class="no">3</i></div>
+    </div>
+  </div>
+  <div class="hp-nav"><div class="on"><b>⏱️</b>Layar</div><div class=""><b>🗓️</b>Jadwal</div><div class=""><b>📊</b>Riwayat</div><div class=""><b>🔑</b>Orang tua</div></div>
+</figure>
+  <ol class="legenda">
+    <li><i>1</i><span><b>Hitung mundur.</b> Angka besar menunjukkan sisa waktu sesi ini.</span></li>
+    <li><i>2</i><span><b>Selesai sekarang.</b> Tekan kalau anak berhenti lebih awal. Menit yang tidak terpakai kembali ke jatah.</span></li>
+    <li><i>3</i><span><b>Tambah 5 menit.</b> Memperpanjang sesi 5 menit, kalau sisa jatahnya cukup.</span></li>
+  </ol>
+</div>
+<ul>
+  <li><b>Menutup aplikasi tidak menghentikan hitungan.</b> Sesi berjalan terus sampai Selesai ditekan.</li>
+  <li>Setiap anak punya sesinya sendiri. Aizar dan Dyandra bisa berjalan bersamaan.</li>
+  <li>Di HP lain yang membuka aplikasi, kartu nama anak itu ikut menampilkan "sedang main".</li>
+</ul>
+
+<h2 id="habis">Saat waktu habis</h2>
+<p>Ada dua pengingat, dan keduanya muncul pada saat yang sama.</p>
+<div class="pasang">
+  
+<figure class="hp" role="img" aria-label="Contoh layar alarm saat waktu habis">
+  <div class="hp-alarm">
+    <div class="em">⏰</div>
+    <h4>Waktu Aizar sudah habis</h4>
+    <p>10 menit untuk Game sudah selesai. Simpan HP dan lanjut ke kegiatan berikutnya.</p>
+    <div class="t s rel">Oke, selesai<i class="no">1</i></div>
+    <div class="t k rel">Minta tambah 5 menit<i class="no">2</i></div>
+  </div>
+</figure>
+  <ol class="legenda">
+    <li><i>1</i><span><b>Oke, selesai.</b> Menutup alarm dan mengakhiri sesi.</span></li>
+    <li><i>2</i><span><b>Minta tambah 5 menit.</b> Memperpanjang sesi, kalau sisa jatahnya cukup. Keputusannya ada pada orang tua.</span></li>
+  </ol>
+</div>
+<ol class="langkah">
+  <li><b>Alarm di layar</b> berbunyi dan bergetar di HP yang membuka aplikasi. Bunyinya diulang tiap 20 detik sampai ditekan.</li>
+  <li><b>Pesan masuk ke HP orang tua</b> lewat email (dan Telegram bila diaktifkan). Judulnya, misalnya, "Waktu layar Aizar sudah habis".</li>
+  <li><b>Minta anak berhenti</b>, lalu tekan Oke, selesai atau Selesai sekarang di aplikasi.</li>
+</ol>
+<div class="catatan">
+  <h3>Yang perlu diingat</h3>
+  <ul>
+    <li>Alarm di layar hanya bunyi kalau aplikasinya sedang terbuka dan HP tidak dalam mode senyap.</li>
+    <li>Kalau sesi belum diselesaikan, pesan ke HP orang tua diulang tiap 5 menit, total paling banyak 4 pesan.</li>
+    <li>Kalau anak sudah berhenti tapi lupa menekan Selesai, tekan sendiri. Kelebihan waktu yang dihitung paling banyak 30 menit.</li>
+  </ul>
+</div>
+
+<h2 id="jadwal">Jadwal kegiatan</h2>
+<div class="pasang">
+  
+<figure class="hp" role="img" aria-label="Contoh layar jadwal kegiatan">
+  <div class="hp-hari rel"><span class="on">Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span><i class="no">1</i></div>
+  <div class="hp-kartu" style="padding:6px">
+    <div class="hp-jd"><div class="j"><b>15:00</b>15:20</div><div>Sholat Ashar<small>🕌 Ibadah</small></div><div class="c y">✓</div></div>
+    <div class="hp-jd"><div class="j"><b>15:20</b>16:00</div><div>Mengaji / hafalan surat pendek<small>🕌 Ibadah</small></div><div class="c y">✓</div></div>
+    <div class="hp-jd kini rel"><div class="j"><b>16:00</b>17:00</div><div>Main aktif di luar<small>🏃 Gerak</small><small><b>Sedang berlangsung</b></small></div><div class="c rel"><i class="no" style="right:-14px;top:-14px">3</i></div><i class="no" style="left:-10px;right:auto">2</i></div>
+    <div class="hp-jd"><div class="j"><b>17:00</b>17:45</div><div>Jendela layar<small>📱 Layar</small></div><span></span></div>
+  </div>
+  <div class="hp-nav"><div class=""><b>⏱️</b>Layar</div><div class="on"><b>🗓️</b>Jadwal</div><div class=""><b>📊</b>Riwayat</div><div class=""><b>🔑</b>Orang tua</div></div>
+</figure>
+  <ol class="legenda">
+    <li><i>1</i><span><b>Pilih hari.</b> Hari ini terpilih otomatis. Ketuk hari lain untuk melihat jadwalnya, tanpa bisa dicentang.</span></li>
+    <li><i>2</i><span><b>Sorotan</b> menandai kegiatan yang sedang berlangsung sekarang.</span></li>
+    <li><i>3</i><span><b>Lingkaran centang.</b> Ketuk setelah kegiatan selesai. Hanya ada untuk hari ini.</span></li>
+  </ol>
+</div>
+<ol class="langkah">
+  <li>Ketuk tab <b>Jadwal</b> di bagian bawah.</li>
+  <li>Pilih anak di bagian atas.</li>
+  <li>Lihat kegiatan yang disorot, lalu centang yang sudah dikerjakan. Di bagian atas ada garis kemajuan yang terisi seiring centang bertambah.</li>
+</ol>
+<p class="muted kecil">Jam sekolah dan jam sholat di jadwal adalah perkiraan awal. Sesuaikan di Google Sheet (lihat bagian <a href="#sheet">Mengubah pengaturan</a>).</p>
+
+<h2 id="riwayat">Riwayat</h2>
+<ol class="langkah">
+  <li>Ketuk tab <b>Riwayat</b> dan pilih anak.</li>
+  <li><b>Grafik 7 hari.</b> Batang menunjukkan menit yang terpakai, garis putus-putus menunjukkan jatah hari itu. Batang merah berarti hari itu melebihi jatah.</li>
+  <li><b>Sesi hari ini.</b> Daftar tiap sesi beserta jam, keperluan, lama waktu, dan statusnya (Berjalan, Selesai, atau Dibatalkan).</li>
+</ol>
+
+<h2 id="ortu">Panel orang tua</h2>
+<p>Tab <b>Orang tua</b> dikunci PIN. Di sinilah bonus, potongan, dan pembatalan sesi dilakukan.</p>
+<ol class="langkah">
+  <li>Ketuk tab <b>Orang tua</b>.</li>
+  <li>Ketik PIN, lalu tekan <b>Buka panel</b>.</li>
+  <li><b>Memberi bonus atau potongan:</b> pilih anak di bagian atas layar, lalu ketuk salah satu tombol siap pakai (misalnya "+15 Nilai bagus / prestasi"), atau isi sendiri jumlah menit dan alasannya. Tekan <b>Simpan untuk (nama anak)</b>. Bonus memakai angka positif, potongan memakai tanda minus.</li>
+  <li><b>Membatalkan sesi yang salah tekan:</b> cari sesinya di bagian "Batalkan sesi salah tekan", tekan <b>Batalkan</b>, lalu setujui. Menitnya kembali ke jatah.</li>
+</ol>
+<p class="muted kecil">Bonus dan potongan berlaku untuk hari itu saja. Kalau muncul peringatan "PIN masih 1234", ganti PIN di Google Sheet.</p>
+
+<h2 id="sheet">Mengubah pengaturan di Google Sheet</h2>
+<p>Jatah, jadwal, PIN, dan pengaturan lain diubah langsung di Google Sheet keluarga.</p>
+<div class="perangkat" style="grid-template-columns:repeat(2,1fr)">
+  <section>
+    <h3>📱 Di HP</h3>
+    <ol>
+      <li>Pasang aplikasi <b>Google Sheets</b> dari Play Store atau App Store.</li>
+      <li>Masuk dengan akun Google yang diberi akses.</li>
+      <li>Buka file <b>Layar Keluarga</b>.</li>
+      <li>Ketuk sel yang ingin diubah, ketik nilai baru, lalu ketuk tanda centang.</li>
+    </ol>
+  </section>
+  <section>
+    <h3>💻 Di komputer</h3>
+    <ol>
+      <li>Buka <b>sheets.google.com</b> dan masuk dengan akun Google yang diberi akses.</li>
+      <li>Buka file <b>Layar Keluarga</b>.</li>
+      <li>Klik sel yang ingin diubah, ketik nilai baru, lalu tekan Enter.</li>
+    </ol>
+  </section>
+</div>
+<p class="muted kecil">Pemilik Google Sheet perlu membagikannya ke email Google kita berdua lebih dulu (tombol <b>Bagikan</b>, pilih <b>Editor</b>).</p>
+<div class="gulir"><table class="tabel">
+  <thead><tr><th>Yang ingin diubah</th><th>Tab</th><th>Kolom atau baris</th></tr></thead>
+  <tbody>
+    <tr><td>Jatah harian dan batas sekali ambil</td><td>Anak</td><td>JatahHariKerja, JatahAkhirPekan, MaksSekaliAmbil</td></tr>
+    <tr><td>PIN, email tujuan pesan, libur sekolah</td><td>Pengaturan</td><td>Kolom Nilai pada baris PIN, EmailTujuan, ModeLibur (TRUE atau FALSE)</td></tr>
+    <tr><td>Jadwal kegiatan</td><td>Jadwal</td><td>Hari, Mulai, Selesai, Kegiatan, Kategori, Catatan</td></tr>
+    <tr><td>Melihat catatan sesi, bonus, dan centang</td><td>Sesi, Penyesuaian, Centang</td><td>Diisi otomatis oleh aplikasi</td></tr>
+  </tbody>
+</table></div>
+<div class="catatan">
+  <h3>Hati-hati saat mengubah</h3>
+  <ul>
+    <li>Jangan mengubah atau menghapus baris judul (baris 1) di tiap tab.</li>
+    <li>Tulis jam dengan format seperti <b>16:00</b>. Kolom Hari diisi salah satu dari: Hari Kerja, Akhir Pekan, Setiap Hari, atau nama hari (Senin sampai Minggu).</li>
+    <li>Perubahan tampil di aplikasi dalam sekitar 15 detik, atau setelah halaman dimuat ulang.</li>
+    <li>Untuk libur sekolah, ubah ModeLibur menjadi TRUE. Kembalikan ke FALSE saat sekolah masuk lagi.</li>
+  </ul>
+</div>
+
+<h2 id="masalah">Kalau ada masalah</h2>
+<details><summary>Tulisan "Memuat data" tidak hilang, atau muncul "Data belum bisa dimuat"</summary><div>
+  <p>Periksa sambungan internet, lalu muat ulang halaman. Pastikan alamat aplikasi yang dibuka sudah benar (yang dikirim lewat WhatsApp). Kalau masih sama, kabari orang yang memasang aplikasinya dan sebutkan tulisan yang muncul.</p></div></details>
+<details><summary>Muncul kotak "Sambungkan ke Google Sheet"</summary><div>
+  <p>Tempel alamat aplikasi yang dikirim lewat WhatsApp, lalu tekan Simpan dan sambungkan.</p></div></details>
+<details><summary>Tombol Mulai tidak bisa ditekan</summary><div>
+  <p>Baca tulisan merah di bawah tombol. Biasanya karena sisa jatah kurang dari menit yang dipilih, atau melewati batas sekali ambil. Pilih menit yang lebih kecil.</p></div></details>
+<details><summary>Anak sudah berhenti, tapi aplikasi masih menulis "sedang main"</summary><div>
+  <p>Tekan <b>Selesai sekarang</b>. Kalau sesinya tidak perlu dicatat (misalnya salah tekan), buka tab Orang tua, masukkan PIN, lalu pilih Batalkan pada sesi itu.</p></div></details>
+<details><summary>Alarm di HP anak tidak berbunyi</summary><div>
+  <p>Alarm hanya bunyi kalau aplikasi sedang terbuka di layar dan HP tidak dalam mode senyap. Pengingat yang utama adalah pesan ke HP orang tua, jadi pastikan itu berfungsi.</p></div></details>
+<details><summary>Pesan email tidak masuk</summary><div>
+  <p>Periksa folder Spam atau Promosi. Pastikan notifikasi aplikasi Gmail aktif di HP. Sistem memeriksa tiap 1 menit, jadi pesan bisa terlambat sampai sekitar 1 menit.</p></div></details>
+<details><summary>Lupa PIN</summary><div>
+  <p>Buka Google Sheet, tab <b>Pengaturan</b>, lihat kolom Nilai pada baris PIN. Di situ juga PIN diganti.</p></div></details>
+<details><summary>Angka sisa waktu tidak sesuai dugaan</summary><div>
+  <p>Buka tab Riwayat dan lihat Sesi hari ini. Ingat bahwa bonus, potongan, dan kelebihan waktu ikut dihitung, dan sesi Belajar / tugas tidak mengurangi jatah.</p></div></details>
+<details><summary>Tampilan di dua HP berbeda</summary><div>
+  <p>Tunggu sekitar 15 detik, atau muat ulang halaman di HP yang datanya belum berubah.</p></div></details>
+<details><summary>Salah memilih anak saat menekan Mulai</summary><div>
+  <p>Buka tab Orang tua, masukkan PIN, lalu Batalkan sesi itu. Setelah itu ulangi dengan anak yang benar. Sebaiknya cek warna nama anak sebelum menekan Mulai.</p></div></details>
+
+<h2 id="contekan">Contekan sehari-hari</h2>
+<div class="gulir"><table class="tabel">
+  <thead><tr><th>Kapan</th><th>Yang dilakukan</th></tr></thead>
+  <tbody>
+    <tr><td>Pagi</td><td>Lihat tab <b>Jadwal</b> untuk kegiatan hari ini.</td></tr>
+    <tr><td>Anak minta waktu layar</td><td>Tab <b>Layar</b>, pilih anak, pilih menit, pilih keperluan, tekan <b>Mulai</b>.</td></tr>
+    <tr><td>Alarm atau pesan masuk</td><td>Minta anak berhenti, lalu tekan <b>Selesai</b>.</td></tr>
+    <tr><td>Anak mengerjakan kegiatan</td><td>Minta anak mencentangnya di tab <b>Jadwal</b>.</td></tr>
+    <tr><td>Malam</td><td>Lihat <b>Riwayat</b>. Beri bonus di tab <b>Orang tua</b> kalau layak.</td></tr>
+    <tr><td>Minggu malam</td><td>Evaluasi mingguan bersama, lalu tetapkan target minggu depan.</td></tr>
+  </tbody>
+</table></div>
+
+<footer>
+  <p>Penjelasan fungsi tiap fitur ada di dokumen <b>Penjelasan Aplikasi</b>.</p>
+</footer>
+
+</div>
+</body>
+</html>

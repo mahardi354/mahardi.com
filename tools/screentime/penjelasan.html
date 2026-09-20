@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Penjelasan fungsi aplikasi Layar Keluarga untuk mencatat dan mengingatkan waktu layar Aizar dan Dyandra.">
+<title>Layar Keluarga: Penjelasan Aplikasi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --kertas:#F3F5F9; --permukaan:#FFFFFF; --tinta:#1B2A41; --tinta-2:#4F5E75; --garis:#D9DFEA;
+  --aizar:#F2A900; --aizar-teks:#1B2A41; --dyandra:#6C4CF1; --dyandra-teks:#FFFFFF;
+  --terpakai:#D3D9E4; --bahaya:#C43D3D; --baik:#25805A; --sorot:#FFF3D1; --sorot-garis:#E0A100;
+  --f-judul:'Fredoka',ui-rounded,'Nunito','Trebuchet MS',system-ui,sans-serif;
+  --f-isi:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --kertas:#0F1520; --permukaan:#182131; --tinta:#E8EDF5; --tinta-2:#A5B2C6; --garis:#2B384D;
+    --terpakai:#2C3849; --bahaya:#FF7A7A; --baik:#4CC38A; --sorot:#2A2410; --sorot-garis:#C79A1B;
+  }
+}
+:root[data-theme="dark"]{
+  --kertas:#0F1520; --permukaan:#182131; --tinta:#E8EDF5; --tinta-2:#A5B2C6; --garis:#2B384D;
+  --terpakai:#2C3849; --bahaya:#FF7A7A; --baik:#4CC38A; --sorot:#2A2410; --sorot-garis:#C79A1B;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--kertas);color:var(--tinta);font-family:var(--f-isi);font-size:18px;line-height:1.65}
+.wrap{max-width:44rem;margin:0 auto;padding:28px 20px 80px}
+h1,h2,h3{font-family:var(--f-judul);font-weight:600;line-height:1.2;margin:0}
+h1{font-size:clamp(34px,7vw,52px);letter-spacing:-.01em}
+h2{font-size:clamp(24px,4.6vw,30px);margin:56px 0 14px;scroll-margin-top:16px}
+h3{font-size:20px;margin:30px 0 8px}
+p{margin:0 0 14px}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--tinta);outline-offset:2px}
+.lead{font-size:clamp(19px,3.4vw,22px);color:var(--tinta-2);margin:14px 0 26px;max-width:34em}
+.muted{color:var(--tinta-2)}
+small,.kecil{font-size:15px}
+
+.isi{background:var(--permukaan);border:1px solid var(--garis);border-radius:16px;padding:16px 20px;margin:26px 0 0}
+.isi b{font-family:var(--f-judul);font-weight:600}
+.isi ol{margin:8px 0 0;padding-left:1.3em;columns:2;column-gap:28px}
+.isi li{break-inside:avoid;margin:3px 0}
+@media (max-width:560px){.isi ol{columns:1}}
+
+/* pil nama anak */
+.a,.d{display:inline-block;padding:0 10px;border-radius:99px;font-weight:600;font-size:.9em;line-height:1.5}
+.a{background:var(--aizar);color:var(--aizar-teks)}
+.d{background:var(--dyandra);color:var(--dyandra-teks)}
+
+/* daftar fitur */
+.fitur{margin:0;padding:0}
+.fitur > div{display:grid;grid-template-columns:11.5rem 1fr;gap:6px 26px;padding:18px 0;border-top:1px solid var(--garis)}
+.fitur > div:last-child{border-bottom:1px solid var(--garis)}
+.fitur dt{font-family:var(--f-judul);font-weight:600;font-size:19px;line-height:1.3}
+.fitur dd{margin:0}
+.fitur dd p:last-child{margin-bottom:0}
+.contoh{display:block;margin-top:8px;color:var(--tinta-2);font-size:16px}
+@media (max-width:640px){.fitur > div{grid-template-columns:1fr;gap:4px}}
+
+/* kotak penekanan */
+.catatan{border-left:6px solid var(--sorot-garis);background:var(--sorot);border-radius:0 14px 14px 0;padding:16px 20px;margin:22px 0}
+.catatan h3{margin:0 0 6px;font-size:19px}
+.catatan p:last-child,.catatan ul:last-child{margin-bottom:0}
+.catatan ul{margin:6px 0 0;padding-left:1.2em}
+.catatan li{margin:4px 0}
+
+/* tabel */
+.tabel{width:100%;border-collapse:collapse;font-size:16.5px;margin:12px 0}
+.tabel th,.tabel td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--garis);vertical-align:top}
+.tabel th{font-family:var(--f-judul);font-weight:600;font-size:16px;color:var(--tinta-2)}
+.gulir{overflow-x:auto}
+
+/* langkah berurutan */
+.langkah{list-style:none;counter-reset:l;margin:14px 0;padding:0}
+.langkah > li{counter-increment:l;position:relative;padding:4px 0 16px 58px;min-height:44px}
+.langkah > li::before{content:counter(l);position:absolute;left:0;top:2px;width:40px;height:40px;border-radius:50%;
+  background:var(--tinta);color:var(--kertas);font-family:var(--f-judul);font-weight:600;font-size:20px;display:grid;place-items:center}
+.langkah > li::after{content:"";position:absolute;left:19px;top:46px;bottom:2px;width:2px;background:var(--garis)}
+.langkah > li:last-child::after{display:none}
+.langkah b{font-weight:600}
+.langkah .kutip{display:block;color:var(--tinta-2);font-size:16.5px}
+
+/* detail / tanya jawab */
+details{background:var(--permukaan);border:1px solid var(--garis);border-radius:14px;margin:10px 0;padding:0}
+summary{cursor:pointer;padding:14px 18px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center;min-height:52px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--f-judul);font-size:26px;line-height:1;color:var(--tinta-2)}
+details[open] summary::after{content:"\2212"}
+details > div{padding:0 18px 16px}
+details > div p:last-child{margin-bottom:0}
+
+/* blok perangkat */
+.perangkat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+.perangkat > section{background:var(--permukaan);border:1px solid var(--garis);border-radius:18px;padding:16px 18px}
+.perangkat h3{margin:0 0 8px;font-size:19px}
+.perangkat ol{margin:0;padding-left:1.25em}
+.perangkat li{margin:5px 0;font-size:16.5px;line-height:1.5}
+@media (max-width:760px){.perangkat{grid-template-columns:1fr}}
+
+/* ====== tiruan tampilan aplikasi ====== */
+.hp{width:100%;max-width:330px;background:var(--kertas);border:2px solid var(--tinta-2);border-radius:26px;padding:14px;margin:0;font-size:14px;line-height:1.4}
+.hp *{box-sizing:border-box}
+.pasang{display:grid;grid-template-columns:330px 1fr;gap:26px;align-items:start;margin:18px 0}
+.pasang figure{margin:0}
+.pasang figcaption{font-size:15px;color:var(--tinta-2);margin-top:8px;max-width:330px}
+@media (max-width:760px){.pasang{grid-template-columns:1fr}.hp{margin:0 auto}.pasang figcaption{margin-left:auto;margin-right:auto}}
+.rel{position:relative}
+.no{position:absolute;right:-8px;top:-8px;width:24px;height:24px;border-radius:50%;background:var(--bahaya);color:#fff;font-style:normal;font-weight:700;font-size:13px;display:grid;place-items:center;font-family:var(--f-isi);z-index:2;border:2px solid var(--kertas)}
+.legenda{margin:0;padding:0;list-style:none}
+.legenda li{display:grid;grid-template-columns:30px 1fr;gap:10px;margin:0 0 12px;align-items:start}
+.legenda i{width:24px;height:24px;border-radius:50%;background:var(--bahaya);color:#fff;font-style:normal;font-weight:700;font-size:13px;display:grid;place-items:center;margin-top:3px}
+.hp-anak{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.hp-anak .p{border:2px solid var(--garis);background:var(--permukaan);border-radius:14px;padding:6px 10px;display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center}
+.hp-anak .p span{grid-row:1 / 3;font-size:22px}
+.hp-anak .p b{font-family:var(--f-judul);font-weight:600;font-size:15px;line-height:1.2}
+.hp-anak .p small{font-size:11.5px;color:var(--tinta-2)}
+.hp-anak .p.on{background:var(--aizar);border-color:var(--aizar);color:var(--aizar-teks)}
+.hp-anak .p.on small{color:inherit;opacity:.9}
+.hp-kartu{background:var(--permukaan);border:1px solid var(--garis);border-radius:18px;padding:14px;margin-bottom:10px}
+.hp-sisa{display:flex;align-items:baseline;gap:6px}
+.hp-sisa b{font-family:var(--f-judul);font-weight:600;font-size:54px;line-height:1}
+.hp-sisa span{color:var(--tinta-2)}
+.hp-info{color:var(--tinta-2);font-size:12px;margin-top:2px}
+.hp-kotak{display:flex;gap:3px;margin:10px 0 6px}
+.hp-kotak i{flex:1;height:22px;border-radius:6px;background:var(--aizar)}
+.hp-kotak i.x{background:var(--terpakai)}
+.hp-judul{font-family:var(--f-judul);font-weight:600;font-size:15px;margin:12px 0 6px}
+.hp-chips{display:flex;flex-wrap:wrap;gap:5px}
+.hp-chips span{border:2px solid var(--garis);background:var(--kertas);border-radius:9px;padding:4px 9px;font-size:12.5px}
+.hp-chips span.on{background:var(--aizar);border-color:var(--tinta);color:var(--aizar-teks);font-weight:600}
+.hp-tombol{margin-top:12px;background:var(--aizar);color:var(--aizar-teks);border-radius:12px;text-align:center;font-weight:600;padding:11px;font-size:15px}
+.hp-tombol.garis{background:transparent;border:2px solid var(--tinta);color:var(--tinta)}
+.hp-baris{display:flex;gap:8px;margin-top:12px}
+.hp-baris > div{flex:1}
+.hp-timer{font-family:var(--f-judul);font-weight:600;font-size:58px;line-height:1;margin:8px 0 6px}
+.hp-label{display:flex;align-items:center;gap:6px;color:var(--tinta-2);font-size:12.5px}
+.hp-label i{width:9px;height:9px;border-radius:50%;background:var(--baik)}
+.hp-alarm{background:var(--aizar);color:var(--aizar-teks);border-radius:18px;padding:22px 16px;text-align:left}
+.hp-alarm .em{font-size:44px;line-height:1}
+.hp-alarm h4{font-family:var(--f-judul);font-weight:600;font-size:24px;margin:10px 0 6px;line-height:1.15}
+.hp-alarm p{font-size:13px;margin:0 0 14px}
+.hp-alarm .t{border-radius:12px;padding:10px;text-align:center;font-weight:600;margin-top:8px}
+.hp-alarm .t.s{background:var(--aizar-teks);color:var(--aizar)}
+.hp-alarm .t.k{border:2px solid var(--aizar-teks)}
+.hp-hari{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+.hp-hari span{border:2px solid var(--garis);background:var(--permukaan);border-radius:9px;padding:5px 0;text-align:center;font-size:11.5px}
+.hp-hari span.on{background:var(--aizar);border-color:var(--aizar);color:var(--aizar-teks);font-weight:600}
+.hp-jd{display:grid;grid-template-columns:46px 1fr 26px;gap:8px;padding:8px 6px;border-bottom:1px solid var(--garis);align-items:center;font-size:12.5px}
+.hp-jd:last-child{border-bottom:0}
+.hp-jd .j{font-family:var(--f-judul);color:var(--tinta-2);line-height:1.2;font-size:12px}
+.hp-jd .j b{display:block;color:var(--tinta)}
+.hp-jd.kini{background:var(--kertas);box-shadow:inset 4px 0 0 var(--aizar);border-radius:6px}
+.hp-jd small{display:block;color:var(--tinta-2);font-size:11px}
+.hp-jd .c{width:24px;height:24px;border-radius:50%;border:2px solid var(--tinta-2);display:grid;place-items:center;font-size:13px}
+.hp-jd .c.y{background:var(--aizar);border-color:var(--aizar);color:var(--aizar-teks)}
+.hp-nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--garis);margin:12px -14px -14px;padding:8px 0 10px;text-align:center;font-size:10.5px;color:var(--tinta-2);background:var(--permukaan);border-radius:0 0 24px 24px}
+.hp-nav b{display:block;font-size:17px;line-height:1.2}
+.hp-nav .on{color:var(--tinta);font-weight:600}
+
+.hero{background:var(--permukaan);border:1px solid var(--garis);border-radius:24px;padding:22px;margin:8px 0 6px;max-width:30rem}
+.hero .atas{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.hero .angka{font-family:var(--f-judul);font-weight:600;font-size:clamp(64px,16vw,92px);line-height:.95}
+.hero .satuan{font-size:20px;color:var(--tinta-2);margin-left:8px}
+.hero .kotak{display:flex;gap:5px;margin:16px 0 8px}
+.hero .kotak i{flex:1;height:36px;border-radius:9px;background:var(--aizar)}
+.hero .kotak i.x{background:var(--terpakai)}
+.hero p{margin:0;font-size:15.5px;color:var(--tinta-2)}
+
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--garis);color:var(--tinta-2);font-size:15.5px}
+@media print{
+  body{font-size:15px;background:#fff}
+  .wrap{padding:0}
+  .langkah > li,.pasang,.catatan,details,.fitur > div{break-inside:avoid}
+  details:not([open]) > div{display:block}
+  .isi{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Layar Keluarga</h1>
+  <p class="lead">Pencatat waktu layar <span class="a">Aizar</span> dan <span class="d">Dyandra</span>. Aturannya sama untuk semua, semuanya tercatat jelas, dan bisa dilihat dari HP atau komputer mana pun.</p>
+  <div class="hero" role="img" aria-label="Contoh: sisa waktu 35 menit dari jatah 45 menit, dua kotak sudah terpakai">
+    <div class="atas"><span class="a">Aizar</span><span class="muted kecil">Sisa hari ini</span></div>
+    <div><span class="angka">35</span><span class="satuan">menit tersisa</span></div>
+    <div class="kotak"><i class="x"></i><i class="x"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <p>Jatah 45 menit, terpakai 10 menit. Setiap kotak sama dengan 5 menit, dan kotak abu-abu sudah dipakai.</p>
+  </div>
+  <nav class="isi" aria-label="Isi dokumen">
+    <b>Isi dokumen</b>
+    <ol>
+      <li><a href="#apa">Apa itu Layar Keluarga</a></li>
+      <li><a href="#kenapa">Kenapa kita memakainya</a></li>
+      <li><a href="#sehari">Satu hari bersama aplikasi</a></li>
+      <li><a href="#fitur">Fitur satu per satu</a></li>
+      <li><a href="#hitungan">Aturan hitungan waktu</a></li>
+      <li><a href="#batas">Yang tidak dilakukan aplikasi</a></li>
+      <li><a href="#diskusi">Bahan diskusi kita berdua</a></li>
+    </ol>
+  </nav>
+</header>
+
+<h2 id="apa">Apa itu Layar Keluarga</h2>
+<p>Layar Keluarga adalah aplikasi web kecil untuk mencatat waktu Aizar dan Dyandra memakai HP, game, atau YouTube. Setiap anak punya jatah menit per hari. Kalau anak ingin bermain, ia "mengambil" sekian menit. Aplikasi mencatatnya, menghitung mundur, lalu mengingatkan saat waktunya habis.</p>
+<p>Selain waktu layar, aplikasi juga memuat jadwal kegiatan harian di luar layar, seperti belajar, ibadah, olahraga, dan membantu di rumah, supaya waktu anak-anak seimbang.</p>
+<p>Semua catatan disimpan di satu Google Sheet milik keluarga. Jadi kita berdua melihat data yang sama, dari HP masing-masing.</p>
+
+<h2 id="kenapa">Kenapa kita memakainya</h2>
+<dl class="fitur">
+  <div><dt>Tercatat jelas</dt><dd>Tidak ada lagi "tadi baru sebentar". Setiap sesi punya jam mulai, lama waktu, dan sisa jatah.</dd></div>
+  <div><dt>Adil</dt><dd>Aizar dan Dyandra memakai aturan yang sama. Yang berbeda hanya jumlah jatahnya, disesuaikan dengan umur.</dd></div>
+  <div><dt>Kita tidak perlu menghitung</dt><dd>Aplikasi yang menghitung sisa waktu dan mengingatkan. Kita tidak perlu memantau jam atau mengulang-ulang peringatan.</dd></div>
+  <div><dt>Ada imbalan yang jelas</dt><dd>Nilai bagus atau membantu di rumah bisa dibalas dengan bonus menit, dan semuanya tercatat beserta alasannya.</dd></div>
+  <div><dt>Waktu tetap seimbang</dt><dd>Jadwal harian memberi tempat untuk belajar, ibadah, bergerak, bermain, dan istirahat, supaya layar tidak menjadi satu-satunya pilihan.</dd></div>
+</dl>
+
+<h2 id="sehari">Satu hari bersama aplikasi</h2>
+<p>Begini kira-kira alurnya saat Aizar ingin bermain:</p>
+<ol class="langkah">
+  <li><b>Anak meminta waktu.</b><span class="kutip">Aizar: "Aku mau main 10 menit."</span></li>
+  <li><b>Kita mencatatnya di aplikasi.</b> Pilih 10 menit dan keperluannya (misalnya Game), lalu tekan Mulai. Sisa jatah langsung berkurang 10 menit.</li>
+  <li><b>Hitung mundur berjalan.</b> Layar menampilkan sisa waktu sesi itu, misalnya 07:42.</li>
+  <li><b>Waktu habis.</b> Di HP yang membuka aplikasi, alarm berbunyi. Pada saat yang sama, pesan masuk ke HP kita lewat email (atau Telegram): "Waktu layar Aizar sudah habis".</li>
+  <li><b>Selesai.</b> Aizar menekan Selesai. Kalau ia berhenti lebih awal, menit yang tidak terpakai kembali ke jatahnya. Sisa waktu hari itu tercatat.</li>
+</ol>
+
+<h2 id="fitur">Fitur satu per satu</h2>
+
+<h3>Mengatur waktu layar</h3>
+<dl class="fitur">
+  <div><dt>Jatah harian</dt><dd>
+    <p>Setiap anak punya jatah menit per hari, dengan angka berbeda untuk hari sekolah dan akhir pekan (Sabtu dan Minggu). Angkanya bisa diubah kapan saja di Google Sheet.</p>
+    <span class="contoh">Jatah dimulai baru setiap hari. Sisa hari ini tidak dibawa ke besok.</span></dd></div>
+  <div><dt>Mengambil waktu</dt><dd>
+    <p>Pilih 5, 10, 15, 20, atau 30 menit (sampai batas sekali ambil), atau ketik jumlah sendiri. Batasnya Aizar 20 menit dan Dyandra 30 menit. Anak tidak bisa mengambil lebih dari sisa jatahnya, dan tiap anak hanya bisa punya satu sesi yang berjalan.</p></dd></div>
+  <div><dt>Keperluan</dt><dd>
+    <p>Setiap sesi diberi keperluan: Game, YouTube, Chat / medsos, Lainnya, atau Belajar / tugas. Sesi Belajar / tugas tidak memotong jatah, karena dipakai untuk mengerjakan tugas sekolah. Lamanya tetap dicatat.</p></dd></div>
+  <div><dt>Sisa waktu dan kotak menit</dt><dd>
+    <p>Angka besar menunjukkan sisa menit hari ini. Deretan kotak di bawahnya (satu kotak sama dengan 5 menit) memperlihatkan bagian yang sudah terpakai, jadi anak bisa melihat sendiri berapa yang tersisa.</p></dd></div>
+  <div><dt>Berhenti lebih awal</dt><dd>
+    <p>Kalau anak menekan Selesai sebelum waktunya habis, menit yang tidak terpakai dikembalikan ke jatah. Ada toleransi 15 detik, jadi menekan Selesai tepat saat alarm berbunyi tidak dianggap terlambat.</p></dd></div>
+  <div><dt>Melebihi waktu</dt><dd>
+    <p>Kalau anak melewati waktunya, kelebihannya ikut dihitung dan mengurangi jatah. Kalau ternyata lupa menekan Selesai, kelebihan yang dihitung paling banyak 30 menit, supaya kelalaian menekan tombol tidak menghabiskan seluruh jatah.</p></dd></div>
+  <div><dt>Tambah 5 menit</dt><dd>
+    <p>Saat sesi berjalan ada tombol untuk menambah 5 menit. Tombol ini hanya berhasil kalau sisa jatahnya cukup.</p></dd></div>
+</dl>
+
+<h3>Pengingat</h3>
+<dl class="fitur">
+  <div><dt>Alarm di layar anak</dt><dd>
+    <p>Saat waktu habis, layar berubah penuh dengan tulisan "Waktu sudah habis", disertai bunyi dan getar. Bunyinya diulang tiap 20 detik sampai anak menekan Oke, selesai. Alarm ini hanya bekerja kalau aplikasi sedang terbuka di layar HP.</p></dd></div>
+  <div><dt>Pesan ke HP orang tua</dt><dd>
+    <p>Ini pengingat yang paling bisa diandalkan. Sistem memeriksa tiap 1 menit, dan begitu waktu sesi habis, email dikirim (Telegram juga bisa diaktifkan). Kalau anak belum berhenti, pesan diulang tiap 5 menit, dengan total paling banyak 4 pesan per sesi. Pesan tetap terkirim walaupun anak sudah pindah ke game lain.</p>
+    <span class="contoh">Contoh judul pesan: "Waktu layar Aizar sudah habis".</span></dd></div>
+</dl>
+
+<h3>Jadwal kegiatan</h3>
+<dl class="fitur">
+  <div><dt>Jadwal seminggu</dt><dd>
+    <p>Tiap anak punya jadwal harian dari bangun sampai tidur, dan bisa dilihat untuk hari apa saja (Senin sampai Minggu). Kegiatan diberi ikon: belajar, ibadah, gerak, layar, keluarga, rumah, istirahat, bakat, sosial, dan tidur. Kegiatan yang sedang berlangsung disorot.</p></dd></div>
+  <div><dt>Centang kegiatan</dt><dd>
+    <p>Untuk hari ini, anak bisa mencentang kegiatan yang sudah dikerjakan. Ada garis kemajuan yang menunjukkan berapa yang sudah selesai. Centang hanya bisa dilakukan pada hari yang bersangkutan.</p></dd></div>
+  <div><dt>Jendela layar</dt><dd>
+    <p>Jadwal juga menandai jam yang dianjurkan untuk layar, sesuai jumlah jatah. Jadi waktu layar punya tempatnya di antara kegiatan lain.</p></dd></div>
+</dl>
+
+<h3>Kendali orang tua</h3>
+<dl class="fitur">
+  <div><dt>Panel orang tua</dt><dd>
+    <p>Dikunci dengan PIN yang hanya kita berdua yang tahu. Di sini kita bisa memberi bonus menit atau memotong menit dengan mencatat alasannya, serta membatalkan sesi yang tidak sengaja tertekan.</p>
+    <span class="contoh">Bonus siap pakai: nilai bagus atau prestasi (+15), membantu pekerjaan rumah (+10), olahraga ekstra (+10). Potongan: melanggar aturan (-10).</span></dd></div>
+  <div><dt>Riwayat</dt><dd>
+    <p>Grafik batang 7 hari terakhir memperlihatkan menit yang terpakai dibanding jatah tiap hari. Batang berwarna merah berarti hari itu melebihi jatah. Di bawahnya ada daftar sesi hari ini.</p></dd></div>
+</dl>
+
+<h3>Data dan akses</h3>
+<dl class="fitur">
+  <div><dt>Google Sheet</dt><dd>
+    <p>Semua catatan tersimpan di satu Google Sheet keluarga: jatah anak, jadwal, riwayat sesi, bonus, dan pengaturan. Jatah, jadwal, PIN, dan pengaturan notifikasi diubah langsung di sana.</p></dd></div>
+  <div><dt>Bisa dibuka dari mana saja</dt><dd>
+    <p>Aplikasi dibuka lewat satu alamat web, dari HP atau komputer. Beberapa perangkat bisa dipakai bersamaan, dan tampilannya menyamakan diri sekitar tiap 15 detik.</p></dd></div>
+  <div><dt>Libur sekolah</dt><dd>
+    <p>Ada satu pengaturan "ModeLibur" di Google Sheet. Kalau diaktifkan, semua hari memakai jatah dan jadwal akhir pekan. Kembalikan saat sekolah masuk lagi.</p></dd></div>
+  <div><dt>Mode gelap</dt><dd>
+    <p>Tampilan otomatis menjadi gelap kalau HP diatur ke mode gelap.</p></dd></div>
+</dl>
+
+<h2 id="hitungan">Aturan hitungan waktu</h2>
+<p>Angka awal jatah (bisa diubah di Google Sheet):</p>
+<div class="gulir"><table class="tabel">
+  <thead><tr><th></th><th>Hari sekolah</th><th>Akhir pekan</th><th>Maks. sekali ambil</th></tr></thead>
+  <tbody>
+    <tr><td><span class="a">Aizar</span></td><td>45 menit</td><td>90 menit</td><td>20 menit</td></tr>
+    <tr><td><span class="d">Dyandra</span></td><td>60 menit</td><td>120 menit</td><td>30 menit</td></tr>
+  </tbody>
+</table></div>
+<div class="gulir"><table class="tabel">
+  <thead><tr><th>Kejadian</th><th>Yang terjadi pada jatah</th></tr></thead>
+  <tbody>
+    <tr><td>Mengambil 10 menit</td><td>Langsung berkurang 10 menit</td></tr>
+    <tr><td>Berhenti lebih awal</td><td>Menit yang tidak terpakai kembali</td></tr>
+    <tr><td>Melewati waktu</td><td>Kelebihannya ikut dihitung, paling banyak 30 menit</td></tr>
+    <tr><td>Sesi Belajar / tugas</td><td>Tidak mengurangi jatah</td></tr>
+    <tr><td>Bonus atau potongan</td><td>Menambah atau mengurangi jatah hari itu saja</td></tr>
+    <tr><td>Ganti hari</td><td>Jatah dimulai baru, sisa kemarin tidak dibawa</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="batas">Yang tidak dilakukan aplikasi</h2>
+<div class="catatan">
+  <h3>Aplikasi ini mencatat dan mengingatkan, bukan mengunci</h3>
+  <ul>
+    <li>Aplikasi <b>tidak mengunci HP</b> dan tidak menutup game atau YouTube. Yang menghentikan permainan tetap kita, atau kesepakatan dengan anak.</li>
+    <li>Aplikasi <b>tidak melihat apa yang dibuka</b> anak. Keperluan (Game, YouTube, dan seterusnya) diisi sendiri, jadi bergantung pada kejujuran.</li>
+    <li>Anak bisa menekan <b>Selesai</b> sendiri, dan siapa saja yang punya alamat aplikasi bisa memulai sesi. Bonus, potongan, dan pembatalan sesi dilindungi PIN.</li>
+    <li>Kalau aplikasi tidak sedang terbuka di HP anak, alarm di HP itu tidak berbunyi. Karena itu pesan ke HP kita yang diandalkan.</li>
+  </ul>
+</div>
+<p>Jadi kuncinya adalah kesepakatan keluarga. Aplikasi membuat kesepakatan itu jelas dan mudah dijalankan.</p>
+
+<h2 id="diskusi">Bahan diskusi kita berdua</h2>
+<p>Beberapa hal yang sebaiknya kita sepakati sebelum mulai:</p>
+<ul>
+  <li><b>Siapa yang memegang tombol Mulai?</b> Kita berdua, atau anak boleh menekannya sendiri di bawah pengawasan.</li>
+  <li><b>Apa yang terjadi kalau melewati waktu?</b> Misalnya potongan menit besok, atau tidak boleh menambah waktu.</li>
+  <li><b>Kapan memberi bonus?</b> Nilai bagus, membantu di rumah, atau prestasi lain, dan berapa menitnya.</li>
+  <li><b>Apakah jatah sudah pas?</b> Angka awal hanya perkiraan. Kita bisa menyesuaikannya setelah seminggu mencoba.</li>
+  <li><b>Apa saja yang boleh dihitung "Belajar / tugas"?</b> Supaya kategori ini tidak dipakai sebagai celah.</li>
+  <li><b>Jam tidur.</b> Jadwal awal memakai bangun sekitar 04:45 untuk Subuh, sehingga tidur Aizar sekitar 8 jam 45 menit dan Dyandra sekitar 7 jam 45 menit. Anak seusia mereka idealnya 9-11 jam (Aizar) dan 8-10 jam (Dyandra), jadi jam tidurnya bisa didiskusikan.</li>
+</ul>
+
+<footer>
+  <p>Langkah demi langkah cara memakainya di HP dan komputer ada di dokumen <b>Panduan Penggunaan</b>.</p>
+</footer>
+
+</div>
+</body>
+</html>
