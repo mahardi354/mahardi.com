@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Kecamatan & Kabupaten</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --highlight: #eff6ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+  }
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 20px;
+    margin: 0 0 16px;
+    text-align: center;
+    color: var(--text);
+  }
+  .tabs {
+    display: flex;
+    background: var(--card);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: #fff;
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  input[type="text"]:focus {
+    border-color: var(--primary);
+  }
+  .results {
+    margin-top: 12px;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s ease;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-item:hover { background: var(--highlight); }
+  .result-text {
+    font-size: 15px;
+  }
+  .result-text b { color: var(--primary); }
+  .copy-icon {
+    font-size: 12px;
+    color: var(--primary);
+    padding: 5px 10px;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .result-item:hover .copy-icon { background: var(--highlight); }
+  .copy-icon.copied-icon {
+    background: #16a34a;
+    color: #fff;
+    border-color: #16a34a;
+  }
+  .empty-msg {
+    text-align: center;
+    color: var(--muted);
+    padding: 30px 0;
+    font-size: 14px;
+  }
+  .selected-box {
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--highlight);
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .selected-box.show { display: flex; }
+  .selected-text {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .copy-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .copy-btn.copied {
+    background: #16a34a;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  thead th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #f3f4f6;
+    position: sticky;
+    top: 0;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:hover { background: var(--highlight); }
+  .table-wrap {
+    max-height: 65vh;
+    overflow-y: auto;
+    border-radius: 8px;
+  }
+  .count-badge {
+    display: inline-block;
+    background: var(--highlight);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .no-col { color: var(--muted); width: 44px; }
+  .row-copy-btn {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid #bfdbfe;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .row-copy-btn:hover { background: var(--highlight); }
+  .row-copy-btn.copied {
+    background: #16a34a;
+    color: #fff;
+    border-color: #16a34a;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Daftar Kecamatan & Kabupaten</h1>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('search')">🔍 Cari Kecamatan</button>
+    <button class="tab-btn" onclick="switchTab('searchKab')">🏙️ Cari Kabupaten</button>
+    <button class="tab-btn" onclick="switchTab('list')">📋 Daftar Lengkap</button>
+    <button class="tab-btn" onclick="switchTab('listKab')">🏘️ Daftar Kabupaten</button>
+  </div>
+
+  <div id="search-panel" class="panel active">
+    <div class="card">
+      <input type="text" id="searchInput" placeholder="Ketik nama kecamatan..." autocomplete="off">
+      <div class="results" id="results"></div>
+    </div>
+  </div>
+
+  <div id="searchKab-panel" class="panel">
+    <div class="card">
+      <input type="text" id="searchKabInput" placeholder="Ketik nama kabupaten..." autocomplete="off">
+      <div class="results" id="resultsKab"></div>
+    </div>
+  </div>
+
+  <div id="list-panel" class="panel">
+    <div class="card">
+      <span class="count-badge" id="countBadge"></span>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="no-col">No</th><th>Kecamatan</th><th>Kabupaten</th><th class="no-col"></th></tr>
+          </thead>
+          <tbody id="fullTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="listKab-panel" class="panel">
+    <div class="card">
+      <span class="count-badge" id="kabCountBadge"></span>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="no-col">No</th><th>Kabupaten</th><th>Jumlah Kecamatan</th><th class="no-col"></th></tr>
+          </thead>
+          <tbody id="kabTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [{"kecamatan": "Babakan Madang", "kabupaten": "Bogor"}, {"kecamatan": "Bojonggede", "kabupaten": "Bogor"}, {"kecamatan": "Caringin", "kabupaten": "Bogor"}, {"kecamatan": "Cariu", "kabupaten": "Bogor"}, {"kecamatan": "Ciampea", "kabupaten": "Bogor"}, {"kecamatan": "Ciawi", "kabupaten": "Bogor"}, {"kecamatan": "Cibinong", "kabupaten": "Bogor"}, {"kecamatan": "Cibungbulang", "kabupaten": "Bogor"}, {"kecamatan": "Cigombong", "kabupaten": "Bogor"}, {"kecamatan": "Cigudeg", "kabupaten": "Bogor"}, {"kecamatan": "Cijeruk", "kabupaten": "Bogor"}, {"kecamatan": "Cileungsi", "kabupaten": "Bogor"}, {"kecamatan": "Ciomas", "kabupaten": "Bogor"}, {"kecamatan": "Cisarua", "kabupaten": "Bogor"}, {"kecamatan": "Ciseeng", "kabupaten": "Bogor"}, {"kecamatan": "Citeureup", "kabupaten": "Bogor"}, {"kecamatan": "Dramaga", "kabupaten": "Bogor"}, {"kecamatan": "Gunung Putri", "kabupaten": "Bogor"}, {"kecamatan": "Gunungsindur", "kabupaten": "Bogor"}, {"kecamatan": "Jasinga", "kabupaten": "Bogor"}, {"kecamatan": "Jonggol", "kabupaten": "Bogor"}, {"kecamatan": "Kemang", "kabupaten": "Bogor"}, {"kecamatan": "Klapanunggal", "kabupaten": "Bogor"}, {"kecamatan": "Leuwiliang", "kabupaten": "Bogor"}, {"kecamatan": "Leuwisadeng", "kabupaten": "Bogor"}, {"kecamatan": "Megamendung", "kabupaten": "Bogor"}, {"kecamatan": "Nanggung", "kabupaten": "Bogor"}, {"kecamatan": "Pamijahan", "kabupaten": "Bogor"}, {"kecamatan": "Parung", "kabupaten": "Bogor"}, {"kecamatan": "Parung Panjang", "kabupaten": "Bogor"}, {"kecamatan": "Rancabungur", "kabupaten": "Bogor"}, {"kecamatan": "Rumpin", "kabupaten": "Bogor"}, {"kecamatan": "Sukajaya", "kabupaten": "Bogor"}, {"kecamatan": "Sukamakmur", "kabupaten": "Bogor"}, {"kecamatan": "Sukaraja", "kabupaten": "Bogor"}, {"kecamatan": "Tajurhalang", "kabupaten": "Bogor"}, {"kecamatan": "Tamansari", "kabupaten": "Bogor"}, {"kecamatan": "Tanjungsari", "kabupaten": "Bogor"}, {"kecamatan": "Tenjo", "kabupaten": "Bogor"}, {"kecamatan": "Tenjolaya", "kabupaten": "Bogor"}, {"kecamatan": "Babelan", "kabupaten": "Bekasi"}, {"kecamatan": "Bojongmangu", "kabupaten": "Bekasi"}, {"kecamatan": "Cabangbungin", "kabupaten": "Bekasi"}, {"kecamatan": "Cibarusah", "kabupaten": "Bekasi"}, {"kecamatan": "Cibitung", "kabupaten": "Bekasi"}, {"kecamatan": "Cikarang Barat", "kabupaten": "Bekasi"}, {"kecamatan": "Cikarang Pusat", "kabupaten": "Bekasi"}, {"kecamatan": "Cikarang Selatan", "kabupaten": "Bekasi"}, {"kecamatan": "Cikarang Timur", "kabupaten": "Bekasi"}, {"kecamatan": "Cikarang Utara", "kabupaten": "Bekasi"}, {"kecamatan": "Karangbahagia", "kabupaten": "Bekasi"}, {"kecamatan": "Kedungwaringin", "kabupaten": "Bekasi"}, {"kecamatan": "Muara Gembong", "kabupaten": "Bekasi"}, {"kecamatan": "Pebayuran", "kabupaten": "Bekasi"}, {"kecamatan": "Serang Baru", "kabupaten": "Bekasi"}, {"kecamatan": "Setu", "kabupaten": "Bekasi"}, {"kecamatan": "Sukakarya", "kabupaten": "Bekasi"}, {"kecamatan": "Sukatani", "kabupaten": "Bekasi"}, {"kecamatan": "Sukawangi", "kabupaten": "Bekasi"}, {"kecamatan": "Tambelang", "kabupaten": "Bekasi"}, {"kecamatan": "Tambun Selatan", "kabupaten": "Bekasi"}, {"kecamatan": "Tambun Utara", "kabupaten": "Bekasi"}, {"kecamatan": "Tarumajaya", "kabupaten": "Bekasi"}, {"kecamatan": "Balaraja", "kabupaten": "Tangerang"}, {"kecamatan": "Cikupa", "kabupaten": "Tangerang"}, {"kecamatan": "Cisauk", "kabupaten": "Tangerang"}, {"kecamatan": "Cisoka", "kabupaten": "Tangerang"}, {"kecamatan": "Curug", "kabupaten": "Tangerang"}, {"kecamatan": "Gunung Kaler", "kabupaten": "Tangerang"}, {"kecamatan": "Jambe", "kabupaten": "Tangerang"}, {"kecamatan": "Jayanti", "kabupaten": "Tangerang"}, {"kecamatan": "Kelapa Dua", "kabupaten": "Tangerang"}, {"kecamatan": "Kemiri", "kabupaten": "Tangerang"}, {"kecamatan": "Kresek", "kabupaten": "Tangerang"}, {"kecamatan": "Kronjo", "kabupaten": "Tangerang"}, {"kecamatan": "Kosambi", "kabupaten": "Tangerang"}, {"kecamatan": "Legok", "kabupaten": "Tangerang"}, {"kecamatan": "Mauk", "kabupaten": "Tangerang"}, {"kecamatan": "Mekarbaru", "kabupaten": "Tangerang"}, {"kecamatan": "Pagedangan", "kabupaten": "Tangerang"}, {"kecamatan": "Pakuhaji", "kabupaten": "Tangerang"}, {"kecamatan": "Panongan", "kabupaten": "Tangerang"}, {"kecamatan": "Pasar Kemis", "kabupaten": "Tangerang"}, {"kecamatan": "Rajeg", "kabupaten": "Tangerang"}, {"kecamatan": "Sepatan", "kabupaten": "Tangerang"}, {"kecamatan": "Sepatan Timur", "kabupaten": "Tangerang"}, {"kecamatan": "Sindang Jaya", "kabupaten": "Tangerang"}, {"kecamatan": "Solear", "kabupaten": "Tangerang"}, {"kecamatan": "Sukadiri", "kabupaten": "Tangerang"}, {"kecamatan": "Sukamulya", "kabupaten": "Tangerang"}, {"kecamatan": "Teluknaga", "kabupaten": "Tangerang"}, {"kecamatan": "Tigaraksa", "kabupaten": "Tangerang"}, {"kecamatan": "Arjasari", "kabupaten": "Bandung"}, {"kecamatan": "Baleendah", "kabupaten": "Bandung"}, {"kecamatan": "Banjaran", "kabupaten": "Bandung"}, {"kecamatan": "Bojongsoang", "kabupaten": "Bandung"}, {"kecamatan": "Cangkuang", "kabupaten": "Bandung"}, {"kecamatan": "Cicalengka", "kabupaten": "Bandung"}, {"kecamatan": "Cikancung", "kabupaten": "Bandung"}, {"kecamatan": "Cilengkrang", "kabupaten": "Bandung"}, {"kecamatan": "Cileunyi", "kabupaten": "Bandung"}, {"kecamatan": "Cimaung", "kabupaten": "Bandung"}, {"kecamatan": "Cimenyan", "kabupaten": "Bandung"}, {"kecamatan": "Ciparay", "kabupaten": "Bandung"}, {"kecamatan": "Ciwidey", "kabupaten": "Bandung"}, {"kecamatan": "Dayeuhkolot", "kabupaten": "Bandung"}, {"kecamatan": "Ibun", "kabupaten": "Bandung"}, {"kecamatan": "Katapang", "kabupaten": "Bandung"}, {"kecamatan": "Kertasari", "kabupaten": "Bandung"}, {"kecamatan": "Kutawaringin", "kabupaten": "Bandung"}, {"kecamatan": "Majalaya", "kabupaten": "Bandung"}, {"kecamatan": "Margaasih", "kabupaten": "Bandung"}, {"kecamatan": "Margahayu", "kabupaten": "Bandung"}, {"kecamatan": "Nagreg", "kabupaten": "Bandung"}, {"kecamatan": "Pacet", "kabupaten": "Bandung"}, {"kecamatan": "Pameungpeuk", "kabupaten": "Bandung"}, {"kecamatan": "Pangalengan", "kabupaten": "Bandung"}, {"kecamatan": "Paseh", "kabupaten": "Bandung"}, {"kecamatan": "Pasirjambu", "kabupaten": "Bandung"}, {"kecamatan": "Rancabali", "kabupaten": "Bandung"}, {"kecamatan": "Rancaekek", "kabupaten": "Bandung"}, {"kecamatan": "Solokanjeruk", "kabupaten": "Bandung"}, {"kecamatan": "Soreang", "kabupaten": "Bandung"}, {"kecamatan": "Banyusari", "kabupaten": "Karawang"}, {"kecamatan": "Batujaya", "kabupaten": "Karawang"}, {"kecamatan": "Ciampel", "kabupaten": "Karawang"}, {"kecamatan": "Cibuaya", "kabupaten": "Karawang"}, {"kecamatan": "Cikampek", "kabupaten": "Karawang"}, {"kecamatan": "Cilamaya Kulon", "kabupaten": "Karawang"}, {"kecamatan": "Cilamaya Wetan", "kabupaten": "Karawang"}, {"kecamatan": "Cilebar", "kabupaten": "Karawang"}, {"kecamatan": "Jatisari", "kabupaten": "Karawang"}, {"kecamatan": "Jayakerta", "kabupaten": "Karawang"}, {"kecamatan": "Karawang Barat", "kabupaten": "Karawang"}, {"kecamatan": "Karawang Timur", "kabupaten": "Karawang"}, {"kecamatan": "Klari", "kabupaten": "Karawang"}, {"kecamatan": "Kotabaru", "kabupaten": "Karawang"}, {"kecamatan": "Kutawaluya", "kabupaten": "Karawang"}, {"kecamatan": "Lemahabang", "kabupaten": "Karawang"}, {"kecamatan": "Majalaya", "kabupaten": "Karawang"}, {"kecamatan": "Pakisjaya", "kabupaten": "Karawang"}, {"kecamatan": "Pangkalan", "kabupaten": "Karawang"}, {"kecamatan": "Pedes", "kabupaten": "Karawang"}, {"kecamatan": "Purwasari", "kabupaten": "Karawang"}, {"kecamatan": "Rawamerta", "kabupaten": "Karawang"}, {"kecamatan": "Rengasdengklok", "kabupaten": "Karawang"}, {"kecamatan": "Tegalwaru", "kabupaten": "Karawang"}, {"kecamatan": "Talagasari", "kabupaten": "Karawang"}, {"kecamatan": "Telukjambe Barat", "kabupaten": "Karawang"}, {"kecamatan": "Telukjambe Timur", "kabupaten": "Karawang"}, {"kecamatan": "Tempuran", "kabupaten": "Karawang"}, {"kecamatan": "Tirtajaya", "kabupaten": "Karawang"}, {"kecamatan": "Tirtamulya", "kabupaten": "Karawang"}, {"kecamatan": "Anyar", "kabupaten": "Serang"}, {"kecamatan": "Bandung", "kabupaten": "Serang"}, {"kecamatan": "Baros", "kabupaten": "Serang"}, {"kecamatan": "Binuang", "kabupaten": "Serang"}, {"kecamatan": "Bojonegara", "kabupaten": "Serang"}, {"kecamatan": "Carenang", "kabupaten": "Serang"}, {"kecamatan": "Cikande", "kabupaten": "Serang"}, {"kecamatan": "Cikeusal", "kabupaten": "Serang"}, {"kecamatan": "Cinangka", "kabupaten": "Serang"}, {"kecamatan": "Ciomas", "kabupaten": "Serang"}, {"kecamatan": "Ciruas", "kabupaten": "Serang"}, {"kecamatan": "Gunung Sari", "kabupaten": "Serang"}, {"kecamatan": "Jawilan", "kabupaten": "Serang"}, {"kecamatan": "Kibin", "kabupaten": "Serang"}, {"kecamatan": "Kopo", "kabupaten": "Serang"}, {"kecamatan": "Kragilan", "kabupaten": "Serang"}, {"kecamatan": "Kramatwatu", "kabupaten": "Serang"}, {"kecamatan": "Lebak Wangi", "kabupaten": "Serang"}, {"kecamatan": "Mancak", "kabupaten": "Serang"}, {"kecamatan": "Pabuaran", "kabupaten": "Serang"}, {"kecamatan": "Padarincang", "kabupaten": "Serang"}, {"kecamatan": "Pamarayan", "kabupaten": "Serang"}, {"kecamatan": "Petir", "kabupaten": "Serang"}, {"kecamatan": "Pontang", "kabupaten": "Serang"}, {"kecamatan": "Pulo Ampel", "kabupaten": "Serang"}, {"kecamatan": "Tanara", "kabupaten": "Serang"}, {"kecamatan": "Tirtayasa", "kabupaten": "Serang"}, {"kecamatan": "Tunjungteja", "kabupaten": "Serang"}, {"kecamatan": "Waringinkurung", "kabupaten": "Serang"}, {"kecamatan": "Arjawinangun", "kabupaten": "Cirebon"}, {"kecamatan": "Astanajapura", "kabupaten": "Cirebon"}, {"kecamatan": "Babakan", "kabupaten": "Cirebon"}, {"kecamatan": "Beber", "kabupaten": "Cirebon"}, {"kecamatan": "Ciledug", "kabupaten": "Cirebon"}, {"kecamatan": "Ciwaringin", "kabupaten": "Cirebon"}, {"kecamatan": "Depok", "kabupaten": "Cirebon"}, {"kecamatan": "Dukupuntang", "kabupaten": "Cirebon"}, {"kecamatan": "Gebang", "kabupaten": "Cirebon"}, {"kecamatan": "Gegesik", "kabupaten": "Cirebon"}, {"kecamatan": "Gempol", "kabupaten": "Cirebon"}, {"kecamatan": "Greged", "kabupaten": "Cirebon"}, {"kecamatan": "Gunungjati", "kabupaten": "Cirebon"}, {"kecamatan": "Jamblang", "kabupaten": "Cirebon"}, {"kecamatan": "Kaliwedi", "kabupaten": "Cirebon"}, {"kecamatan": "Kapetakan", "kabupaten": "Cirebon"}, {"kecamatan": "Karangsembung", "kabupaten": "Cirebon"}, {"kecamatan": "Karangwareng", "kabupaten": "Cirebon"}, {"kecamatan": "Kedawung", "kabupaten": "Cirebon"}, {"kecamatan": "Klangenan", "kabupaten": "Cirebon"}, {"kecamatan": "Lemahabang", "kabupaten": "Cirebon"}, {"kecamatan": "Losari", "kabupaten": "Cirebon"}, {"kecamatan": "Mundu", "kabupaten": "Cirebon"}, {"kecamatan": "Pabedilan", "kabupaten": "Cirebon"}, {"kecamatan": "Pabuaran", "kabupaten": "Cirebon"}, {"kecamatan": "Palimanan", "kabupaten": "Cirebon"}, {"kecamatan": "Pangenan", "kabupaten": "Cirebon"}, {"kecamatan": "Panguragan", "kabupaten": "Cirebon"}, {"kecamatan": "Pasaleman", "kabupaten": "Cirebon"}, {"kecamatan": "Plered", "kabupaten": "Cirebon"}, {"kecamatan": "Plumbon", "kabupaten": "Cirebon"}, {"kecamatan": "Sedong", "kabupaten": "Cirebon"}, {"kecamatan": "Sumber", "kabupaten": "Cirebon"}, {"kecamatan": "Suranenggala", "kabupaten": "Cirebon"}, {"kecamatan": "Susukan", "kabupaten": "Cirebon"}, {"kecamatan": "Susukanlebak", "kabupaten": "Cirebon"}, {"kecamatan": "Talun", "kabupaten": "Cirebon"}, {"kecamatan": "Tengahtani", "kabupaten": "Cirebon"}, {"kecamatan": "Waled", "kabupaten": "Cirebon"}, {"kecamatan": "Weru", "kabupaten": "Cirebon"}, {"kecamatan": "Bantargadung", "kabupaten": "Sukabumi"}, {"kecamatan": "Bojonggenteng", "kabupaten": "Sukabumi"}, {"kecamatan": "Caringin", "kabupaten": "Sukabumi"}, {"kecamatan": "Ciambar", "kabupaten": "Sukabumi"}, {"kecamatan": "Cibadak", "kabupaten": "Sukabumi"}, {"kecamatan": "Cibitung", "kabupaten": "Sukabumi"}, {"kecamatan": "Cicantayan", "kabupaten": "Sukabumi"}, {"kecamatan": "Cicurug", "kabupaten": "Sukabumi"}, {"kecamatan": "Cidadap", "kabupaten": "Sukabumi"}, {"kecamatan": "Cidahu", "kabupaten": "Sukabumi"}, {"kecamatan": "Cidolog", "kabupaten": "Sukabumi"}, {"kecamatan": "Ciemas", "kabupaten": "Sukabumi"}, {"kecamatan": "Cikakak", "kabupaten": "Sukabumi"}, {"kecamatan": "Cikembar", "kabupaten": "Sukabumi"}, {"kecamatan": "Cikidang", "kabupaten": "Sukabumi"}, {"kecamatan": "Cimanggu", "kabupaten": "Sukabumi"}, {"kecamatan": "Ciracap", "kabupaten": "Sukabumi"}, {"kecamatan": "Cireunghas", "kabupaten": "Sukabumi"}, {"kecamatan": "Cisaat", "kabupaten": "Sukabumi"}, {"kecamatan": "Cisolok", "kabupaten": "Sukabumi"}, {"kecamatan": "Curugkembar", "kabupaten": "Sukabumi"}, {"kecamatan": "Gegerbitung", "kabupaten": "Sukabumi"}, {"kecamatan": "Gunungguruh", "kabupaten": "Sukabumi"}, {"kecamatan": "Jampang Kulon", "kabupaten": "Sukabumi"}, {"kecamatan": "Jampang Tengah", "kabupaten": "Sukabumi"}, {"kecamatan": "Kabandungan", "kabupaten": "Sukabumi"}, {"kecamatan": "Kadudampit", "kabupaten": "Sukabumi"}, {"kecamatan": "Kalapanunggal", "kabupaten": "Sukabumi"}, {"kecamatan": "Kalibunder", "kabupaten": "Sukabumi"}, {"kecamatan": "Kebonpedes", "kabupaten": "Sukabumi"}, {"kecamatan": "Lengkong", "kabupaten": "Sukabumi"}, {"kecamatan": "Nagrak", "kabupaten": "Sukabumi"}, {"kecamatan": "Nyalindung", "kabupaten": "Sukabumi"}, {"kecamatan": "Pabuaran", "kabupaten": "Sukabumi"}, {"kecamatan": "Palabuhanratu", "kabupaten": "Sukabumi"}, {"kecamatan": "Parakansalak", "kabupaten": "Sukabumi"}, {"kecamatan": "Parungkuda", "kabupaten": "Sukabumi"}, {"kecamatan": "Purabaya", "kabupaten": "Sukabumi"}, {"kecamatan": "Sagaranten", "kabupaten": "Sukabumi"}, {"kecamatan": "Simpenan", "kabupaten": "Sukabumi"}, {"kecamatan": "Sukabumi", "kabupaten": "Sukabumi"}, {"kecamatan": "Sukalarang", "kabupaten": "Sukabumi"}, {"kecamatan": "Sukaraja", "kabupaten": "Sukabumi"}, {"kecamatan": "Surade", "kabupaten": "Sukabumi"}, {"kecamatan": "Tegalbuleud", "kabupaten": "Sukabumi"}, {"kecamatan": "Waluran", "kabupaten": "Sukabumi"}, {"kecamatan": "Warung Kiara", "kabupaten": "Sukabumi"}, {"kecamatan": "Banjarwangi", "kabupaten": "Garut"}, {"kecamatan": "Banyuresmi", "kabupaten": "Garut"}, {"kecamatan": "Bayongbong", "kabupaten": "Garut"}, {"kecamatan": "Balubur Limbangan", "kabupaten": "Garut"}, {"kecamatan": "Bungbulang", "kabupaten": "Garut"}, {"kecamatan": "Caringin", "kabupaten": "Garut"}, {"kecamatan": "Cibalong", "kabupaten": "Garut"}, {"kecamatan": "Cibatu", "kabupaten": "Garut"}, {"kecamatan": "Cibiuk", "kabupaten": "Garut"}, {"kecamatan": "Cigedug", "kabupaten": "Garut"}, {"kecamatan": "Cihurip", "kabupaten": "Garut"}, {"kecamatan": "Cikajang", "kabupaten": "Garut"}, {"kecamatan": "Cikelet", "kabupaten": "Garut"}, {"kecamatan": "Cilawu", "kabupaten": "Garut"}, {"kecamatan": "Cisewu", "kabupaten": "Garut"}, {"kecamatan": "Cisompet", "kabupaten": "Garut"}, {"kecamatan": "Cisurupan", "kabupaten": "Garut"}, {"kecamatan": "Garut Kota", "kabupaten": "Garut"}, {"kecamatan": "Kadungora", "kabupaten": "Garut"}, {"kecamatan": "Karangpawitan", "kabupaten": "Garut"}, {"kecamatan": "Karangtengah", "kabupaten": "Garut"}, {"kecamatan": "Kersamanah", "kabupaten": "Garut"}, {"kecamatan": "Leles", "kabupaten": "Garut"}, {"kecamatan": "Leuwigoong", "kabupaten": "Garut"}, {"kecamatan": "Malangbong", "kabupaten": "Garut"}, {"kecamatan": "Mekarmukti", "kabupaten": "Garut"}, {"kecamatan": "Pakenjeng", "kabupaten": "Garut"}, {"kecamatan": "Pameungpeuk", "kabupaten": "Garut"}, {"kecamatan": "Pamulihan", "kabupaten": "Garut"}, {"kecamatan": "Pangatikan", "kabupaten": "Garut"}, {"kecamatan": "Pasirwangi", "kabupaten": "Garut"}, {"kecamatan": "Peundeuy", "kabupaten": "Garut"}, {"kecamatan": "Samarang", "kabupaten": "Garut"}, {"kecamatan": "Selaawi", "kabupaten": "Garut"}, {"kecamatan": "Singajaya", "kabupaten": "Garut"}, {"kecamatan": "Sucinaraja", "kabupaten": "Garut"}, {"kecamatan": "Sukaresmi", "kabupaten": "Garut"}, {"kecamatan": "Sukawening", "kabupaten": "Garut"}, {"kecamatan": "Talegong", "kabupaten": "Garut"}, {"kecamatan": "Tarogong Kaler", "kabupaten": "Garut"}, {"kecamatan": "Tarogong Kidul", "kabupaten": "Garut"}, {"kecamatan": "Wanaraja", "kabupaten": "Garut"}, {"kecamatan": "Beji", "kabupaten": "Depok"}, {"kecamatan": "Bojongsari", "kabupaten": "Depok"}, {"kecamatan": "Cilodong", "kabupaten": "Depok"}, {"kecamatan": "Cimanggis", "kabupaten": "Depok"}, {"kecamatan": "Cinere", "kabupaten": "Depok"}, {"kecamatan": "Cipayung", "kabupaten": "Depok"}, {"kecamatan": "Limo", "kabupaten": "Depok"}, {"kecamatan": "Pancoran Mas", "kabupaten": "Depok"}, {"kecamatan": "Sawangan", "kabupaten": "Depok"}, {"kecamatan": "Sukmajaya", "kabupaten": "Depok"}, {"kecamatan": "Tapos", "kabupaten": "Depok"}, {"kecamatan": "Ciputat", "kabupaten": "Tangerang Selatan"}, {"kecamatan": "Ciputat Timur", "kabupaten": "Tangerang Selatan"}, {"kecamatan": "Pamulang", "kabupaten": "Tangerang Selatan"}, {"kecamatan": "Pondok Aren", "kabupaten": "Tangerang Selatan"}, {"kecamatan": "Serpong", "kabupaten": "Tangerang Selatan"}, {"kecamatan": "Serpong Utara", "kabupaten": "Tangerang Selatan"}, {"kecamatan": "Setu", "kabupaten": "Tangerang Selatan"}, {"kecamatan": "Berbah", "kabupaten": "Sleman"}, {"kecamatan": "Cangkringan", "kabupaten": "Sleman"}, {"kecamatan": "Depok", "kabupaten": "Sleman"}, {"kecamatan": "Gamping", "kabupaten": "Sleman"}, {"kecamatan": "Godean", "kabupaten": "Sleman"}, {"kecamatan": "Kalasan", "kabupaten": "Sleman"}, {"kecamatan": "Minggir", "kabupaten": "Sleman"}, {"kecamatan": "Mlati", "kabupaten": "Sleman"}, {"kecamatan": "Moyudan", "kabupaten": "Sleman"}, {"kecamatan": "Ngaglik", "kabupaten": "Sleman"}, {"kecamatan": "Ngemplak", "kabupaten": "Sleman"}, {"kecamatan": "Pakem", "kabupaten": "Sleman"}, {"kecamatan": "Prambanan", "kabupaten": "Sleman"}, {"kecamatan": "Seyegan", "kabupaten": "Sleman"}, {"kecamatan": "Sleman", "kabupaten": "Sleman"}, {"kecamatan": "Tempel", "kabupaten": "Sleman"}, {"kecamatan": "Turi", "kabupaten": "Sleman"}, {"kecamatan": "Adipala", "kabupaten": "Cilacap"}, {"kecamatan": "Bantarsari", "kabupaten": "Cilacap"}, {"kecamatan": "Binangun", "kabupaten": "Cilacap"}, {"kecamatan": "Cilacap Selatan", "kabupaten": "Cilacap"}, {"kecamatan": "Cilacap Tengah", "kabupaten": "Cilacap"}, {"kecamatan": "Cilacap Utara", "kabupaten": "Cilacap"}, {"kecamatan": "Cimanggu", "kabupaten": "Cilacap"}, {"kecamatan": "Cipari", "kabupaten": "Cilacap"}, {"kecamatan": "Dayeuhluhur", "kabupaten": "Cilacap"}, {"kecamatan": "Gandrungmangu", "kabupaten": "Cilacap"}, {"kecamatan": "Jeruklegi", "kabupaten": "Cilacap"}, {"kecamatan": "Kampung Laut", "kabupaten": "Cilacap"}, {"kecamatan": "Karangpucung", "kabupaten": "Cilacap"}, {"kecamatan": "Kawunganten", "kabupaten": "Cilacap"}, {"kecamatan": "Kedungreja", "kabupaten": "Cilacap"}, {"kecamatan": "Kesugihan", "kabupaten": "Cilacap"}, {"kecamatan": "Kroya", "kabupaten": "Cilacap"}, {"kecamatan": "Majenang", "kabupaten": "Cilacap"}, {"kecamatan": "Maos", "kabupaten": "Cilacap"}, {"kecamatan": "Nusawungu", "kabupaten": "Cilacap"}, {"kecamatan": "Patimuan", "kabupaten": "Cilacap"}, {"kecamatan": "Sampang", "kabupaten": "Cilacap"}, {"kecamatan": "Sidareja", "kabupaten": "Cilacap"}, {"kecamatan": "Wanareja", "kabupaten": "Cilacap"}, {"kecamatan": "Ajibarang", "kabupaten": "Banyumas"}, {"kecamatan": "Banyumas", "kabupaten": "Banyumas"}, {"kecamatan": "Baturaden", "kabupaten": "Banyumas"}, {"kecamatan": "Cilongok", "kabupaten": "Banyumas"}, {"kecamatan": "Gumelar", "kabupaten": "Banyumas"}, {"kecamatan": "Kalibagor", "kabupaten": "Banyumas"}, {"kecamatan": "Karanglewas", "kabupaten": "Banyumas"}, {"kecamatan": "Kebasen", "kabupaten": "Banyumas"}, {"kecamatan": "Kedung Banteng", "kabupaten": "Banyumas"}, {"kecamatan": "Kembaran", "kabupaten": "Banyumas"}, {"kecamatan": "Kemranjen", "kabupaten": "Banyumas"}, {"kecamatan": "Jatilawang", "kabupaten": "Banyumas"}, {"kecamatan": "Lumbir", "kabupaten": "Banyumas"}, {"kecamatan": "Patikraja", "kabupaten": "Banyumas"}, {"kecamatan": "Pekuncen", "kabupaten": "Banyumas"}, {"kecamatan": "Purwojati", "kabupaten": "Banyumas"}, {"kecamatan": "Purwokerto Barat", "kabupaten": "Banyumas"}, {"kecamatan": "Purwokerto Selatan", "kabupaten": "Banyumas"}, {"kecamatan": "Purwokerto Timur", "kabupaten": "Banyumas"}, {"kecamatan": "Purwokerto Utara", "kabupaten": "Banyumas"}, {"kecamatan": "Rawalo", "kabupaten": "Banyumas"}, {"kecamatan": "Sokaraja", "kabupaten": "Banyumas"}, {"kecamatan": "Somagede", "kabupaten": "Banyumas"}, {"kecamatan": "Sumbang", "kabupaten": "Banyumas"}, {"kecamatan": "Sumpiuh", "kabupaten": "Banyumas"}, {"kecamatan": "Tambak", "kabupaten": "Banyumas"}, {"kecamatan": "Wangon", "kabupaten": "Banyumas"}, {"kecamatan": "Bambanglipuro", "kabupaten": "Bantul"}, {"kecamatan": "Banguntapan", "kabupaten": "Bantul"}, {"kecamatan": "Bantul", "kabupaten": "Bantul"}, {"kecamatan": "Dlingo", "kabupaten": "Bantul"}, {"kecamatan": "Imogiri", "kabupaten": "Bantul"}, {"kecamatan": "Jetis", "kabupaten": "Bantul"}, {"kecamatan": "Kasihan", "kabupaten": "Bantul"}, {"kecamatan": "Kretek", "kabupaten": "Bantul"}, {"kecamatan": "Pajangan", "kabupaten": "Bantul"}, {"kecamatan": "Pandak", "kabupaten": "Bantul"}, {"kecamatan": "Piyungan", "kabupaten": "Bantul"}, {"kecamatan": "Pleret", "kabupaten": "Bantul"}, {"kecamatan": "Pundong", "kabupaten": "Bantul"}, {"kecamatan": "Sanden", "kabupaten": "Bantul"}, {"kecamatan": "Sedayu", "kabupaten": "Bantul"}, {"kecamatan": "Sewon", "kabupaten": "Bantul"}, {"kecamatan": "Srandakan", "kabupaten": "Bantul"}, {"kecamatan": "Adimulyo", "kabupaten": "Kebumen"}, {"kecamatan": "Alian", "kabupaten": "Kebumen"}, {"kecamatan": "Ambal", "kabupaten": "Kebumen"}, {"kecamatan": "Ayah", "kabupaten": "Kebumen"}, {"kecamatan": "Bonorowo", "kabupaten": "Kebumen"}, {"kecamatan": "Buayan", "kabupaten": "Kebumen"}, {"kecamatan": "Buluspesantren", "kabupaten": "Kebumen"}, {"kecamatan": "Gombong", "kabupaten": "Kebumen"}, {"kecamatan": "Karanganyar", "kabupaten": "Kebumen"}, {"kecamatan": "Karanggayam", "kabupaten": "Kebumen"}, {"kecamatan": "Karangsambung", "kabupaten": "Kebumen"}, {"kecamatan": "Kebumen", "kabupaten": "Kebumen"}, {"kecamatan": "Klirong", "kabupaten": "Kebumen"}, {"kecamatan": "Kutowinangun", "kabupaten": "Kebumen"}, {"kecamatan": "Kuwarasan", "kabupaten": "Kebumen"}, {"kecamatan": "Mirit", "kabupaten": "Kebumen"}, {"kecamatan": "Padureso", "kabupaten": "Kebumen"}, {"kecamatan": "Pejagoan", "kabupaten": "Kebumen"}, {"kecamatan": "Petanahan", "kabupaten": "Kebumen"}, {"kecamatan": "Poncowarno", "kabupaten": "Kebumen"}, {"kecamatan": "Prembun", "kabupaten": "Kebumen"}, {"kecamatan": "Puring", "kabupaten": "Kebumen"}, {"kecamatan": "Rowokele", "kabupaten": "Kebumen"}, {"kecamatan": "Sadang", "kabupaten": "Kebumen"}, {"kecamatan": "Sempor", "kabupaten": "Kebumen"}, {"kecamatan": "Sruweng", "kabupaten": "Kebumen"}, {"kecamatan": "Bayat", "kabupaten": "Klaten"}, {"kecamatan": "Cawas", "kabupaten": "Klaten"}, {"kecamatan": "Ceper", "kabupaten": "Klaten"}, {"kecamatan": "Delanggu", "kabupaten": "Klaten"}, {"kecamatan": "Gantiwarno", "kabupaten": "Klaten"}, {"kecamatan": "Jatinom", "kabupaten": "Klaten"}, {"kecamatan": "Jogonalan", "kabupaten": "Klaten"}, {"kecamatan": "Juwiring", "kabupaten": "Klaten"}, {"kecamatan": "Kalikotes", "kabupaten": "Klaten"}, {"kecamatan": "Karanganom", "kabupaten": "Klaten"}, {"kecamatan": "Karangdowo", "kabupaten": "Klaten"}, {"kecamatan": "Karangnongko", "kabupaten": "Klaten"}, {"kecamatan": "Kebonarum", "kabupaten": "Klaten"}, {"kecamatan": "Kemalang", "kabupaten": "Klaten"}, {"kecamatan": "Klaten Selatan", "kabupaten": "Klaten"}, {"kecamatan": "Klaten Tengah", "kabupaten": "Klaten"}, {"kecamatan": "Klaten Utara", "kabupaten": "Klaten"}, {"kecamatan": "Manisrenggo", "kabupaten": "Klaten"}, {"kecamatan": "Ngawen", "kabupaten": "Klaten"}, {"kecamatan": "Pedan", "kabupaten": "Klaten"}, {"kecamatan": "Polanharjo", "kabupaten": "Klaten"}, {"kecamatan": "Prambanan", "kabupaten": "Klaten"}, {"kecamatan": "Trucuk", "kabupaten": "Klaten"}, {"kecamatan": "Tulung", "kabupaten": "Klaten"}, {"kecamatan": "Wedi", "kabupaten": "Klaten"}, {"kecamatan": "Wonosari", "kabupaten": "Klaten"}, {"kecamatan": "Ampel", "kabupaten": "Boyolali"}, {"kecamatan": "Andong", "kabupaten": "Boyolali"}, {"kecamatan": "Banyudono", "kabupaten": "Boyolali"}, {"kecamatan": "Boyolali", "kabupaten": "Boyolali"}, {"kecamatan": "Cepogo", "kabupaten": "Boyolali"}, {"kecamatan": "Gladagsari", "kabupaten": "Boyolali"}, {"kecamatan": "Juwangi", "kabupaten": "Boyolali"}, {"kecamatan": "Karanggede", "kabupaten": "Boyolali"}, {"kecamatan": "Kemusu", "kabupaten": "Boyolali"}, {"kecamatan": "Klego", "kabupaten": "Boyolali"}, {"kecamatan": "Mojosongo", "kabupaten": "Boyolali"}, {"kecamatan": "Musuk", "kabupaten": "Boyolali"}, {"kecamatan": "Ngemplak", "kabupaten": "Boyolali"}, {"kecamatan": "Nogosari", "kabupaten": "Boyolali"}, {"kecamatan": "Sambi", "kabupaten": "Boyolali"}, {"kecamatan": "Sawit", "kabupaten": "Boyolali"}, {"kecamatan": "Selo", "kabupaten": "Boyolali"}, {"kecamatan": "Simo", "kabupaten": "Boyolali"}, {"kecamatan": "Tamansari", "kabupaten": "Boyolali"}, {"kecamatan": "Teras", "kabupaten": "Boyolali"}, {"kecamatan": "Wonosamodro", "kabupaten": "Boyolali"}, {"kecamatan": "Wonosegoro", "kabupaten": "Boyolali"}, {"kecamatan": "Balongbendo", "kabupaten": "Sidoarjo"}, {"kecamatan": "Buduran", "kabupaten": "Sidoarjo"}, {"kecamatan": "Candi", "kabupaten": "Sidoarjo"}, {"kecamatan": "Gedangan", "kabupaten": "Sidoarjo"}, {"kecamatan": "Jabon", "kabupaten": "Sidoarjo"}, {"kecamatan": "Krembung", "kabupaten": "Sidoarjo"}, {"kecamatan": "Krian", "kabupaten": "Sidoarjo"}, {"kecamatan": "Prambon", "kabupaten": "Sidoarjo"}, {"kecamatan": "Porong", "kabupaten": "Sidoarjo"}, {"kecamatan": "Sedati", "kabupaten": "Sidoarjo"}, {"kecamatan": "Sidoarjo", "kabupaten": "Sidoarjo"}, {"kecamatan": "Sukodono", "kabupaten": "Sidoarjo"}, {"kecamatan": "Taman", "kabupaten": "Sidoarjo"}, {"kecamatan": "Tanggulangin", "kabupaten": "Sidoarjo"}, {"kecamatan": "Tarik", "kabupaten": "Sidoarjo"}, {"kecamatan": "Tulangan", "kabupaten": "Sidoarjo"}, {"kecamatan": "Waru", "kabupaten": "Sidoarjo"}, {"kecamatan": "Wonoayu", "kabupaten": "Sidoarjo"}, {"kecamatan": "Ampelgading", "kabupaten": "Malang"}, {"kecamatan": "Bantur", "kabupaten": "Malang"}, {"kecamatan": "Bululawang", "kabupaten": "Malang"}, {"kecamatan": "Dampit", "kabupaten": "Malang"}, {"kecamatan": "Dau", "kabupaten": "Malang"}, {"kecamatan": "Donomulyo", "kabupaten": "Malang"}, {"kecamatan": "Gedangan", "kabupaten": "Malang"}, {"kecamatan": "Gondanglegi", "kabupaten": "Malang"}, {"kecamatan": "Jabung", "kabupaten": "Malang"}, {"kecamatan": "Kalipare", "kabupaten": "Malang"}, {"kecamatan": "Karangploso", "kabupaten": "Malang"}, {"kecamatan": "Kasembon", "kabupaten": "Malang"}, {"kecamatan": "Kepanjen", "kabupaten": "Malang"}, {"kecamatan": "Kromengan", "kabupaten": "Malang"}, {"kecamatan": "Lawang", "kabupaten": "Malang"}, {"kecamatan": "Ngajum", "kabupaten": "Malang"}, {"kecamatan": "Ngantang", "kabupaten": "Malang"}, {"kecamatan": "Pagak", "kabupaten": "Malang"}, {"kecamatan": "Pagelaran", "kabupaten": "Malang"}, {"kecamatan": "Pakis", "kabupaten": "Malang"}, {"kecamatan": "Pakisaji", "kabupaten": "Malang"}, {"kecamatan": "Poncokusumo", "kabupaten": "Malang"}, {"kecamatan": "Pujon", "kabupaten": "Malang"}, {"kecamatan": "Singosari", "kabupaten": "Malang"}, {"kecamatan": "Sumbermanjing Wetan", "kabupaten": "Malang"}, {"kecamatan": "Sumberpucung", "kabupaten": "Malang"}, {"kecamatan": "Tajinan", "kabupaten": "Malang"}, {"kecamatan": "Tirtoyudo", "kabupaten": "Malang"}, {"kecamatan": "Tumpang", "kabupaten": "Malang"}, {"kecamatan": "Turen", "kabupaten": "Malang"}, {"kecamatan": "Wagir", "kabupaten": "Malang"}, {"kecamatan": "Wajak", "kabupaten": "Malang"}, {"kecamatan": "Wonosari", "kabupaten": "Malang"}, {"kecamatan": "Bangil", "kabupaten": "Pasuruan"}, {"kecamatan": "Beji", "kabupaten": "Pasuruan"}, {"kecamatan": "Gempol", "kabupaten": "Pasuruan"}, {"kecamatan": "Gondang Wetan", "kabupaten": "Pasuruan"}, {"kecamatan": "Grati", "kabupaten": "Pasuruan"}, {"kecamatan": "Kejayan", "kabupaten": "Pasuruan"}, {"kecamatan": "Kraton", "kabupaten": "Pasuruan"}, {"kecamatan": "Lekok", "kabupaten": "Pasuruan"}, {"kecamatan": "Lumbang", "kabupaten": "Pasuruan"}, {"kecamatan": "Nguling", "kabupaten": "Pasuruan"}, {"kecamatan": "Pandaan", "kabupaten": "Pasuruan"}, {"kecamatan": "Pasrepan", "kabupaten": "Pasuruan"}, {"kecamatan": "Prigen", "kabupaten": "Pasuruan"}, {"kecamatan": "Pohjentrek", "kabupaten": "Pasuruan"}, {"kecamatan": "Purwodadi", "kabupaten": "Pasuruan"}, {"kecamatan": "Purwosari", "kabupaten": "Pasuruan"}, {"kecamatan": "Puspo", "kabupaten": "Pasuruan"}, {"kecamatan": "Rejoso", "kabupaten": "Pasuruan"}, {"kecamatan": "Rembang", "kabupaten": "Pasuruan"}, {"kecamatan": "Sukorejo", "kabupaten": "Pasuruan"}, {"kecamatan": "Tosari", "kabupaten": "Pasuruan"}, {"kecamatan": "Tutur", "kabupaten": "Pasuruan"}, {"kecamatan": "Winongan", "kabupaten": "Pasuruan"}, {"kecamatan": "Wonorejo", "kabupaten": "Pasuruan"}, {"kecamatan": "Balongpanggang", "kabupaten": "Gresik"}, {"kecamatan": "Benjeng", "kabupaten": "Gresik"}, {"kecamatan": "Bungah", "kabupaten": "Gresik"}, {"kecamatan": "Cerme", "kabupaten": "Gresik"}, {"kecamatan": "Driyorejo", "kabupaten": "Gresik"}, {"kecamatan": "Duduk Sampeyan", "kabupaten": "Gresik"}, {"kecamatan": "Dukun", "kabupaten": "Gresik"}, {"kecamatan": "Gresik", "kabupaten": "Gresik"}, {"kecamatan": "Kebomas", "kabupaten": "Gresik"}, {"kecamatan": "Kedamean", "kabupaten": "Gresik"}, {"kecamatan": "Manyar", "kabupaten": "Gresik"}, {"kecamatan": "Menganti", "kabupaten": "Gresik"}, {"kecamatan": "Panceng", "kabupaten": "Gresik"}, {"kecamatan": "Sangkapura", "kabupaten": "Gresik"}, {"kecamatan": "Sidayu", "kabupaten": "Gresik"}, {"kecamatan": "Tambak", "kabupaten": "Gresik"}, {"kecamatan": "Ujung Pangkah", "kabupaten": "Gresik"}, {"kecamatan": "Wringinanom", "kabupaten": "Gresik"}, {"kecamatan": "Ajung", "kabupaten": "Jember"}, {"kecamatan": "Ambulu", "kabupaten": "Jember"}, {"kecamatan": "Arjasa", "kabupaten": "Jember"}, {"kecamatan": "Bangsalsari", "kabupaten": "Jember"}, {"kecamatan": "Balung", "kabupaten": "Jember"}, {"kecamatan": "Gumukmas", "kabupaten": "Jember"}, {"kecamatan": "Jelbuk", "kabupaten": "Jember"}, {"kecamatan": "Jenggawah", "kabupaten": "Jember"}, {"kecamatan": "Jombang", "kabupaten": "Jember"}, {"kecamatan": "Kalisat", "kabupaten": "Jember"}, {"kecamatan": "Kaliwates", "kabupaten": "Jember"}, {"kecamatan": "Kencong", "kabupaten": "Jember"}, {"kecamatan": "Ledokombo", "kabupaten": "Jember"}, {"kecamatan": "Mayang", "kabupaten": "Jember"}, {"kecamatan": "Mumbulsari", "kabupaten": "Jember"}, {"kecamatan": "Panti", "kabupaten": "Jember"}, {"kecamatan": "Pakusari", "kabupaten": "Jember"}, {"kecamatan": "Patrang", "kabupaten": "Jember"}, {"kecamatan": "Puger", "kabupaten": "Jember"}, {"kecamatan": "Rambipuji", "kabupaten": "Jember"}, {"kecamatan": "Semboro", "kabupaten": "Jember"}, {"kecamatan": "Silo", "kabupaten": "Jember"}, {"kecamatan": "Sukorambi", "kabupaten": "Jember"}, {"kecamatan": "Sukowono", "kabupaten": "Jember"}, {"kecamatan": "Sumberbaru", "kabupaten": "Jember"}, {"kecamatan": "Sumberjambe", "kabupaten": "Jember"}, {"kecamatan": "Sumbersari", "kabupaten": "Jember"}, {"kecamatan": "Tanggul", "kabupaten": "Jember"}, {"kecamatan": "Tempurejo", "kabupaten": "Jember"}, {"kecamatan": "Umbulsari", "kabupaten": "Jember"}, {"kecamatan": "Wuluhan", "kabupaten": "Jember"}, {"kecamatan": "Bangsal", "kabupaten": "Mojokerto"}, {"kecamatan": "Dawarblandong", "kabupaten": "Mojokerto"}, {"kecamatan": "Dlanggu", "kabupaten": "Mojokerto"}, {"kecamatan": "Gedeg", "kabupaten": "Mojokerto"}, {"kecamatan": "Gondang", "kabupaten": "Mojokerto"}, {"kecamatan": "Jatirejo", "kabupaten": "Mojokerto"}, {"kecamatan": "Jetis", "kabupaten": "Mojokerto"}, {"kecamatan": "Kemlagi", "kabupaten": "Mojokerto"}, {"kecamatan": "Kutorejo", "kabupaten": "Mojokerto"}, {"kecamatan": "Mojoanyar", "kabupaten": "Mojokerto"}, {"kecamatan": "Mojosari", "kabupaten": "Mojokerto"}, {"kecamatan": "Ngoro", "kabupaten": "Mojokerto"}, {"kecamatan": "Pacet", "kabupaten": "Mojokerto"}, {"kecamatan": "Pungging", "kabupaten": "Mojokerto"}, {"kecamatan": "Puri", "kabupaten": "Mojokerto"}, {"kecamatan": "Sooko", "kabupaten": "Mojokerto"}, {"kecamatan": "Trawas", "kabupaten": "Mojokerto"}, {"kecamatan": "Trowulan", "kabupaten": "Mojokerto"}, {"kecamatan": "Sibolangit", "kabupaten": "Deli Serdang"}, {"kecamatan": "Pancur Batu", "kabupaten": "Deli Serdang"}, {"kecamatan": "Kutalimbaru", "kabupaten": "Deli Serdang"}, {"kecamatan": "Sunggal", "kabupaten": "Deli Serdang"}, {"kecamatan": "Hamparan Perak", "kabupaten": "Deli Serdang"}, {"kecamatan": "Labuhan Deli", "kabupaten": "Deli Serdang"}, {"kecamatan": "Percut Sei Tuan", "kabupaten": "Deli Serdang"}, {"kecamatan": "Batang Kuis", "kabupaten": "Deli Serdang"}, {"kecamatan": "Pantai Labu", "kabupaten": "Deli Serdang"}, {"kecamatan": "Beringin", "kabupaten": "Deli Serdang"}, {"kecamatan": "Pagar Merbau", "kabupaten": "Deli Serdang"}, {"kecamatan": "Lubuk Pakam", "kabupaten": "Deli Serdang"}, {"kecamatan": "Galang", "kabupaten": "Deli Serdang"}, {"kecamatan": "Bangun Purba", "kabupaten": "Deli Serdang"}, {"kecamatan": "Gunung Meriah", "kabupaten": "Deli Serdang"}, {"kecamatan": "Sinembah Tanjung Muda Hulu", "kabupaten": "Deli Serdang"}, {"kecamatan": "Sinembah Tanjung Muda Hilir", "kabupaten": "Deli Serdang"}, {"kecamatan": "Tanjung Morawa", "kabupaten": "Deli Serdang"}, {"kecamatan": "Patumbak", "kabupaten": "Deli Serdang"}, {"kecamatan": "Sibiru-biru", "kabupaten": "Deli Serdang"}, {"kecamatan": "Deli Tua", "kabupaten": "Deli Serdang"}, {"kecamatan": "Namorambe", "kabupaten": "Deli Serdang"}, {"kecamatan": "Anggana", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Kembang Janggut", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Kenohan", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Kota Bangun", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Loa Janan", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Loa Kulu", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Marang Kayu", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Muara Badak", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Muara Jawa", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Muara Kaman", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Muara Muntai", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Muara Wis", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Samboja", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Sanga-Sanga", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Sebulu", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Tabang", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Tenggarong", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Tenggarong Seberang", "kabupaten": "Kutai Kartanegara"}, {"kecamatan": "Aluh Aluh", "kabupaten": "Banjar"}, {"kecamatan": "Aranio", "kabupaten": "Banjar"}, {"kecamatan": "Astambul", "kabupaten": "Banjar"}, {"kecamatan": "Beruntung Baru", "kabupaten": "Banjar"}, {"kecamatan": "Cintapuri Darussalam", "kabupaten": "Banjar"}, {"kecamatan": "Gambut", "kabupaten": "Banjar"}, {"kecamatan": "Karang Intan", "kabupaten": "Banjar"}, {"kecamatan": "Kertak Hanyar", "kabupaten": "Banjar"}, {"kecamatan": "Mataraman", "kabupaten": "Banjar"}, {"kecamatan": "Martapura", "kabupaten": "Banjar"}, {"kecamatan": "Martapura Barat", "kabupaten": "Banjar"}, {"kecamatan": "Martapura Timur", "kabupaten": "Banjar"}, {"kecamatan": "Paramasan", "kabupaten": "Banjar"}, {"kecamatan": "Pengaron", "kabupaten": "Banjar"}, {"kecamatan": "Sambung Makmur", "kabupaten": "Banjar"}, {"kecamatan": "Simpang Empat", "kabupaten": "Banjar"}, {"kecamatan": "Sungai Pinang", "kabupaten": "Banjar"}, {"kecamatan": "Sungai Tabuk", "kabupaten": "Banjar"}, {"kecamatan": "Tatah Makmur", "kabupaten": "Banjar"}, {"kecamatan": "Telaga Bauntung", "kabupaten": "Banjar"}, {"kecamatan": "XIII Koto Kampar", "kabupaten": "Kampar"}, {"kecamatan": "Bangkinang", "kabupaten": "Kampar"}, {"kecamatan": "Bangkinang Kota", "kabupaten": "Kampar"}, {"kecamatan": "Gunung Sahilan", "kabupaten": "Kampar"}, {"kecamatan": "Kampa", "kabupaten": "Kampar"}, {"kecamatan": "Kampar", "kabupaten": "Kampar"}, {"kecamatan": "Kampar Kiri", "kabupaten": "Kampar"}, {"kecamatan": "Kampar Kiri Hilir", "kabupaten": "Kampar"}, {"kecamatan": "Kampar Kiri Hulu", "kabupaten": "Kampar"}, {"kecamatan": "Kampar Kiri Tengah", "kabupaten": "Kampar"}, {"kecamatan": "Kampar Utara", "kabupaten": "Kampar"}, {"kecamatan": "Koto Kampar Hulu", "kabupaten": "Kampar"}, {"kecamatan": "Kuok", "kabupaten": "Kampar"}, {"kecamatan": "Perhentian Raja", "kabupaten": "Kampar"}, {"kecamatan": "Rumbio Jaya", "kabupaten": "Kampar"}, {"kecamatan": "Salo", "kabupaten": "Kampar"}, {"kecamatan": "Siak Hulu", "kabupaten": "Kampar"}, {"kecamatan": "Tambang", "kabupaten": "Kampar"}, {"kecamatan": "Tapung", "kabupaten": "Kampar"}, {"kecamatan": "Tapung Hilir", "kabupaten": "Kampar"}, {"kecamatan": "Tapung Hulu", "kabupaten": "Kampar"}, {"kecamatan": "Batu Ampar", "kabupaten": "Kubu Raya"}, {"kecamatan": "Kuala Mandor B", "kabupaten": "Kubu Raya"}, {"kecamatan": "Kubu", "kabupaten": "Kubu Raya"}, {"kecamatan": "Rasau Jaya", "kabupaten": "Kubu Raya"}, {"kecamatan": "Sungai Ambawang", "kabupaten": "Kubu Raya"}, {"kecamatan": "Sungai Kakap", "kabupaten": "Kubu Raya"}, {"kecamatan": "Sungai Raya", "kabupaten": "Kubu Raya"}, {"kecamatan": "Teluk Pakedai", "kabupaten": "Kubu Raya"}, {"kecamatan": "Terentang", "kabupaten": "Kubu Raya"}, {"kecamatan": "Bajeng", "kabupaten": "Gowa"}, {"kecamatan": "Bajeng Barat", "kabupaten": "Gowa"}, {"kecamatan": "Barombong", "kabupaten": "Gowa"}, {"kecamatan": "Biringbulu", "kabupaten": "Gowa"}, {"kecamatan": "Bontolempangan", "kabupaten": "Gowa"}, {"kecamatan": "Bontomarannu", "kabupaten": "Gowa"}, {"kecamatan": "Bontonompo", "kabupaten": "Gowa"}, {"kecamatan": "Bontonompo Selatan", "kabupaten": "Gowa"}, {"kecamatan": "Bungaya", "kabupaten": "Gowa"}, {"kecamatan": "Manuju", "kabupaten": "Gowa"}, {"kecamatan": "Pallangga", "kabupaten": "Gowa"}, {"kecamatan": "Parangloe", "kabupaten": "Gowa"}, {"kecamatan": "Parigi", "kabupaten": "Gowa"}, {"kecamatan": "Pattallassang", "kabupaten": "Gowa"}, {"kecamatan": "Somba Opu", "kabupaten": "Gowa"}, {"kecamatan": "Tinggimoncong", "kabupaten": "Gowa"}, {"kecamatan": "Tompobulu", "kabupaten": "Gowa"}, {"kecamatan": "Tombolo Pao", "kabupaten": "Gowa"}];
+
+function switchTab(tab) {
+  document.getElementById('search-panel').classList.toggle('active', tab === 'search');
+  document.getElementById('searchKab-panel').classList.toggle('active', tab === 'searchKab');
+  document.getElementById('list-panel').classList.toggle('active', tab === 'list');
+  document.getElementById('listKab-panel').classList.toggle('active', tab === 'listKab');
+  const order = ['search', 'searchKab', 'list', 'listKab'];
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', order[i] === tab);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function highlight(text, query) {
+  if (!query) return escapeHtml(text);
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return escapeHtml(text);
+  return escapeHtml(text.slice(0, idx)) + '<b>' + escapeHtml(text.slice(idx, idx + query.length)) + '</b>' + escapeHtml(text.slice(idx + query.length));
+}
+
+const resultsEl = document.getElementById('results');
+const searchInput = document.getElementById('searchInput');
+
+function renderResults(query) {
+  resultsEl.innerHTML = '';
+  if (!query.trim()) {
+    resultsEl.innerHTML = '<div class="empty-msg">Ketik minimal 1 huruf untuk mencari kecamatan</div>';
+    return;
+  }
+  const q = query.trim().toLowerCase();
+  const matches = DATA.filter(d => d.kecamatan.toLowerCase().includes(q)).slice(0, 50);
+  if (matches.length === 0) {
+    resultsEl.innerHTML = '<div class="empty-msg">Tidak ditemukan</div>';
+    return;
+  }
+  matches.forEach(d => {
+    const full = d.kecamatan + ', ' + d.kabupaten;
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    item.innerHTML = '<span class="result-text">' + highlight(d.kecamatan, query) + ', ' + escapeHtml(d.kabupaten) + '</span><span class="copy-icon">Copy</span>';
+    const iconEl = item.querySelector('.copy-icon');
+    item.onclick = () => copyItem(full, iconEl);
+    resultsEl.appendChild(item);
+  });
+}
+
+function copyItem(text, iconEl) {
+  navigator.clipboard.writeText(text).then(() => {
+    const original = iconEl.textContent;
+    iconEl.textContent = 'Tersalin!';
+    iconEl.classList.add('copied-icon');
+    setTimeout(() => {
+      iconEl.textContent = original;
+      iconEl.classList.remove('copied-icon');
+    }, 1200);
+  });
+}
+
+searchInput.addEventListener('input', e => renderResults(e.target.value));
+renderResults('');
+
+// ---- Cari Kabupaten ----
+const KAB_DATA = [...new Set(DATA.map(d => d.kabupaten))].sort((a, b) => a.localeCompare(b)).map(kab => {
+  return { kabupaten: kab, jumlah: DATA.filter(d => d.kabupaten === kab).length };
+});
+
+const resultsKabEl = document.getElementById('resultsKab');
+const searchKabInput = document.getElementById('searchKabInput');
+
+function renderResultsKab(query) {
+  resultsKabEl.innerHTML = '';
+  if (!query.trim()) {
+    resultsKabEl.innerHTML = '<div class="empty-msg">Ketik minimal 1 huruf untuk mencari kabupaten</div>';
+    return;
+  }
+  const q = query.trim().toLowerCase();
+  const matches = DATA.filter(d => d.kabupaten.toLowerCase().includes(q)).slice(0, 300);
+  if (matches.length === 0) {
+    resultsKabEl.innerHTML = '<div class="empty-msg">Tidak ditemukan</div>';
+    return;
+  }
+  matches.forEach(d => {
+    const full = d.kecamatan + ', ' + d.kabupaten;
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    item.innerHTML = '<span class="result-text">' + escapeHtml(d.kecamatan) + ', ' + highlight(d.kabupaten, query) + '</span><span class="copy-icon">Copy</span>';
+    const iconEl = item.querySelector('.copy-icon');
+    item.onclick = () => copyItem(full, iconEl);
+    resultsKabEl.appendChild(item);
+  });
+}
+
+searchKabInput.addEventListener('input', e => renderResultsKab(e.target.value));
+renderResultsKab('');
+
+// Full list tab
+const tbody = document.getElementById('fullTableBody');
+document.getElementById('countBadge').textContent = DATA.length + ' Kecamatan';
+DATA.forEach((d, i) => {
+  const tr = document.createElement('tr');
+  const full = d.kecamatan + ', ' + d.kabupaten;
+  tr.innerHTML = '<td class="no-col">' + (i+1) + '</td><td>' + escapeHtml(d.kecamatan) + '</td><td>' + escapeHtml(d.kabupaten) + '</td><td><button class="row-copy-btn" data-value="' + escapeHtml(full) + '">Copy</button></td>';
+  tbody.appendChild(tr);
+});
+
+// Daftar Kabupaten tab
+const KAB_LIST = [...new Set(DATA.map(d => d.kabupaten))].sort((a, b) => a.localeCompare(b));
+const kabTbody = document.getElementById('kabTableBody');
+document.getElementById('kabCountBadge').textContent = KAB_LIST.length + ' Kabupaten';
+KAB_LIST.forEach((kab, i) => {
+  const tr = document.createElement('tr');
+  const jumlah = DATA.filter(d => d.kabupaten === kab).length;
+  tr.innerHTML = '<td class="no-col">' + (i+1) + '</td><td>' + escapeHtml(kab) + '</td><td>' + jumlah + ' kecamatan</td><td><button class="row-copy-btn" data-value="' + escapeHtml(kab) + '">Copy</button></td>';
+  kabTbody.appendChild(tr);
+});
+
+// Delegated click handler for all row-copy buttons (works for both tables)
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.row-copy-btn');
+  if (!btn) return;
+  const value = btn.getAttribute('data-value');
+  navigator.clipboard.writeText(value).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Tersalin!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('copied');
+    }, 1200);
+  });
+});
+</script>
+</body>
+</html>

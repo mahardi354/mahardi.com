@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Isi — Demo Website per Niche</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f0ede8;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #1e2d40;
+    padding: 48px 40px 40px;
+    text-align: center;
+  }
+  .header-eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 3px;
+    text-transform: uppercase; color: #c9a84c;
+    margin-bottom: 12px;
+  }
+  header h1 {
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 700; color: #fff;
+    letter-spacing: -0.5px; margin-bottom: 10px;
+  }
+  header p {
+    color: rgba(255,255,255,0.55); font-size: 14px; margin-bottom: 18px;
+  }
+  .badge {
+    display: inline-block;
+    background: #c9a84c; color: #1e2d40;
+    font-size: 12px; font-weight: 700;
+    padding: 5px 18px; border-radius: 20px;
+  }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 36px 24px 70px;
+  }
+
+  .toc {
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  .toc-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #c9a84c; margin-bottom: 8px;
+  }
+  .toc a {
+    color: #1e2d40; text-decoration: none; margin-right: 14px;
+    border-bottom: 1px dotted #c9a84c;
+  }
+  .toc a:hover { color: #c9a84c; }
+
+  .group {
+    margin-bottom: 30px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .group-head {
+    background: #1e2d40;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .group-icon { font-size: 18px; }
+  .group-name {
+    color: #fff; font-size: 15px; font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .group-count {
+    margin-left: auto;
+    font-size: 11px; color: #c9a84c; font-weight: 600;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    text-align: left;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; color: #999;
+    padding: 10px 22px;
+    border-bottom: 1px solid #f0ede8;
+    background: #faf9f7;
+  }
+  tbody td {
+    padding: 12px 22px;
+    font-size: 13.5px;
+    border-bottom: 1px solid #f3f1ed;
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #faf8f3; }
+
+  .col-niche { width: 26%; color: #555; }
+  .col-niche .niche-icon { margin-right: 6px; }
+  .col-title { width: 44%; font-weight: 600; color: #1a1a1a; }
+  .col-file { width: 18%; font-family: monospace; font-size: 11.5px; color: #aaa; }
+  .col-link { width: 12%; text-align: right; }
+
+  .open-btn {
+    display: inline-block;
+    background: #1e2d40;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px; font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: background 0.2s;
+  }
+  .open-btn:hover { background: #c9a84c; color: #1e2d40; }
+
+  footer {
+    text-align: center;
+    padding: 26px;
+    font-size: 12px; color: #bbb;
+  }
+
+  @media (max-width: 700px) {
+    main { padding: 24px 14px 50px; }
+    .col-file { display: none; }
+    thead th:nth-child(3) { display: none; }
+    .col-niche { width: 30%; }
+    .col-title { width: 45%; }
+    .col-link { width: 25%; }
+    table thead { display: none; }
+    tbody td { padding: 10px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">Portofolio Demo</div>
+  <h1>📋 Daftar Isi — Demo Website per Niche</h1>
+  <p>Dikelompokkan berdasarkan niche yang berdekatan agar mudah dibandingkan</p>
+  <div class="badge">60 Halaman Demo · 17 Kelompok Niche</div>
+</header>
+
+<main>
+
+  <div class="toc">
+    <div class="toc-title">Lompat ke kelompok</div>
+    <a href="#kesehatan">🏥 Kesehatan & Medis</a>
+    <a href="#kecantikan">✨ Kecantikan & Perawatan Diri</a>
+    <a href="#properti">🏠 Properti & Hunian</a>
+    <a href="#acara">💍 Acara & Pernikahan</a>
+    <a href="#kuliner">🍽️ Kuliner & Catering</a>
+    <a href="#jasarumahtangga">🧹 Jasa Rumah Tangga</a>
+    <a href="#bangunan">🏗️ Bangunan & Konstruksi</a>
+    <a href="#transportasi">🚗 Transportasi & Logistik</a>
+    <a href="#retail">🛍️ Retail & Toko</a>
+    <a href="#kreatif">🖨️ Percetakan & Kreatif</a>
+    <a href="#pendidikan">🎒 Pendidikan & Keagamaan</a>
+    <a href="#gayahidup">💪 Gaya Hidup & Hiburan</a>
+    <a href="#hospitality">🏨 Hospitality & Layanan Acara</a>
+    <a href="#otomotif">🔧 Otomotif & Sparepart</a>
+    <a href="#profesional">⚖️ Jasa Profesional & Keuangan</a>
+  </div>
+
+  <!-- KESEHATAN -->
+  <div class="group" id="kesehatan">
+    <div class="group-head">
+      <span class="group-icon">🏥</span>
+      <span class="group-name">Kesehatan & Medis</span>
+      <span class="group-count">7 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">🏥</span>Klinik / Dokter</td><td class="col-title">Klinik Sehat Medika — Klinik Umum Purwokerto</td><td class="col-file">04-klinik-umum.html</td><td class="col-link"><a class="open-btn" href="04-klinik-umum.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🦷</span>Klinik Gigi</td><td class="col-title">Klinik Gigi Senyum Indah — Dokter Gigi Purwokerto</td><td class="col-file">05-klinik-gigi.html</td><td class="col-link"><a class="open-btn" href="05-klinik-gigi.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🦷</span>Klinik Gigi</td><td class="col-title">Klinik Gigi Senyum Sehat — Dokter Gigi Purwokerto</td><td class="col-file">06-dokter-gigi.html</td><td class="col-link"><a class="open-btn" href="06-dokter-gigi.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🏥</span>Klinik / Dokter</td><td class="col-title">dr. Anisa Rahayu, Sp.PD — Praktek Dokter Spesialis</td><td class="col-file">07-dokter-praktek.html</td><td class="col-link"><a class="open-btn" href="07-dokter-praktek.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">💊</span>Apotek</td><td class="col-title">Apotek Sehat Abadi — Apotek Purwokerto 24 Jam</td><td class="col-file">08-apotek.html</td><td class="col-link"><a class="open-btn" href="08-apotek.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🧠</span>Psikolog / Konselor</td><td class="col-title">Dr. Anisa Pratiwi, M.Psi. — Psikolog & Konselor</td><td class="col-file">46-psikolog.html</td><td class="col-link"><a class="open-btn" href="46-psikolog.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🐾</span>Klinik Hewan / Petshop</td><td class="col-title">Satwa Sehat — Klinik Hewan & Pet Shop</td><td class="col-file">47-klinik-hewan-petshop.html</td><td class="col-link"><a class="open-btn" href="47-klinik-hewan-petshop.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- KECANTIKAN -->
+  <div class="group" id="kecantikan">
+    <div class="group-head">
+      <span class="group-icon">✨</span>
+      <span class="group-name">Kecantikan & Perawatan Diri</span>
+      <span class="group-count">4 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">✨</span>Klinik Kecantikan</td><td class="col-title">Lumière Aesthetic Clinic — Kecantikan & Estetika Medis</td><td class="col-file">09-klinik-kecantikan.html</td><td class="col-link"><a class="open-btn" href="09-klinik-kecantikan.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">✨</span>Klinik Kecantikan</td><td class="col-title">Aurelia Aesthetic Clinic — Klinik Kecantikan Purwokerto</td><td class="col-file">10-klinik-kecantikan2.html</td><td class="col-link"><a class="open-btn" href="10-klinik-kecantikan2.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">💆</span>Salon / Spa</td><td class="col-title">Mawar Beauty Salon — Salon Kecantikan Purwokerto</td><td class="col-file">11-salon.html</td><td class="col-link"><a class="open-btn" href="11-salon.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">💈</span>Barbershop</td><td class="col-title">Gentlemen's Cut — Barbershop Purwokerto</td><td class="col-file">12-barbershop.html</td><td class="col-link"><a class="open-btn" href="12-barbershop.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PROPERTI -->
+  <div class="group" id="properti">
+    <div class="group-head">
+      <span class="group-icon">🏠</span>
+      <span class="group-name">Properti & Hunian</span>
+      <span class="group-count">5 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">🛏️</span>Kost / Indekos</td><td class="col-title">Kost Griya Harmoni — Kost Putra Putri Purwokerto</td><td class="col-file">13-kost.html</td><td class="col-link"><a class="open-btn" href="13-kost.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🏘️</span>Perumahan / Developer</td><td class="col-title">Griya Nusantara — Developer Properti Premium</td><td class="col-file">14-perumahan.html</td><td class="col-link"><a class="open-btn" href="14-perumahan.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🏠</span>Agen Properti</td><td class="col-title">Arinta Realty — Agen Properti Independen</td><td class="col-file">15-properti.html</td><td class="col-link"><a class="open-btn" href="15-properti.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🏢</span>Apartemen</td><td class="col-title">Arya Residences — Hunian Premium Jakarta Selatan</td><td class="col-file">16-apartemen.html</td><td class="col-link"><a class="open-btn" href="16-apartemen.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🏨</span>Hotel / Penginapan</td><td class="col-title">Villa Nusantara — Penginapan Premium</td><td class="col-file">50-hotel.html</td><td class="col-link"><a class="open-btn" href="50-hotel.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACARA & PERNIKAHAN -->
+  <div class="group" id="acara">
+    <div class="group-head">
+      <span class="group-icon">💍</span>
+      <span class="group-name">Acara & Pernikahan</span>
+      <span class="group-count">6 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">💍</span>Wedding / Pernikahan</td><td class="col-title">Eternal Moments — Fotografer & Wedding Organizer Purwokerto</td><td class="col-file">17-wedding.html</td><td class="col-link"><a class="open-btn" href="17-wedding.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🌐</span>Event/Wedding Org.</td><td class="col-title">Spektakuler EO – Wujudkan Momen Tak Terlupakan</td><td class="col-file">18-eo.html</td><td class="col-link"><a class="open-btn" href="18-eo.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">💐</span>Wedding Organizer</td><td class="col-title">Mahakarya Wedding — Wedding Organizer Profesional</td><td class="col-file">18-wo.html</td><td class="col-link"><a class="open-btn" href="18-wo.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">📷</span>Fotografi / Studio</td><td class="col-title">LENSA STUDIO — Fotografi & Videografi</td><td class="col-file">19-fotografer.html</td><td class="col-link"><a class="open-btn" href="19-fotografer.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🎉</span>Event Organizer</td><td class="col-title">Lumina Events — Wedding & Event Planner</td><td class="col-file">21-event-organizer.html</td><td class="col-link"><a class="open-btn" href="21-event-organizer.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🎤</span>MC / Pembawa Acara</td><td class="col-title">LARAS — MC & Event Host Profesional</td><td class="col-file">51-mc-laras.html</td><td class="col-link"><a class="open-btn" href="51-mc-laras.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- KULINER & CATERING -->
+  <div class="group" id="kuliner">
+    <div class="group-head">
+      <span class="group-icon">🍽️</span>
+      <span class="group-name">Kuliner & Catering</span>
+      <span class="group-count">4 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">☕</span>Kafe / Kedai Kopi</td><td class="col-title">Kopikal — Kedai Kopi Specialty Purwokerto</td><td class="col-file">01-kafe-kopi.html</td><td class="col-link"><a class="open-btn" href="01-kafe-kopi.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🍱</span>Catering / Aqiqah</td><td class="col-title">Dapur Sari — Catering Profesional</td><td class="col-file">02-catering.html</td><td class="col-link"><a class="open-btn" href="02-catering.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🍽️</span>Restoran</td><td class="col-title">Dapur Rempah — Restoran & Cafe</td><td class="col-file">03-restoran.html</td><td class="col-link"><a class="open-btn" href="03-restoran.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🍱</span>Catering / Aqiqah</td><td class="col-title">Aqiqah Berkah – Jasa Aqiqah Terpercaya & Sesuai Syariat</td><td class="col-file">20-aqiqah.html</td><td class="col-link"><a class="open-btn" href="20-aqiqah.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- JASA RUMAH TANGGA -->
+  <div class="group" id="jasarumahtangga">
+    <div class="group-head">
+      <span class="group-icon">🧹</span>
+      <span class="group-name">Jasa Rumah Tangga & Perawatan</span>
+      <span class="group-count">4 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">👕</span>Laundry Kiloan</td><td class="col-title">Beresin Laundry — Laundry Kiloan Antar Jemput Gratis</td><td class="col-file">22-laundry-kiloan.html</td><td class="col-link"><a class="open-btn" href="22-laundry-kiloan.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">❄️</span>Service AC</td><td class="col-title">FrostCool — Jasa Service AC Profesional</td><td class="col-file">23-service-ac.html</td><td class="col-link"><a class="open-btn" href="23-service-ac.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🧹</span>Cleaning Service</td><td class="col-title">SparkClean — Jasa Cleaning Service Profesional</td><td class="col-file">24-cleaning-service.html</td><td class="col-link"><a class="open-btn" href="24-cleaning-service.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🚽</span>Sedot WC</td><td class="col-title">SIGAP — Sedot WC & Saluran Tersumbat 24 Jam</td><td class="col-file">25-sedotwc-sigap.html</td><td class="col-link"><a class="open-btn" href="25-sedotwc-sigap.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BANGUNAN & KONSTRUKSI -->
+  <div class="group" id="bangunan">
+    <div class="group-head">
+      <span class="group-icon">🏗️</span>
+      <span class="group-name">Bangunan & Konstruksi</span>
+      <span class="group-count">6 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">⚡</span>Tukang Listrik</td><td class="col-title">Kilat Listrik — Tukang Listrik Panggilan Yogyakarta, Sleman & Bantul</td><td class="col-file">26-listrik-panggilan.html</td><td class="col-link"><a class="open-btn" href="26-listrik-panggilan.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🏗️</span>Kontraktor Bangunan</td><td class="col-title">Pondasi Konstruksi – Kontraktor & Bangun Gedung</td><td class="col-file">27-kontraktor.html</td><td class="col-link"><a class="open-btn" href="27-kontraktor.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🛋️</span>Desain Interior</td><td class="col-title">Rupa Studio — Desain Interior</td><td class="col-file">28-desain-interior.html</td><td class="col-link"><a class="open-btn" href="28-desain-interior.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🧱</span>Toko Bangunan / Material</td><td class="col-title">Toko Bangunan Maju Jaya — Material Bangunan Purwokerto</td><td class="col-file">29-toko-bangunan.html</td><td class="col-link"><a class="open-btn" href="29-toko-bangunan.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🔨</span>Tukang Bangunan</td><td class="col-title">Bangun Jaya – Jasa Tukang Bangunan Profesional</td><td class="col-file">30-tukang-bangunan.html</td><td class="col-link"><a class="open-btn" href="30-tukang-bangunan.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🌐</span>Renovasi / Interior</td><td class="col-title">RUPA & RUANG — Jasa Renovasi & Desain Interior</td><td class="col-file">59-renovasi.html</td><td class="col-link"><a class="open-btn" href="59-renovasi.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TRANSPORTASI & LOGISTIK -->
+  <div class="group" id="transportasi">
+    <div class="group-head">
+      <span class="group-icon">🚗</span>
+      <span class="group-name">Transportasi & Logistik</span>
+      <span class="group-count">4 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">🚗</span>Rental Mobil</td><td class="col-title">DriveEase – Rental Mobil Premium</td><td class="col-file">31-rental-mobil.html</td><td class="col-link"><a class="open-btn" href="31-rental-mobil.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">✈️</span>Travel / Wisata</td><td class="col-title">SinarJaya Travel – Door to Door Antar Kota</td><td class="col-file">32-travel-antarkota.html</td><td class="col-link"><a class="open-btn" href="32-travel-antarkota.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">📦</span>Jasa Pindahan Rumah</td><td class="col-title">MoverPro – Jasa Pindahan & Ekspedisi Terpercaya</td><td class="col-file">33-jasa-pindahan.html</td><td class="col-link"><a class="open-btn" href="33-jasa-pindahan.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">📦</span>Jasa Pindahan Rumah</td><td class="col-title">GarudaMove — Jasa Pindahan & Ekspedisi Terpercaya</td><td class="col-file">34-pindahan-ekspedisi.html</td><td class="col-link"><a class="open-btn" href="34-pindahan-ekspedisi.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RETAIL & TOKO -->
+  <div class="group" id="retail">
+    <div class="group-head">
+      <span class="group-icon">🛍️</span>
+      <span class="group-name">Retail & Toko</span>
+      <span class="group-count">6 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">🛍️</span>Toko Online / UMKM</td><td class="col-title">Anyaman Nusa — Kerajinan Tangan Asli Indonesia</td><td class="col-file">35-umkm-toko-online.html</td><td class="col-link"><a class="open-btn" href="35-umkm-toko-online.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">💄</span>Toko Kosmetik & Skincare</td><td class="col-title">Velure — Skincare & Kosmetik</td><td class="col-file">36-toko-kosmetik-skincare.html</td><td class="col-link"><a class="open-btn" href="36-toko-kosmetik-skincare.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">💐</span>Toko Bunga / Florist</td><td class="col-title">Sekar — Toko Bunga & Florist</td><td class="col-file">37-toko-bunga-florist.html</td><td class="col-link"><a class="open-btn" href="37-toko-bunga-florist.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🪑</span>Toko Furniture</td><td class="col-title">Kayu & Karsa — Furniture Custom Kayu Jati, Jepara</td><td class="col-file">38-toko-furniture.html</td><td class="col-link"><a class="open-btn" href="38-toko-furniture.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🚲</span>Toko Sepeda</td><td class="col-title">VeloKu — Toko Sepeda Yogyakarta</td><td class="col-file">39-toko-sepeda.html</td><td class="col-link"><a class="open-btn" href="39-toko-sepeda.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">💆</span>Sparepart (mis-tag)</td><td class="col-title">SpareKing – Sparepart Terpercaya</td><td class="col-file">57-sparepart.html</td><td class="col-link"><a class="open-btn" href="57-sparepart.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PERCETAKAN & KREATIF -->
+  <div class="group" id="kreatif">
+    <div class="group-head">
+      <span class="group-icon">🖨️</span>
+      <span class="group-name">Percetakan & Kreatif</span>
+      <span class="group-count">3 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">🖨️</span>Percetakan / Digital Print</td><td class="col-title">PrintKu Studio — Percetakan & Sablon Purwokerto</td><td class="col-file">40-percetakan.html</td><td class="col-link"><a class="open-btn" href="40-percetakan.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🧵</span>Konveksi / Jasa Jahit</td><td class="col-title">Wastra Konveksi & Jahit — Jahit Custom & Konveksi Yogyakarta</td><td class="col-file">41-konveksi-jahit.html</td><td class="col-link"><a class="open-btn" href="41-konveksi-jahit.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🎵</span>Studio Musik</td><td class="col-title">SoundSpace Studio | Studio Rekam & Rental Alat Musik</td><td class="col-file">48-studio-musik.html</td><td class="col-link"><a class="open-btn" href="48-studio-musik.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PENDIDIKAN & KEAGAMAAN -->
+  <div class="group" id="pendidikan">
+    <div class="group-head">
+      <span class="group-icon">🎒</span>
+      <span class="group-name">Pendidikan & Keagamaan</span>
+      <span class="group-count">3 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">✏️</span>Bimbel / Les Privat</td><td class="col-title">Bimbel Cendekia — Les Privat & Bimbel SD, SMP, SMA</td><td class="col-file">42-bimbel-les-privat.html</td><td class="col-link"><a class="open-btn" href="42-bimbel-les-privat.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🎒</span>Sekolah PAUD / TK</td><td class="col-title">TK & PAUD Ceria Bintang — Yogyakarta</td><td class="col-file">43-sekolah-paud.html</td><td class="col-link"><a class="open-btn" href="43-sekolah-paud.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🕌</span>Pesantren</td><td class="col-title">Pondok Pesantren Al-Hikmah — Membentuk Generasi Berilmu & Berakhlak</td><td class="col-file">44-pesantren.html</td><td class="col-link"><a class="open-btn" href="44-pesantren.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GAYA HIDUP & HIBURAN -->
+  <div class="group" id="gayahidup">
+    <div class="group-head">
+      <span class="group-icon">💪</span>
+      <span class="group-name">Gaya Hidup & Hiburan</span>
+      <span class="group-count">2 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">💪</span>Gym / Pusat Kebugaran</td><td class="col-title">FORGE Gym | Fitness Center Yogyakarta</td><td class="col-file">45-gym.html</td><td class="col-link"><a class="open-btn" href="45-gym.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🎮</span>Game Center / Warnet</td><td class="col-title">NEXUS GameCenter | Rental PS5 · PC Gaming · Warnet Jogja</td><td class="col-file">49-gamecenter.html</td><td class="col-link"><a class="open-btn" href="49-gamecenter.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OTOMOTIF -->
+  <div class="group" id="otomotif">
+    <div class="group-head">
+      <span class="group-icon">🔧</span>
+      <span class="group-name">Otomotif & Sparepart</span>
+      <span class="group-count">2 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">🔧</span>Bengkel Motor / Mobil</td><td class="col-title">Bengkel Prima Teknik — Servis Motor & Mobil Purwokerto</td><td class="col-file">52-bengkel.html</td><td class="col-link"><a class="open-btn" href="52-bengkel.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">🔧</span>Bengkel Las / Fabrikasi</td><td class="col-title">SteelForge – Jasa Las & Fabrikasi Besi Profesional</td><td class="col-file">58-bengkel-las.html</td><td class="col-link"><a class="open-btn" href="58-bengkel-las.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PROFESIONAL & KEUANGAN -->
+  <div class="group" id="profesional">
+    <div class="group-head">
+      <span class="group-icon">⚖️</span>
+      <span class="group-name">Jasa Profesional & Keuangan</span>
+      <span class="group-count">4 halaman</span>
+    </div>
+    <table>
+      <thead><tr><th class="col-niche">Niche</th><th class="col-title">Judul Website</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+      <tbody>
+        <tr><td class="col-niche"><span class="niche-icon">🏦</span>Koperasi / BMT</td><td class="col-title">BMT Amanah Sejahtera — Koperasi Simpan Pinjam Syariah Terpercaya</td><td class="col-file">53-koperasi-bmt.html</td><td class="col-link"><a class="open-btn" href="53-koperasi-bmt.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">📜</span>Notaris</td><td class="col-title">Notaris & PPAT Suharto, S.H., M.Kn.</td><td class="col-file">54-notaris.html</td><td class="col-link"><a class="open-btn" href="54-notaris.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">📊</span>Akuntan / Konsultan Pajak</td><td class="col-title">Andika Prasetyo & Rekan — Konsultan Pajak & Akuntan Publik</td><td class="col-file">55-akuntan.html</td><td class="col-link"><a class="open-btn" href="55-akuntan.html" target="_blank">Buka</a></td></tr>
+        <tr><td class="col-niche"><span class="niche-icon">⚖️</span>Pengacara / Advokat</td><td class="col-title">Kantor Hukum Wardhana & Partners</td><td class="col-file">56-pengacara.html</td><td class="col-link"><a class="open-btn" href="56-pengacara.html" target="_blank">Buka</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<footer>
+  Daftar isi dibuat otomatis dari index.html — 60 halaman demo, 17 kelompok niche.
+</footer>
+
+</body>
+</html>

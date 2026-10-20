@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Kota & Provinsi Indonesia</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --highlight: #eff6ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+  }
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 20px;
+    margin: 0 0 16px;
+    text-align: center;
+    color: var(--text);
+  }
+  .tabs {
+    display: flex;
+    background: var(--card);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: #fff;
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  input[type="text"]:focus {
+    border-color: var(--primary);
+  }
+  .results {
+    margin-top: 12px;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s ease;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-item:hover { background: var(--highlight); }
+  .result-text {
+    font-size: 15px;
+  }
+  .result-text b { color: var(--primary); }
+  .copy-icon {
+    font-size: 12px;
+    color: var(--primary);
+    padding: 5px 10px;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .result-item:hover .copy-icon { background: var(--highlight); }
+  .copy-icon.copied-icon {
+    background: #16a34a;
+    color: #fff;
+    border-color: #16a34a;
+  }
+  .empty-msg {
+    text-align: center;
+    color: var(--muted);
+    padding: 30px 0;
+    font-size: 14px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  thead th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #f3f4f6;
+    position: sticky;
+    top: 0;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:hover { background: var(--highlight); }
+  .table-wrap {
+    max-height: 65vh;
+    overflow-y: auto;
+    border-radius: 8px;
+  }
+  .count-badge {
+    display: inline-block;
+    background: var(--highlight);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .no-col { color: var(--muted); width: 44px; }
+  .row-copy-btn {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid #bfdbfe;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .row-copy-btn:hover { background: var(--highlight); }
+  .row-copy-btn.copied {
+    background: #16a34a;
+    color: #fff;
+    border-color: #16a34a;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Daftar Kota & Provinsi Indonesia</h1>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('search')">🔍 Cari Kota</button>
+    <button class="tab-btn" onclick="switchTab('searchProv')">🏙️ Cari Provinsi</button>
+    <button class="tab-btn" onclick="switchTab('list')">📋 Daftar Kota</button>
+    <button class="tab-btn" onclick="switchTab('listProv')">🏘️ Daftar Provinsi</button>
+  </div>
+
+  <div id="search-panel" class="panel active">
+    <div class="card">
+      <input type="text" id="searchInput" placeholder="Ketik nama kota..." autocomplete="off">
+      <div class="results" id="results"></div>
+    </div>
+  </div>
+
+  <div id="searchProv-panel" class="panel">
+    <div class="card">
+      <input type="text" id="searchProvInput" placeholder="Ketik nama provinsi..." autocomplete="off">
+      <div class="results" id="resultsProv"></div>
+    </div>
+  </div>
+
+  <div id="list-panel" class="panel">
+    <div class="card">
+      <span class="count-badge" id="countBadge"></span>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="no-col">No</th><th>Kota</th><th>Provinsi</th><th class="no-col"></th></tr>
+          </thead>
+          <tbody id="fullTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="listProv-panel" class="panel">
+    <div class="card">
+      <span class="count-badge" id="provCountBadge"></span>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th class="no-col">No</th><th>Provinsi</th><th>Jumlah Kota</th><th class="no-col"></th></tr>
+          </thead>
+          <tbody id="provTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [{"kota": "Banda Aceh (Ibukota)", "provinsi": "Nanggroe Aceh Darussalam", "pulau": "Sumatera"}, {"kota": "Langsa", "provinsi": "Nanggroe Aceh Darussalam", "pulau": "Sumatera"}, {"kota": "Lhokseumawe", "provinsi": "Nanggroe Aceh Darussalam", "pulau": "Sumatera"}, {"kota": "Meulaboh", "provinsi": "Nanggroe Aceh Darussalam", "pulau": "Sumatera"}, {"kota": "Sabang", "provinsi": "Nanggroe Aceh Darussalam", "pulau": "Sumatera"}, {"kota": "Subulussalam", "provinsi": "Nanggroe Aceh Darussalam", "pulau": "Sumatera"}, {"kota": "Binjai", "provinsi": "Sumatera Utara", "pulau": "Sumatera"}, {"kota": "Gunungsitoli", "provinsi": "Sumatera Utara", "pulau": "Sumatera"}, {"kota": "Medan (Ibukota)", "provinsi": "Sumatera Utara", "pulau": "Sumatera"}, {"kota": "Padang Sidempuan", "provinsi": "Sumatera Utara", "pulau": "Sumatera"}, {"kota": "Pematangsiantar", "provinsi": "Sumatera Utara", "pulau": "Sumatera"}, {"kota": "Sibolga", "provinsi": "Sumatera Utara", "pulau": "Sumatera"}, {"kota": "Tanjungbalai", "provinsi": "Sumatera Utara", "pulau": "Sumatera"}, {"kota": "Tebingtinggi", "provinsi": "Sumatera Utara", "pulau": "Sumatera"}, {"kota": "Bukittinggi", "provinsi": "Sumatera Barat", "pulau": "Sumatera"}, {"kota": "Padang (Ibukota)", "provinsi": "Sumatera Barat", "pulau": "Sumatera"}, {"kota": "Padangpanjang", "provinsi": "Sumatera Barat", "pulau": "Sumatera"}, {"kota": "Pariaman", "provinsi": "Sumatera Barat", "pulau": "Sumatera"}, {"kota": "Payakumbuh", "provinsi": "Sumatera Barat", "pulau": "Sumatera"}, {"kota": "Sawahlunto", "provinsi": "Sumatera Barat", "pulau": "Sumatera"}, {"kota": "Solok", "provinsi": "Sumatera Barat", "pulau": "Sumatera"}, {"kota": "Dumai", "provinsi": "Riau", "pulau": "Sumatera"}, {"kota": "Pekanbaru (Ibukota)", "provinsi": "Riau", "pulau": "Sumatera"}, {"kota": "Jambi (Ibukota)", "provinsi": "Jambi", "pulau": "Sumatera"}, {"kota": "Sungai Penuh", "provinsi": "Jambi", "pulau": "Sumatera"}, {"kota": "Lubuklinggau", "provinsi": "Sumatera Selatan", "pulau": "Sumatera"}, {"kota": "Pagaralam", "provinsi": "Sumatera Selatan", "pulau": "Sumatera"}, {"kota": "Palembang (Ibukota)", "provinsi": "Sumatera Selatan", "pulau": "Sumatera"}, {"kota": "Prabumulih", "provinsi": "Sumatera Selatan", "pulau": "Sumatera"}, {"kota": "Bengkulu (Ibukota)", "provinsi": "Bengkulu", "pulau": "Sumatera"}, {"kota": "Bandar Lampung (Ibukota)", "provinsi": "Lampung", "pulau": "Sumatera"}, {"kota": "Metro", "provinsi": "Lampung", "pulau": "Sumatera"}, {"kota": "Batam", "provinsi": "Kepulauan Riau", "pulau": "Sumatera"}, {"kota": "Tanjungpinang (Ibukota)", "provinsi": "Kepulauan Riau", "pulau": "Sumatera"}, {"kota": "Pangkalpinang (Ibukota)", "provinsi": "Kepulauan Bangka Belitung", "pulau": "Sumatera"}, {"kota": "Cilegon", "provinsi": "Banten", "pulau": "Jawa"}, {"kota": "Serang (Ibukota)", "provinsi": "Banten", "pulau": "Jawa"}, {"kota": "Tangerang", "provinsi": "Banten", "pulau": "Jawa"}, {"kota": "Tangerang Selatan", "provinsi": "Banten", "pulau": "Jawa"}, {"kota": "Kota Administrasi Jakarta Barat", "provinsi": "DKI Jakarta", "pulau": "Jawa"}, {"kota": "Kota Administrasi Jakarta Pusat", "provinsi": "DKI Jakarta", "pulau": "Jawa"}, {"kota": "Kota Administrasi Jakarta Selatan", "provinsi": "DKI Jakarta", "pulau": "Jawa"}, {"kota": "Kota Administrasi Jakarta Timur", "provinsi": "DKI Jakarta", "pulau": "Jawa"}, {"kota": "Kota Administrasi Jakarta Utara", "provinsi": "DKI Jakarta", "pulau": "Jawa"}, {"kota": "Bandung (Ibukota)", "provinsi": "Jawa Barat", "pulau": "Jawa"}, {"kota": "Banjar", "provinsi": "Jawa Barat", "pulau": "Jawa"}, {"kota": "Bekasi", "provinsi": "Jawa Barat", "pulau": "Jawa"}, {"kota": "Bogor", "provinsi": "Jawa Barat", "pulau": "Jawa"}, {"kota": "Cimahi", "provinsi": "Jawa Barat", "pulau": "Jawa"}, {"kota": "Cirebon", "provinsi": "Jawa Barat", "pulau": "Jawa"}, {"kota": "Depok", "provinsi": "Jawa Barat", "pulau": "Jawa"}, {"kota": "Sukabumi", "provinsi": "Jawa Barat", "pulau": "Jawa"}, {"kota": "Tasikmalaya", "provinsi": "Jawa Barat", "pulau": "Jawa"}, {"kota": "Magelang", "provinsi": "Jawa Tengah", "pulau": "Jawa"}, {"kota": "Pekalongan", "provinsi": "Jawa Tengah", "pulau": "Jawa"}, {"kota": "Purwokerto", "provinsi": "Jawa Tengah", "pulau": "Jawa"}, {"kota": "Salatiga", "provinsi": "Jawa Tengah", "pulau": "Jawa"}, {"kota": "Semarang (Ibukota)", "provinsi": "Jawa Tengah", "pulau": "Jawa"}, {"kota": "Surakarta", "provinsi": "Jawa Tengah", "pulau": "Jawa"}, {"kota": "Tegal", "provinsi": "Jawa Tengah", "pulau": "Jawa"}, {"kota": "Yogyakarta (Ibukota)", "provinsi": "Daerah Istimewa (DI) Yogyakarta", "pulau": "Jawa"}, {"kota": "Sleman", "provinsi": "Daerah Istimewa (DI) Yogyakarta", "pulau": "Jawa"}, {"kota": "Bantul", "provinsi": "Daerah Istimewa (DI) Yogyakarta", "pulau": "Jawa"}, {"kota": "Batu", "provinsi": "Jawa Timur", "pulau": "Jawa"}, {"kota": "Blitar", "provinsi": "Jawa Timur", "pulau": "Jawa"}, {"kota": "Kediri", "provinsi": "Jawa Timur", "pulau": "Jawa"}, {"kota": "Madiun", "provinsi": "Jawa Timur", "pulau": "Jawa"}, {"kota": "Malang", "provinsi": "Jawa Timur", "pulau": "Jawa"}, {"kota": "Mojokerto", "provinsi": "Jawa Timur", "pulau": "Jawa"}, {"kota": "Pasuruan", "provinsi": "Jawa Timur", "pulau": "Jawa"}, {"kota": "Probolinggo", "provinsi": "Jawa Timur", "pulau": "Jawa"}, {"kota": "Surabaya (Ibukota)", "provinsi": "Jawa Timur", "pulau": "Jawa"}, {"kota": "Denpasar (Ibukota)", "provinsi": "Bali", "pulau": "Bali & Nusa Tenggara"}, {"kota": "Bima", "provinsi": "Nusa Tenggara Barat", "pulau": "Bali & Nusa Tenggara"}, {"kota": "Mataram (Ibukota)", "provinsi": "Nusa Tenggara Barat", "pulau": "Bali & Nusa Tenggara"}, {"kota": "Kupang (Ibukota)", "provinsi": "Nusa Tenggara Timur", "pulau": "Bali & Nusa Tenggara"}, {"kota": "Pontianak (Ibukota)", "provinsi": "Kalimantan Barat", "pulau": "Kalimantan"}, {"kota": "Singkawang", "provinsi": "Kalimantan Barat", "pulau": "Kalimantan"}, {"kota": "Palangkaraya (Ibukota)", "provinsi": "Kalimantan Tengah", "pulau": "Kalimantan"}, {"kota": "Banjarbaru", "provinsi": "Kalimantan Selatan", "pulau": "Kalimantan"}, {"kota": "Banjarmasin (Ibukota)", "provinsi": "Kalimantan Selatan", "pulau": "Kalimantan"}, {"kota": "Balikpapan", "provinsi": "Kalimantan Timur", "pulau": "Kalimantan"}, {"kota": "Bontang", "provinsi": "Kalimantan Timur", "pulau": "Kalimantan"}, {"kota": "Samarinda (Ibukota)", "provinsi": "Kalimantan Timur", "pulau": "Kalimantan"}, {"kota": "Tarakan (Ibukota)", "provinsi": "Kalimantan Utara", "pulau": "Kalimantan"}, {"kota": "Bitung", "provinsi": "Sulawesi Utara", "pulau": "Sulawesi"}, {"kota": "Kotamobagu", "provinsi": "Sulawesi Utara", "pulau": "Sulawesi"}, {"kota": "Manado (Ibukota)", "provinsi": "Sulawesi Utara", "pulau": "Sulawesi"}, {"kota": "Tomohon", "provinsi": "Sulawesi Utara", "pulau": "Sulawesi"}, {"kota": "Gorontalo (Ibukota)", "provinsi": "Gorontalo", "pulau": "Sulawesi"}, {"kota": "Palu (Ibukota)", "provinsi": "Sulawesi Tengah", "pulau": "Sulawesi"}, {"kota": "Makassar (Ibukota)", "provinsi": "Sulawesi Selatan", "pulau": "Sulawesi"}, {"kota": "Palopo", "provinsi": "Sulawesi Selatan", "pulau": "Sulawesi"}, {"kota": "Parepare", "provinsi": "Sulawesi Selatan", "pulau": "Sulawesi"}, {"kota": "Bau-Bau", "provinsi": "Sulawesi Tenggara", "pulau": "Sulawesi"}, {"kota": "Kendari (Ibukota)", "provinsi": "Sulawesi Tenggara", "pulau": "Sulawesi"}, {"kota": "Ambon (Ibukota)", "provinsi": "Maluku", "pulau": "Maluku & Papua"}, {"kota": "Tual", "provinsi": "Maluku", "pulau": "Maluku & Papua"}, {"kota": "Ternate (Ibukota)", "provinsi": "Maluku Utara", "pulau": "Maluku & Papua"}, {"kota": "Tidore Kepulauan", "provinsi": "Maluku Utara", "pulau": "Maluku & Papua"}, {"kota": "Sorong (Ibukota)", "provinsi": "Papua Barat", "pulau": "Maluku & Papua"}, {"kota": "Jayapura (Ibukota)", "provinsi": "Papua", "pulau": "Maluku & Papua"}];
+
+function switchTab(tab) {
+  document.getElementById('search-panel').classList.toggle('active', tab === 'search');
+  document.getElementById('searchProv-panel').classList.toggle('active', tab === 'searchProv');
+  document.getElementById('list-panel').classList.toggle('active', tab === 'list');
+  document.getElementById('listProv-panel').classList.toggle('active', tab === 'listProv');
+  const order = ['search', 'searchProv', 'list', 'listProv'];
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', order[i] === tab);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function highlight(text, query) {
+  if (!query) return escapeHtml(text);
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return escapeHtml(text);
+  return escapeHtml(text.slice(0, idx)) + '<b>' + escapeHtml(text.slice(idx, idx + query.length)) + '</b>' + escapeHtml(text.slice(idx + query.length));
+}
+
+const resultsEl = document.getElementById('results');
+const searchInput = document.getElementById('searchInput');
+
+function renderResults(query) {
+  resultsEl.innerHTML = '';
+  if (!query.trim()) {
+    resultsEl.innerHTML = '<div class="empty-msg">Ketik minimal 1 huruf untuk mencari kota</div>';
+    return;
+  }
+  const q = query.trim().toLowerCase();
+  const matches = DATA.filter(d => d.kota.toLowerCase().includes(q)).slice(0, 50);
+  if (matches.length === 0) {
+    resultsEl.innerHTML = '<div class="empty-msg">Tidak ditemukan</div>';
+    return;
+  }
+  matches.forEach(d => {
+    const full = d.kota + ', ' + d.provinsi;
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    item.innerHTML = '<span class="result-text">' + highlight(d.kota, query) + ', ' + escapeHtml(d.provinsi) + '</span><span class="copy-icon">Copy</span>';
+    const iconEl = item.querySelector('.copy-icon');
+    item.onclick = () => copyItem(full, iconEl);
+    resultsEl.appendChild(item);
+  });
+}
+
+function copyItem(text, iconEl) {
+  navigator.clipboard.writeText(text).then(() => {
+    const original = iconEl.textContent;
+    iconEl.textContent = 'Tersalin!';
+    iconEl.classList.add('copied-icon');
+    setTimeout(() => {
+      iconEl.textContent = original;
+      iconEl.classList.remove('copied-icon');
+    }, 1200);
+  });
+}
+
+searchInput.addEventListener('input', e => renderResults(e.target.value));
+renderResults('');
+
+// ---- Cari Provinsi ----
+const resultsProvEl = document.getElementById('resultsProv');
+const searchProvInput = document.getElementById('searchProvInput');
+
+function renderResultsProv(query) {
+  resultsProvEl.innerHTML = '';
+  if (!query.trim()) {
+    resultsProvEl.innerHTML = '<div class="empty-msg">Ketik minimal 1 huruf untuk mencari provinsi</div>';
+    return;
+  }
+  const q = query.trim().toLowerCase();
+  const matches = DATA.filter(d => d.provinsi.toLowerCase().includes(q)).slice(0, 300);
+  if (matches.length === 0) {
+    resultsProvEl.innerHTML = '<div class="empty-msg">Tidak ditemukan</div>';
+    return;
+  }
+  matches.forEach(d => {
+    const full = d.kota + ', ' + d.provinsi;
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    item.innerHTML = '<span class="result-text">' + escapeHtml(d.kota) + ', ' + highlight(d.provinsi, query) + '</span><span class="copy-icon">Copy</span>';
+    const iconEl = item.querySelector('.copy-icon');
+    item.onclick = () => copyItem(full, iconEl);
+    resultsProvEl.appendChild(item);
+  });
+}
+
+searchProvInput.addEventListener('input', e => renderResultsProv(e.target.value));
+renderResultsProv('');
+
+// Full list tab (Daftar Kota)
+const tbody = document.getElementById('fullTableBody');
+document.getElementById('countBadge').textContent = DATA.length + ' Kota';
+DATA.forEach((d, i) => {
+  const tr = document.createElement('tr');
+  const full = d.kota + ', ' + d.provinsi;
+  tr.innerHTML = '<td class="no-col">' + (i+1) + '</td><td>' + escapeHtml(d.kota) + '</td><td>' + escapeHtml(d.provinsi) + '</td><td><button class="row-copy-btn" data-value="' + escapeHtml(full) + '">Copy</button></td>';
+  tbody.appendChild(tr);
+});
+
+// Daftar Provinsi tab
+const PROV_LIST = [...new Set(DATA.map(d => d.provinsi))].sort((a, b) => a.localeCompare(b));
+const provTbody = document.getElementById('provTableBody');
+document.getElementById('provCountBadge').textContent = PROV_LIST.length + ' Provinsi';
+PROV_LIST.forEach((prov, i) => {
+  const tr = document.createElement('tr');
+  const jumlah = DATA.filter(d => d.provinsi === prov).length;
+  tr.innerHTML = '<td class="no-col">' + (i+1) + '</td><td>' + escapeHtml(prov) + '</td><td>' + jumlah + ' kota</td><td><button class="row-copy-btn" data-value="' + escapeHtml(prov) + '">Copy</button></td>';
+  provTbody.appendChild(tr);
+});
+
+// Delegated click handler for all row-copy buttons (works for both tables)
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.row-copy-btn');
+  if (!btn) return;
+  const value = btn.getAttribute('data-value');
+  navigator.clipboard.writeText(value).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Tersalin!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('copied');
+    }, 1200);
+  });
+});
+</script>
+</body>
+</html>
