@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracker pSEO Mitra — TeraWeb</title>
+<style>
+  :root {
+    --bg: #F8F9FA; --white: #FFFFFF; --border: #E2E8F0;
+    --blue: #3B82F6; --blue-l: #EFF6FF; --blue-d: #1D4ED8;
+    --green: #10B981; --green-l: #ECFDF5; --green-d: #047857;
+    --yellow: #F59E0B; --yellow-l: #FFFBEB;
+    --red: #EF4444; --red-l: #FEF2F2;
+    --purple: #8B5CF6; --purple-l: #F5F3FF;
+    --orange: #F97316; --orange-l: #FFF7ED;
+    --teal: #0D9488; --teal-l: #F0FDFA;
+    --gold: #B45309; --gold-l: #FFFBEB;
+    --gray: #64748B; --dark: #1E293B;
+    --font: 'Inter', -apple-system, sans-serif;
+    --r: 8px; --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--dark); font-size: 14px; }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--dark); color: white;
+    padding: 0 24px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50; height: 52px;
+  }
+  .app-brand { display: flex; align-items: center; gap: 10px; }
+  .app-logo { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px; }
+  .app-logo span { color: #38BDF8; }
+  .app-tag { font-size: 0.68rem; background: rgba(255,255,255,0.12); padding: 2px 8px; border-radius: 100px; color: rgba(255,255,255,0.7); }
+  .header-right { font-size: 0.75rem; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 14px; }
+
+  /* ── REMINDER BELL ── */
+  .bell-btn {
+    position: relative; width: 32px; height: 32px; border-radius: 8px; border: none;
+    background: rgba(255,255,255,0.1); cursor: pointer; font-size: 0.95rem;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .bell-btn:hover { background: rgba(255,255,255,0.2); }
+  .bell-dot {
+    position: absolute; top: 3px; right: 4px; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--red); border: 1.5px solid var(--dark); display: none;
+  }
+  .bell-dot.show { display: block; }
+
+  /* ── SYSTEM SWITCHER ── */
+  .system-switch-bar {
+    background: var(--dark); padding: 0 24px 14px; display: flex; gap: 10px;
+  }
+  .sys-btn {
+    flex: 1; max-width: 320px; padding: 12px 18px; border-radius: 10px; border: 2px solid transparent;
+    background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); cursor: pointer;
+    font-family: var(--font); font-size: 0.86rem; font-weight: 700; text-align: left;
+    display: flex; align-items: center; gap: 10px; transition: all 0.15s;
+  }
+  .sys-btn .sys-icon { font-size: 1.3rem; }
+  .sys-btn .sys-sub { display: block; font-size: 0.68rem; font-weight: 500; color: rgba(255,255,255,0.4); margin-top: 1px; }
+  .sys-btn:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85); }
+  .sys-btn.active.sys-komisi { background: var(--green-l); color: var(--green-d); border-color: var(--green-d); }
+  .sys-btn.active.sys-komisi .sys-sub { color: var(--green-d); opacity: 0.75; }
+  .sys-btn.active.sys-sewa { background: var(--blue-l); color: var(--blue-d); border-color: var(--blue-d); }
+  .sys-btn.active.sys-sewa .sys-sub { color: var(--blue-d); opacity: 0.75; }
+
+  /* ── SYSTEM PANEL ── */
+  .system-panel { display: none; }
+  .system-panel.active { display: block; }
+
+  /* ── TABS ── */
+  .tabs-bar {
+    background: var(--white); border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; padding: 0 24px; gap: 2px;
+    position: sticky; top: 52px; z-index: 40;
+  }
+  .tab-btn {
+    padding: 14px 18px; border: none; background: none; cursor: pointer;
+    font-size: 0.82rem; font-weight: 600; color: var(--gray);
+    font-family: var(--font); border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: all 0.15s; white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tab-btn:hover { color: var(--dark); }
+  .system-panel.sys-komisi .tab-btn.active { color: var(--green-d); border-bottom-color: var(--green-d); }
+  .system-panel.sys-sewa .tab-btn.active { color: var(--blue-d); border-bottom-color: var(--blue-d); }
+  .tab-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; border-radius: 100px; font-size: 0.65rem;
+    background: var(--border); color: var(--gray); font-weight: 700; padding: 0 5px;
+  }
+  .system-panel.sys-komisi .tab-btn.active .tab-count { background: var(--green-d); color: white; }
+  .system-panel.sys-sewa .tab-btn.active .tab-count { background: var(--blue-d); color: white; }
+
+  /* ── DASHBOARD BAR ── */
+  .dash-bar {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    gap: 10px; padding: 14px 24px;
+    background: var(--white); border-bottom: 1px solid var(--border);
+  }
+  .kpi { background: var(--bg); border-radius: var(--r); padding: 12px 14px; border: 1px solid var(--border); }
+  .kpi-label { font-size: 0.63rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gray); }
+  .kpi-val { font-size: 1.4rem; font-weight: 800; color: var(--dark); line-height: 1.15; margin-top: 3px; }
+  .kpi-val.green { color: var(--green-d); }
+  .kpi-val.blue { color: var(--blue-d); }
+  .kpi-val.yellow { color: var(--yellow); }
+  .kpi-val.teal { color: var(--teal); }
+  .kpi-val.red { color: var(--red); }
+  .kpi-val.gold { color: var(--gold); }
+  .kpi-sub { font-size: 0.65rem; color: var(--gray); margin-top: 2px; }
+
+  /* ── TOOLBAR ── */
+  .toolbar { padding: 10px 24px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 7px 14px; border-radius: 6px; border: none; cursor: pointer;
+    font-size: 0.8rem; font-weight: 600; font-family: var(--font); transition: all 0.15s;
+  }
+  .btn-primary { background: var(--dark); color: white; }
+  .btn-primary:hover { background: #334155; }
+  .btn-green { background: var(--green-d); color: white; }
+  .btn-green:hover { background: #065F46; }
+  .btn-blue { background: var(--blue-d); color: white; }
+  .btn-blue:hover { background: #1E40AF; }
+  .btn-ghost { background: var(--white); color: var(--dark); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn-danger { background: var(--red-l); color: var(--red); border: 1px solid #FECACA; }
+  .btn-danger:hover { background: #FEE2E2; }
+  .search-box {
+    padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border);
+    font-size: 0.82rem; font-family: var(--font); color: var(--dark);
+    background: var(--white); outline: none; width: 220px; margin-left: auto;
+  }
+  .search-box:focus { border-color: var(--blue); }
+  .filter-group { display: flex; gap: 5px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 5px 11px; border-radius: 100px; border: 1px solid var(--border);
+    background: var(--white); color: var(--gray); font-size: 0.72rem; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; font-family: var(--font);
+  }
+  .system-panel.sys-komisi .filter-btn.active { background: var(--green-d); color: white; border-color: var(--green-d); }
+  .system-panel.sys-sewa .filter-btn.active { background: var(--blue-d); color: white; border-color: var(--blue-d); }
+
+  /* ── TABLE ── */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .table-wrap { padding: 0 24px 32px; overflow-x: auto; }
+  table {
+    width: 100%; border-collapse: collapse;
+    background: var(--white); border-radius: var(--r);
+    overflow: hidden; box-shadow: var(--shadow);
+    border: 1px solid var(--border); min-width: 900px;
+  }
+  .system-panel.sys-komisi thead { background: var(--green-d); }
+  .system-panel.sys-sewa thead { background: var(--blue-d); }
+  thead th {
+    padding: 10px 12px; text-align: left;
+    font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: rgba(255,255,255,0.75); white-space: nowrap; cursor: pointer; user-select: none;
+  }
+  thead th:hover { color: white; }
+  thead th.sort-asc::after { content: ' ↑'; color: #A7F3D0; }
+  thead th.sort-desc::after { content: ' ↓'; color: #A7F3D0; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #F8FAFF; }
+  tbody td { padding: 9px 12px; vertical-align: middle; }
+  td.col-no { font-size: 0.72rem; color: var(--gray); font-weight: 500; width: 36px; text-align: center; }
+  .notes-cell { max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.76rem; color: var(--gray); }
+  .name-cell { font-weight: 600; font-size: 0.84rem; }
+  .sub-cell { font-size: 0.72rem; color: var(--gray); margin-top: 1px; }
+  .empty-state { text-align: center; padding: 56px 24px; color: var(--gray); display: none; }
+  .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .empty-state h3 { font-size: 0.95rem; font-weight: 600; color: var(--dark); margin-bottom: 6px; }
+  .empty-state p { font-size: 0.82rem; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 9px; border-radius: 100px;
+    font-size: 0.67rem; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .b-deal    { background: #D1FAE5; color: #065F46; }
+  .b-nego    { background: #FEF3C7; color: #92400E; }
+  .b-prospek { background: #DBEAFE; color: #1E40AF; }
+  .b-tidak   { background: #FEE2E2; color: #991B1B; }
+  .b-black   { background: #F1F5F9; color: #475569; }
+  .b-aktif   { background: #D1FAE5; color: #065F46; }
+  .b-followup{ background: #FEF3C7; color: #92400E; }
+  .b-nonaktif{ background: #F1F5F9; color: #94A3B8; }
+  .b-berakhir{ background: #FEE2E2; color: #991B1B; }
+  .b-valid   { background: #D1FAE5; color: #065F46; }
+  .b-invalid { background: #FEE2E2; color: #991B1B; }
+  .b-konfirm { background: #FEF3C7; color: #92400E; }
+  .b-lunas   { background: #D1FAE5; color: #065F46; }
+  .b-belum   { background: #FEF3C7; color: #92400E; }
+  .b-terlambat{background: #FEE2E2; color: #991B1B; }
+  .b-bebas   { background: #EDE9FE; color: #5B21B6; }
+  .b-niche   { background: #F0FDFA; color: #0F766E; }
+  .b-gratis  { background: #FEF3C7; color: #92400E; }
+  .b-order   { background: #DBEAFE; color: #1E40AF; }
+  .b-tagihan { background: #DBEAFE; color: #1E40AF; }
+  .b-skip    { background: #F1F5F9; color: #94A3B8; }
+  .pri-high  { color: var(--red); font-weight: 700; font-size: 0.78rem; }
+  .pri-med   { color: var(--yellow); font-weight: 600; font-size: 0.78rem; }
+  .pri-low   { color: var(--gray); font-size: 0.78rem; }
+
+  /* ── ACTION BTNS ── */
+  .action-btns { display: flex; gap: 4px; }
+  .btn-icon {
+    width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--white); cursor: pointer; font-size: 0.75rem;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .btn-icon:hover { background: var(--bg); }
+  .btn-icon.danger:hover { background: var(--red-l); border-color: #FECACA; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 12px;
+    padding: 28px; width: 600px; max-width: 96vw;
+    max-height: 92vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-title { font-size: 1.05rem; font-weight: 800; color: var(--dark); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group.full { grid-column: span 2; }
+  .form-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gray); }
+  .form-input, .form-select, .form-textarea {
+    padding: 8px 11px; border-radius: 6px; border: 1.5px solid var(--border);
+    font-size: 0.86rem; font-family: var(--font); color: var(--dark);
+    outline: none; transition: border-color 0.15s; background: var(--white);
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--blue); }
+  .form-input[readonly] { background: var(--bg); color: var(--gray); }
+  .form-textarea { resize: vertical; min-height: 68px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 22px; }
+  .form-section { grid-column: span 2; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray); padding: 6px 0 2px; border-top: 1px solid var(--border); margin-top: 4px; }
+  .form-hint {
+    grid-column: span 2; font-size: 0.78rem; padding: 9px 12px; border-radius: 6px;
+    background: var(--green-l); color: var(--green-d); font-weight: 600; border: 1px solid #A7F3D0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .form-hint.komisi { background: var(--blue-l); color: var(--blue-d); border-color: #BFDBFE; }
+
+  /* ── REMINDER MODAL ── */
+  .reminder-modal {
+    background: var(--white); border-radius: 12px; padding: 26px;
+    width: 520px; max-width: 95vw; max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .reminder-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .reminder-icon { width: 42px; height: 42px; border-radius: 50%; background: var(--orange-l); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+  .reminder-title { font-size: 1rem; font-weight: 700; }
+  .reminder-sub { font-size: 0.76rem; color: var(--gray); margin-top: 2px; }
+  .reminder-section-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gray); margin: 14px 0 8px; }
+  .reminder-section-title:first-of-type { margin-top: 0; }
+  .reminder-list { display: flex; flex-direction: column; gap: 8px; }
+  .reminder-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg);
+  }
+  .r-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .r-dot.overdue { background: var(--red); }
+  .r-dot.today { background: var(--orange); }
+  .r-name { font-weight: 600; font-size: 0.85rem; }
+  .r-meta { font-size: 0.74rem; color: var(--gray); margin-top: 2px; }
+  .r-tag { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 100px; white-space: nowrap; }
+  .r-tag.overdue { background: var(--red-l); color: var(--red); }
+  .r-tag.today { background: var(--orange-l); color: var(--orange); }
+  .reminder-empty { text-align: center; padding: 20px; color: var(--gray); font-size: 0.82rem; }
+
+  /* ── MONEY FORMAT ── */
+  .money { font-weight: 600; font-size: 0.82rem; }
+  .money-big { font-size: 1.1rem; font-weight: 700; }
+
+  /* ── IMPORT PREVIEW ── */
+  .import-info { background: var(--bg); border-radius: 6px; padding: 12px 14px; font-size: 0.8rem; line-height: 1.6; margin-bottom: 14px; border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div class="modal-overlay open" id="loginOverlay" style="z-index:300">
+  <div class="modal" style="width:380px">
+    <div class="modal-title">🔒 Masuk ke Tracker</div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div style="position:relative">
+        <input type="password" class="form-input" id="loginPass" placeholder="Masukkan password" style="padding-right:38px">
+        <button type="button" onclick="toggleLoginPass()" title="Tampilkan/sembunyikan password"
+          style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;padding:4px;line-height:1;color:var(--gray)">
+          <span id="loginPassIcon">👁️</span>
+        </button>
+      </div>
+    </div>
+    <div id="loginError" style="color:var(--red);font-size:0.8rem;margin-top:8px;display:none">Password salah, coba lagi.</div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="doLogin()">Masuk</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="app-brand">
+    <div class="app-logo">Tera<span>Web</span></div>
+    <span class="app-tag">Tracker pSEO Mitra</span>
+  </div>
+  <div class="header-right">
+    <span id="headerDate"></span>
+    <button class="bell-btn" onclick="checkReminders(true)" title="Lihat semua reminder follow-up & jatuh tempo">
+      🔔<span class="bell-dot" id="bellDot"></span>
+    </button>
+    <button class="btn btn-ghost" style="padding:5px 10px;font-size:0.72rem" onclick="doLogout()">🔒 Keluar</button>
+  </div>
+</header>
+
+<!-- SYSTEM SWITCHER -->
+<div class="system-switch-bar">
+  <button class="sys-btn active sys-komisi" id="sysbtn-komisi" onclick="switchSystem('komisi')">
+    <span class="sys-icon">💰</span>
+    <span>Komisi per Lead<span class="sys-sub">Bayar komisi per lead masuk, order pertama gratis opsional per mitra</span></span>
+  </button>
+  <button class="sys-btn sys-sewa" id="sysbtn-sewa" onclick="switchSystem('sewa')">
+    <span class="sys-icon">🏠</span>
+    <span>Sewa Halaman<span class="sys-sub">Sewa bulanan per halaman pSEO</span></span>
+  </button>
+</div>
+
+<!-- ═══════════════════ SYSTEM: KOMISI PER LEAD ═══════════════════ -->
+<div class="system-panel sys-komisi active" id="system-komisi">
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" id="tab-k-mitra" onclick="k_switchTab('mitra',this)">
+    👥 Master Mitra <span class="tab-count" id="cnt-k-mitra">0</span>
+  </button>
+  <button class="tab-btn" id="tab-k-order" onclick="k_switchTab('order',this)">
+    🧾 Log Order &amp; Komisi <span class="tab-count" id="cnt-k-order">0</span>
+  </button>
+</div>
+
+<!-- ═══════════════════ TAB: MASTER MITRA ═══════════════════ -->
+<div class="tab-content active" id="content-k-mitra">
+  <div class="dash-bar">
+    <div class="kpi"><div class="kpi-label">Total Mitra</div><div class="kpi-val" id="m-k-total">0</div></div>
+    <div class="kpi"><div class="kpi-label">Mitra Aktif ✅</div><div class="kpi-val green" id="m-k-aktif">0</div></div>
+    <div class="kpi"><div class="kpi-label">Deal ✅</div><div class="kpi-val blue" id="m-k-deal">0</div></div>
+    <div class="kpi"><div class="kpi-label">Negosiasi 🔄</div><div class="kpi-val yellow" id="m-k-nego">0</div></div>
+    <div class="kpi"><div class="kpi-label">Prospek 🔍</div><div class="kpi-val teal" id="m-k-prospek">0</div></div>
+    <div class="kpi"><div class="kpi-label">Total Order Semua Mitra</div><div class="kpi-val gold" id="m-k-order">0</div></div>
+  </div>
+  <div class="toolbar">
+    <button class="btn btn-green" onclick="k_openMitraModal()">＋ Tambah Mitra</button>
+    <button class="btn btn-ghost" onclick="k_exportMitraCSV()">⬇ Export CSV</button>
+    <button class="btn btn-ghost" onclick="k_triggerImport('mitra')">⬆ Import CSV</button>
+    <div class="filter-group" id="filter-k-mitra">
+      <button class="filter-btn active" onclick="k_setFilter('mitra','semua',this)">Semua</button>
+      <button class="filter-btn" onclick="k_setFilter('mitra','Aktif ✅',this,'status_mitra')">Aktif</button>
+      <button class="filter-btn" onclick="k_setFilter('mitra','Deal ✅',this,'status_deal')">Deal</button>
+      <button class="filter-btn" onclick="k_setFilter('mitra','Negosiasi 🔄',this,'status_deal')">Negosiasi</button>
+      <button class="filter-btn" onclick="k_setFilter('mitra','Prospek 🔍',this,'status_deal')">Prospek</button>
+    </div>
+    <input type="text" class="search-box" placeholder="🔍 Cari nama, kecamatan, niche..." id="search-k-mitra" oninput="k_renderMitra()">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36px">#</th>
+          <th onclick="k_sortM('tanggal')">Tgl Gabung</th>
+          <th onclick="k_sortM('nama')">Nama Mitra / Usaha</th>
+          <th onclick="k_sortM('niche')">Niche</th>
+          <th onclick="k_sortM('kecamatan')">Kecamatan</th>
+          <th onclick="k_sortM('kabupaten')">Kabupaten</th>
+          <th onclick="k_sortM('hp')">No HP / WA</th>
+          <th onclick="k_sortM('status_deal')">Status Deal</th>
+          <th onclick="k_sortM('status_mitra')">Status Mitra</th>
+          <th onclick="k_sortM('followup')">Follow-up</th>
+          <th>Jumlah Order</th>
+          <th onclick="k_sortM('komisi_default')">Komisi/Lead (Rp)</th>
+          <th>Total Komisi Lunas</th>
+          <th>Catatan</th>
+          <th style="width:72px"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody-k-mitra"></tbody>
+    </table>
+    <div class="empty-state" id="empty-k-mitra">
+      <div class="empty-icon">👥</div>
+      <h3>Belum ada mitra Komisi per Lead</h3>
+      <p>Klik "+ Tambah Mitra" untuk mulai mencatat mitra sistem komisi.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB: LOG ORDER & KOMISI ═══════════════════ -->
+<div class="tab-content" id="content-k-order">
+  <div class="dash-bar">
+    <div class="kpi"><div class="kpi-label">Total Order Valid</div><div class="kpi-val" id="o-k-total">0</div></div>
+    <div class="kpi"><div class="kpi-label">Order Pertama (Gratis) 🎁</div><div class="kpi-val yellow" id="o-k-gratis">0</div></div>
+    <div class="kpi"><div class="kpi-label">Order Kena Komisi</div><div class="kpi-val blue" id="o-k-komisi">0</div></div>
+    <div class="kpi"><div class="kpi-label">Lead Tidak Valid ❌</div><div class="kpi-val red" id="o-k-invalid">0</div></div>
+    <div class="kpi"><div class="kpi-label">Komisi Lunas</div><div class="kpi-val green" id="o-k-lunas">Rp 0</div></div>
+    <div class="kpi"><div class="kpi-label">Komisi Belum Dibayar</div><div class="kpi-val gold" id="o-k-belum">Rp 0</div></div>
+  </div>
+  <div class="toolbar">
+    <button class="btn btn-green" onclick="k_openOrderModal()">＋ Catat Order / Lead</button>
+    <button class="btn btn-ghost" onclick="k_exportOrderCSV()">⬇ Export CSV</button>
+    <button class="btn btn-ghost" onclick="k_triggerImport('order')">⬆ Import CSV</button>
+    <div class="filter-group" id="filter-k-order">
+      <button class="filter-btn active" onclick="k_setFilter('order','semua',this)">Semua</button>
+      <button class="filter-btn" onclick="k_setFilter('order','Valid ✅',this,'status_lead')">Valid</button>
+      <button class="filter-btn" onclick="k_setFilter('order','gratis',this,'tipe')">🎁 Gratis</button>
+      <button class="filter-btn" onclick="k_setFilter('order','komisi',this,'tipe')">Kena Komisi</button>
+      <button class="filter-btn" onclick="k_setFilter('order','Belum Bayar ⏳',this,'bayar')">Belum Bayar</button>
+    </div>
+    <input type="text" class="search-box" placeholder="🔍 Cari mitra, kecamatan, niche..." id="search-k-order" oninput="k_renderOrder()">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36px">#</th>
+          <th onclick="k_sortO('tanggal')">Tanggal</th>
+          <th onclick="k_sortO('mitra')">Mitra</th>
+          <th onclick="k_sortO('niche')">Niche</th>
+          <th onclick="k_sortO('kecamatan')">Kecamatan Asal Lead</th>
+          <th onclick="k_sortO('penelepon')">Penelepon</th>
+          <th onclick="k_sortO('hp_lead')">No HP Lead</th>
+          <th onclick="k_sortO('status_lead')">Status Lead</th>
+          <th>Order Ke-</th>
+          <th onclick="k_sortO('komisi')">Komisi (Rp)</th>
+          <th onclick="k_sortO('bayar')">Status Bayar</th>
+          <th onclick="k_sortO('batas_bayar')">Batas Bayar</th>
+          <th>Catatan</th>
+          <th style="width:72px"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody-k-order"></tbody>
+    </table>
+    <div class="empty-state" id="empty-k-order">
+      <div class="empty-icon">🧾</div>
+      <h3>Belum ada log order</h3>
+      <p>Klik "+ Catat Order / Lead" tiap ada lead baru masuk dari halaman pSEO.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: MASTER MITRA ══ -->
+<div class="modal-overlay" id="mo-k-mitra">
+  <div class="modal">
+    <div class="modal-title"><span id="mt-k-mitra">Tambah Mitra Baru</span></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tanggal Gabung</label>
+        <input type="date" class="form-input" id="fm-k-tanggal">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Niche *</label>
+        <select class="form-select" id="fm-k-niche" onchange="k_applyNicheDefault()"><option>Sedot WC</option><option>Service AC</option><option>Tukang Listrik</option><option>Laundry</option><option>Rental Mobil</option><option>Dokter Gigi</option><option>Travel Antar Kota</option><option>Tukang Bangunan</option><option>Kontraktor</option><option>Catering</option><option>Aqiqah</option><option>Cuci Karpet</option></select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Nama Mitra / Usaha *</label>
+        <input type="text" class="form-input" id="fm-k-nama" placeholder="mis. Sedot WC Pak Budi">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nama PIC</label>
+        <input type="text" class="form-input" id="fm-k-pic" placeholder="Nama pemilik / yang dihubungi">
+      </div>
+      <div class="form-group">
+        <label class="form-label">No HP / WA</label>
+        <input type="text" class="form-input" id="fm-k-hp" placeholder="08xxxxxxxxxx" oninput="k_checkHpDuplicate()" onblur="k_checkHpDuplicate()">
+      </div>
+      <div class="form-group full" id="fm-k-hp-warning" style="display:none;background:var(--red-l);border:1px solid #FECACA;border-radius:6px;padding:10px 12px;font-size:0.8rem;color:#991B1B;line-height:1.5"></div>
+      <div class="form-group full">
+        <label class="form-label">Kecamatan (basis mitra) — bisa diketik untuk cari</label>
+        <input type="text" class="form-input" id="fm-k-kecamatan" list="dl-kecamatan" placeholder="Ketik nama kecamatan..." oninput="onKecInput('fm-k-kecamatan','fm-k-kabupaten')">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Kabupaten (otomatis)</label>
+        <input type="text" class="form-input" id="fm-k-kabupaten" readonly placeholder="Terisi otomatis dari kecamatan">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sumber Lead</label>
+        <select class="form-select" id="fm-k-sumber">
+          <option>Inbound Call</option><option>Inbound WA</option>
+          <option>Outbound DM IG</option><option>Outbound DM WA</option>
+          <option>Referral</option><option>Facebook Group</option>
+          <option>Sejasa</option><option>Lainnya</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Komisi per Lead Setelah Order Pertama (Rp) <span style="font-weight:400;color:var(--gray)">— saran otomatis, bisa diedit</span></label>
+        <input type="number" class="form-input" id="fm-k-komisi-default" placeholder="mis. 25000" oninput="fmKKomisiTouched=true">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Kebijakan Order Pertama</label>
+        <select class="form-select" id="fm-k-kebijakan1">
+          <option value="tidak">Tidak ada — langsung kena komisi dari lead ke-1 (default)</option>
+          <option value="gratis">🎁 Order Pertama Gratis Penuh — lead ke-1 tidak ditagih apa pun</option>
+          <option value="garansi">🛡️ Garansi Kualitas Lead — tetap ditagih dari lead ke-1, TAPI lead yang ternyata "Tidak Valid ❌" (nomor mati/gak nyambung/gak niat beli) otomatis tidak ditagih</option>
+        </select>
+      </div>
+      <div class="form-section">Status</div>
+      <div class="form-group">
+        <label class="form-label">Status Deal</label>
+        <select class="form-select" id="fm-k-status-deal">
+          <option>Prospek 🔍</option><option>Negosiasi 🔄</option>
+          <option>Deal ✅</option><option>Tidak Deal ❌</option><option>Blacklist 🚫</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status Mitra</label>
+        <select class="form-select" id="fm-k-status-mitra">
+          <option>Aktif ✅</option><option>Follow Up</option><option>Nonaktif</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal Follow-up Berikutnya</label>
+        <input type="date" class="form-input" id="fm-k-followup">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Catatan</label>
+        <textarea class="form-textarea" id="fm-k-catatan" placeholder="Catatan penting tentang mitra ini..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="k_closeModal('mo-k-mitra')">Batal</button>
+      <button class="btn btn-green" onclick="k_saveMitra()">Simpan Mitra</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: LOG ORDER ══ -->
+<div class="modal-overlay" id="mo-k-order">
+  <div class="modal">
+    <div class="modal-title"><span id="mt-k-order">Catat Order / Lead Masuk</span></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tanggal Lead Masuk</label>
+        <input type="date" class="form-input" id="fo-k-tanggal">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mitra *</label>
+        <input type="text" class="form-input" id="fo-k-mitra" list="dl-k-mitra" placeholder="Ketik / pilih nama mitra..." oninput="k_onMitraPick()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Niche</label>
+        <select class="form-select" id="fo-k-niche"><option>Sedot WC</option><option>Service AC</option><option>Tukang Listrik</option><option>Laundry</option><option>Rental Mobil</option><option>Dokter Gigi</option><option>Travel Antar Kota</option><option>Tukang Bangunan</option><option>Kontraktor</option><option>Catering</option><option>Aqiqah</option><option>Cuci Karpet</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status Lead</label>
+        <select class="form-select" id="fo-k-status" onchange="k_onMitraPick()">
+          <option>Valid ✅</option><option>Tidak Valid ❌</option><option>Perlu Konfirmasi ❓</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Kecamatan Asal Lead (halaman pSEO sumber) — bisa diketik untuk cari</label>
+        <input type="text" class="form-input" id="fo-k-kecamatan" list="dl-kecamatan" placeholder="Ketik nama kecamatan..." oninput="onKecInput('fo-k-kecamatan','fo-k-kabupaten')">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Kabupaten (otomatis)</label>
+        <input type="text" class="form-input" id="fo-k-kabupaten" readonly placeholder="Terisi otomatis dari kecamatan">
+      </div>
+      <div class="form-section">Info Penelepon / Pengirim WA</div>
+      <div class="form-group">
+        <label class="form-label">Nama Penelepon / Pengirim</label>
+        <input type="text" class="form-input" id="fo-k-penelepon" placeholder="Nama atau anonim">
+      </div>
+      <div class="form-group">
+        <label class="form-label">No HP Penelepon</label>
+        <input type="text" class="form-input" id="fo-k-hp" placeholder="08xxxxxxxxxx">
+      </div>
+      <div class="form-hint" id="fo-k-hint">Pilih mitra dulu untuk melihat ini order ke berapa.</div>
+      <div class="form-section">Komisi</div>
+      <div class="form-group">
+        <label class="form-label">Order Ke- (otomatis)</label>
+        <input type="text" class="form-input" id="fo-k-order-ke" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Komisi Order Ini (Rp)</label>
+        <input type="number" class="form-input" id="fo-k-komisi" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status Bayar Komisi</label>
+        <select class="form-select" id="fo-k-bayar">
+          <option>Belum Bayar ⏳</option><option>Lunas ✅</option>
+          <option>Dibebaskan</option><option value="Gratis Order Pertama">Gratis Order Pertama</option>
+          <option value="Tidak Ditagih (Lead Invalid)">Tidak Ditagih (Lead Invalid) 🛡️</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Batas Waktu Bayar Komisi</label>
+        <input type="date" class="form-input" id="fo-k-batas-bayar">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Catatan</label>
+        <textarea class="form-textarea" id="fo-k-catatan" placeholder="Catatan tambahan..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="k_closeModal('mo-k-order')">Batal</button>
+      <button class="btn btn-green" onclick="k_saveOrder()">Simpan Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: IMPORT CSV ══ -->
+<div class="modal-overlay" id="mo-k-import">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">⬆ Import CSV</div>
+    <div class="import-info">
+      <strong>Cara pakai:</strong><br>
+      1. Pilih file CSV yang sebelumnya di-export dari tab yang sama.<br>
+      2. Pilih mode: <strong>Tambahkan</strong> (merge) atau <strong>Ganti semua</strong> (replace).<br>
+      3. Klik Import.
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tab Target</label>
+        <select class="form-select" id="imp-k-tab">
+          <option value="mitra">👥 Master Mitra</option>
+          <option value="order">🧾 Log Order &amp; Komisi</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mode Import</label>
+        <select class="form-select" id="imp-k-mode">
+          <option value="merge">Tambahkan (merge)</option>
+          <option value="replace">Ganti semua (replace)</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">File CSV</label>
+        <input type="file" class="form-input" id="imp-k-file" accept=".csv" onchange="k_previewImport(event)" style="padding:6px 10px;cursor:pointer">
+      </div>
+    </div>
+    <div id="imp-k-preview" style="margin-top:12px;font-size:0.8rem;min-height:24px;color:var(--gray)">Belum ada file dipilih.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="k_closeModal('mo-k-import')">Batal</button>
+      <button class="btn btn-primary" id="imp-k-btn" onclick="k_doImport()" disabled>Import</button>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+<!-- ═══════════════════ SYSTEM: SEWA HALAMAN ═══════════════════ -->
+<div class="system-panel sys-sewa" id="system-sewa">
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" id="tab-s-mitra" onclick="s_switchTab('mitra',this)">
+    👥 Master Kontrak Sewa <span class="tab-count" id="cnt-s-mitra">0</span>
+  </button>
+  <button class="tab-btn" id="tab-s-tagihan" onclick="s_switchTab('tagihan',this)">
+    🧾 Log Tagihan Bulanan <span class="tab-count" id="cnt-s-tagihan">0</span>
+  </button>
+</div>
+
+<!-- ═══════════════════ TAB: MASTER KONTRAK SEWA ═══════════════════ -->
+<div class="tab-content active" id="content-s-mitra">
+  <div class="dash-bar">
+    <div class="kpi"><div class="kpi-label">Total Kontrak</div><div class="kpi-val" id="m-s-total">0</div></div>
+    <div class="kpi"><div class="kpi-label">Kontrak Aktif ✅</div><div class="kpi-val green" id="m-s-aktif">0</div></div>
+    <div class="kpi"><div class="kpi-label">Prospek 🔍</div><div class="kpi-val teal" id="m-s-prospek">0</div></div>
+    <div class="kpi"><div class="kpi-label">Berakhir ❌</div><div class="kpi-val red" id="m-s-berakhir">0</div></div>
+    <div class="kpi"><div class="kpi-label">MRR (Kontrak Aktif)</div><div class="kpi-val blue" id="m-s-mrr">Rp 0</div></div>
+    <div class="kpi"><div class="kpi-label">Total Bulan Tertagih</div><div class="kpi-val gold" id="m-s-tertagih">0</div></div>
+  </div>
+  <div class="toolbar">
+    <button class="btn btn-blue" onclick="s_openMitraModal()">＋ Tambah Kontrak</button>
+    <button class="btn btn-ghost" onclick="s_exportMitraCSV()">⬇ Export CSV</button>
+    <button class="btn btn-ghost" onclick="s_triggerImport('mitra')">⬆ Import CSV</button>
+    <div class="filter-group" id="filter-s-mitra">
+      <button class="filter-btn active" onclick="s_setFilter('mitra','semua',this)">Semua</button>
+      <button class="filter-btn" onclick="s_setFilter('mitra','Aktif ✅',this,'status_kontrak')">Aktif</button>
+      <button class="filter-btn" onclick="s_setFilter('mitra','Prospek 🔍',this,'status_kontrak')">Prospek</button>
+      <button class="filter-btn" onclick="s_setFilter('mitra','Perpanjang 🔄',this,'status_kontrak')">Perpanjang</button>
+      <button class="filter-btn" onclick="s_setFilter('mitra','Berakhir ❌',this,'status_kontrak')">Berakhir</button>
+    </div>
+    <input type="text" class="search-box" placeholder="🔍 Cari nama, kecamatan, niche..." id="search-s-mitra" oninput="s_renderMitra()">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36px">#</th>
+          <th onclick="s_sortM('tanggal_mulai')">Tgl Mulai</th>
+          <th onclick="s_sortM('nama')">Nama Mitra / Usaha</th>
+          <th onclick="s_sortM('niche')">Niche</th>
+          <th onclick="s_sortM('kecamatan')">Kecamatan</th>
+          <th onclick="s_sortM('kabupaten')">Kabupaten</th>
+          <th onclick="s_sortM('url')">URL Halaman Disewa</th>
+          <th onclick="s_sortM('harga_bulan')">Harga/Bulan</th>
+          <th onclick="s_sortM('durasi')">Durasi</th>
+          <th onclick="s_sortM('tanggal_berakhir')">Tgl Berakhir</th>
+          <th onclick="s_sortM('status_kontrak')">Status Kontrak</th>
+          <th onclick="s_sortM('followup')">Follow-up</th>
+          <th onclick="s_sortM('jatuh_tempo')">Jatuh Tempo</th>
+          <th>Bulan Tertagih</th>
+          <th>Total Lunas</th>
+          <th>Catatan</th>
+          <th style="width:72px"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody-s-mitra"></tbody>
+    </table>
+    <div class="empty-state" id="empty-s-mitra">
+      <div class="empty-icon">👥</div>
+      <h3>Belum ada kontrak sewa halaman</h3>
+      <p>Klik "+ Tambah Kontrak" untuk mulai mencatat mitra sistem sewa halaman.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB: LOG TAGIHAN BULANAN ═══════════════════ -->
+<div class="tab-content" id="content-s-tagihan">
+  <div class="dash-bar">
+    <div class="kpi"><div class="kpi-label">Total Tagihan</div><div class="kpi-val" id="o-s-total">0</div></div>
+    <div class="kpi"><div class="kpi-label">Lunas ✅</div><div class="kpi-val green" id="o-s-lunas-cnt">0</div></div>
+    <div class="kpi"><div class="kpi-label">Belum Bayar ⏳</div><div class="kpi-val yellow" id="o-s-belum-cnt">0</div></div>
+    <div class="kpi"><div class="kpi-label">Terlambat ⚠️</div><div class="kpi-val red" id="o-s-terlambat-cnt">0</div></div>
+    <div class="kpi"><div class="kpi-label">Total Lunas (Rp)</div><div class="kpi-val green" id="o-s-lunas">Rp 0</div></div>
+    <div class="kpi"><div class="kpi-label">Belum Dibayar (Rp)</div><div class="kpi-val gold" id="o-s-belum">Rp 0</div></div>
+  </div>
+  <div class="toolbar">
+    <button class="btn btn-blue" onclick="s_openTagihanModal()">＋ Catat Tagihan</button>
+    <button class="btn btn-ghost" onclick="s_exportTagihanCSV()">⬇ Export CSV</button>
+    <button class="btn btn-ghost" onclick="s_triggerImport('tagihan')">⬆ Import CSV</button>
+    <div class="filter-group" id="filter-s-tagihan">
+      <button class="filter-btn active" onclick="s_setFilter('tagihan','semua',this)">Semua</button>
+      <button class="filter-btn" onclick="s_setFilter('tagihan','Lunas ✅',this,'bayar')">Lunas</button>
+      <button class="filter-btn" onclick="s_setFilter('tagihan','Belum ⏳',this,'bayar')">Belum Bayar</button>
+      <button class="filter-btn" onclick="s_setFilter('tagihan','Terlambat ⚠️',this,'bayar')">Terlambat</button>
+    </div>
+    <input type="text" class="search-box" placeholder="🔍 Cari mitra, kecamatan, niche..." id="search-s-tagihan" oninput="s_renderTagihan()">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36px">#</th>
+          <th onclick="s_sortO('tanggal_tagihan')">Tgl Tagihan</th>
+          <th onclick="s_sortO('mitra')">Mitra</th>
+          <th onclick="s_sortO('niche')">Niche</th>
+          <th onclick="s_sortO('kecamatan')">Kecamatan</th>
+          <th onclick="s_sortO('bulan_tagihan')">Bulan Tagihan</th>
+          <th>Tagihan Ke-</th>
+          <th onclick="s_sortO('nominal')">Nominal (Rp)</th>
+          <th onclick="s_sortO('bayar')">Status Bayar</th>
+          <th onclick="s_sortO('tanggal_bayar')">Tgl Bayar</th>
+          <th>Catatan</th>
+          <th style="width:72px"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody-s-tagihan"></tbody>
+    </table>
+    <div class="empty-state" id="empty-s-tagihan">
+      <div class="empty-icon">🧾</div>
+      <h3>Belum ada log tagihan</h3>
+      <p>Klik "+ Catat Tagihan" tiap ada tagihan bulanan baru untuk mitra sewa.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: MASTER KONTRAK SEWA ══ -->
+<div class="modal-overlay" id="mo-s-mitra">
+  <div class="modal">
+    <div class="modal-title"><span id="mt-s-mitra">Tambah Kontrak Sewa Baru</span></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tanggal Mulai Kontrak</label>
+        <input type="date" class="form-input" id="fm-s-tanggal-mulai">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Niche *</label>
+        <select class="form-select" id="fm-s-niche" onchange="s_applyNicheDefault()"><option>Sedot WC</option><option>Service AC</option><option>Tukang Listrik</option><option>Laundry</option><option>Rental Mobil</option><option>Dokter Gigi</option><option>Travel Antar Kota</option><option>Tukang Bangunan</option><option>Kontraktor</option><option>Catering</option><option>Aqiqah</option><option>Cuci Karpet</option></select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Nama Mitra / Usaha *</label>
+        <input type="text" class="form-input" id="fm-s-nama" placeholder="mis. AC Prima Service">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nama PIC</label>
+        <input type="text" class="form-input" id="fm-s-pic" placeholder="Nama pemilik / yang dihubungi">
+      </div>
+      <div class="form-group">
+        <label class="form-label">No HP / WA</label>
+        <input type="text" class="form-input" id="fm-s-hp" placeholder="08xxxxxxxxxx" oninput="s_checkHpDuplicate()" onblur="s_checkHpDuplicate()">
+      </div>
+      <div class="form-group full" id="fm-s-hp-warning" style="display:none;background:var(--red-l);border:1px solid #FECACA;border-radius:6px;padding:10px 12px;font-size:0.8rem;color:#991B1B;line-height:1.5"></div>
+      <div class="form-group full">
+        <label class="form-label">Kecamatan Halaman Disewa — bisa diketik untuk cari</label>
+        <input type="text" class="form-input" id="fm-s-kecamatan" list="dl-kecamatan" placeholder="Ketik nama kecamatan..." oninput="onKecInput('fm-s-kecamatan','fm-s-kabupaten')">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Kabupaten (otomatis)</label>
+        <input type="text" class="form-input" id="fm-s-kabupaten" readonly placeholder="Terisi otomatis dari kecamatan">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">URL / Halaman yang Disewa</label>
+        <input type="text" class="form-input" id="fm-s-url" placeholder="mis. service-ac-cilacap.html">
+      </div>
+      <div class="form-section">Kontrak & Harga</div>
+      <div class="form-group">
+        <label class="form-label">Harga Sewa / Bulan (Rp) <span style="font-weight:400;color:var(--gray)">— saran otomatis, bisa diedit</span></label>
+        <input type="number" class="form-input" id="fm-s-harga" placeholder="0" oninput="fmSHargaTouched=true">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Durasi Kontrak</label>
+        <select class="form-select" id="fm-s-durasi">
+          <option value="">—</option><option>1 Bulan</option><option>3 Bulan</option>
+          <option>6 Bulan</option><option>12 Bulan</option><option>Bulanan (auto)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal Berakhir Kontrak</label>
+        <input type="date" class="form-input" id="fm-s-tanggal-berakhir">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status Kontrak</label>
+        <select class="form-select" id="fm-s-status">
+          <option>Prospek 🔍</option><option>Aktif ✅</option>
+          <option>Perpanjang 🔄</option><option>Berakhir ❌</option><option>Tidak Jadi ❌</option>
+        </select>
+      </div>
+      <div class="form-section">Reminder</div>
+      <div class="form-group">
+        <label class="form-label">Tanggal Follow-up Berikutnya</label>
+        <input type="date" class="form-input" id="fm-s-followup">
+        <span style="font-size:0.68rem;color:var(--gray)">Untuk mitra Prospek / Perpanjang yang masih perlu dihubungi lagi.</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal Jatuh Tempo Tagihan</label>
+        <input type="date" class="form-input" id="fm-s-jatuh-tempo">
+        <span style="font-size:0.68rem;color:var(--gray)">Untuk kontrak Aktif — kapan tagihan bulan berikutnya harus ditagih.</span>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Catatan</label>
+        <textarea class="form-textarea" id="fm-s-catatan" placeholder="Catatan penting tentang kontrak ini..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="s_closeModal('mo-s-mitra')">Batal</button>
+      <button class="btn btn-blue" onclick="s_saveMitra()">Simpan Kontrak</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: LOG TAGIHAN ══ -->
+<div class="modal-overlay" id="mo-s-tagihan">
+  <div class="modal">
+    <div class="modal-title"><span id="mt-s-tagihan">Catat Tagihan Bulanan</span></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tanggal Tagihan Dibuat</label>
+        <input type="date" class="form-input" id="fo-s-tanggal">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mitra *</label>
+        <input type="text" class="form-input" id="fo-s-mitra" list="dl-s-mitra" placeholder="Ketik / pilih nama mitra..." oninput="s_onMitraPick()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Niche</label>
+        <select class="form-select" id="fo-s-niche"><option>Sedot WC</option><option>Service AC</option><option>Tukang Listrik</option><option>Laundry</option><option>Rental Mobil</option><option>Dokter Gigi</option><option>Travel Antar Kota</option><option>Tukang Bangunan</option><option>Kontraktor</option><option>Catering</option><option>Aqiqah</option><option>Cuci Karpet</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bulan Tagihan</label>
+        <input type="text" class="form-input" id="fo-s-bulan" placeholder="mis. Juli 2026">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Kecamatan Halaman — bisa diketik untuk cari</label>
+        <input type="text" class="form-input" id="fo-s-kecamatan" list="dl-kecamatan" placeholder="Ketik nama kecamatan..." oninput="onKecInput('fo-s-kecamatan','fo-s-kabupaten')">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Kabupaten (otomatis)</label>
+        <input type="text" class="form-input" id="fo-s-kabupaten" readonly placeholder="Terisi otomatis dari kecamatan">
+      </div>
+      <div class="form-hint" id="fo-s-hint">Pilih mitra dulu untuk melihat ini tagihan bulan ke berapa.</div>
+      <div class="form-section">Nominal & Pembayaran</div>
+      <div class="form-group">
+        <label class="form-label">Tagihan Ke- (otomatis)</label>
+        <input type="text" class="form-input" id="fo-s-tagihan-ke" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nominal (Rp)</label>
+        <input type="number" class="form-input" id="fo-s-nominal" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status Bayar</label>
+        <select class="form-select" id="fo-s-bayar">
+          <option>Belum ⏳</option><option>Lunas ✅</option>
+          <option>Terlambat ⚠️</option><option>Dibebaskan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal Bayar</label>
+        <input type="date" class="form-input" id="fo-s-tanggal-bayar">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Catatan / Invoice</label>
+        <textarea class="form-textarea" id="fo-s-catatan" placeholder="Catatan tagihan, nomor invoice, dsb..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="s_closeModal('mo-s-tagihan')">Batal</button>
+      <button class="btn btn-blue" onclick="s_saveTagihan()">Simpan Tagihan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: IMPORT CSV ══ -->
+<div class="modal-overlay" id="mo-s-import">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">⬆ Import CSV</div>
+    <div class="import-info">
+      <strong>Cara pakai:</strong><br>
+      1. Pilih file CSV yang sebelumnya di-export dari tab yang sama.<br>
+      2. Pilih mode: <strong>Tambahkan</strong> (merge) atau <strong>Ganti semua</strong> (replace).<br>
+      3. Klik Import.
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tab Target</label>
+        <select class="form-select" id="imp-s-tab">
+          <option value="mitra">👥 Master Kontrak Sewa</option>
+          <option value="tagihan">🧾 Log Tagihan Bulanan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mode Import</label>
+        <select class="form-select" id="imp-s-mode">
+          <option value="merge">Tambahkan (merge)</option>
+          <option value="replace">Ganti semua (replace)</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">File CSV</label>
+        <input type="file" class="form-input" id="imp-s-file" accept=".csv" onchange="s_previewImport(event)" style="padding:6px 10px;cursor:pointer">
+      </div>
+    </div>
+    <div id="imp-s-preview" style="margin-top:12px;font-size:0.8rem;min-height:24px;color:var(--gray)">Belum ada file dipilih.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="s_closeModal('mo-s-import')">Batal</button>
+      <button class="btn btn-primary" id="imp-s-btn" onclick="s_doImport()" disabled>Import</button>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+<!-- ══ MODAL: REMINDER (GABUNGAN) ══ -->
+<div class="modal-overlay" id="mo-reminder">
+  <div class="reminder-modal">
+    <div class="reminder-header">
+      <div class="reminder-icon">🔔</div>
+      <div>
+        <div class="reminder-title">Follow-up &amp; Jatuh Tempo</div>
+        <div class="reminder-sub" id="reminder-date"></div>
+      </div>
+    </div>
+    <div id="reminder-list"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="closeSharedModal('mo-reminder')">Siap, Mulai Kerja! 💪</button>
+    </div>
+  </div>
+</div>
+
+<!-- DATALISTS -->
+<datalist id="dl-kecamatan"><option value="Babakan Madang — Bogor"><option value="Bojonggede — Bogor"><option value="Caringin — Bogor"><option value="Cariu — Bogor"><option value="Ciampea — Bogor"><option value="Ciawi — Bogor"><option value="Cibinong — Bogor"><option value="Cibungbulang — Bogor"><option value="Cigombong — Bogor"><option value="Cigudeg — Bogor"><option value="Cijeruk — Bogor"><option value="Cileungsi — Bogor"><option value="Ciomas — Bogor"><option value="Cisarua — Bogor"><option value="Ciseeng — Bogor"><option value="Citeureup — Bogor"><option value="Dramaga — Bogor"><option value="Gunung Putri — Bogor"><option value="Gunungsindur — Bogor"><option value="Jasinga — Bogor"><option value="Jonggol — Bogor"><option value="Kemang — Bogor"><option value="Klapanunggal — Bogor"><option value="Leuwiliang — Bogor"><option value="Leuwisadeng — Bogor"><option value="Megamendung — Bogor"><option value="Nanggung — Bogor"><option value="Pamijahan — Bogor"><option value="Parung — Bogor"><option value="Parung Panjang — Bogor"><option value="Rancabungur — Bogor"><option value="Rumpin — Bogor"><option value="Sukajaya — Bogor"><option value="Sukamakmur — Bogor"><option value="Sukaraja — Bogor"><option value="Tajurhalang — Bogor"><option value="Tamansari — Bogor"><option value="Tanjungsari — Bogor"><option value="Tenjo — Bogor"><option value="Tenjolaya — Bogor"><option value="Babelan — Bekasi"><option value="Bojongmangu — Bekasi"><option value="Cabangbungin — Bekasi"><option value="Cibarusah — Bekasi"><option value="Cibitung — Bekasi"><option value="Cikarang Barat — Bekasi"><option value="Cikarang Pusat — Bekasi"><option value="Cikarang Selatan — Bekasi"><option value="Cikarang Timur — Bekasi"><option value="Cikarang Utara — Bekasi"><option value="Karangbahagia — Bekasi"><option value="Kedungwaringin — Bekasi"><option value="Muara Gembong — Bekasi"><option value="Pebayuran — Bekasi"><option value="Serang Baru — Bekasi"><option value="Setu — Bekasi"><option value="Sukakarya — Bekasi"><option value="Sukatani — Bekasi"><option value="Sukawangi — Bekasi"><option value="Tambelang — Bekasi"><option value="Tambun Selatan — Bekasi"><option value="Tambun Utara — Bekasi"><option value="Tarumajaya — Bekasi"><option value="Balaraja — Tangerang"><option value="Cikupa — Tangerang"><option value="Cisauk — Tangerang"><option value="Cisoka — Tangerang"><option value="Curug — Tangerang"><option value="Gunung Kaler — Tangerang"><option value="Jambe — Tangerang"><option value="Jayanti — Tangerang"><option value="Kelapa Dua — Tangerang"><option value="Kemiri — Tangerang"><option value="Kresek — Tangerang"><option value="Kronjo — Tangerang"><option value="Kosambi — Tangerang"><option value="Legok — Tangerang"><option value="Mauk — Tangerang"><option value="Mekarbaru — Tangerang"><option value="Pagedangan — Tangerang"><option value="Pakuhaji — Tangerang"><option value="Panongan — Tangerang"><option value="Pasar Kemis — Tangerang"><option value="Rajeg — Tangerang"><option value="Sepatan — Tangerang"><option value="Sepatan Timur — Tangerang"><option value="Sindang Jaya — Tangerang"><option value="Solear — Tangerang"><option value="Sukadiri — Tangerang"><option value="Sukamulya — Tangerang"><option value="Teluknaga — Tangerang"><option value="Tigaraksa — Tangerang"><option value="Arjasari — Bandung"><option value="Baleendah — Bandung"><option value="Banjaran — Bandung"><option value="Bojongsoang — Bandung"><option value="Cangkuang — Bandung"><option value="Cicalengka — Bandung"><option value="Cikancung — Bandung"><option value="Cilengkrang — Bandung"><option value="Cileunyi — Bandung"><option value="Cimaung — Bandung"><option value="Cimenyan — Bandung"><option value="Ciparay — Bandung"><option value="Ciwidey — Bandung"><option value="Dayeuhkolot — Bandung"><option value="Ibun — Bandung"><option value="Katapang — Bandung"><option value="Kertasari — Bandung"><option value="Kutawaringin — Bandung"><option value="Majalaya — Bandung"><option value="Margaasih — Bandung"><option value="Margahayu — Bandung"><option value="Nagreg — Bandung"><option value="Pacet — Bandung"><option value="Pameungpeuk — Bandung"><option value="Pangalengan — Bandung"><option value="Paseh — Bandung"><option value="Pasirjambu — Bandung"><option value="Rancabali — Bandung"><option value="Rancaekek — Bandung"><option value="Solokanjeruk — Bandung"><option value="Soreang — Bandung"><option value="Banyusari — Karawang"><option value="Batujaya — Karawang"><option value="Ciampel — Karawang"><option value="Cibuaya — Karawang"><option value="Cikampek — Karawang"><option value="Cilamaya Kulon — Karawang"><option value="Cilamaya Wetan — Karawang"><option value="Cilebar — Karawang"><option value="Jatisari — Karawang"><option value="Jayakerta — Karawang"><option value="Karawang Barat — Karawang"><option value="Karawang Timur — Karawang"><option value="Klari — Karawang"><option value="Kotabaru — Karawang"><option value="Kutawaluya — Karawang"><option value="Lemahabang — Karawang"><option value="Majalaya — Karawang"><option value="Pakisjaya — Karawang"><option value="Pangkalan — Karawang"><option value="Pedes — Karawang"><option value="Purwasari — Karawang"><option value="Rawamerta — Karawang"><option value="Rengasdengklok — Karawang"><option value="Tegalwaru — Karawang"><option value="Talagasari — Karawang"><option value="Telukjambe Barat — Karawang"><option value="Telukjambe Timur — Karawang"><option value="Tempuran — Karawang"><option value="Tirtajaya — Karawang"><option value="Tirtamulya — Karawang"><option value="Anyar — Serang"><option value="Bandung — Serang"><option value="Baros — Serang"><option value="Binuang — Serang"><option value="Bojonegara — Serang"><option value="Carenang — Serang"><option value="Cikande — Serang"><option value="Cikeusal — Serang"><option value="Cinangka — Serang"><option value="Ciomas — Serang"><option value="Ciruas — Serang"><option value="Gunung Sari — Serang"><option value="Jawilan — Serang"><option value="Kibin — Serang"><option value="Kopo — Serang"><option value="Kragilan — Serang"><option value="Kramatwatu — Serang"><option value="Lebak Wangi — Serang"><option value="Mancak — Serang"><option value="Pabuaran — Serang"><option value="Padarincang — Serang"><option value="Pamarayan — Serang"><option value="Petir — Serang"><option value="Pontang — Serang"><option value="Pulo Ampel — Serang"><option value="Tanara — Serang"><option value="Tirtayasa — Serang"><option value="Tunjungteja — Serang"><option value="Waringinkurung — Serang"><option value="Arjawinangun — Cirebon"><option value="Astanajapura — Cirebon"><option value="Babakan — Cirebon"><option value="Beber — Cirebon"><option value="Ciledug — Cirebon"><option value="Ciwaringin — Cirebon"><option value="Depok — Cirebon"><option value="Dukupuntang — Cirebon"><option value="Gebang — Cirebon"><option value="Gegesik — Cirebon"><option value="Gempol — Cirebon"><option value="Greged — Cirebon"><option value="Gunungjati — Cirebon"><option value="Jamblang — Cirebon"><option value="Kaliwedi — Cirebon"><option value="Kapetakan — Cirebon"><option value="Karangsembung — Cirebon"><option value="Karangwareng — Cirebon"><option value="Kedawung — Cirebon"><option value="Klangenan — Cirebon"><option value="Lemahabang — Cirebon"><option value="Losari — Cirebon"><option value="Mundu — Cirebon"><option value="Pabedilan — Cirebon"><option value="Pabuaran — Cirebon"><option value="Palimanan — Cirebon"><option value="Pangenan — Cirebon"><option value="Panguragan — Cirebon"><option value="Pasaleman — Cirebon"><option value="Plered — Cirebon"><option value="Plumbon — Cirebon"><option value="Sedong — Cirebon"><option value="Sumber — Cirebon"><option value="Suranenggala — Cirebon"><option value="Susukan — Cirebon"><option value="Susukanlebak — Cirebon"><option value="Talun — Cirebon"><option value="Tengahtani — Cirebon"><option value="Waled — Cirebon"><option value="Weru — Cirebon"><option value="Bantargadung — Sukabumi"><option value="Bojonggenteng — Sukabumi"><option value="Caringin — Sukabumi"><option value="Ciambar — Sukabumi"><option value="Cibadak — Sukabumi"><option value="Cibitung — Sukabumi"><option value="Cicantayan — Sukabumi"><option value="Cicurug — Sukabumi"><option value="Cidadap — Sukabumi"><option value="Cidahu — Sukabumi"><option value="Cidolog — Sukabumi"><option value="Ciemas — Sukabumi"><option value="Cikakak — Sukabumi"><option value="Cikembar — Sukabumi"><option value="Cikidang — Sukabumi"><option value="Cimanggu — Sukabumi"><option value="Ciracap — Sukabumi"><option value="Cireunghas — Sukabumi"><option value="Cisaat — Sukabumi"><option value="Cisolok — Sukabumi"><option value="Curugkembar — Sukabumi"><option value="Gegerbitung — Sukabumi"><option value="Gunungguruh — Sukabumi"><option value="Jampang Kulon — Sukabumi"><option value="Jampang Tengah — Sukabumi"><option value="Kabandungan — Sukabumi"><option value="Kadudampit — Sukabumi"><option value="Kalapanunggal — Sukabumi"><option value="Kalibunder — Sukabumi"><option value="Kebonpedes — Sukabumi"><option value="Lengkong — Sukabumi"><option value="Nagrak — Sukabumi"><option value="Nyalindung — Sukabumi"><option value="Pabuaran — Sukabumi"><option value="Palabuhanratu — Sukabumi"><option value="Parakansalak — Sukabumi"><option value="Parungkuda — Sukabumi"><option value="Purabaya — Sukabumi"><option value="Sagaranten — Sukabumi"><option value="Simpenan — Sukabumi"><option value="Sukabumi — Sukabumi"><option value="Sukalarang — Sukabumi"><option value="Sukaraja — Sukabumi"><option value="Surade — Sukabumi"><option value="Tegalbuleud — Sukabumi"><option value="Waluran — Sukabumi"><option value="Warung Kiara — Sukabumi"><option value="Banjarwangi — Garut"><option value="Banyuresmi — Garut"><option value="Bayongbong — Garut"><option value="Balubur Limbangan — Garut"><option value="Bungbulang — Garut"><option value="Caringin — Garut"><option value="Cibalong — Garut"><option value="Cibatu — Garut"><option value="Cibiuk — Garut"><option value="Cigedug — Garut"><option value="Cihurip — Garut"><option value="Cikajang — Garut"><option value="Cikelet — Garut"><option value="Cilawu — Garut"><option value="Cisewu — Garut"><option value="Cisompet — Garut"><option value="Cisurupan — Garut"><option value="Garut Kota — Garut"><option value="Kadungora — Garut"><option value="Karangpawitan — Garut"><option value="Karangtengah — Garut"><option value="Kersamanah — Garut"><option value="Leles — Garut"><option value="Leuwigoong — Garut"><option value="Malangbong — Garut"><option value="Mekarmukti — Garut"><option value="Pakenjeng — Garut"><option value="Pameungpeuk — Garut"><option value="Pamulihan — Garut"><option value="Pangatikan — Garut"><option value="Pasirwangi — Garut"><option value="Peundeuy — Garut"><option value="Samarang — Garut"><option value="Selaawi — Garut"><option value="Singajaya — Garut"><option value="Sucinaraja — Garut"><option value="Sukaresmi — Garut"><option value="Sukawening — Garut"><option value="Talegong — Garut"><option value="Tarogong Kaler — Garut"><option value="Tarogong Kidul — Garut"><option value="Wanaraja — Garut"><option value="Beji — Depok"><option value="Bojongsari — Depok"><option value="Cilodong — Depok"><option value="Cimanggis — Depok"><option value="Cinere — Depok"><option value="Cipayung — Depok"><option value="Limo — Depok"><option value="Pancoran Mas — Depok"><option value="Sawangan — Depok"><option value="Sukmajaya — Depok"><option value="Tapos — Depok"><option value="Ciputat — Tangerang Selatan"><option value="Ciputat Timur — Tangerang Selatan"><option value="Pamulang — Tangerang Selatan"><option value="Pondok Aren — Tangerang Selatan"><option value="Serpong — Tangerang Selatan"><option value="Serpong Utara — Tangerang Selatan"><option value="Setu — Tangerang Selatan"><option value="Berbah — Sleman"><option value="Cangkringan — Sleman"><option value="Depok — Sleman"><option value="Gamping — Sleman"><option value="Godean — Sleman"><option value="Kalasan — Sleman"><option value="Minggir — Sleman"><option value="Mlati — Sleman"><option value="Moyudan — Sleman"><option value="Ngaglik — Sleman"><option value="Ngemplak — Sleman"><option value="Pakem — Sleman"><option value="Prambanan — Sleman"><option value="Seyegan — Sleman"><option value="Sleman — Sleman"><option value="Tempel — Sleman"><option value="Turi — Sleman"><option value="Adipala — Cilacap"><option value="Bantarsari — Cilacap"><option value="Binangun — Cilacap"><option value="Cilacap Selatan — Cilacap"><option value="Cilacap Tengah — Cilacap"><option value="Cilacap Utara — Cilacap"><option value="Cimanggu — Cilacap"><option value="Cipari — Cilacap"><option value="Dayeuhluhur — Cilacap"><option value="Gandrungmangu — Cilacap"><option value="Jeruklegi — Cilacap"><option value="Kampung Laut — Cilacap"><option value="Karangpucung — Cilacap"><option value="Kawunganten — Cilacap"><option value="Kedungreja — Cilacap"><option value="Kesugihan — Cilacap"><option value="Kroya — Cilacap"><option value="Majenang — Cilacap"><option value="Maos — Cilacap"><option value="Nusawungu — Cilacap"><option value="Patimuan — Cilacap"><option value="Sampang — Cilacap"><option value="Sidareja — Cilacap"><option value="Wanareja — Cilacap"><option value="Ajibarang — Banyumas"><option value="Banyumas — Banyumas"><option value="Baturaden — Banyumas"><option value="Cilongok — Banyumas"><option value="Gumelar — Banyumas"><option value="Kalibagor — Banyumas"><option value="Karanglewas — Banyumas"><option value="Kebasen — Banyumas"><option value="Kedung Banteng — Banyumas"><option value="Kembaran — Banyumas"><option value="Kemranjen — Banyumas"><option value="Jatilawang — Banyumas"><option value="Lumbir — Banyumas"><option value="Patikraja — Banyumas"><option value="Pekuncen — Banyumas"><option value="Purwojati — Banyumas"><option value="Purwokerto Barat — Banyumas"><option value="Purwokerto Selatan — Banyumas"><option value="Purwokerto Timur — Banyumas"><option value="Purwokerto Utara — Banyumas"><option value="Rawalo — Banyumas"><option value="Sokaraja — Banyumas"><option value="Somagede — Banyumas"><option value="Sumbang — Banyumas"><option value="Sumpiuh — Banyumas"><option value="Tambak — Banyumas"><option value="Wangon — Banyumas"><option value="Bambanglipuro — Bantul"><option value="Banguntapan — Bantul"><option value="Bantul — Bantul"><option value="Dlingo — Bantul"><option value="Imogiri — Bantul"><option value="Jetis — Bantul"><option value="Kasihan — Bantul"><option value="Kretek — Bantul"><option value="Pajangan — Bantul"><option value="Pandak — Bantul"><option value="Piyungan — Bantul"><option value="Pleret — Bantul"><option value="Pundong — Bantul"><option value="Sanden — Bantul"><option value="Sedayu — Bantul"><option value="Sewon — Bantul"><option value="Srandakan — Bantul"><option value="Adimulyo — Kebumen"><option value="Alian — Kebumen"><option value="Ambal — Kebumen"><option value="Ayah — Kebumen"><option value="Bonorowo — Kebumen"><option value="Buayan — Kebumen"><option value="Buluspesantren — Kebumen"><option value="Gombong — Kebumen"><option value="Karanganyar — Kebumen"><option value="Karanggayam — Kebumen"><option value="Karangsambung — Kebumen"><option value="Kebumen — Kebumen"><option value="Klirong — Kebumen"><option value="Kutowinangun — Kebumen"><option value="Kuwarasan — Kebumen"><option value="Mirit — Kebumen"><option value="Padureso — Kebumen"><option value="Pejagoan — Kebumen"><option value="Petanahan — Kebumen"><option value="Poncowarno — Kebumen"><option value="Prembun — Kebumen"><option value="Puring — Kebumen"><option value="Rowokele — Kebumen"><option value="Sadang — Kebumen"><option value="Sempor — Kebumen"><option value="Sruweng — Kebumen"><option value="Bayat — Klaten"><option value="Cawas — Klaten"><option value="Ceper — Klaten"><option value="Delanggu — Klaten"><option value="Gantiwarno — Klaten"><option value="Jatinom — Klaten"><option value="Jogonalan — Klaten"><option value="Juwiring — Klaten"><option value="Kalikotes — Klaten"><option value="Karanganom — Klaten"><option value="Karangdowo — Klaten"><option value="Karangnongko — Klaten"><option value="Kebonarum — Klaten"><option value="Kemalang — Klaten"><option value="Klaten Selatan — Klaten"><option value="Klaten Tengah — Klaten"><option value="Klaten Utara — Klaten"><option value="Manisrenggo — Klaten"><option value="Ngawen — Klaten"><option value="Pedan — Klaten"><option value="Polanharjo — Klaten"><option value="Prambanan — Klaten"><option value="Trucuk — Klaten"><option value="Tulung — Klaten"><option value="Wedi — Klaten"><option value="Wonosari — Klaten"><option value="Ampel — Boyolali"><option value="Andong — Boyolali"><option value="Banyudono — Boyolali"><option value="Boyolali — Boyolali"><option value="Cepogo — Boyolali"><option value="Gladagsari — Boyolali"><option value="Juwangi — Boyolali"><option value="Karanggede — Boyolali"><option value="Kemusu — Boyolali"><option value="Klego — Boyolali"><option value="Mojosongo — Boyolali"><option value="Musuk — Boyolali"><option value="Ngemplak — Boyolali"><option value="Nogosari — Boyolali"><option value="Sambi — Boyolali"><option value="Sawit — Boyolali"><option value="Selo — Boyolali"><option value="Simo — Boyolali"><option value="Tamansari — Boyolali"><option value="Teras — Boyolali"><option value="Wonosamodro — Boyolali"><option value="Wonosegoro — Boyolali"><option value="Balongbendo — Sidoarjo"><option value="Buduran — Sidoarjo"><option value="Candi — Sidoarjo"><option value="Gedangan — Sidoarjo"><option value="Jabon — Sidoarjo"><option value="Krembung — Sidoarjo"><option value="Krian — Sidoarjo"><option value="Prambon — Sidoarjo"><option value="Porong — Sidoarjo"><option value="Sedati — Sidoarjo"><option value="Sidoarjo — Sidoarjo"><option value="Sukodono — Sidoarjo"><option value="Taman — Sidoarjo"><option value="Tanggulangin — Sidoarjo"><option value="Tarik — Sidoarjo"><option value="Tulangan — Sidoarjo"><option value="Waru — Sidoarjo"><option value="Wonoayu — Sidoarjo"><option value="Ampelgading — Malang"><option value="Bantur — Malang"><option value="Bululawang — Malang"><option value="Dampit — Malang"><option value="Dau — Malang"><option value="Donomulyo — Malang"><option value="Gedangan — Malang"><option value="Gondanglegi — Malang"><option value="Jabung — Malang"><option value="Kalipare — Malang"><option value="Karangploso — Malang"><option value="Kasembon — Malang"><option value="Kepanjen — Malang"><option value="Kromengan — Malang"><option value="Lawang — Malang"><option value="Ngajum — Malang"><option value="Ngantang — Malang"><option value="Pagak — Malang"><option value="Pagelaran — Malang"><option value="Pakis — Malang"><option value="Pakisaji — Malang"><option value="Poncokusumo — Malang"><option value="Pujon — Malang"><option value="Singosari — Malang"><option value="Sumbermanjing Wetan — Malang"><option value="Sumberpucung — Malang"><option value="Tajinan — Malang"><option value="Tirtoyudo — Malang"><option value="Tumpang — Malang"><option value="Turen — Malang"><option value="Wagir — Malang"><option value="Wajak — Malang"><option value="Wonosari — Malang"><option value="Bangil — Pasuruan"><option value="Beji — Pasuruan"><option value="Gempol — Pasuruan"><option value="Gondang Wetan — Pasuruan"><option value="Grati — Pasuruan"><option value="Kejayan — Pasuruan"><option value="Kraton — Pasuruan"><option value="Lekok — Pasuruan"><option value="Lumbang — Pasuruan"><option value="Nguling — Pasuruan"><option value="Pandaan — Pasuruan"><option value="Pasrepan — Pasuruan"><option value="Prigen — Pasuruan"><option value="Pohjentrek — Pasuruan"><option value="Purwodadi — Pasuruan"><option value="Purwosari — Pasuruan"><option value="Puspo — Pasuruan"><option value="Rejoso — Pasuruan"><option value="Rembang — Pasuruan"><option value="Sukorejo — Pasuruan"><option value="Tosari — Pasuruan"><option value="Tutur — Pasuruan"><option value="Winongan — Pasuruan"><option value="Wonorejo — Pasuruan"><option value="Balongpanggang — Gresik"><option value="Benjeng — Gresik"><option value="Bungah — Gresik"><option value="Cerme — Gresik"><option value="Driyorejo — Gresik"><option value="Duduk Sampeyan — Gresik"><option value="Dukun — Gresik"><option value="Gresik — Gresik"><option value="Kebomas — Gresik"><option value="Kedamean — Gresik"><option value="Manyar — Gresik"><option value="Menganti — Gresik"><option value="Panceng — Gresik"><option value="Sangkapura — Gresik"><option value="Sidayu — Gresik"><option value="Tambak — Gresik"><option value="Ujung Pangkah — Gresik"><option value="Wringinanom — Gresik"><option value="Ajung — Jember"><option value="Ambulu — Jember"><option value="Arjasa — Jember"><option value="Bangsalsari — Jember"><option value="Balung — Jember"><option value="Gumukmas — Jember"><option value="Jelbuk — Jember"><option value="Jenggawah — Jember"><option value="Jombang — Jember"><option value="Kalisat — Jember"><option value="Kaliwates — Jember"><option value="Kencong — Jember"><option value="Ledokombo — Jember"><option value="Mayang — Jember"><option value="Mumbulsari — Jember"><option value="Panti — Jember"><option value="Pakusari — Jember"><option value="Patrang — Jember"><option value="Puger — Jember"><option value="Rambipuji — Jember"><option value="Semboro — Jember"><option value="Silo — Jember"><option value="Sukorambi — Jember"><option value="Sukowono — Jember"><option value="Sumberbaru — Jember"><option value="Sumberjambe — Jember"><option value="Sumbersari — Jember"><option value="Tanggul — Jember"><option value="Tempurejo — Jember"><option value="Umbulsari — Jember"><option value="Wuluhan — Jember"><option value="Bangsal — Mojokerto"><option value="Dawarblandong — Mojokerto"><option value="Dlanggu — Mojokerto"><option value="Gedeg — Mojokerto"><option value="Gondang — Mojokerto"><option value="Jatirejo — Mojokerto"><option value="Jetis — Mojokerto"><option value="Kemlagi — Mojokerto"><option value="Kutorejo — Mojokerto"><option value="Mojoanyar — Mojokerto"><option value="Mojosari — Mojokerto"><option value="Ngoro — Mojokerto"><option value="Pacet — Mojokerto"><option value="Pungging — Mojokerto"><option value="Puri — Mojokerto"><option value="Sooko — Mojokerto"><option value="Trawas — Mojokerto"><option value="Trowulan — Mojokerto"><option value="Sibolangit — Deli Serdang"><option value="Pancur Batu — Deli Serdang"><option value="Kutalimbaru — Deli Serdang"><option value="Sunggal — Deli Serdang"><option value="Hamparan Perak — Deli Serdang"><option value="Labuhan Deli — Deli Serdang"><option value="Percut Sei Tuan — Deli Serdang"><option value="Batang Kuis — Deli Serdang"><option value="Pantai Labu — Deli Serdang"><option value="Beringin — Deli Serdang"><option value="Pagar Merbau — Deli Serdang"><option value="Lubuk Pakam — Deli Serdang"><option value="Galang — Deli Serdang"><option value="Bangun Purba — Deli Serdang"><option value="Gunung Meriah — Deli Serdang"><option value="Sinembah Tanjung Muda Hulu — Deli Serdang"><option value="Sinembah Tanjung Muda Hilir — Deli Serdang"><option value="Tanjung Morawa — Deli Serdang"><option value="Patumbak — Deli Serdang"><option value="Sibiru-biru — Deli Serdang"><option value="Deli Tua — Deli Serdang"><option value="Namorambe — Deli Serdang"><option value="Anggana — Kutai Kartanegara"><option value="Kembang Janggut — Kutai Kartanegara"><option value="Kenohan — Kutai Kartanegara"><option value="Kota Bangun — Kutai Kartanegara"><option value="Loa Janan — Kutai Kartanegara"><option value="Loa Kulu — Kutai Kartanegara"><option value="Marang Kayu — Kutai Kartanegara"><option value="Muara Badak — Kutai Kartanegara"><option value="Muara Jawa — Kutai Kartanegara"><option value="Muara Kaman — Kutai Kartanegara"><option value="Muara Muntai — Kutai Kartanegara"><option value="Muara Wis — Kutai Kartanegara"><option value="Samboja — Kutai Kartanegara"><option value="Sanga-Sanga — Kutai Kartanegara"><option value="Sebulu — Kutai Kartanegara"><option value="Tabang — Kutai Kartanegara"><option value="Tenggarong — Kutai Kartanegara"><option value="Tenggarong Seberang — Kutai Kartanegara"><option value="Aluh Aluh — Banjar"><option value="Aranio — Banjar"><option value="Astambul — Banjar"><option value="Beruntung Baru — Banjar"><option value="Cintapuri Darussalam — Banjar"><option value="Gambut — Banjar"><option value="Karang Intan — Banjar"><option value="Kertak Hanyar — Banjar"><option value="Mataraman — Banjar"><option value="Martapura — Banjar"><option value="Martapura Barat — Banjar"><option value="Martapura Timur — Banjar"><option value="Paramasan — Banjar"><option value="Pengaron — Banjar"><option value="Sambung Makmur — Banjar"><option value="Simpang Empat — Banjar"><option value="Sungai Pinang — Banjar"><option value="Sungai Tabuk — Banjar"><option value="Tatah Makmur — Banjar"><option value="Telaga Bauntung — Banjar"><option value="XIII Koto Kampar — Kampar"><option value="Bangkinang — Kampar"><option value="Bangkinang Kota — Kampar"><option value="Gunung Sahilan — Kampar"><option value="Kampa — Kampar"><option value="Kampar — Kampar"><option value="Kampar Kiri — Kampar"><option value="Kampar Kiri Hilir — Kampar"><option value="Kampar Kiri Hulu — Kampar"><option value="Kampar Kiri Tengah — Kampar"><option value="Kampar Utara — Kampar"><option value="Koto Kampar Hulu — Kampar"><option value="Kuok — Kampar"><option value="Perhentian Raja — Kampar"><option value="Rumbio Jaya — Kampar"><option value="Salo — Kampar"><option value="Siak Hulu — Kampar"><option value="Tambang — Kampar"><option value="Tapung — Kampar"><option value="Tapung Hilir — Kampar"><option value="Tapung Hulu — Kampar"><option value="Batu Ampar — Kubu Raya"><option value="Kuala Mandor B — Kubu Raya"><option value="Kubu — Kubu Raya"><option value="Rasau Jaya — Kubu Raya"><option value="Sungai Ambawang — Kubu Raya"><option value="Sungai Kakap — Kubu Raya"><option value="Sungai Raya — Kubu Raya"><option value="Teluk Pakedai — Kubu Raya"><option value="Terentang — Kubu Raya"><option value="Bajeng — Gowa"><option value="Bajeng Barat — Gowa"><option value="Barombong — Gowa"><option value="Biringbulu — Gowa"><option value="Bontolempangan — Gowa"><option value="Bontomarannu — Gowa"><option value="Bontonompo — Gowa"><option value="Bontonompo Selatan — Gowa"><option value="Bungaya — Gowa"><option value="Manuju — Gowa"><option value="Pallangga — Gowa"><option value="Parangloe — Gowa"><option value="Parigi — Gowa"><option value="Pattallassang — Gowa"><option value="Somba Opu — Gowa"><option value="Tinggimoncong — Gowa"><option value="Tompobulu — Gowa"><option value="Tombolo Pao — Gowa"></datalist>
+<datalist id="dl-k-mitra"></datalist>
+<datalist id="dl-s-mitra"></datalist>
+
+<script>
+  // ============================================================
+  // GANTI URL INI dengan URL Web App dari Google Apps Script kamu
+  // (didapat setelah Deploy > New deployment, lihat CARA-INSTALL-MITRA-SHEETS.txt)
+  // Contoh: 'https://script.google.com/macros/s/AKfycb.../exec'
+  // ============================================================
+  const API_URL = 'https://script.google.com/macros/s/AKfycbykfVY9GS_ULvOEp2-BH07DB9zJjS3UFD3ps8y1LvVPxD0Mc4AStCbgiGGDQEla3JeAtg/exec';
+  let sessionPassword = localStorage.getItem('trackerMitraPass') || '';
+
+  async function apiGet() {
+    const res = await fetch(API_URL + '?password=' + encodeURIComponent(sessionPassword));
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || 'Gagal ambil data dari server.');
+    return json;
+  }
+  async function apiPost(payload) {
+    // Content-Type 'text/plain' dipakai supaya browser tidak mengirim
+    // preflight OPTIONS request, karena Google Apps Script Web App
+    // tidak menangani preflight itu. Apps Script tetap membaca isinya
+    // sebagai JSON biasa lewat e.postData.contents.
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ ...payload, password: sessionPassword })
+    });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || 'Terjadi kesalahan di server.');
+    return json;
+  }
+
+  async function loadAllData() {
+    const result = await apiGet();
+    mitraListK   = result.mitra_komisi  || [];
+    orderListK   = result.order_komisi  || [];
+    mitraListS   = result.mitra_sewa    || [];
+    tagihanListS = result.tagihan_sewa  || [];
+  }
+
+  async function initApp() {
+    if (!sessionPassword) return; // biarkan layar login tampil
+    try {
+      await loadAllData();
+      document.getElementById('loginOverlay').classList.remove('open');
+      setHeaderDate();
+      k_renderMitra();
+      k_renderOrder();
+      s_renderMitra();
+      s_renderTagihan();
+      checkReminders();
+    } catch (err) {
+      if (String(err.message).includes('Password')) {
+        sessionPassword = '';
+        localStorage.removeItem('trackerMitraPass');
+        document.getElementById('loginOverlay').classList.add('open');
+        return;
+      }
+      alert('❌ Gagal memuat data dari server: ' + err.message);
+    }
+  }
+
+  async function doLogin() {
+    const pass = document.getElementById('loginPass').value;
+    sessionPassword = pass;
+    document.getElementById('loginError').style.display = 'none';
+    try {
+      await loadAllData(); // sekaligus validasi password
+      localStorage.setItem('trackerMitraPass', pass);
+      await initApp();
+    } catch (err) {
+      sessionPassword = '';
+      document.getElementById('loginError').textContent = err.message.includes('Password') ? 'Password salah, coba lagi.' : ('Gagal: ' + err.message);
+      document.getElementById('loginError').style.display = 'block';
+    }
+  }
+  function doLogout() {
+    sessionPassword = '';
+    localStorage.removeItem('trackerMitraPass');
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginOverlay').classList.add('open');
+  }
+  function toggleLoginPass() {
+    const input = document.getElementById('loginPass');
+    const icon = document.getElementById('loginPassIcon');
+    if (input.type === 'password') { input.type = 'text'; icon.textContent = '🙈'; }
+    else { input.type = 'password'; icon.textContent = '👁️'; }
+  }
+  document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// ─── SHARED MASTER DATA: 738 KECAMATAN & 11 NICHE ───
+const KECAMATAN_DATA = [{"kec": "Babakan Madang", "kab": "Bogor"}, {"kec": "Bojonggede", "kab": "Bogor"}, {"kec": "Caringin", "kab": "Bogor"}, {"kec": "Cariu", "kab": "Bogor"}, {"kec": "Ciampea", "kab": "Bogor"}, {"kec": "Ciawi", "kab": "Bogor"}, {"kec": "Cibinong", "kab": "Bogor"}, {"kec": "Cibungbulang", "kab": "Bogor"}, {"kec": "Cigombong", "kab": "Bogor"}, {"kec": "Cigudeg", "kab": "Bogor"}, {"kec": "Cijeruk", "kab": "Bogor"}, {"kec": "Cileungsi", "kab": "Bogor"}, {"kec": "Ciomas", "kab": "Bogor"}, {"kec": "Cisarua", "kab": "Bogor"}, {"kec": "Ciseeng", "kab": "Bogor"}, {"kec": "Citeureup", "kab": "Bogor"}, {"kec": "Dramaga", "kab": "Bogor"}, {"kec": "Gunung Putri", "kab": "Bogor"}, {"kec": "Gunungsindur", "kab": "Bogor"}, {"kec": "Jasinga", "kab": "Bogor"}, {"kec": "Jonggol", "kab": "Bogor"}, {"kec": "Kemang", "kab": "Bogor"}, {"kec": "Klapanunggal", "kab": "Bogor"}, {"kec": "Leuwiliang", "kab": "Bogor"}, {"kec": "Leuwisadeng", "kab": "Bogor"}, {"kec": "Megamendung", "kab": "Bogor"}, {"kec": "Nanggung", "kab": "Bogor"}, {"kec": "Pamijahan", "kab": "Bogor"}, {"kec": "Parung", "kab": "Bogor"}, {"kec": "Parung Panjang", "kab": "Bogor"}, {"kec": "Rancabungur", "kab": "Bogor"}, {"kec": "Rumpin", "kab": "Bogor"}, {"kec": "Sukajaya", "kab": "Bogor"}, {"kec": "Sukamakmur", "kab": "Bogor"}, {"kec": "Sukaraja", "kab": "Bogor"}, {"kec": "Tajurhalang", "kab": "Bogor"}, {"kec": "Tamansari", "kab": "Bogor"}, {"kec": "Tanjungsari", "kab": "Bogor"}, {"kec": "Tenjo", "kab": "Bogor"}, {"kec": "Tenjolaya", "kab": "Bogor"}, {"kec": "Babelan", "kab": "Bekasi"}, {"kec": "Bojongmangu", "kab": "Bekasi"}, {"kec": "Cabangbungin", "kab": "Bekasi"}, {"kec": "Cibarusah", "kab": "Bekasi"}, {"kec": "Cibitung", "kab": "Bekasi"}, {"kec": "Cikarang Barat", "kab": "Bekasi"}, {"kec": "Cikarang Pusat", "kab": "Bekasi"}, {"kec": "Cikarang Selatan", "kab": "Bekasi"}, {"kec": "Cikarang Timur", "kab": "Bekasi"}, {"kec": "Cikarang Utara", "kab": "Bekasi"}, {"kec": "Karangbahagia", "kab": "Bekasi"}, {"kec": "Kedungwaringin", "kab": "Bekasi"}, {"kec": "Muara Gembong", "kab": "Bekasi"}, {"kec": "Pebayuran", "kab": "Bekasi"}, {"kec": "Serang Baru", "kab": "Bekasi"}, {"kec": "Setu", "kab": "Bekasi"}, {"kec": "Sukakarya", "kab": "Bekasi"}, {"kec": "Sukatani", "kab": "Bekasi"}, {"kec": "Sukawangi", "kab": "Bekasi"}, {"kec": "Tambelang", "kab": "Bekasi"}, {"kec": "Tambun Selatan", "kab": "Bekasi"}, {"kec": "Tambun Utara", "kab": "Bekasi"}, {"kec": "Tarumajaya", "kab": "Bekasi"}, {"kec": "Balaraja", "kab": "Tangerang"}, {"kec": "Cikupa", "kab": "Tangerang"}, {"kec": "Cisauk", "kab": "Tangerang"}, {"kec": "Cisoka", "kab": "Tangerang"}, {"kec": "Curug", "kab": "Tangerang"}, {"kec": "Gunung Kaler", "kab": "Tangerang"}, {"kec": "Jambe", "kab": "Tangerang"}, {"kec": "Jayanti", "kab": "Tangerang"}, {"kec": "Kelapa Dua", "kab": "Tangerang"}, {"kec": "Kemiri", "kab": "Tangerang"}, {"kec": "Kresek", "kab": "Tangerang"}, {"kec": "Kronjo", "kab": "Tangerang"}, {"kec": "Kosambi", "kab": "Tangerang"}, {"kec": "Legok", "kab": "Tangerang"}, {"kec": "Mauk", "kab": "Tangerang"}, {"kec": "Mekarbaru", "kab": "Tangerang"}, {"kec": "Pagedangan", "kab": "Tangerang"}, {"kec": "Pakuhaji", "kab": "Tangerang"}, {"kec": "Panongan", "kab": "Tangerang"}, {"kec": "Pasar Kemis", "kab": "Tangerang"}, {"kec": "Rajeg", "kab": "Tangerang"}, {"kec": "Sepatan", "kab": "Tangerang"}, {"kec": "Sepatan Timur", "kab": "Tangerang"}, {"kec": "Sindang Jaya", "kab": "Tangerang"}, {"kec": "Solear", "kab": "Tangerang"}, {"kec": "Sukadiri", "kab": "Tangerang"}, {"kec": "Sukamulya", "kab": "Tangerang"}, {"kec": "Teluknaga", "kab": "Tangerang"}, {"kec": "Tigaraksa", "kab": "Tangerang"}, {"kec": "Arjasari", "kab": "Bandung"}, {"kec": "Baleendah", "kab": "Bandung"}, {"kec": "Banjaran", "kab": "Bandung"}, {"kec": "Bojongsoang", "kab": "Bandung"}, {"kec": "Cangkuang", "kab": "Bandung"}, {"kec": "Cicalengka", "kab": "Bandung"}, {"kec": "Cikancung", "kab": "Bandung"}, {"kec": "Cilengkrang", "kab": "Bandung"}, {"kec": "Cileunyi", "kab": "Bandung"}, {"kec": "Cimaung", "kab": "Bandung"}, {"kec": "Cimenyan", "kab": "Bandung"}, {"kec": "Ciparay", "kab": "Bandung"}, {"kec": "Ciwidey", "kab": "Bandung"}, {"kec": "Dayeuhkolot", "kab": "Bandung"}, {"kec": "Ibun", "kab": "Bandung"}, {"kec": "Katapang", "kab": "Bandung"}, {"kec": "Kertasari", "kab": "Bandung"}, {"kec": "Kutawaringin", "kab": "Bandung"}, {"kec": "Majalaya", "kab": "Bandung"}, {"kec": "Margaasih", "kab": "Bandung"}, {"kec": "Margahayu", "kab": "Bandung"}, {"kec": "Nagreg", "kab": "Bandung"}, {"kec": "Pacet", "kab": "Bandung"}, {"kec": "Pameungpeuk", "kab": "Bandung"}, {"kec": "Pangalengan", "kab": "Bandung"}, {"kec": "Paseh", "kab": "Bandung"}, {"kec": "Pasirjambu", "kab": "Bandung"}, {"kec": "Rancabali", "kab": "Bandung"}, {"kec": "Rancaekek", "kab": "Bandung"}, {"kec": "Solokanjeruk", "kab": "Bandung"}, {"kec": "Soreang", "kab": "Bandung"}, {"kec": "Banyusari", "kab": "Karawang"}, {"kec": "Batujaya", "kab": "Karawang"}, {"kec": "Ciampel", "kab": "Karawang"}, {"kec": "Cibuaya", "kab": "Karawang"}, {"kec": "Cikampek", "kab": "Karawang"}, {"kec": "Cilamaya Kulon", "kab": "Karawang"}, {"kec": "Cilamaya Wetan", "kab": "Karawang"}, {"kec": "Cilebar", "kab": "Karawang"}, {"kec": "Jatisari", "kab": "Karawang"}, {"kec": "Jayakerta", "kab": "Karawang"}, {"kec": "Karawang Barat", "kab": "Karawang"}, {"kec": "Karawang Timur", "kab": "Karawang"}, {"kec": "Klari", "kab": "Karawang"}, {"kec": "Kotabaru", "kab": "Karawang"}, {"kec": "Kutawaluya", "kab": "Karawang"}, {"kec": "Lemahabang", "kab": "Karawang"}, {"kec": "Majalaya", "kab": "Karawang"}, {"kec": "Pakisjaya", "kab": "Karawang"}, {"kec": "Pangkalan", "kab": "Karawang"}, {"kec": "Pedes", "kab": "Karawang"}, {"kec": "Purwasari", "kab": "Karawang"}, {"kec": "Rawamerta", "kab": "Karawang"}, {"kec": "Rengasdengklok", "kab": "Karawang"}, {"kec": "Tegalwaru", "kab": "Karawang"}, {"kec": "Talagasari", "kab": "Karawang"}, {"kec": "Telukjambe Barat", "kab": "Karawang"}, {"kec": "Telukjambe Timur", "kab": "Karawang"}, {"kec": "Tempuran", "kab": "Karawang"}, {"kec": "Tirtajaya", "kab": "Karawang"}, {"kec": "Tirtamulya", "kab": "Karawang"}, {"kec": "Anyar", "kab": "Serang"}, {"kec": "Bandung", "kab": "Serang"}, {"kec": "Baros", "kab": "Serang"}, {"kec": "Binuang", "kab": "Serang"}, {"kec": "Bojonegara", "kab": "Serang"}, {"kec": "Carenang", "kab": "Serang"}, {"kec": "Cikande", "kab": "Serang"}, {"kec": "Cikeusal", "kab": "Serang"}, {"kec": "Cinangka", "kab": "Serang"}, {"kec": "Ciomas", "kab": "Serang"}, {"kec": "Ciruas", "kab": "Serang"}, {"kec": "Gunung Sari", "kab": "Serang"}, {"kec": "Jawilan", "kab": "Serang"}, {"kec": "Kibin", "kab": "Serang"}, {"kec": "Kopo", "kab": "Serang"}, {"kec": "Kragilan", "kab": "Serang"}, {"kec": "Kramatwatu", "kab": "Serang"}, {"kec": "Lebak Wangi", "kab": "Serang"}, {"kec": "Mancak", "kab": "Serang"}, {"kec": "Pabuaran", "kab": "Serang"}, {"kec": "Padarincang", "kab": "Serang"}, {"kec": "Pamarayan", "kab": "Serang"}, {"kec": "Petir", "kab": "Serang"}, {"kec": "Pontang", "kab": "Serang"}, {"kec": "Pulo Ampel", "kab": "Serang"}, {"kec": "Tanara", "kab": "Serang"}, {"kec": "Tirtayasa", "kab": "Serang"}, {"kec": "Tunjungteja", "kab": "Serang"}, {"kec": "Waringinkurung", "kab": "Serang"}, {"kec": "Arjawinangun", "kab": "Cirebon"}, {"kec": "Astanajapura", "kab": "Cirebon"}, {"kec": "Babakan", "kab": "Cirebon"}, {"kec": "Beber", "kab": "Cirebon"}, {"kec": "Ciledug", "kab": "Cirebon"}, {"kec": "Ciwaringin", "kab": "Cirebon"}, {"kec": "Depok", "kab": "Cirebon"}, {"kec": "Dukupuntang", "kab": "Cirebon"}, {"kec": "Gebang", "kab": "Cirebon"}, {"kec": "Gegesik", "kab": "Cirebon"}, {"kec": "Gempol", "kab": "Cirebon"}, {"kec": "Greged", "kab": "Cirebon"}, {"kec": "Gunungjati", "kab": "Cirebon"}, {"kec": "Jamblang", "kab": "Cirebon"}, {"kec": "Kaliwedi", "kab": "Cirebon"}, {"kec": "Kapetakan", "kab": "Cirebon"}, {"kec": "Karangsembung", "kab": "Cirebon"}, {"kec": "Karangwareng", "kab": "Cirebon"}, {"kec": "Kedawung", "kab": "Cirebon"}, {"kec": "Klangenan", "kab": "Cirebon"}, {"kec": "Lemahabang", "kab": "Cirebon"}, {"kec": "Losari", "kab": "Cirebon"}, {"kec": "Mundu", "kab": "Cirebon"}, {"kec": "Pabedilan", "kab": "Cirebon"}, {"kec": "Pabuaran", "kab": "Cirebon"}, {"kec": "Palimanan", "kab": "Cirebon"}, {"kec": "Pangenan", "kab": "Cirebon"}, {"kec": "Panguragan", "kab": "Cirebon"}, {"kec": "Pasaleman", "kab": "Cirebon"}, {"kec": "Plered", "kab": "Cirebon"}, {"kec": "Plumbon", "kab": "Cirebon"}, {"kec": "Sedong", "kab": "Cirebon"}, {"kec": "Sumber", "kab": "Cirebon"}, {"kec": "Suranenggala", "kab": "Cirebon"}, {"kec": "Susukan", "kab": "Cirebon"}, {"kec": "Susukanlebak", "kab": "Cirebon"}, {"kec": "Talun", "kab": "Cirebon"}, {"kec": "Tengahtani", "kab": "Cirebon"}, {"kec": "Waled", "kab": "Cirebon"}, {"kec": "Weru", "kab": "Cirebon"}, {"kec": "Bantargadung", "kab": "Sukabumi"}, {"kec": "Bojonggenteng", "kab": "Sukabumi"}, {"kec": "Caringin", "kab": "Sukabumi"}, {"kec": "Ciambar", "kab": "Sukabumi"}, {"kec": "Cibadak", "kab": "Sukabumi"}, {"kec": "Cibitung", "kab": "Sukabumi"}, {"kec": "Cicantayan", "kab": "Sukabumi"}, {"kec": "Cicurug", "kab": "Sukabumi"}, {"kec": "Cidadap", "kab": "Sukabumi"}, {"kec": "Cidahu", "kab": "Sukabumi"}, {"kec": "Cidolog", "kab": "Sukabumi"}, {"kec": "Ciemas", "kab": "Sukabumi"}, {"kec": "Cikakak", "kab": "Sukabumi"}, {"kec": "Cikembar", "kab": "Sukabumi"}, {"kec": "Cikidang", "kab": "Sukabumi"}, {"kec": "Cimanggu", "kab": "Sukabumi"}, {"kec": "Ciracap", "kab": "Sukabumi"}, {"kec": "Cireunghas", "kab": "Sukabumi"}, {"kec": "Cisaat", "kab": "Sukabumi"}, {"kec": "Cisolok", "kab": "Sukabumi"}, {"kec": "Curugkembar", "kab": "Sukabumi"}, {"kec": "Gegerbitung", "kab": "Sukabumi"}, {"kec": "Gunungguruh", "kab": "Sukabumi"}, {"kec": "Jampang Kulon", "kab": "Sukabumi"}, {"kec": "Jampang Tengah", "kab": "Sukabumi"}, {"kec": "Kabandungan", "kab": "Sukabumi"}, {"kec": "Kadudampit", "kab": "Sukabumi"}, {"kec": "Kalapanunggal", "kab": "Sukabumi"}, {"kec": "Kalibunder", "kab": "Sukabumi"}, {"kec": "Kebonpedes", "kab": "Sukabumi"}, {"kec": "Lengkong", "kab": "Sukabumi"}, {"kec": "Nagrak", "kab": "Sukabumi"}, {"kec": "Nyalindung", "kab": "Sukabumi"}, {"kec": "Pabuaran", "kab": "Sukabumi"}, {"kec": "Palabuhanratu", "kab": "Sukabumi"}, {"kec": "Parakansalak", "kab": "Sukabumi"}, {"kec": "Parungkuda", "kab": "Sukabumi"}, {"kec": "Purabaya", "kab": "Sukabumi"}, {"kec": "Sagaranten", "kab": "Sukabumi"}, {"kec": "Simpenan", "kab": "Sukabumi"}, {"kec": "Sukabumi", "kab": "Sukabumi"}, {"kec": "Sukalarang", "kab": "Sukabumi"}, {"kec": "Sukaraja", "kab": "Sukabumi"}, {"kec": "Surade", "kab": "Sukabumi"}, {"kec": "Tegalbuleud", "kab": "Sukabumi"}, {"kec": "Waluran", "kab": "Sukabumi"}, {"kec": "Warung Kiara", "kab": "Sukabumi"}, {"kec": "Banjarwangi", "kab": "Garut"}, {"kec": "Banyuresmi", "kab": "Garut"}, {"kec": "Bayongbong", "kab": "Garut"}, {"kec": "Balubur Limbangan", "kab": "Garut"}, {"kec": "Bungbulang", "kab": "Garut"}, {"kec": "Caringin", "kab": "Garut"}, {"kec": "Cibalong", "kab": "Garut"}, {"kec": "Cibatu", "kab": "Garut"}, {"kec": "Cibiuk", "kab": "Garut"}, {"kec": "Cigedug", "kab": "Garut"}, {"kec": "Cihurip", "kab": "Garut"}, {"kec": "Cikajang", "kab": "Garut"}, {"kec": "Cikelet", "kab": "Garut"}, {"kec": "Cilawu", "kab": "Garut"}, {"kec": "Cisewu", "kab": "Garut"}, {"kec": "Cisompet", "kab": "Garut"}, {"kec": "Cisurupan", "kab": "Garut"}, {"kec": "Garut Kota", "kab": "Garut"}, {"kec": "Kadungora", "kab": "Garut"}, {"kec": "Karangpawitan", "kab": "Garut"}, {"kec": "Karangtengah", "kab": "Garut"}, {"kec": "Kersamanah", "kab": "Garut"}, {"kec": "Leles", "kab": "Garut"}, {"kec": "Leuwigoong", "kab": "Garut"}, {"kec": "Malangbong", "kab": "Garut"}, {"kec": "Mekarmukti", "kab": "Garut"}, {"kec": "Pakenjeng", "kab": "Garut"}, {"kec": "Pameungpeuk", "kab": "Garut"}, {"kec": "Pamulihan", "kab": "Garut"}, {"kec": "Pangatikan", "kab": "Garut"}, {"kec": "Pasirwangi", "kab": "Garut"}, {"kec": "Peundeuy", "kab": "Garut"}, {"kec": "Samarang", "kab": "Garut"}, {"kec": "Selaawi", "kab": "Garut"}, {"kec": "Singajaya", "kab": "Garut"}, {"kec": "Sucinaraja", "kab": "Garut"}, {"kec": "Sukaresmi", "kab": "Garut"}, {"kec": "Sukawening", "kab": "Garut"}, {"kec": "Talegong", "kab": "Garut"}, {"kec": "Tarogong Kaler", "kab": "Garut"}, {"kec": "Tarogong Kidul", "kab": "Garut"}, {"kec": "Wanaraja", "kab": "Garut"}, {"kec": "Beji", "kab": "Depok"}, {"kec": "Bojongsari", "kab": "Depok"}, {"kec": "Cilodong", "kab": "Depok"}, {"kec": "Cimanggis", "kab": "Depok"}, {"kec": "Cinere", "kab": "Depok"}, {"kec": "Cipayung", "kab": "Depok"}, {"kec": "Limo", "kab": "Depok"}, {"kec": "Pancoran Mas", "kab": "Depok"}, {"kec": "Sawangan", "kab": "Depok"}, {"kec": "Sukmajaya", "kab": "Depok"}, {"kec": "Tapos", "kab": "Depok"}, {"kec": "Ciputat", "kab": "Tangerang Selatan"}, {"kec": "Ciputat Timur", "kab": "Tangerang Selatan"}, {"kec": "Pamulang", "kab": "Tangerang Selatan"}, {"kec": "Pondok Aren", "kab": "Tangerang Selatan"}, {"kec": "Serpong", "kab": "Tangerang Selatan"}, {"kec": "Serpong Utara", "kab": "Tangerang Selatan"}, {"kec": "Setu", "kab": "Tangerang Selatan"}, {"kec": "Berbah", "kab": "Sleman"}, {"kec": "Cangkringan", "kab": "Sleman"}, {"kec": "Depok", "kab": "Sleman"}, {"kec": "Gamping", "kab": "Sleman"}, {"kec": "Godean", "kab": "Sleman"}, {"kec": "Kalasan", "kab": "Sleman"}, {"kec": "Minggir", "kab": "Sleman"}, {"kec": "Mlati", "kab": "Sleman"}, {"kec": "Moyudan", "kab": "Sleman"}, {"kec": "Ngaglik", "kab": "Sleman"}, {"kec": "Ngemplak", "kab": "Sleman"}, {"kec": "Pakem", "kab": "Sleman"}, {"kec": "Prambanan", "kab": "Sleman"}, {"kec": "Seyegan", "kab": "Sleman"}, {"kec": "Sleman", "kab": "Sleman"}, {"kec": "Tempel", "kab": "Sleman"}, {"kec": "Turi", "kab": "Sleman"}, {"kec": "Adipala", "kab": "Cilacap"}, {"kec": "Bantarsari", "kab": "Cilacap"}, {"kec": "Binangun", "kab": "Cilacap"}, {"kec": "Cilacap Selatan", "kab": "Cilacap"}, {"kec": "Cilacap Tengah", "kab": "Cilacap"}, {"kec": "Cilacap Utara", "kab": "Cilacap"}, {"kec": "Cimanggu", "kab": "Cilacap"}, {"kec": "Cipari", "kab": "Cilacap"}, {"kec": "Dayeuhluhur", "kab": "Cilacap"}, {"kec": "Gandrungmangu", "kab": "Cilacap"}, {"kec": "Jeruklegi", "kab": "Cilacap"}, {"kec": "Kampung Laut", "kab": "Cilacap"}, {"kec": "Karangpucung", "kab": "Cilacap"}, {"kec": "Kawunganten", "kab": "Cilacap"}, {"kec": "Kedungreja", "kab": "Cilacap"}, {"kec": "Kesugihan", "kab": "Cilacap"}, {"kec": "Kroya", "kab": "Cilacap"}, {"kec": "Majenang", "kab": "Cilacap"}, {"kec": "Maos", "kab": "Cilacap"}, {"kec": "Nusawungu", "kab": "Cilacap"}, {"kec": "Patimuan", "kab": "Cilacap"}, {"kec": "Sampang", "kab": "Cilacap"}, {"kec": "Sidareja", "kab": "Cilacap"}, {"kec": "Wanareja", "kab": "Cilacap"}, {"kec": "Ajibarang", "kab": "Banyumas"}, {"kec": "Banyumas", "kab": "Banyumas"}, {"kec": "Baturaden", "kab": "Banyumas"}, {"kec": "Cilongok", "kab": "Banyumas"}, {"kec": "Gumelar", "kab": "Banyumas"}, {"kec": "Kalibagor", "kab": "Banyumas"}, {"kec": "Karanglewas", "kab": "Banyumas"}, {"kec": "Kebasen", "kab": "Banyumas"}, {"kec": "Kedung Banteng", "kab": "Banyumas"}, {"kec": "Kembaran", "kab": "Banyumas"}, {"kec": "Kemranjen", "kab": "Banyumas"}, {"kec": "Jatilawang", "kab": "Banyumas"}, {"kec": "Lumbir", "kab": "Banyumas"}, {"kec": "Patikraja", "kab": "Banyumas"}, {"kec": "Pekuncen", "kab": "Banyumas"}, {"kec": "Purwojati", "kab": "Banyumas"}, {"kec": "Purwokerto Barat", "kab": "Banyumas"}, {"kec": "Purwokerto Selatan", "kab": "Banyumas"}, {"kec": "Purwokerto Timur", "kab": "Banyumas"}, {"kec": "Purwokerto Utara", "kab": "Banyumas"}, {"kec": "Rawalo", "kab": "Banyumas"}, {"kec": "Sokaraja", "kab": "Banyumas"}, {"kec": "Somagede", "kab": "Banyumas"}, {"kec": "Sumbang", "kab": "Banyumas"}, {"kec": "Sumpiuh", "kab": "Banyumas"}, {"kec": "Tambak", "kab": "Banyumas"}, {"kec": "Wangon", "kab": "Banyumas"}, {"kec": "Bambanglipuro", "kab": "Bantul"}, {"kec": "Banguntapan", "kab": "Bantul"}, {"kec": "Bantul", "kab": "Bantul"}, {"kec": "Dlingo", "kab": "Bantul"}, {"kec": "Imogiri", "kab": "Bantul"}, {"kec": "Jetis", "kab": "Bantul"}, {"kec": "Kasihan", "kab": "Bantul"}, {"kec": "Kretek", "kab": "Bantul"}, {"kec": "Pajangan", "kab": "Bantul"}, {"kec": "Pandak", "kab": "Bantul"}, {"kec": "Piyungan", "kab": "Bantul"}, {"kec": "Pleret", "kab": "Bantul"}, {"kec": "Pundong", "kab": "Bantul"}, {"kec": "Sanden", "kab": "Bantul"}, {"kec": "Sedayu", "kab": "Bantul"}, {"kec": "Sewon", "kab": "Bantul"}, {"kec": "Srandakan", "kab": "Bantul"}, {"kec": "Adimulyo", "kab": "Kebumen"}, {"kec": "Alian", "kab": "Kebumen"}, {"kec": "Ambal", "kab": "Kebumen"}, {"kec": "Ayah", "kab": "Kebumen"}, {"kec": "Bonorowo", "kab": "Kebumen"}, {"kec": "Buayan", "kab": "Kebumen"}, {"kec": "Buluspesantren", "kab": "Kebumen"}, {"kec": "Gombong", "kab": "Kebumen"}, {"kec": "Karanganyar", "kab": "Kebumen"}, {"kec": "Karanggayam", "kab": "Kebumen"}, {"kec": "Karangsambung", "kab": "Kebumen"}, {"kec": "Kebumen", "kab": "Kebumen"}, {"kec": "Klirong", "kab": "Kebumen"}, {"kec": "Kutowinangun", "kab": "Kebumen"}, {"kec": "Kuwarasan", "kab": "Kebumen"}, {"kec": "Mirit", "kab": "Kebumen"}, {"kec": "Padureso", "kab": "Kebumen"}, {"kec": "Pejagoan", "kab": "Kebumen"}, {"kec": "Petanahan", "kab": "Kebumen"}, {"kec": "Poncowarno", "kab": "Kebumen"}, {"kec": "Prembun", "kab": "Kebumen"}, {"kec": "Puring", "kab": "Kebumen"}, {"kec": "Rowokele", "kab": "Kebumen"}, {"kec": "Sadang", "kab": "Kebumen"}, {"kec": "Sempor", "kab": "Kebumen"}, {"kec": "Sruweng", "kab": "Kebumen"}, {"kec": "Bayat", "kab": "Klaten"}, {"kec": "Cawas", "kab": "Klaten"}, {"kec": "Ceper", "kab": "Klaten"}, {"kec": "Delanggu", "kab": "Klaten"}, {"kec": "Gantiwarno", "kab": "Klaten"}, {"kec": "Jatinom", "kab": "Klaten"}, {"kec": "Jogonalan", "kab": "Klaten"}, {"kec": "Juwiring", "kab": "Klaten"}, {"kec": "Kalikotes", "kab": "Klaten"}, {"kec": "Karanganom", "kab": "Klaten"}, {"kec": "Karangdowo", "kab": "Klaten"}, {"kec": "Karangnongko", "kab": "Klaten"}, {"kec": "Kebonarum", "kab": "Klaten"}, {"kec": "Kemalang", "kab": "Klaten"}, {"kec": "Klaten Selatan", "kab": "Klaten"}, {"kec": "Klaten Tengah", "kab": "Klaten"}, {"kec": "Klaten Utara", "kab": "Klaten"}, {"kec": "Manisrenggo", "kab": "Klaten"}, {"kec": "Ngawen", "kab": "Klaten"}, {"kec": "Pedan", "kab": "Klaten"}, {"kec": "Polanharjo", "kab": "Klaten"}, {"kec": "Prambanan", "kab": "Klaten"}, {"kec": "Trucuk", "kab": "Klaten"}, {"kec": "Tulung", "kab": "Klaten"}, {"kec": "Wedi", "kab": "Klaten"}, {"kec": "Wonosari", "kab": "Klaten"}, {"kec": "Ampel", "kab": "Boyolali"}, {"kec": "Andong", "kab": "Boyolali"}, {"kec": "Banyudono", "kab": "Boyolali"}, {"kec": "Boyolali", "kab": "Boyolali"}, {"kec": "Cepogo", "kab": "Boyolali"}, {"kec": "Gladagsari", "kab": "Boyolali"}, {"kec": "Juwangi", "kab": "Boyolali"}, {"kec": "Karanggede", "kab": "Boyolali"}, {"kec": "Kemusu", "kab": "Boyolali"}, {"kec": "Klego", "kab": "Boyolali"}, {"kec": "Mojosongo", "kab": "Boyolali"}, {"kec": "Musuk", "kab": "Boyolali"}, {"kec": "Ngemplak", "kab": "Boyolali"}, {"kec": "Nogosari", "kab": "Boyolali"}, {"kec": "Sambi", "kab": "Boyolali"}, {"kec": "Sawit", "kab": "Boyolali"}, {"kec": "Selo", "kab": "Boyolali"}, {"kec": "Simo", "kab": "Boyolali"}, {"kec": "Tamansari", "kab": "Boyolali"}, {"kec": "Teras", "kab": "Boyolali"}, {"kec": "Wonosamodro", "kab": "Boyolali"}, {"kec": "Wonosegoro", "kab": "Boyolali"}, {"kec": "Balongbendo", "kab": "Sidoarjo"}, {"kec": "Buduran", "kab": "Sidoarjo"}, {"kec": "Candi", "kab": "Sidoarjo"}, {"kec": "Gedangan", "kab": "Sidoarjo"}, {"kec": "Jabon", "kab": "Sidoarjo"}, {"kec": "Krembung", "kab": "Sidoarjo"}, {"kec": "Krian", "kab": "Sidoarjo"}, {"kec": "Prambon", "kab": "Sidoarjo"}, {"kec": "Porong", "kab": "Sidoarjo"}, {"kec": "Sedati", "kab": "Sidoarjo"}, {"kec": "Sidoarjo", "kab": "Sidoarjo"}, {"kec": "Sukodono", "kab": "Sidoarjo"}, {"kec": "Taman", "kab": "Sidoarjo"}, {"kec": "Tanggulangin", "kab": "Sidoarjo"}, {"kec": "Tarik", "kab": "Sidoarjo"}, {"kec": "Tulangan", "kab": "Sidoarjo"}, {"kec": "Waru", "kab": "Sidoarjo"}, {"kec": "Wonoayu", "kab": "Sidoarjo"}, {"kec": "Ampelgading", "kab": "Malang"}, {"kec": "Bantur", "kab": "Malang"}, {"kec": "Bululawang", "kab": "Malang"}, {"kec": "Dampit", "kab": "Malang"}, {"kec": "Dau", "kab": "Malang"}, {"kec": "Donomulyo", "kab": "Malang"}, {"kec": "Gedangan", "kab": "Malang"}, {"kec": "Gondanglegi", "kab": "Malang"}, {"kec": "Jabung", "kab": "Malang"}, {"kec": "Kalipare", "kab": "Malang"}, {"kec": "Karangploso", "kab": "Malang"}, {"kec": "Kasembon", "kab": "Malang"}, {"kec": "Kepanjen", "kab": "Malang"}, {"kec": "Kromengan", "kab": "Malang"}, {"kec": "Lawang", "kab": "Malang"}, {"kec": "Ngajum", "kab": "Malang"}, {"kec": "Ngantang", "kab": "Malang"}, {"kec": "Pagak", "kab": "Malang"}, {"kec": "Pagelaran", "kab": "Malang"}, {"kec": "Pakis", "kab": "Malang"}, {"kec": "Pakisaji", "kab": "Malang"}, {"kec": "Poncokusumo", "kab": "Malang"}, {"kec": "Pujon", "kab": "Malang"}, {"kec": "Singosari", "kab": "Malang"}, {"kec": "Sumbermanjing Wetan", "kab": "Malang"}, {"kec": "Sumberpucung", "kab": "Malang"}, {"kec": "Tajinan", "kab": "Malang"}, {"kec": "Tirtoyudo", "kab": "Malang"}, {"kec": "Tumpang", "kab": "Malang"}, {"kec": "Turen", "kab": "Malang"}, {"kec": "Wagir", "kab": "Malang"}, {"kec": "Wajak", "kab": "Malang"}, {"kec": "Wonosari", "kab": "Malang"}, {"kec": "Bangil", "kab": "Pasuruan"}, {"kec": "Beji", "kab": "Pasuruan"}, {"kec": "Gempol", "kab": "Pasuruan"}, {"kec": "Gondang Wetan", "kab": "Pasuruan"}, {"kec": "Grati", "kab": "Pasuruan"}, {"kec": "Kejayan", "kab": "Pasuruan"}, {"kec": "Kraton", "kab": "Pasuruan"}, {"kec": "Lekok", "kab": "Pasuruan"}, {"kec": "Lumbang", "kab": "Pasuruan"}, {"kec": "Nguling", "kab": "Pasuruan"}, {"kec": "Pandaan", "kab": "Pasuruan"}, {"kec": "Pasrepan", "kab": "Pasuruan"}, {"kec": "Prigen", "kab": "Pasuruan"}, {"kec": "Pohjentrek", "kab": "Pasuruan"}, {"kec": "Purwodadi", "kab": "Pasuruan"}, {"kec": "Purwosari", "kab": "Pasuruan"}, {"kec": "Puspo", "kab": "Pasuruan"}, {"kec": "Rejoso", "kab": "Pasuruan"}, {"kec": "Rembang", "kab": "Pasuruan"}, {"kec": "Sukorejo", "kab": "Pasuruan"}, {"kec": "Tosari", "kab": "Pasuruan"}, {"kec": "Tutur", "kab": "Pasuruan"}, {"kec": "Winongan", "kab": "Pasuruan"}, {"kec": "Wonorejo", "kab": "Pasuruan"}, {"kec": "Balongpanggang", "kab": "Gresik"}, {"kec": "Benjeng", "kab": "Gresik"}, {"kec": "Bungah", "kab": "Gresik"}, {"kec": "Cerme", "kab": "Gresik"}, {"kec": "Driyorejo", "kab": "Gresik"}, {"kec": "Duduk Sampeyan", "kab": "Gresik"}, {"kec": "Dukun", "kab": "Gresik"}, {"kec": "Gresik", "kab": "Gresik"}, {"kec": "Kebomas", "kab": "Gresik"}, {"kec": "Kedamean", "kab": "Gresik"}, {"kec": "Manyar", "kab": "Gresik"}, {"kec": "Menganti", "kab": "Gresik"}, {"kec": "Panceng", "kab": "Gresik"}, {"kec": "Sangkapura", "kab": "Gresik"}, {"kec": "Sidayu", "kab": "Gresik"}, {"kec": "Tambak", "kab": "Gresik"}, {"kec": "Ujung Pangkah", "kab": "Gresik"}, {"kec": "Wringinanom", "kab": "Gresik"}, {"kec": "Ajung", "kab": "Jember"}, {"kec": "Ambulu", "kab": "Jember"}, {"kec": "Arjasa", "kab": "Jember"}, {"kec": "Bangsalsari", "kab": "Jember"}, {"kec": "Balung", "kab": "Jember"}, {"kec": "Gumukmas", "kab": "Jember"}, {"kec": "Jelbuk", "kab": "Jember"}, {"kec": "Jenggawah", "kab": "Jember"}, {"kec": "Jombang", "kab": "Jember"}, {"kec": "Kalisat", "kab": "Jember"}, {"kec": "Kaliwates", "kab": "Jember"}, {"kec": "Kencong", "kab": "Jember"}, {"kec": "Ledokombo", "kab": "Jember"}, {"kec": "Mayang", "kab": "Jember"}, {"kec": "Mumbulsari", "kab": "Jember"}, {"kec": "Panti", "kab": "Jember"}, {"kec": "Pakusari", "kab": "Jember"}, {"kec": "Patrang", "kab": "Jember"}, {"kec": "Puger", "kab": "Jember"}, {"kec": "Rambipuji", "kab": "Jember"}, {"kec": "Semboro", "kab": "Jember"}, {"kec": "Silo", "kab": "Jember"}, {"kec": "Sukorambi", "kab": "Jember"}, {"kec": "Sukowono", "kab": "Jember"}, {"kec": "Sumberbaru", "kab": "Jember"}, {"kec": "Sumberjambe", "kab": "Jember"}, {"kec": "Sumbersari", "kab": "Jember"}, {"kec": "Tanggul", "kab": "Jember"}, {"kec": "Tempurejo", "kab": "Jember"}, {"kec": "Umbulsari", "kab": "Jember"}, {"kec": "Wuluhan", "kab": "Jember"}, {"kec": "Bangsal", "kab": "Mojokerto"}, {"kec": "Dawarblandong", "kab": "Mojokerto"}, {"kec": "Dlanggu", "kab": "Mojokerto"}, {"kec": "Gedeg", "kab": "Mojokerto"}, {"kec": "Gondang", "kab": "Mojokerto"}, {"kec": "Jatirejo", "kab": "Mojokerto"}, {"kec": "Jetis", "kab": "Mojokerto"}, {"kec": "Kemlagi", "kab": "Mojokerto"}, {"kec": "Kutorejo", "kab": "Mojokerto"}, {"kec": "Mojoanyar", "kab": "Mojokerto"}, {"kec": "Mojosari", "kab": "Mojokerto"}, {"kec": "Ngoro", "kab": "Mojokerto"}, {"kec": "Pacet", "kab": "Mojokerto"}, {"kec": "Pungging", "kab": "Mojokerto"}, {"kec": "Puri", "kab": "Mojokerto"}, {"kec": "Sooko", "kab": "Mojokerto"}, {"kec": "Trawas", "kab": "Mojokerto"}, {"kec": "Trowulan", "kab": "Mojokerto"}, {"kec": "Sibolangit", "kab": "Deli Serdang"}, {"kec": "Pancur Batu", "kab": "Deli Serdang"}, {"kec": "Kutalimbaru", "kab": "Deli Serdang"}, {"kec": "Sunggal", "kab": "Deli Serdang"}, {"kec": "Hamparan Perak", "kab": "Deli Serdang"}, {"kec": "Labuhan Deli", "kab": "Deli Serdang"}, {"kec": "Percut Sei Tuan", "kab": "Deli Serdang"}, {"kec": "Batang Kuis", "kab": "Deli Serdang"}, {"kec": "Pantai Labu", "kab": "Deli Serdang"}, {"kec": "Beringin", "kab": "Deli Serdang"}, {"kec": "Pagar Merbau", "kab": "Deli Serdang"}, {"kec": "Lubuk Pakam", "kab": "Deli Serdang"}, {"kec": "Galang", "kab": "Deli Serdang"}, {"kec": "Bangun Purba", "kab": "Deli Serdang"}, {"kec": "Gunung Meriah", "kab": "Deli Serdang"}, {"kec": "Sinembah Tanjung Muda Hulu", "kab": "Deli Serdang"}, {"kec": "Sinembah Tanjung Muda Hilir", "kab": "Deli Serdang"}, {"kec": "Tanjung Morawa", "kab": "Deli Serdang"}, {"kec": "Patumbak", "kab": "Deli Serdang"}, {"kec": "Sibiru-biru", "kab": "Deli Serdang"}, {"kec": "Deli Tua", "kab": "Deli Serdang"}, {"kec": "Namorambe", "kab": "Deli Serdang"}, {"kec": "Anggana", "kab": "Kutai Kartanegara"}, {"kec": "Kembang Janggut", "kab": "Kutai Kartanegara"}, {"kec": "Kenohan", "kab": "Kutai Kartanegara"}, {"kec": "Kota Bangun", "kab": "Kutai Kartanegara"}, {"kec": "Loa Janan", "kab": "Kutai Kartanegara"}, {"kec": "Loa Kulu", "kab": "Kutai Kartanegara"}, {"kec": "Marang Kayu", "kab": "Kutai Kartanegara"}, {"kec": "Muara Badak", "kab": "Kutai Kartanegara"}, {"kec": "Muara Jawa", "kab": "Kutai Kartanegara"}, {"kec": "Muara Kaman", "kab": "Kutai Kartanegara"}, {"kec": "Muara Muntai", "kab": "Kutai Kartanegara"}, {"kec": "Muara Wis", "kab": "Kutai Kartanegara"}, {"kec": "Samboja", "kab": "Kutai Kartanegara"}, {"kec": "Sanga-Sanga", "kab": "Kutai Kartanegara"}, {"kec": "Sebulu", "kab": "Kutai Kartanegara"}, {"kec": "Tabang", "kab": "Kutai Kartanegara"}, {"kec": "Tenggarong", "kab": "Kutai Kartanegara"}, {"kec": "Tenggarong Seberang", "kab": "Kutai Kartanegara"}, {"kec": "Aluh Aluh", "kab": "Banjar"}, {"kec": "Aranio", "kab": "Banjar"}, {"kec": "Astambul", "kab": "Banjar"}, {"kec": "Beruntung Baru", "kab": "Banjar"}, {"kec": "Cintapuri Darussalam", "kab": "Banjar"}, {"kec": "Gambut", "kab": "Banjar"}, {"kec": "Karang Intan", "kab": "Banjar"}, {"kec": "Kertak Hanyar", "kab": "Banjar"}, {"kec": "Mataraman", "kab": "Banjar"}, {"kec": "Martapura", "kab": "Banjar"}, {"kec": "Martapura Barat", "kab": "Banjar"}, {"kec": "Martapura Timur", "kab": "Banjar"}, {"kec": "Paramasan", "kab": "Banjar"}, {"kec": "Pengaron", "kab": "Banjar"}, {"kec": "Sambung Makmur", "kab": "Banjar"}, {"kec": "Simpang Empat", "kab": "Banjar"}, {"kec": "Sungai Pinang", "kab": "Banjar"}, {"kec": "Sungai Tabuk", "kab": "Banjar"}, {"kec": "Tatah Makmur", "kab": "Banjar"}, {"kec": "Telaga Bauntung", "kab": "Banjar"}, {"kec": "XIII Koto Kampar", "kab": "Kampar"}, {"kec": "Bangkinang", "kab": "Kampar"}, {"kec": "Bangkinang Kota", "kab": "Kampar"}, {"kec": "Gunung Sahilan", "kab": "Kampar"}, {"kec": "Kampa", "kab": "Kampar"}, {"kec": "Kampar", "kab": "Kampar"}, {"kec": "Kampar Kiri", "kab": "Kampar"}, {"kec": "Kampar Kiri Hilir", "kab": "Kampar"}, {"kec": "Kampar Kiri Hulu", "kab": "Kampar"}, {"kec": "Kampar Kiri Tengah", "kab": "Kampar"}, {"kec": "Kampar Utara", "kab": "Kampar"}, {"kec": "Koto Kampar Hulu", "kab": "Kampar"}, {"kec": "Kuok", "kab": "Kampar"}, {"kec": "Perhentian Raja", "kab": "Kampar"}, {"kec": "Rumbio Jaya", "kab": "Kampar"}, {"kec": "Salo", "kab": "Kampar"}, {"kec": "Siak Hulu", "kab": "Kampar"}, {"kec": "Tambang", "kab": "Kampar"}, {"kec": "Tapung", "kab": "Kampar"}, {"kec": "Tapung Hilir", "kab": "Kampar"}, {"kec": "Tapung Hulu", "kab": "Kampar"}, {"kec": "Batu Ampar", "kab": "Kubu Raya"}, {"kec": "Kuala Mandor B", "kab": "Kubu Raya"}, {"kec": "Kubu", "kab": "Kubu Raya"}, {"kec": "Rasau Jaya", "kab": "Kubu Raya"}, {"kec": "Sungai Ambawang", "kab": "Kubu Raya"}, {"kec": "Sungai Kakap", "kab": "Kubu Raya"}, {"kec": "Sungai Raya", "kab": "Kubu Raya"}, {"kec": "Teluk Pakedai", "kab": "Kubu Raya"}, {"kec": "Terentang", "kab": "Kubu Raya"}, {"kec": "Bajeng", "kab": "Gowa"}, {"kec": "Bajeng Barat", "kab": "Gowa"}, {"kec": "Barombong", "kab": "Gowa"}, {"kec": "Biringbulu", "kab": "Gowa"}, {"kec": "Bontolempangan", "kab": "Gowa"}, {"kec": "Bontomarannu", "kab": "Gowa"}, {"kec": "Bontonompo", "kab": "Gowa"}, {"kec": "Bontonompo Selatan", "kab": "Gowa"}, {"kec": "Bungaya", "kab": "Gowa"}, {"kec": "Manuju", "kab": "Gowa"}, {"kec": "Pallangga", "kab": "Gowa"}, {"kec": "Parangloe", "kab": "Gowa"}, {"kec": "Parigi", "kab": "Gowa"}, {"kec": "Pattallassang", "kab": "Gowa"}, {"kec": "Somba Opu", "kab": "Gowa"}, {"kec": "Tinggimoncong", "kab": "Gowa"}, {"kec": "Tompobulu", "kab": "Gowa"}, {"kec": "Tombolo Pao", "kab": "Gowa"}];
+const NICHE_LIST = ["Sedot WC", "Service AC", "Tukang Listrik", "Laundry", "Rental Mobil", "Dokter Gigi", "Travel Antar Kota", "Tukang Bangunan", "Kontraktor", "Catering", "Aqiqah", "Cuci Karpet"];
+
+// ─── DEFAULT KOMISI & SEWA PER NICHE (hasil riset harga pasar riil, Juli 2026) ───
+// Komisi = titik tengah rentang wajar per lead (Rp). Sewa = estimasi tarif Sewa Halaman/bulan (Rp).
+// Ini cuma SARAN awal yang auto-terisi saat pilih niche — tetap bisa diedit manual sebelum simpan.
+const NICHE_KOMISI_DEFAULT = {
+  "Sedot WC": 75000, "Service AC": 20000, "Tukang Listrik": 30000, "Laundry": 7000,
+  "Rental Mobil": 100000, "Dokter Gigi": 30000, "Travel Antar Kota": 25000,
+  "Tukang Bangunan": 350000, "Kontraktor": 500000, "Catering": 130000, "Aqiqah": 250000, "Cuci Karpet": 15000
+};
+const NICHE_SEWA_DEFAULT = {
+  "Sedot WC": 300000, "Service AC": 150000, "Tukang Listrik": 200000, "Laundry": 100000,
+  "Rental Mobil": 400000, "Dokter Gigi": 200000, "Travel Antar Kota": 150000,
+  "Tukang Bangunan": 600000, "Kontraktor": 800000, "Catering": 400000, "Aqiqah": 500000, "Cuci Karpet": 200000
+};
+const KEC_MAP = {}; // "Kec — Kab" -> {kec, kab}
+KECAMATAN_DATA.forEach(r => { KEC_MAP[r.kec + ' — ' + r.kab] = r; });
+
+// ─── SHARED HELPERS ───
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y.slice(2)}`;
+}
+function fmtMoney(v) {
+  if (!v || v === 0) return '—';
+  return 'Rp ' + Number(v).toLocaleString('id-ID');
+}
+function norm(s) { return (s||'').trim().toLowerCase(); }
+function isOverdue(d) {
+  if (!d) return false;
+  const t = new Date(); t.setHours(0,0,0,0);
+  return new Date(d) < t;
+}
+function isToday(d) { return d === today(); }
+function onKecInput(inputId, kabId) {
+  const val = document.getElementById(inputId).value;
+  const hit = KEC_MAP[val];
+  document.getElementById(kabId).value = hit ? hit.kab : '';
+}
+function g(id) { return document.getElementById(id).value; }
+
+// ─── CEK NOMOR HP MITRA DUPLIKAT (dipakai di sistem Komisi & Sewa) ───
+// Normalisasi supaya 0812xxx, +62812xxx, 62812xxx, atau yang ada
+// spasi/strip/kurung, semua dianggap nomor yang sama.
+function normalizePhone(v) {
+  let digits = (v || '').replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.startsWith('0')) digits = '62' + digits.slice(1);
+  else if (digits.startsWith('620')) digits = '62' + digits.slice(3);
+  return digits;
+}
+// excludeSystem/excludeId dipakai supaya saat EDIT mitra yang sama,
+// nomor dia sendiri tidak dianggap "duplikat".
+function findDuplicateMitraPhone(phone, excludeSystem, excludeId) {
+  const norm = normalizePhone(phone);
+  if (!norm) return null;
+  const inK = mitraListK.find(r => normalizePhone(r.hp) === norm && !(excludeSystem === 'komisi' && r.id === excludeId));
+  if (inK) return { row: inK, sistem: 'Komisi per Lead' };
+  const inS = mitraListS.find(r => normalizePhone(r.hp) === norm && !(excludeSystem === 'sewa' && r.id === excludeId));
+  if (inS) return { row: inS, sistem: 'Sewa Halaman' };
+  return null;
+}
+function mitraHpWarningHTML(dup) {
+  return `⚠️ <strong>Nomor ini sudah pernah digarap sebelumnya!</strong><br>
+    Atas nama: <strong>${dup.row.nama}</strong> · Sistem: <strong>${dup.sistem}</strong> · Niche: ${dup.row.niche || '—'}
+    ${dup.row.kecamatan ? ` · Kec. ${dup.row.kecamatan}` : ''}`;
+}
+
+function csvBlob(headers, rows, fname) {
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${fname}-${today()}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+}
+function setHeaderDate() {
+  const d = new Date();
+  document.getElementById('headerDate').textContent =
+    d.toLocaleDateString('id-ID', {weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+function closeSharedModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ─── SYSTEM SWITCHER ───
+let activeSystem = 'komisi';
+function switchSystem(sys) {
+  activeSystem = sys;
+  document.getElementById('system-komisi').classList.toggle('active', sys === 'komisi');
+  document.getElementById('system-sewa').classList.toggle('active', sys === 'sewa');
+  document.getElementById('sysbtn-komisi').classList.toggle('active', sys === 'komisi');
+  document.getElementById('sysbtn-sewa').classList.toggle('active', sys === 'sewa');
+}
+
+/* ════════════════════════════════════════════════════════
+   SYSTEM: KOMISI PER LEAD (semua identifier berprefix k_ / K)
+   ════════════════════════════════════════════════════════ */
+
+
+// ─── STORAGE KEYS (dipetakan ke key server) ───
+const SK_K = { mitra: 'mitra_komisi', order: 'order_komisi' };
+
+// ─── DATA (diisi lewat loadAllData() saat login, bukan localStorage lagi) ───
+let mitraListK = [];
+let orderListK = [];
+
+// ─── STATE ───
+let editIdK = { mitra: null, order: null };
+let filterK = { mitra: 'semua', order: 'semua' };
+let filterFieldK = { mitra: 'status_deal', order: 'status_lead' };
+let sortK_ = {
+  mitra: { key: 'tanggal', dir: 'desc' },
+  order: { key: 'tanggal', dir: 'desc' }
+};
+let activeTabK = 'mitra';
+
+// ─── HELPERS ───
+function saveK(key, arr) {
+  apiPost({ action: 'save', key: SK_K[key], value: arr })
+    .catch(err => alert('❌ Gagal menyimpan ke server: ' + err.message));
+}
+
+// ─── ORDER-KE ENGINE ───
+// Menghitung urutan order (ke-1, ke-2, dst) per mitra berdasarkan lead berstatus "Valid ✅",
+// diurutkan berdasarkan tanggal lalu id. Order ke-1 = gratis, ke-2 dst = kena komisi.
+function k_computeOrderKeMap() {
+  const map = {}; // orderId -> order_ke
+  const byMitra = {};
+  orderListK.forEach(r => {
+    const key = norm(r.mitra);
+    (byMitra[key] = byMitra[key] || []).push(r);
+  });
+  Object.values(byMitra).forEach(list => {
+    const valid = list.filter(r => r.status_lead === 'Valid ✅')
+      .sort((a,b) => (a.tanggal||'').localeCompare(b.tanggal||'') || a.id - b.id);
+    valid.forEach((r, idx) => { map[r.id] = idx + 1; });
+  });
+  return map;
+}
+function k_orderKeForNew(mitraName) {
+  const key = norm(mitraName);
+  const count = orderListK.filter(r => norm(r.mitra) === key && r.status_lead === 'Valid ✅').length;
+  return count + 1;
+}
+function k_jumlahOrderMitra(namaMitra) {
+  const key = norm(namaMitra);
+  return orderListK.filter(r => norm(r.mitra) === key && r.status_lead === 'Valid ✅').length;
+}
+function k_totalKomisiLunasMitra(namaMitra) {
+  const key = norm(namaMitra);
+  return orderListK.filter(r => norm(r.mitra) === key && r.bayar === 'Lunas ✅')
+    .reduce((s,r) => s + (+r.komisi||0), 0);
+}
+
+// ─── MITRA DATALIST REFRESH ───
+function k_refreshMitraDatalist() {
+  const dl = document.getElementById('dl-k-mitra');
+  const names = [...new Set(mitraListK.map(m => m.nama))];
+  dl.innerHTML = names.map(n => `<option value="${n.replace(/"/g,'&quot;')}">`).join('');
+}
+
+// ─── BADGES ───
+function k_dealBadge(v) {
+  const m = { 'Deal ✅':'b-deal','Negosiasi 🔄':'b-nego','Prospek 🔍':'b-prospek','Tidak Deal ❌':'b-tidak','Blacklist 🚫':'b-black' };
+  return `<span class="badge ${m[v]||'b-skip'}">${v||'—'}</span>`;
+}
+function k_statusMitraBadge(v) {
+  const m = { 'Aktif ✅':'b-aktif','Follow Up':'b-followup','Nonaktif':'b-nonaktif' };
+  return `<span class="badge ${m[v]||'b-skip'}">${v||'—'}</span>`;
+}
+function k_leadBadge(v) {
+  const m = { 'Valid ✅':'b-valid','Tidak Valid ❌':'b-invalid','Perlu Konfirmasi ❓':'b-konfirm' };
+  return `<span class="badge ${m[v]||'b-skip'}">${v||'—'}</span>`;
+}
+function k_bayarBadge(v) {
+  const m = { 'Lunas ✅':'b-lunas','Belum Bayar ⏳':'b-belum','Dibebaskan':'b-bebas','Gratis Order Pertama':'b-gratis','Tidak Ditagih (Lead Invalid)':'b-bebas' };
+  return `<span class="badge ${m[v]||'b-skip'}">${v||'—'}</span>`;
+}
+function k_nicheBadge(v) { return `<span class="badge b-niche">${v||'—'}</span>`; }
+function k_orderKeBadge(id, statusLead, mitraName) {
+  const map = k_computeOrderKeMap();
+  const ke = map[id];
+  if (statusLead !== 'Valid ✅' || !ke) return `<span class="badge b-skip">—</span>`;
+  const mitraRef = mitraListK.find(m => norm(m.nama) === norm(mitraName||''));
+  if (ke === 1 && mitraRef && mitraRef.kebijakan_order1 === 'gratis') return `<span class="badge b-gratis">🎁 Ke-1 (Gratis)</span>`;
+  return `<span class="badge b-order">Ke-${ke}</span>`;
+}
+
+// ─── TAB SWITCH ───
+function k_switchTab(tab, btn) {
+  activeTabK = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`content-k-${tab}`).classList.add('active');
+}
+
+// ─── FILTER & SORT ───
+function k_setFilter(tab, val, btn, field) {
+  filterK[tab] = val;
+  if (field) filterFieldK[tab] = field;
+  const scope = btn.closest('.filter-group');
+  scope.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'mitra') k_renderMitra();
+  if (tab === 'order') k_renderOrder();
+}
+function k_doSort(tab, key) {
+  if (sortK_[tab].key === key) sortK_[tab].dir = sortK_[tab].dir === 'asc' ? 'desc' : 'asc';
+  else { sortK_[tab].key = key; sortK_[tab].dir = 'asc'; }
+  if (tab === 'mitra') k_renderMitra();
+  if (tab === 'order') k_renderOrder();
+}
+function k_sortM(k) { k_doSort('mitra', k); }
+function k_sortO(k) { k_doSort('order', k); }
+
+function k_applySort(arr, tab) {
+  const { key, dir } = sortK_[tab];
+  return [...arr].sort((a, b) => {
+    let va = a[key] || '', vb = b[key] || '';
+    if (typeof va === 'number') return dir === 'asc' ? va - vb : vb - va;
+    return dir === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+  });
+}
+
+// ─── RENDER: MASTER MITRA ───
+function k_renderMitra() {
+  const q = document.getElementById('search-k-mitra').value.toLowerCase();
+  let d = mitraListK.filter(r => {
+    if (filterK.mitra !== 'semua') {
+      const field = filterFieldK.mitra === 'status_mitra' ? r.status_mitra : r.status_deal;
+      if (field !== filterK.mitra) return false;
+    }
+    if (q) return [r.nama, r.kecamatan, r.kabupaten, r.niche, r.hp, r.catatan].join(' ').toLowerCase().includes(q);
+    return true;
+  });
+  d = k_applySort(d, 'mitra');
+
+  document.getElementById('m-k-total').textContent   = mitraListK.length;
+  document.getElementById('m-k-aktif').textContent   = mitraListK.filter(r=>r.status_mitra==='Aktif ✅').length;
+  document.getElementById('m-k-deal').textContent    = mitraListK.filter(r=>r.status_deal==='Deal ✅').length;
+  document.getElementById('m-k-nego').textContent    = mitraListK.filter(r=>r.status_deal==='Negosiasi 🔄').length;
+  document.getElementById('m-k-prospek').textContent = mitraListK.filter(r=>r.status_deal==='Prospek 🔍').length;
+  document.getElementById('m-k-order').textContent   = orderListK.filter(r=>r.status_lead==='Valid ✅').length;
+  document.getElementById('cnt-k-mitra').textContent = mitraListK.length;
+
+  const tbody = document.getElementById('tbody-k-mitra');
+  const empty = document.getElementById('empty-k-mitra');
+  if (!d.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = d.map((r, i) => {
+    const jumlahOrder = k_jumlahOrderMitra(r.nama);
+    const totalLunas = k_totalKomisiLunasMitra(r.nama);
+    const fuOver = isOverdue(r.followup), fuToday = isToday(r.followup);
+    const fuCol = fuOver ? 'var(--red)' : fuToday ? 'var(--orange)' : 'var(--gray)';
+    const fuIco = fuOver ? '🚨 ' : fuToday ? '⏰ ' : '';
+    return `<tr>
+      <td class="col-no">${i+1}</td>
+      <td style="font-size:0.76rem;white-space:nowrap;color:var(--gray)">${fmtDate(r.tanggal)}</td>
+      <td><div class="name-cell">${r.nama}</div><div class="sub-cell">${r.pic||''}</div></td>
+      <td>${k_nicheBadge(r.niche)}</td>
+      <td style="font-size:0.82rem">${r.kecamatan||'—'}</td>
+      <td style="font-size:0.8rem;color:var(--gray)">${r.kabupaten||'—'}</td>
+      <td style="font-size:0.8rem;font-family:monospace">${r.hp||'—'}</td>
+      <td>${k_dealBadge(r.status_deal)}</td>
+      <td>${k_statusMitraBadge(r.status_mitra)}</td>
+      <td style="font-size:0.76rem;white-space:nowrap;color:${fuCol};font-weight:${fuOver||fuToday?'700':'400'}">${r.followup?fuIco+fmtDate(r.followup):'—'}</td>
+      <td style="text-align:center;font-weight:700">${jumlahOrder}</td>
+      <td class="money">${fmtMoney(r.komisi_default)}${r.kebijakan_order1==='gratis' ? ' <span class="badge b-gratis" style="font-size:0.62rem">🎁 order-1 gratis</span>' : r.kebijakan_order1==='garansi' ? ' <span class="badge b-bebas" style="font-size:0.62rem">🛡️ garansi kualitas</span>' : ''}</td>
+      <td class="money" style="color:var(--green-d)">${fmtMoney(totalLunas)}</td>
+      <td><div class="notes-cell" title="${r.catatan||''}">${r.catatan||'—'}</div></td>
+      <td><div class="action-btns">
+        <button class="btn-icon" onclick="k_openMitraModal(${r.id})" title="Edit">✏️</button>
+        <button class="btn-icon danger" onclick="k_delMitra(${r.id})" title="Hapus">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  k_refreshMitraDatalist();
+  updateBellDot();
+}
+
+// ─── RENDER: LOG ORDER ───
+function k_renderOrder() {
+  const q = document.getElementById('search-k-order').value.toLowerCase();
+  const keMap = k_computeOrderKeMap();
+  let d = orderListK.filter(r => {
+    if (filterK.order !== 'semua') {
+      if (filterFieldK.order === 'tipe') {
+        const ke = keMap[r.id];
+        const isGratis = r.status_lead === 'Valid ✅' && ke === 1;
+        const isKomisi = r.status_lead === 'Valid ✅' && ke > 1;
+        if (filterK.order === 'gratis' && !isGratis) return false;
+        if (filterK.order === 'komisi' && !isKomisi) return false;
+      } else {
+        const field = filterFieldK.order === 'bayar' ? r.bayar : r.status_lead;
+        if (field !== filterK.order) return false;
+      }
+    }
+    if (q) return [r.mitra, r.niche, r.kecamatan, r.kabupaten, r.penelepon].join(' ').toLowerCase().includes(q);
+    return true;
+  });
+  d = k_applySort(d, 'order');
+
+  const all = orderListK;
+  const validAll = all.filter(r=>r.status_lead==='Valid ✅');
+  const gratisAll = validAll.filter(r=>keMap[r.id]===1);
+  const komisiAll = validAll.filter(r=>keMap[r.id]>1);
+  const lunas   = all.filter(r=>r.bayar==='Lunas ✅').reduce((s,r)=>s+(+r.komisi||0),0);
+  const belum   = all.filter(r=>r.bayar==='Belum Bayar ⏳').reduce((s,r)=>s+(+r.komisi||0),0);
+
+  document.getElementById('o-k-total').textContent   = validAll.length;
+  document.getElementById('o-k-gratis').textContent  = gratisAll.length;
+  document.getElementById('o-k-komisi').textContent  = komisiAll.length;
+  document.getElementById('o-k-invalid').textContent = all.filter(r=>r.status_lead==='Tidak Valid ❌').length;
+  document.getElementById('o-k-lunas').textContent   = fmtMoney(lunas);
+  document.getElementById('o-k-belum').textContent   = fmtMoney(belum);
+  document.getElementById('cnt-k-order').textContent = all.length;
+
+  const tbody = document.getElementById('tbody-k-order');
+  const empty = document.getElementById('empty-k-order');
+  if (!d.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = d.map((r, i) => {
+    const bbOver = isOverdue(r.batas_bayar) && r.bayar === 'Belum Bayar ⏳';
+    const bbToday = isToday(r.batas_bayar) && r.bayar === 'Belum Bayar ⏳';
+    const bbCol = bbOver ? 'var(--red)' : bbToday ? 'var(--orange)' : 'var(--gray)';
+    const bbIco = bbOver ? '🚨 ' : bbToday ? '⏰ ' : '';
+    return `<tr>
+    <td class="col-no">${i+1}</td>
+    <td style="font-size:0.76rem;white-space:nowrap;color:var(--gray)">${fmtDate(r.tanggal)}</td>
+    <td><div class="name-cell">${r.mitra}</div></td>
+    <td>${k_nicheBadge(r.niche)}</td>
+    <td style="font-size:0.82rem">${r.kecamatan||'—'}<div class="sub-cell">${r.kabupaten||''}</div></td>
+    <td style="font-size:0.82rem">${r.penelepon||'—'}</td>
+    <td style="font-size:0.78rem;font-family:monospace">${r.hp_lead||'—'}</td>
+    <td>${k_leadBadge(r.status_lead)}</td>
+    <td>${k_orderKeBadge(r.id, r.status_lead, r.mitra)}</td>
+    <td class="money">${fmtMoney(r.komisi)}</td>
+    <td>${k_bayarBadge(r.bayar)}</td>
+    <td style="font-size:0.76rem;white-space:nowrap;color:${bbCol};font-weight:${bbOver||bbToday?'700':'400'}">${r.batas_bayar?bbIco+fmtDate(r.batas_bayar):'—'}</td>
+    <td><div class="notes-cell" title="${r.catatan||''}">${r.catatan||'—'}</div></td>
+    <td><div class="action-btns">
+      <button class="btn-icon" onclick="k_openOrderModal(${r.id})" title="Edit">✏️</button>
+      <button class="btn-icon danger" onclick="k_delOrder(${r.id})" title="Hapus">🗑</button>
+    </div></td>
+  </tr>`;
+  }).join('');
+}
+
+// ─── MODAL: OPEN/CLOSE ───
+function k_closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  editIdK[id.replace('mo-k-','')] = null;
+}
+function k_openMitraModal(id=null) {
+  editIdK.mitra = id;
+  document.getElementById('mt-k-mitra').textContent = id ? 'Edit Mitra' : 'Tambah Mitra Baru';
+  const r = id ? mitraListK.find(x=>x.id===id) : {};
+  const f = (fid, val) => { const el = document.getElementById(fid); if (el) el.value = val||''; };
+  f('fm-k-tanggal', r.tanggal||today()); f('fm-k-niche', r.niche||NICHE_LIST[0]);
+  f('fm-k-nama', r.nama); f('fm-k-pic', r.pic); f('fm-k-hp', r.hp);
+  f('fm-k-kecamatan', r.kecamatan); f('fm-k-kabupaten', r.kabupaten);
+  f('fm-k-sumber', r.sumber||'Inbound Call');
+  fmKKomisiTouched = false;
+  f('fm-k-komisi-default', id ? (r.komisi_default||0) : (NICHE_KOMISI_DEFAULT[r.niche||NICHE_LIST[0]]||0));
+  f('fm-k-kebijakan1', r.kebijakan_order1||'tidak');
+  f('fm-k-status-deal', r.status_deal||'Prospek 🔍'); f('fm-k-status-mitra', r.status_mitra||'Follow Up');
+  f('fm-k-followup', r.followup);
+  f('fm-k-catatan', r.catatan);
+  document.getElementById('fm-k-hp-warning').style.display = 'none';
+  document.getElementById('fm-k-hp-warning').innerHTML = '';
+  document.getElementById('mo-k-mitra').classList.add('open');
+  setTimeout(() => document.getElementById('fm-k-nama').focus(), 80);
+}
+function k_checkHpDuplicate() {
+  const box = document.getElementById('fm-k-hp-warning');
+  const dup = findDuplicateMitraPhone(g('fm-k-hp'), 'komisi', editIdK.mitra);
+  if (dup) { box.style.display = 'block'; box.innerHTML = mitraHpWarningHTML(dup); }
+  else { box.style.display = 'none'; box.innerHTML = ''; }
+  return dup;
+}
+let fmKKomisiTouched = false;
+function k_applyNicheDefault() {
+  if (fmKKomisiTouched) return;
+  const niche = document.getElementById('fm-k-niche').value;
+  document.getElementById('fm-k-komisi-default').value = NICHE_KOMISI_DEFAULT[niche] || 0;
+}
+function k_onMitraPick() {
+  const nama = document.getElementById('fo-k-mitra').value.trim();
+  const hintEl = document.getElementById('fo-k-hint');
+  const orderKeEl = document.getElementById('fo-k-order-ke');
+  const komisiEl = document.getElementById('fo-k-komisi');
+  const bayarEl = document.getElementById('fo-k-bayar');
+  const statusLead = document.getElementById('fo-k-status').value;
+  const nicheEl = document.getElementById('fo-k-niche');
+
+  if (!nama) {
+    hintEl.className = 'form-hint';
+    hintEl.textContent = 'Pilih mitra dulu untuk melihat ini order ke berapa.';
+    return;
+  }
+  const mitraRef = mitraListK.find(m => norm(m.nama) === norm(nama));
+  if (mitraRef && !editIdK.order) nicheEl.value = mitraRef.niche || nicheEl.value;
+
+  const kebijakan = mitraRef ? (mitraRef.kebijakan_order1 || 'tidak') : 'tidak';
+
+  if (statusLead !== 'Valid ✅') {
+    orderKeEl.value = '—';
+    if (kebijakan === 'garansi' && statusLead === 'Tidak Valid ❌') {
+      hintEl.className = 'form-hint';
+      hintEl.textContent = '🛡️ Garansi Kualitas — lead ini "Tidak Valid ❌", otomatis TIDAK DITAGIH ke mitra.';
+      if (!editIdK.order) { komisiEl.value = 0; bayarEl.value = 'Tidak Ditagih (Lead Invalid)'; }
+    } else {
+      hintEl.className = 'form-hint';
+      hintEl.textContent = 'Lead belum "Valid ✅" — belum dihitung sebagai order.';
+    }
+    return;
+  }
+  // Saat edit, hitung tanpa entry ini sendiri supaya tidak dobel hitung
+  const key = norm(nama);
+  let count = orderListK.filter(r => norm(r.mitra) === key && r.status_lead === 'Valid ✅' && r.id !== editIdK.order).length;
+  const ke = count + 1;
+  const isFreeOrder = ke === 1 && kebijakan === 'gratis';
+  orderKeEl.value = 'Order ke-' + ke + (isFreeOrder ? ' (Gratis)' : '');
+
+  if (isFreeOrder) {
+    hintEl.className = 'form-hint';
+    hintEl.textContent = '🎁 Ini order PERTAMA mitra ini — mitra ditandai GRATIS order-1, tanpa komisi.';
+    if (!editIdK.order) { komisiEl.value = 0; bayarEl.value = 'Gratis Order Pertama'; }
+  } else {
+    const defaultKomisi = mitraRef ? (+mitraRef.komisi_default || 0) : 0;
+    hintEl.className = 'form-hint komisi';
+    const garansiNote = kebijakan === 'garansi' ? ' (Garansi Kualitas aktif — cuma gugur kalau lead ini nanti ditandai Tidak Valid ❌)' : '';
+    hintEl.textContent = '💰 Order ke-' + ke + ' — sudah KENA KOMISI' + (defaultKomisi ? ' (default Rp ' + defaultKomisi.toLocaleString('id-ID') + ')' : '') + garansiNote + '.';
+    if (!editIdK.order && (!komisiEl.value || komisiEl.value === '0')) komisiEl.value = defaultKomisi;
+    if (!editIdK.order && (bayarEl.value === 'Gratis Order Pertama' || bayarEl.value === 'Tidak Ditagih (Lead Invalid)')) bayarEl.value = 'Belum Bayar ⏳';
+  }
+}
+function k_openOrderModal(id=null) {
+  editIdK.order = id;
+  k_refreshMitraDatalist();
+  document.getElementById('mt-k-order').textContent = id ? 'Edit Order / Lead' : 'Catat Order / Lead Masuk';
+  const r = id ? orderListK.find(x=>x.id===id) : {};
+  const f = (fid,val) => { const el=document.getElementById(fid); if(el) el.value=val||''; };
+  f('fo-k-tanggal', r.tanggal||today()); f('fo-k-mitra', r.mitra);
+  f('fo-k-niche', r.niche||NICHE_LIST[0]); f('fo-k-status', r.status_lead||'Valid ✅');
+  f('fo-k-kecamatan', r.kecamatan); f('fo-k-kabupaten', r.kabupaten);
+  f('fo-k-penelepon', r.penelepon); f('fo-k-hp', r.hp_lead);
+  f('fo-k-komisi', r.komisi||0); f('fo-k-bayar', r.bayar||'Belum Bayar ⏳');
+  f('fo-k-batas-bayar', r.batas_bayar);
+  f('fo-k-catatan', r.catatan);
+  document.getElementById('mo-k-order').classList.add('open');
+  k_onMitraPick();
+  setTimeout(() => document.getElementById('fo-k-mitra').focus(), 80);
+}
+
+// ─── SAVE ───
+function k_saveMitra() {
+  const nama = g('fm-k-nama').trim();
+  if (!nama) { alert('Nama mitra wajib diisi.'); return; }
+  const hp = g('fm-k-hp');
+  const dup = findDuplicateMitraPhone(hp, 'komisi', editIdK.mitra);
+  if (dup) {
+    const lanjut = confirm(
+      `⚠️ Nomor ini sudah pernah digarap sebelumnya!\n\n` +
+      `Atas nama: ${dup.row.nama}\nSistem: ${dup.sistem}\nNiche: ${dup.row.niche||'—'}` +
+      `\n\nTetap simpan sebagai mitra baru?`
+    );
+    if (!lanjut) return;
+  }
+  const row = {
+    id: editIdK.mitra || Date.now(),
+    tanggal: g('fm-k-tanggal'), niche: g('fm-k-niche'), nama, pic: g('fm-k-pic'),
+    hp: g('fm-k-hp'), kecamatan: g('fm-k-kecamatan'), kabupaten: g('fm-k-kabupaten'),
+    sumber: g('fm-k-sumber'), komisi_default: +g('fm-k-komisi-default')||0,
+    kebijakan_order1: g('fm-k-kebijakan1')||'tidak',
+    status_deal: g('fm-k-status-deal'), status_mitra: g('fm-k-status-mitra'),
+    followup: g('fm-k-followup'),
+    catatan: g('fm-k-catatan')
+  };
+  if (editIdK.mitra) mitraListK = mitraListK.map(x=>x.id===editIdK.mitra?row:x);
+  else mitraListK.push(row);
+  saveK('mitra', mitraListK); k_closeModal('mo-k-mitra'); k_renderMitra(); k_renderOrder();
+}
+function k_saveOrder() {
+  const mitra = g('fo-k-mitra').trim();
+  if (!mitra) { alert('Nama mitra wajib diisi.'); return; }
+  const row = {
+    id: editIdK.order || Date.now(),
+    tanggal: g('fo-k-tanggal'), mitra, niche: g('fo-k-niche'),
+    kecamatan: g('fo-k-kecamatan'), kabupaten: g('fo-k-kabupaten'),
+    penelepon: g('fo-k-penelepon'), hp_lead: g('fo-k-hp'),
+    status_lead: g('fo-k-status'), komisi: +g('fo-k-komisi')||0,
+    bayar: g('fo-k-bayar'), batas_bayar: g('fo-k-batas-bayar'), catatan: g('fo-k-catatan')
+  };
+  if (editIdK.order) orderListK = orderListK.map(x=>x.id===editIdK.order?row:x);
+  else orderListK.push(row);
+  saveK('order', orderListK); k_closeModal('mo-k-order'); k_renderOrder(); k_renderMitra();
+}
+
+// ─── DELETE ───
+function k_delMitra(id) {
+  if (!confirm('Hapus mitra ini? (Log order terkait tidak ikut terhapus)')) return;
+  mitraListK = mitraListK.filter(x=>x.id!==id); saveK('mitra',mitraListK); k_renderMitra();
+}
+function k_delOrder(id) {
+  if (!confirm('Hapus baris order ini?')) return;
+  orderListK = orderListK.filter(x=>x.id!==id); saveK('order',orderListK); k_renderOrder(); k_renderMitra();
+}
+
+// ─── EXPORT CSV ───
+function k_exportMitraCSV() {
+  csvBlob(
+    ['No','Tanggal Gabung','Nama Mitra','PIC','No HP','Niche','Kecamatan','Kabupaten','Sumber','Komisi Default/Lead','Kebijakan Order Pertama','Status Deal','Status Mitra','Follow-up','Jumlah Order','Total Komisi Lunas','Catatan'],
+    mitraListK.map((r,i) => [i+1,r.tanggal,r.nama,r.pic,r.hp,r.niche,r.kecamatan,r.kabupaten,r.sumber,r.komisi_default,({tidak:'Tidak Ada',gratis:'Gratis Penuh',garansi:'Garansi Kualitas'})[r.kebijakan_order1]||'Tidak Ada',r.status_deal,r.status_mitra,r.followup,k_jumlahOrderMitra(r.nama),k_totalKomisiLunasMitra(r.nama),r.catatan]),
+    'tracker-mitra-komisi'
+  );
+}
+function k_exportOrderCSV() {
+  const keMap = k_computeOrderKeMap();
+  csvBlob(
+    ['No','Tanggal','Mitra','Niche','Kecamatan','Kabupaten','Penelepon','HP Lead','Status Lead','Order Ke-','Komisi (Rp)','Status Bayar','Batas Bayar','Catatan'],
+    orderListK.map((r,i) => [i+1,r.tanggal,r.mitra,r.niche,r.kecamatan,r.kabupaten,r.penelepon,r.hp_lead,r.status_lead,keMap[r.id]||'-',r.komisi,r.bayar,r.batas_bayar,r.catatan]),
+    'tracker-log-order-komisi'
+  );
+}
+
+// ─── IMPORT CSV ───
+let pendingImportK = null;
+function k_triggerImport(tab) {
+  pendingImportK = null;
+  document.getElementById('imp-k-tab').value = tab;
+  document.getElementById('imp-k-mode').value = 'merge';
+  document.getElementById('imp-k-file').value = '';
+  document.getElementById('imp-k-preview').textContent = 'Belum ada file dipilih.';
+  document.getElementById('imp-k-btn').disabled = true;
+  document.getElementById('mo-k-import').classList.add('open');
+}
+function k_previewImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const text = ev.target.result.replace(/^\uFEFF/, '');
+      const lines = text.split('\n').filter(l => l.trim());
+      if (lines.length < 2) throw new Error('File kosong atau tidak valid.');
+      const rows = lines.slice(1).map(line => {
+        const fields = []; let cur = ''; let inQ = false;
+        for (let i = 0; i < line.length; i++) {
+          if (line[i] === '"') { inQ = !inQ; }
+          else if (line[i] === ',' && !inQ) { fields.push(cur); cur = ''; }
+          else { cur += line[i]; }
+        }
+        fields.push(cur);
+        return fields;
+      });
+      const tab = document.getElementById('imp-k-tab').value;
+      pendingImportK = k_parseCSVRows(tab, rows).filter(r => {
+        if (tab === 'mitra') return r.nama;
+        if (tab === 'order') return r.mitra;
+      });
+      document.getElementById('imp-k-preview').innerHTML =
+        '<span style="color:var(--green-d);font-weight:700">✅ ' + pendingImportK.length + ' baris siap diimport</span> dari <strong>' + file.name + '</strong>';
+      document.getElementById('imp-k-btn').disabled = false;
+    } catch(err) {
+      document.getElementById('imp-k-preview').innerHTML =
+        '<span style="color:var(--red)">❌ Gagal baca file: ' + err.message + '</span>';
+      document.getElementById('imp-k-btn').disabled = true;
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+function k_parseCSVRows(tab, rows) {
+  const n = today();
+  if (tab === 'mitra') return rows.map((f, i) => ({
+    id: Date.now() + i,
+    tanggal: f[1]||n, nama: f[2]||'', pic: f[3]||'', hp: f[4]||'',
+    niche: f[5]||NICHE_LIST[0], kecamatan: f[6]||'', kabupaten: f[7]||'',
+    sumber: f[8]||'Lainnya', komisi_default: +f[9]||0,
+    status_deal: f[10]||'Prospek 🔍', status_mitra: f[11]||'Follow Up',
+    followup: f[12]||'',
+    catatan: f[15]||''
+  }));
+  if (tab === 'order') return rows.map((f, i) => ({
+    id: Date.now() + i,
+    tanggal: f[1]||n, mitra: f[2]||'', niche: f[3]||NICHE_LIST[0],
+    kecamatan: f[4]||'', kabupaten: f[5]||'', penelepon: f[6]||'',
+    hp_lead: f[7]||'', status_lead: f[8]||'Valid ✅',
+    komisi: +f[10]||0, bayar: f[11]||'Belum Bayar ⏳', batas_bayar: f[12]||'', catatan: f[13]||''
+  }));
+  return [];
+}
+function k_doImport() {
+  if (!pendingImportK) return;
+  const tab  = document.getElementById('imp-k-tab').value;
+  const mode = document.getElementById('imp-k-mode').value;
+  if (mode === 'replace') {
+    const existing = { mitra: mitraListK.length, order: orderListK.length }[tab];
+    if (!confirm('Ini akan MENGGANTI ' + existing + ' baris data yang ada dengan ' + pendingImportK.length + ' baris dari file CSV. Lanjutkan?')) return;
+  }
+  if (tab === 'mitra') {
+    mitraListK = mode === 'replace' ? pendingImportK : [...mitraListK, ...pendingImportK];
+    saveK('mitra', mitraListK); k_renderMitra();
+  } else {
+    orderListK = mode === 'replace' ? pendingImportK : [...orderListK, ...pendingImportK];
+    saveK('order', orderListK); k_renderOrder();
+  }
+  k_closeModal('mo-k-import');
+  alert('✅ Berhasil import ' + pendingImportK.length + ' baris ke tab ' + tab + '!');
+  pendingImportK = null;
+}
+
+// ─── SEED DATA ───
+// Sudah tidak dipakai lagi di versi database — data contoh awal ada di schema.sql
+function k_seedIfEmpty() { /* no-op: data dikelola server */ }
+
+
+
+/* ════════════════════════════════════════════════════════
+   SYSTEM: SEWA HALAMAN (semua identifier berprefix s_ / S)
+   ════════════════════════════════════════════════════════ */
+
+
+// ─── STORAGE KEYS (dipetakan ke key server) ───
+const SK_S = { mitra: 'mitra_sewa', tagihan: 'tagihan_sewa' };
+
+// ─── DATA (diisi lewat loadAllData() saat login, bukan localStorage lagi) ───
+let mitraListS   = [];
+let tagihanListS = [];
+
+// ─── STATE ───
+let editIdS = { mitra: null, tagihan: null };
+let filterS = { mitra: 'semua', tagihan: 'semua' };
+let filterFieldS = { mitra: 'status_kontrak', tagihan: 'bayar' };
+let sortS_ = {
+  mitra:   { key: 'tanggal_mulai',   dir: 'desc' },
+  tagihan: { key: 'tanggal_tagihan', dir: 'desc' }
+};
+let activeTabS = 'mitra';
+
+// ─── HELPERS ───
+function saveS(key, arr) {
+  apiPost({ action: 'save', key: SK_S[key], value: arr })
+    .catch(err => alert('❌ Gagal menyimpan ke server: ' + err.message));
+}
+
+// ─── TAGIHAN-KE ENGINE ───
+// Menghitung urutan tagihan (ke-1, ke-2, dst) per mitra, diurutkan berdasarkan tanggal lalu id.
+function s_computeTagihanKeMap() {
+  const map = {};
+  const byMitra = {};
+  tagihanListS.forEach(r => {
+    const key = norm(r.mitra);
+    (byMitra[key] = byMitra[key] || []).push(r);
+  });
+  Object.values(byMitra).forEach(list => {
+    const sorted = [...list].sort((a,b) => (a.tanggal_tagihan||'').localeCompare(b.tanggal_tagihan||'') || a.id - b.id);
+    sorted.forEach((r, idx) => { map[r.id] = idx + 1; });
+  });
+  return map;
+}
+function s_jumlahTertagihMitra(namaMitra) {
+  const key = norm(namaMitra);
+  return tagihanListS.filter(r => norm(r.mitra) === key).length;
+}
+function s_totalLunasMitra(namaMitra) {
+  const key = norm(namaMitra);
+  return tagihanListS.filter(r => norm(r.mitra) === key && r.bayar === 'Lunas ✅')
+    .reduce((s,r) => s + (+r.nominal||0), 0);
+}
+
+// ─── MITRA DATALIST REFRESH ───
+function s_refreshMitraDatalist() {
+  const dl = document.getElementById('dl-s-mitra');
+  const names = [...new Set(mitraListS.map(m => m.nama))];
+  dl.innerHTML = names.map(n => `<option value="${n.replace(/"/g,'&quot;')}">`).join('');
+}
+
+// ─── BADGES ───
+function s_statusKontrakBadge(v) {
+  const m = { 'Aktif ✅':'b-aktif','Prospek 🔍':'b-prospek','Perpanjang 🔄':'b-nego','Berakhir ❌':'b-berakhir','Tidak Jadi ❌':'b-black' };
+  return `<span class="badge ${m[v]||'b-skip'}">${v||'—'}</span>`;
+}
+function s_bayarBadge(v) {
+  const m = { 'Lunas ✅':'b-lunas','Belum ⏳':'b-belum','Terlambat ⚠️':'b-terlambat','Dibebaskan':'b-bebas' };
+  return `<span class="badge ${m[v]||'b-skip'}">${v||'—'}</span>`;
+}
+function s_nicheBadge(v) { return `<span class="badge b-niche">${v||'—'}</span>`; }
+function s_tagihanKeBadge(id) {
+  const map = s_computeTagihanKeMap();
+  const ke = map[id];
+  if (!ke) return `<span class="badge b-skip">—</span>`;
+  return `<span class="badge b-tagihan">Ke-${ke}</span>`;
+}
+
+// ─── TAB SWITCH ───
+function s_switchTab(tab, btn) {
+  activeTabS = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`content-s-${tab}`).classList.add('active');
+}
+
+// ─── FILTER & SORT ───
+function s_setFilter(tab, val, btn, field) {
+  filterS[tab] = val;
+  if (field) filterFieldS[tab] = field;
+  const scope = btn.closest('.filter-group');
+  scope.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'mitra') s_renderMitra();
+  if (tab === 'tagihan') s_renderTagihan();
+}
+function s_doSort(tab, key) {
+  if (sortS_[tab].key === key) sortS_[tab].dir = sortS_[tab].dir === 'asc' ? 'desc' : 'asc';
+  else { sortS_[tab].key = key; sortS_[tab].dir = 'asc'; }
+  if (tab === 'mitra') s_renderMitra();
+  if (tab === 'tagihan') s_renderTagihan();
+}
+function s_sortM(k) { s_doSort('mitra', k); }
+function s_sortO(k) { s_doSort('tagihan', k); }
+
+function s_applySort(arr, tab) {
+  const { key, dir } = sortS_[tab];
+  return [...arr].sort((a, b) => {
+    let va = a[key] || '', vb = b[key] || '';
+    if (typeof va === 'number') return dir === 'asc' ? va - vb : vb - va;
+    return dir === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+  });
+}
+
+// ─── RENDER: MASTER KONTRAK SEWA ───
+function s_renderMitra() {
+  const q = document.getElementById('search-s-mitra').value.toLowerCase();
+  let d = mitraListS.filter(r => {
+    if (filterS.mitra !== 'semua' && r.status_kontrak !== filterS.mitra) return false;
+    if (q) return [r.nama, r.kecamatan, r.kabupaten, r.niche, r.url, r.catatan].join(' ').toLowerCase().includes(q);
+    return true;
+  });
+  d = s_applySort(d, 'mitra');
+
+  const aktifRows = mitraListS.filter(r=>r.status_kontrak==='Aktif ✅');
+  const mrr = aktifRows.reduce((s,r)=>s+(+r.harga_bulan||0),0);
+  const totalTertagih = tagihanListS.length;
+
+  document.getElementById('m-s-total').textContent    = mitraListS.length;
+  document.getElementById('m-s-aktif').textContent    = aktifRows.length;
+  document.getElementById('m-s-prospek').textContent  = mitraListS.filter(r=>r.status_kontrak==='Prospek 🔍').length;
+  document.getElementById('m-s-berakhir').textContent = mitraListS.filter(r=>r.status_kontrak==='Berakhir ❌').length;
+  document.getElementById('m-s-mrr').textContent      = fmtMoney(mrr);
+  document.getElementById('m-s-tertagih').textContent = totalTertagih;
+  document.getElementById('cnt-s-mitra').textContent  = mitraListS.length;
+
+  const tbody = document.getElementById('tbody-s-mitra');
+  const empty = document.getElementById('empty-s-mitra');
+  if (!d.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = d.map((r, i) => {
+    const jml = s_jumlahTertagihMitra(r.nama);
+    const totalLunas = s_totalLunasMitra(r.nama);
+    const fuOver = isOverdue(r.followup), fuToday = isToday(r.followup);
+    const fuCol = fuOver ? 'var(--red)' : fuToday ? 'var(--orange)' : 'var(--gray)';
+    const fuIco = fuOver ? '🚨 ' : fuToday ? '⏰ ' : '';
+    const jtOver = isOverdue(r.jatuh_tempo), jtToday = isToday(r.jatuh_tempo);
+    const jtCol = jtOver ? 'var(--red)' : jtToday ? 'var(--orange)' : 'var(--gray)';
+    const jtIco = jtOver ? '🚨 ' : jtToday ? '⏰ ' : '';
+    return `<tr>
+      <td class="col-no">${i+1}</td>
+      <td style="font-size:0.76rem;white-space:nowrap;color:var(--gray)">${fmtDate(r.tanggal_mulai)}</td>
+      <td><div class="name-cell">${r.nama}</div><div class="sub-cell">${r.pic||''}</div></td>
+      <td>${s_nicheBadge(r.niche)}</td>
+      <td style="font-size:0.82rem">${r.kecamatan||'—'}</td>
+      <td style="font-size:0.8rem;color:var(--gray)">${r.kabupaten||'—'}</td>
+      <td style="font-size:0.75rem;color:var(--gray);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.url||''}">${r.url||'—'}</td>
+      <td class="money">${fmtMoney(r.harga_bulan)}</td>
+      <td style="font-size:0.8rem">${r.durasi||'—'}</td>
+      <td style="font-size:0.76rem;white-space:nowrap;color:var(--gray)">${fmtDate(r.tanggal_berakhir)}</td>
+      <td>${s_statusKontrakBadge(r.status_kontrak)}</td>
+      <td style="font-size:0.76rem;white-space:nowrap;color:${fuCol};font-weight:${fuOver||fuToday?'700':'400'}">${r.followup?fuIco+fmtDate(r.followup):'—'}</td>
+      <td style="font-size:0.76rem;white-space:nowrap;color:${jtCol};font-weight:${jtOver||jtToday?'700':'400'}">${r.jatuh_tempo?jtIco+fmtDate(r.jatuh_tempo):'—'}</td>
+      <td style="text-align:center;font-weight:700">${jml}</td>
+      <td class="money" style="color:var(--green-d)">${fmtMoney(totalLunas)}</td>
+      <td><div class="notes-cell" title="${r.catatan||''}">${r.catatan||'—'}</div></td>
+      <td><div class="action-btns">
+        <button class="btn-icon" onclick="s_openMitraModal(${r.id})" title="Edit">✏️</button>
+        <button class="btn-icon danger" onclick="s_delMitra(${r.id})" title="Hapus">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  s_refreshMitraDatalist();
+  updateBellDot();
+}
+
+// ─── RENDER: LOG TAGIHAN ───
+function s_renderTagihan() {
+  const q = document.getElementById('search-s-tagihan').value.toLowerCase();
+  let d = tagihanListS.filter(r => {
+    if (filterS.tagihan !== 'semua' && r.bayar !== filterS.tagihan) return false;
+    if (q) return [r.mitra, r.niche, r.kecamatan, r.kabupaten, r.bulan_tagihan].join(' ').toLowerCase().includes(q);
+    return true;
+  });
+  d = s_applySort(d, 'tagihan');
+
+  const all = tagihanListS;
+  const lunas      = all.filter(r=>r.bayar==='Lunas ✅').reduce((s,r)=>s+(+r.nominal||0),0);
+  const belum      = all.filter(r=>r.bayar==='Belum ⏳').reduce((s,r)=>s+(+r.nominal||0),0);
+
+  document.getElementById('o-s-total').textContent        = all.length;
+  document.getElementById('o-s-lunas-cnt').textContent     = all.filter(r=>r.bayar==='Lunas ✅').length;
+  document.getElementById('o-s-belum-cnt').textContent     = all.filter(r=>r.bayar==='Belum ⏳').length;
+  document.getElementById('o-s-terlambat-cnt').textContent = all.filter(r=>r.bayar==='Terlambat ⚠️').length;
+  document.getElementById('o-s-lunas').textContent         = fmtMoney(lunas);
+  document.getElementById('o-s-belum').textContent         = fmtMoney(belum);
+  document.getElementById('cnt-s-tagihan').textContent     = all.length;
+
+  const tbody = document.getElementById('tbody-s-tagihan');
+  const empty = document.getElementById('empty-s-tagihan');
+  if (!d.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = d.map((r, i) => {
+    const terlambat = r.bayar === 'Terlambat ⚠️';
+    return `<tr${terlambat ? ' style="background:#FEF2F2"' : ''}>
+      <td class="col-no">${i+1}</td>
+      <td style="font-size:0.76rem;white-space:nowrap;color:var(--gray)">${fmtDate(r.tanggal_tagihan)}</td>
+      <td><div class="name-cell">${r.mitra}</div></td>
+      <td>${s_nicheBadge(r.niche)}</td>
+      <td style="font-size:0.82rem">${r.kecamatan||'—'}<div class="sub-cell">${r.kabupaten||''}</div></td>
+      <td style="font-size:0.82rem">${r.bulan_tagihan||'—'}</td>
+      <td>${s_tagihanKeBadge(r.id)}</td>
+      <td class="money">${fmtMoney(r.nominal)}</td>
+      <td>${s_bayarBadge(r.bayar)}</td>
+      <td style="font-size:0.76rem;white-space:nowrap;color:var(--gray)">${fmtDate(r.tanggal_bayar)}</td>
+      <td><div class="notes-cell" title="${r.catatan||''}">${r.catatan||'—'}</div></td>
+      <td><div class="action-btns">
+        <button class="btn-icon" onclick="s_openTagihanModal(${r.id})" title="Edit">✏️</button>
+        <button class="btn-icon danger" onclick="s_delTagihan(${r.id})" title="Hapus">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── MODAL: OPEN/CLOSE ───
+function s_closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  editIdS[id.replace('mo-s-','')] = null;
+}
+function s_openMitraModal(id=null) {
+  editIdS.mitra = id;
+  document.getElementById('mt-s-mitra').textContent = id ? 'Edit Kontrak Sewa' : 'Tambah Kontrak Sewa Baru';
+  const r = id ? mitraListS.find(x=>x.id===id) : {};
+  const f = (fid, val) => { const el = document.getElementById(fid); if (el) el.value = val||''; };
+  f('fm-s-tanggal-mulai', r.tanggal_mulai||today()); f('fm-s-niche', r.niche||NICHE_LIST[0]);
+  f('fm-s-nama', r.nama); f('fm-s-pic', r.pic); f('fm-s-hp', r.hp);
+  f('fm-s-kecamatan', r.kecamatan); f('fm-s-kabupaten', r.kabupaten);
+  f('fm-s-url', r.url);
+  fmSHargaTouched = false;
+  f('fm-s-harga', id ? (r.harga_bulan||0) : (NICHE_SEWA_DEFAULT[r.niche||NICHE_LIST[0]]||0));
+  f('fm-s-durasi', r.durasi);
+  f('fm-s-tanggal-berakhir', r.tanggal_berakhir); f('fm-s-status', r.status_kontrak||'Prospek 🔍');
+  f('fm-s-followup', r.followup); f('fm-s-jatuh-tempo', r.jatuh_tempo);
+  f('fm-s-catatan', r.catatan);
+  document.getElementById('fm-s-hp-warning').style.display = 'none';
+  document.getElementById('fm-s-hp-warning').innerHTML = '';
+  document.getElementById('mo-s-mitra').classList.add('open');
+  setTimeout(() => document.getElementById('fm-s-nama').focus(), 80);
+}
+function s_checkHpDuplicate() {
+  const box = document.getElementById('fm-s-hp-warning');
+  const dup = findDuplicateMitraPhone(g('fm-s-hp'), 'sewa', editIdS.mitra);
+  if (dup) { box.style.display = 'block'; box.innerHTML = mitraHpWarningHTML(dup); }
+  else { box.style.display = 'none'; box.innerHTML = ''; }
+  return dup;
+}
+let fmSHargaTouched = false;
+function s_applyNicheDefault() {
+  if (fmSHargaTouched) return;
+  const niche = document.getElementById('fm-s-niche').value;
+  document.getElementById('fm-s-harga').value = NICHE_SEWA_DEFAULT[niche] || 0;
+}
+function s_onMitraPick() {
+  const nama = document.getElementById('fo-s-mitra').value.trim();
+  const hintEl = document.getElementById('fo-s-hint');
+  const tagihanKeEl = document.getElementById('fo-s-tagihan-ke');
+  const nominalEl = document.getElementById('fo-s-nominal');
+  const nicheEl = document.getElementById('fo-s-niche');
+  const kecEl = document.getElementById('fo-s-kecamatan');
+  const kabEl = document.getElementById('fo-s-kabupaten');
+
+  if (!nama) {
+    hintEl.textContent = 'Pilih mitra dulu untuk melihat ini tagihan bulan ke berapa.';
+    tagihanKeEl.value = '';
+    return;
+  }
+  const mitraRef = mitraListS.find(m => norm(m.nama) === norm(nama));
+  if (mitraRef && !editIdS.tagihan) {
+    nicheEl.value = mitraRef.niche || nicheEl.value;
+    if (!kecEl.value) { kecEl.value = (mitraRef.kecamatan && mitraRef.kabupaten) ? mitraRef.kecamatan + ' — ' + mitraRef.kabupaten : mitraRef.kecamatan || ''; }
+    kabEl.value = mitraRef.kabupaten || kabEl.value;
+    if (!nominalEl.value || nominalEl.value === '0') nominalEl.value = mitraRef.harga_bulan || 0;
+  }
+
+  const key = norm(nama);
+  let count = tagihanListS.filter(r => norm(r.mitra) === key && r.id !== editIdS.tagihan).length;
+  const ke = count + 1;
+  tagihanKeEl.value = 'Tagihan bulan ke-' + ke;
+  hintEl.textContent = '🧾 Ini akan menjadi tagihan bulan ke-' + ke + ' untuk mitra ini' +
+    (mitraRef && mitraRef.harga_bulan ? ' (harga kontrak Rp ' + Number(mitraRef.harga_bulan).toLocaleString('id-ID') + '/bulan).' : '.');
+}
+function s_openTagihanModal(id=null) {
+  editIdS.tagihan = id;
+  s_refreshMitraDatalist();
+  document.getElementById('mt-s-tagihan').textContent = id ? 'Edit Tagihan' : 'Catat Tagihan Bulanan';
+  const r = id ? tagihanListS.find(x=>x.id===id) : {};
+  const f = (fid,val) => { const el=document.getElementById(fid); if(el) el.value=val||''; };
+  f('fo-s-tanggal', r.tanggal_tagihan||today()); f('fo-s-mitra', r.mitra);
+  f('fo-s-niche', r.niche||NICHE_LIST[0]); f('fo-s-bulan', r.bulan_tagihan);
+  f('fo-s-kecamatan', r.kecamatan); f('fo-s-kabupaten', r.kabupaten);
+  f('fo-s-nominal', r.nominal||0); f('fo-s-bayar', r.bayar||'Belum ⏳');
+  f('fo-s-tanggal-bayar', r.tanggal_bayar); f('fo-s-catatan', r.catatan);
+  document.getElementById('mo-s-tagihan').classList.add('open');
+  s_onMitraPick();
+  setTimeout(() => document.getElementById('fo-s-mitra').focus(), 80);
+}
+
+// ─── SAVE ───
+function s_saveMitra() {
+  const nama = g('fm-s-nama').trim();
+  if (!nama) { alert('Nama mitra wajib diisi.'); return; }
+  const hp = g('fm-s-hp');
+  const dup = findDuplicateMitraPhone(hp, 'sewa', editIdS.mitra);
+  if (dup) {
+    const lanjut = confirm(
+      `⚠️ Nomor ini sudah pernah digarap sebelumnya!\n\n` +
+      `Atas nama: ${dup.row.nama}\nSistem: ${dup.sistem}\nNiche: ${dup.row.niche||'—'}` +
+      `\n\nTetap simpan sebagai kontrak baru?`
+    );
+    if (!lanjut) return;
+  }
+  const row = {
+    id: editIdS.mitra || Date.now(),
+    tanggal_mulai: g('fm-s-tanggal-mulai'), niche: g('fm-s-niche'), nama, pic: g('fm-s-pic'),
+    hp: g('fm-s-hp'), kecamatan: g('fm-s-kecamatan'), kabupaten: g('fm-s-kabupaten'),
+    url: g('fm-s-url'), harga_bulan: +g('fm-s-harga')||0, durasi: g('fm-s-durasi'),
+    tanggal_berakhir: g('fm-s-tanggal-berakhir'), status_kontrak: g('fm-s-status'),
+    followup: g('fm-s-followup'), jatuh_tempo: g('fm-s-jatuh-tempo'),
+    catatan: g('fm-s-catatan')
+  };
+  if (editIdS.mitra) mitraListS = mitraListS.map(x=>x.id===editIdS.mitra?row:x);
+  else mitraListS.push(row);
+  saveS('mitra', mitraListS); s_closeModal('mo-s-mitra'); s_renderMitra(); s_renderTagihan();
+}
+function s_saveTagihan() {
+  const mitra = g('fo-s-mitra').trim();
+  if (!mitra) { alert('Nama mitra wajib diisi.'); return; }
+  const row = {
+    id: editIdS.tagihan || Date.now(),
+    tanggal_tagihan: g('fo-s-tanggal'), mitra, niche: g('fo-s-niche'),
+    bulan_tagihan: g('fo-s-bulan'), kecamatan: g('fo-s-kecamatan'), kabupaten: g('fo-s-kabupaten'),
+    nominal: +g('fo-s-nominal')||0, bayar: g('fo-s-bayar'),
+    tanggal_bayar: g('fo-s-tanggal-bayar'), catatan: g('fo-s-catatan')
+  };
+  if (editIdS.tagihan) tagihanListS = tagihanListS.map(x=>x.id===editIdS.tagihan?row:x);
+  else tagihanListS.push(row);
+  saveS('tagihan', tagihanListS); s_closeModal('mo-s-tagihan'); s_renderTagihan(); s_renderMitra();
+}
+
+// ─── DELETE ───
+function s_delMitra(id) {
+  if (!confirm('Hapus kontrak ini? (Log tagihan terkait tidak ikut terhapus)')) return;
+  mitraListS = mitraListS.filter(x=>x.id!==id); saveS('mitra',mitraListS); s_renderMitra();
+}
+function s_delTagihan(id) {
+  if (!confirm('Hapus baris tagihan ini?')) return;
+  tagihanListS = tagihanListS.filter(x=>x.id!==id); saveS('tagihan',tagihanListS); s_renderTagihan(); s_renderMitra();
+}
+
+// ─── EXPORT CSV ───
+function s_exportMitraCSV() {
+  csvBlob(
+    ['No','Tgl Mulai','Nama Mitra','PIC','No HP','Niche','Kecamatan','Kabupaten','URL Halaman','Harga/Bulan','Durasi','Tgl Berakhir','Status Kontrak','Follow-up','Jatuh Tempo','Bulan Tertagih','Total Lunas','Catatan'],
+    mitraListS.map((r,i) => [i+1,r.tanggal_mulai,r.nama,r.pic,r.hp,r.niche,r.kecamatan,r.kabupaten,r.url,r.harga_bulan,r.durasi,r.tanggal_berakhir,r.status_kontrak,r.followup,r.jatuh_tempo,s_jumlahTertagihMitra(r.nama),s_totalLunasMitra(r.nama),r.catatan]),
+    'tracker-mitra-sewa'
+  );
+}
+function s_exportTagihanCSV() {
+  const keMap = s_computeTagihanKeMap();
+  csvBlob(
+    ['No','Tgl Tagihan','Mitra','Niche','Kecamatan','Kabupaten','Bulan Tagihan','Tagihan Ke-','Nominal (Rp)','Status Bayar','Tgl Bayar','Catatan'],
+    tagihanListS.map((r,i) => [i+1,r.tanggal_tagihan,r.mitra,r.niche,r.kecamatan,r.kabupaten,r.bulan_tagihan,keMap[r.id]||'-',r.nominal,r.bayar,r.tanggal_bayar,r.catatan]),
+    'tracker-log-tagihan-sewa'
+  );
+}
+
+// ─── IMPORT CSV ───
+let pendingImportS = null;
+function s_triggerImport(tab) {
+  pendingImportS = null;
+  document.getElementById('imp-s-tab').value = tab;
+  document.getElementById('imp-s-mode').value = 'merge';
+  document.getElementById('imp-s-file').value = '';
+  document.getElementById('imp-s-preview').textContent = 'Belum ada file dipilih.';
+  document.getElementById('imp-s-btn').disabled = true;
+  document.getElementById('mo-s-import').classList.add('open');
+}
+function s_previewImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const text = ev.target.result.replace(/^\uFEFF/, '');
+      const lines = text.split('\n').filter(l => l.trim());
+      if (lines.length < 2) throw new Error('File kosong atau tidak valid.');
+      const rows = lines.slice(1).map(line => {
+        const fields = []; let cur = ''; let inQ = false;
+        for (let i = 0; i < line.length; i++) {
+          if (line[i] === '"') { inQ = !inQ; }
+          else if (line[i] === ',' && !inQ) { fields.push(cur); cur = ''; }
+          else { cur += line[i]; }
+        }
+        fields.push(cur);
+        return fields;
+      });
+      const tab = document.getElementById('imp-s-tab').value;
+      pendingImportS = s_parseCSVRows(tab, rows).filter(r => {
+        if (tab === 'mitra') return r.nama;
+        if (tab === 'tagihan') return r.mitra;
+      });
+      document.getElementById('imp-s-preview').innerHTML =
+        '<span style="color:var(--green-d);font-weight:700">✅ ' + pendingImportS.length + ' baris siap diimport</span> dari <strong>' + file.name + '</strong>';
+      document.getElementById('imp-s-btn').disabled = false;
+    } catch(err) {
+      document.getElementById('imp-s-preview').innerHTML =
+        '<span style="color:var(--red)">❌ Gagal baca file: ' + err.message + '</span>';
+      document.getElementById('imp-s-btn').disabled = true;
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+function s_parseCSVRows(tab, rows) {
+  const n = today();
+  if (tab === 'mitra') return rows.map((f, i) => ({
+    id: Date.now() + i,
+    tanggal_mulai: f[1]||n, nama: f[2]||'', pic: f[3]||'', hp: f[4]||'',
+    niche: f[5]||NICHE_LIST[0], kecamatan: f[6]||'', kabupaten: f[7]||'',
+    url: f[8]||'', harga_bulan: +f[9]||0, durasi: f[10]||'',
+    tanggal_berakhir: f[11]||'', status_kontrak: f[12]||'Prospek 🔍',
+    followup: f[13]||'', jatuh_tempo: f[14]||'',
+    catatan: f[17]||''
+  }));
+  if (tab === 'tagihan') return rows.map((f, i) => ({
+    id: Date.now() + i,
+    tanggal_tagihan: f[1]||n, mitra: f[2]||'', niche: f[3]||NICHE_LIST[0],
+    kecamatan: f[4]||'', kabupaten: f[5]||'', bulan_tagihan: f[6]||'',
+    nominal: +f[8]||0, bayar: f[9]||'Belum ⏳',
+    tanggal_bayar: f[10]||'', catatan: f[11]||''
+  }));
+  return [];
+}
+function s_doImport() {
+  if (!pendingImportS) return;
+  const tab  = document.getElementById('imp-s-tab').value;
+  const mode = document.getElementById('imp-s-mode').value;
+  if (mode === 'replace') {
+    const existing = { mitra: mitraListS.length, tagihan: tagihanListS.length }[tab];
+    if (!confirm('Ini akan MENGGANTI ' + existing + ' baris data yang ada dengan ' + pendingImportS.length + ' baris dari file CSV. Lanjutkan?')) return;
+  }
+  if (tab === 'mitra') {
+    mitraListS = mode === 'replace' ? pendingImportS : [...mitraListS, ...pendingImportS];
+    saveS('mitra', mitraListS); s_renderMitra();
+  } else {
+    tagihanListS = mode === 'replace' ? pendingImportS : [...tagihanListS, ...pendingImportS];
+    saveS('tagihan', tagihanListS); s_renderTagihan();
+  }
+  s_closeModal('mo-s-import');
+  alert('✅ Berhasil import ' + pendingImportS.length + ' baris ke tab ' + tab + '!');
+  pendingImportS = null;
+}
+
+// ─── SEED DATA ───
+// Sudah tidak dipakai lagi di versi database — data contoh awal ada di schema.sql
+function s_seedIfEmpty() { /* no-op: data dikelola server */ }
+
+
+
+/* ════════════════════════════════════════════════════════
+   REMINDER GABUNGAN (mengambil data dari KEDUA sistem)
+   ════════════════════════════════════════════════════════ */
+function updateBellDot() {
+  const kFollowupDue = mitraListK.filter(r =>
+    ['Prospek 🔍','Negosiasi 🔄'].includes(r.status_deal) && r.followup && (isOverdue(r.followup) || isToday(r.followup))
+  );
+  const kBayarDue = orderListK.filter(r =>
+    r.bayar === 'Belum Bayar ⏳' && r.batas_bayar && (isOverdue(r.batas_bayar) || isToday(r.batas_bayar))
+  );
+  const sFollowupDue = mitraListS.filter(r =>
+    ['Prospek 🔍','Perpanjang 🔄'].includes(r.status_kontrak) && r.followup && (isOverdue(r.followup) || isToday(r.followup))
+  );
+  const sJatuhTempoDue = mitraListS.filter(r =>
+    r.status_kontrak === 'Aktif ✅' && r.jatuh_tempo && (isOverdue(r.jatuh_tempo) || isToday(r.jatuh_tempo))
+  );
+  const total = kFollowupDue.length + kBayarDue.length + sFollowupDue.length + sJatuhTempoDue.length;
+  document.getElementById('bellDot').classList.toggle('show', total > 0);
+}
+function reminderItemHtml(nama, sub, dateVal, catatan) {
+  const type = isOverdue(dateVal) ? 'overdue' : 'today';
+  return `<div class="reminder-item">
+    <div class="r-dot ${type}"></div>
+    <div style="flex:1">
+      <div class="r-name">${nama}</div>
+      <div class="r-meta">${sub}</div>
+      ${catatan?`<div class="r-meta" style="font-style:italic;margin-top:2px">"${catatan}"</div>`:''}
+    </div>
+    <span class="r-tag ${type}">${type==='overdue'?'Terlambat!':'Hari ini'}</span>
+  </div>`;
+}
+function checkReminders(manual) {
+  const kFollowup = mitraListK.filter(r =>
+    ['Prospek 🔍','Negosiasi 🔄'].includes(r.status_deal) && r.followup && (isOverdue(r.followup) || isToday(r.followup))
+  ).sort((a,b) => (a.followup||'').localeCompare(b.followup||''));
+  const kBayar = orderListK.filter(r =>
+    r.bayar === 'Belum Bayar ⏳' && r.batas_bayar && (isOverdue(r.batas_bayar) || isToday(r.batas_bayar))
+  ).sort((a,b) => (a.batas_bayar||'').localeCompare(b.batas_bayar||''));
+  const sFollowup = mitraListS.filter(r =>
+    ['Prospek 🔍','Perpanjang 🔄'].includes(r.status_kontrak) && r.followup && (isOverdue(r.followup) || isToday(r.followup))
+  ).sort((a,b) => (a.followup||'').localeCompare(b.followup||''));
+  const sJatuhTempo = mitraListS.filter(r =>
+    r.status_kontrak === 'Aktif ✅' && r.jatuh_tempo && (isOverdue(r.jatuh_tempo) || isToday(r.jatuh_tempo))
+  ).sort((a,b) => (a.jatuh_tempo||'').localeCompare(b.jatuh_tempo||''));
+
+  updateBellDot();
+  const totalCount = kFollowup.length + kBayar.length + sFollowup.length + sJatuhTempo.length;
+
+  if (!totalCount) {
+    if (manual) {
+      document.getElementById('reminder-date').textContent =
+        new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      document.getElementById('reminder-list').innerHTML = '<div class="reminder-empty">🎉 Tidak ada follow-up atau jatuh tempo yang perlu diurus hari ini — di kedua sistem.</div>';
+      document.getElementById('mo-reminder').classList.add('open');
+    }
+    return;
+  }
+
+  document.getElementById('reminder-date').textContent =
+    new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  let html = '';
+  if (kFollowup.length) {
+    html += `<div class="reminder-section-title">💰 Komisi per Lead — Follow-up Prospek/Negosiasi (${kFollowup.length})</div>`;
+    html += `<div class="reminder-list">` + kFollowup.map(r =>
+      reminderItemHtml(r.nama, r.niche + ' · ' + (r.kecamatan||'') + ' · Status: ' + r.status_deal, r.followup, r.catatan)
+    ).join('') + `</div>`;
+  }
+  if (kBayar.length) {
+    html += `<div class="reminder-section-title">💰 Komisi per Lead — Batas Bayar Komisi (${kBayar.length})</div>`;
+    html += `<div class="reminder-list">` + kBayar.map(r =>
+      reminderItemHtml(r.mitra, r.niche + ' · ' + (r.kecamatan||'') + ' · Komisi: ' + fmtMoney(r.komisi), r.batas_bayar, r.catatan)
+    ).join('') + `</div>`;
+  }
+  if (sFollowup.length) {
+    html += `<div class="reminder-section-title">🏠 Sewa Halaman — Follow-up Prospek/Perpanjang (${sFollowup.length})</div>`;
+    html += `<div class="reminder-list">` + sFollowup.map(r =>
+      reminderItemHtml(r.nama, r.niche + ' · ' + (r.kecamatan||'') + ' · Status: ' + r.status_kontrak, r.followup, r.catatan)
+    ).join('') + `</div>`;
+  }
+  if (sJatuhTempo.length) {
+    html += `<div class="reminder-section-title">🏠 Sewa Halaman — Jatuh Tempo Tagihan (${sJatuhTempo.length})</div>`;
+    html += `<div class="reminder-list">` + sJatuhTempo.map(r =>
+      reminderItemHtml(r.nama, r.niche + ' · ' + (r.kecamatan||'') + ' · ' + fmtMoney(r.harga_bulan) + '/bulan', r.jatuh_tempo, r.catatan)
+    ).join('') + `</div>`;
+  }
+  document.getElementById('reminder-list').innerHTML = html;
+  document.getElementById('mo-reminder').classList.add('open');
+}
+
+/* ════════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS & OUTSIDE-CLICK (GABUNGAN)
+   ════════════════════════════════════════════════════════ */
+const ALL_MODAL_IDS = ['mo-k-mitra','mo-k-order','mo-k-import','mo-s-mitra','mo-s-tagihan','mo-s-import','mo-reminder'];
+function closeAnyModal(id) {
+  if (id === 'mo-k-mitra' || id === 'mo-k-order' || id === 'mo-k-import') { k_closeModal(id); return; }
+  if (id === 'mo-s-mitra' || id === 'mo-s-tagihan' || id === 'mo-s-import') { s_closeModal(id); return; }
+  closeSharedModal(id);
+}
+document.addEventListener('keydown', e => {
+  if (e.target.closest('input,textarea,select')) return;
+  if (e.key === 'Escape') ALL_MODAL_IDS.forEach(closeAnyModal);
+  if (e.key === 'n' && activeSystem === 'komisi') {
+    if (activeTabK === 'mitra') k_openMitraModal(); else k_openOrderModal();
+  }
+  if (e.key === 'n' && activeSystem === 'sewa') {
+    if (activeTabS === 'mitra') s_openMitraModal(); else s_openTagihanModal();
+  }
+});
+ALL_MODAL_IDS.forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeAnyModal(id);
+  });
+});
+
+/* ════════════════════════════════════════════════════════
+   INIT (GABUNGAN)
+   ════════════════════════════════════════════════════════ */
+initApp(); // hanya jalan kalau sessionPassword sudah ada (login sebelumnya tersimpan)
+</script>
+</body>
+</html>

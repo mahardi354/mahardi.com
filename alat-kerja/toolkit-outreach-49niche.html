@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toolkit Outreach — 49 Niche TeraWeb</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
+
+  :root{
+    --paper: #F6F5F1;
+    --card: #FFFFFF;
+    --ink: #1D1E1B;
+    --ink-soft: rgba(29,30,27,0.64);
+    --accent: #3D4FE0;
+    --accent-dim: #2C3AB0;
+    --success: #2FA84F;
+    --line: rgba(29,30,27,0.12);
+    --tab-w: 260px;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background: var(--paper); color: var(--ink); font-family:'Inter', sans-serif; line-height:1.55; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  button{ font-family: inherit; cursor:pointer; }
+  input, textarea{ font-family: inherit; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce){ *{ transition-duration:0.001ms !important; } }
+
+  /* ===== APP SHELL ===== */
+  .app{ display:flex; min-height:100vh; max-width:1200px; margin:0 auto; }
+
+  /* ===== SIDEBAR (index tabs) ===== */
+  .sidebar{ width: var(--tab-w); flex-shrink:0; border-right:1px solid var(--line); padding: 24px 0; }
+  .sidebar-head{ padding: 0 20px 18px; border-bottom:1px solid var(--line); margin-bottom: 10px; }
+  .sidebar-head h1{ font-size:1.05rem; font-weight:700; }
+  .sidebar-head p{ font-size:0.78rem; color: var(--ink-soft); margin-top:4px; }
+  .sidebar-me{ padding: 16px 20px; border-bottom:1px solid var(--line); margin-bottom: 4px; }
+  .sidebar-me label{ display:block; font-size:0.74rem; color: var(--ink-soft); margin-bottom:6px; font-weight:500; }
+  .sidebar-me input{
+    width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:6px; font-size:0.86rem;
+    background: var(--paper); color: var(--ink);
+  }
+  .sidebar-me input:focus{ background:#fff; }
+
+  .mobile-me{ display:none; padding: 14px 20px; border-bottom:1px solid var(--line); }
+  .mobile-me label{ display:block; font-size:0.76rem; color: var(--ink-soft); margin-bottom:6px; font-weight:500; }
+  .mobile-me input{
+    width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:0.88rem;
+    background: var(--card); color: var(--ink);
+  }
+  .tab-list{ list-style:none; max-height: calc(100vh - 200px); overflow-y:auto; }
+  .tab-item{ position:relative; }
+  .tab-btn{
+    width:100%; text-align:left; background:none; border:none; padding: 12px 20px 12px 24px;
+    font-size:0.86rem; color: var(--ink-soft); border-left: 3px solid transparent;
+  }
+  .tab-btn:hover{ background: rgba(61,79,224,0.05); color: var(--ink); }
+  .tab-btn.active{ background: rgba(61,79,224,0.08); color: var(--accent); border-left-color: var(--accent); font-weight:600; }
+  .tab-num{ font-family:'JetBrains Mono', monospace; font-size:0.7rem; opacity:0.6; margin-right:8px; }
+
+  /* Mobile select */
+  .mobile-select{ display:none; }
+
+  /* ===== MAIN ===== */
+  main{ flex:1; padding: 32px 36px 80px; min-width:0; }
+  .niche-title{ font-size:1.5rem; font-weight:700; margin-bottom: 4px; }
+  .niche-sub{ font-size:0.86rem; color: var(--ink-soft); margin-bottom: 28px; }
+
+  /* Keywords */
+  .block{ margin-bottom: 34px; }
+  .block-label{ font-family:'JetBrains Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color: var(--ink-soft); margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+  .kw-list{ display:flex; flex-wrap:wrap; gap:8px; }
+  .kw-chip{
+    background: var(--card); border:1px solid var(--line); border-radius:20px; padding: 7px 14px;
+    font-size:0.82rem; display:flex; align-items:center; gap:8px;
+  }
+  .kw-copy{ background:none; border:none; color: var(--accent); font-size:0.78rem; font-weight:600; padding:0; }
+
+  /* Editable fields */
+  .fields{ background: var(--card); border:1px solid var(--line); border-radius:12px; padding: 20px 22px; display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
+  @media (max-width: 720px){ .fields{ grid-template-columns:1fr; } }
+  .field label{ display:block; font-size:0.76rem; color: var(--ink-soft); margin-bottom:6px; font-weight:500; }
+  .field input{
+    width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:0.88rem;
+    background: var(--paper); color: var(--ink);
+  }
+  .field input:focus{ background:#fff; }
+  .field-link-stack{ display:flex; flex-direction:column; gap:12px; }
+
+  .hint{ font-size:0.78rem; color: var(--ink-soft); margin-top:10px; }
+
+  /* Message cards */
+  .msg-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+  @media (max-width: 860px){ .msg-grid{ grid-template-columns:1fr; } }
+  .msg-card{ background: var(--card); border:1px solid var(--line); border-radius:12px; padding: 20px 20px 18px; display:flex; flex-direction:column; }
+  .msg-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .msg-label{ font-size:0.86rem; font-weight:700; }
+  .copy-btn{
+    background: var(--accent); color:#fff; border:none; border-radius:6px; padding:7px 14px;
+    font-size:0.78rem; font-weight:600; transition: background 0.15s;
+  }
+  .copy-btn:hover{ background: var(--accent-dim); }
+  .copy-btn.copied{ background: var(--success); }
+  .msg-preview{
+    display:block; width:100%; box-sizing:border-box; font-family:inherit;
+    white-space:pre-wrap; font-size:0.86rem; color: var(--ink); background: var(--paper);
+    border:1px solid var(--line); border-radius:8px; padding: 14px; min-height:150px;
+    resize:vertical; overflow-y:hidden;
+  }
+  .msg-preview:focus{ outline:none; border-color: var(--accent); background:#fff; }
+  .msg-preview .ph{ background: rgba(61,79,224,0.15); border-radius:3px; padding:0 2px; }
+  .msg-head-actions{ display:flex; align-items:center; gap:10px; }
+  .reset-btn{
+    background:none; border:none; color: var(--ink-soft); font-size:0.76rem; font-weight:500;
+    padding:0; text-decoration:underline;
+  }
+  .reset-btn:hover{ color: var(--accent); }
+
+  footer{ padding: 26px 36px; text-align:center; font-size:0.78rem; color: var(--ink-soft); border-top:1px solid var(--line); }
+
+  @media (max-width: 860px){
+    .app{ flex-direction:column; }
+    .sidebar{ display:none; }
+    .mobile-select{ display:block; padding: 18px 20px 0; }
+    .mobile-select select{
+      width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-size:0.9rem;
+      background: var(--card);
+    }
+    .mobile-me{ display:block; }
+    main{ padding: 0 20px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <h1>Toolkit Outreach</h1>
+      <p>49 niche TeraWeb &middot; keyword &amp; pesan</p>
+    </div>
+    <div class="sidebar-me">
+      <label for="fNamaKamu">Nama kamu (pengirim)</label>
+      <input type="text" id="fNamaKamu" placeholder="cth. Didik">
+    </div>
+    <ul class="tab-list" id="tabList"></ul>
+  </aside>
+
+  <main>
+    <div class="mobile-select">
+      <select id="mobileSelect"></select>
+    </div>
+    <div class="mobile-me">
+      <label for="fNamaKamuMobile">Nama kamu (pengirim)</label>
+      <input type="text" id="fNamaKamuMobile" placeholder="cth. Didik">
+    </div>
+
+    <div id="content"></div>
+  </main>
+
+</div>
+
+<footer>Toolkit internal TeraWeb &middot; sesuaikan isian sebelum mengirim pesan ke calon klien</footer>
+
+<script>
+const DATA = [
+  {
+    "id": "fotografer-videografer",
+    "name": "Fotografer & videografer",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "fotografer wedding [kota]",
+      "jasa foto prewedding [kota]",
+      "videografer pernikahan [kota]",
+      "#fotograferwedding",
+      "#fotograferpernikahan",
+      "#videograferwedding",
+      "#preweddingphotography"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil fotografer dan videografer Kakak di {{sumber}}. Fotonya bagus-bagus banget... tapi sayang kalau portofolio sebagus itu cuma numpuk di feed IG kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche fotografer dan videografer, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil fotografer dan videografer Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus fotografer dan videografer biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "wo-dekorasi-pernikahan",
+    "name": "WO & dekorasi pernikahan",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/wedding-organizer-1/",
+      "link2": ""
+    },
+    "keywords": [
+      "wedding organizer [kota]",
+      "dekorasi pernikahan [kota]",
+      "vendor WO [kota]",
+      "#weddingorganizer[kota]",
+      "#dekorasipernikahan",
+      "#vendorwedding[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil WO dan dekorasi pernikahan Kakak di {{sumber}}. Konsep dekorasinya rapi-rapi banget... tapi sayang kalau portofolio sebagus itu cuma numpuk di feed Instagram, padahal calon pengantin biasanya pengen leluasa bandingin paket & baca testimoni dulu sebelum mutusin kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche WO dan dekorasi pernikahan, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil WO dan dekorasi pernikahan Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus WO dan dekorasi pernikahan biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "catering",
+    "name": "Catering",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/catering-1/",
+      "link2": ""
+    },
+    "keywords": [
+      "catering [kota]",
+      "jasa catering pernikahan [kota]",
+      "catering nasi kotak [kota]",
+      "#catering[kota]",
+      "#cateringpernikahan[kota]",
+      "#nasikotak[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil catering Kakak di {{sumber}}. Menu dan galeri acaranya menarik banget... tapi sayang kalau portofolio sebagus itu cuma numpuk di feed IG, padahal calon klien acara nikahan/kantor biasanya pengen bandingin paket dulu sebelum pesan kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche catering, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil catering Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus catering biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "kontraktor-renovasi-rumah",
+    "name": "Tukang Bangunan",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/kontraktor-arsitek-1/",
+      "link2": ""
+    },
+    "keywords": [
+      "tukang bangunan [kota]",
+      "jasa tukang bangunan [kota]",
+      "tukang renovasi rumah [kota]",
+      "#tukangbangunan[kota]",
+      "#jasarenovasirumah",
+      "#tukangrenovasi[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil tukang bangunan Kakak di {{sumber}}. Hasil kerjanya rapi-rapi banget... tapi sayang kalau portofolio sebagus itu belum ada di tempat yang bikin calon klien baru percaya sebelum berani serahin rumah & uang buat direnovasi kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche tukang bangunan, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil tukang bangunan Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus tukang bangunan biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "agen-properti-independen",
+    "name": "Agen properti independen",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "agen properti [kota]",
+      "broker properti independen [kota]",
+      "#agenproperti[kota]",
+      "#brokerproperti"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil agen properti independen Bapak/Ibu di {{sumber}}. Listingnya rapi-rapi dan fotonya jelas... tapi sayang kalau portofolio properti sebagus itu cuma numpuk di marketplace, padahal calon klien biasanya pengen cek dulu track record Bapak/Ibu sebelum serius nanya pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche agen properti independen, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil agen properti independen Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus agen properti independen biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "travel-agent-individual-open-trip",
+    "name": "Travel Agent Individual/Open Trip Organizer",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "open trip [kota]",
+      "travel consultant [kota]",
+      "trip organizer [kota]",
+      "#opentrip[kota]",
+      "#travelconsultant",
+      "#jalanbareng[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil open trip Kakak di {{sumber}}. Destinasi tripnya seru-seru dan fotonya bagus banget... tapi sayang kalau portofolio sebagus itu cuma numpuk di feed IG, padahal calon peserta biasanya pengen bandingin jadwal & harga trip dulu sebelum ikutan kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche open trip, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil open trip Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus open trip biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "notaris-ppat",
+    "name": "Notaris & PPAT",
+    "defaults": {
+      "sumber": "Google Maps",
+      "link1": "https://teraweb.id/demo/notaris-ppat-1/",
+      "link2": ""
+    },
+    "keywords": [
+      "notaris [kota]",
+      "PPAT [kota]",
+      "kantor notaris dan PPAT [kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil notaris dan PPAT Bapak/Ibu di {{sumber}}. Profilnya keliatan meyakinkan... tapi sayang kalau Bapak/Ibu belum punya tempat sendiri buat nunjukin legalitas & spesialisasi ke klien yang dirujuk dari bank atau rekan bisnis pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche notaris dan PPAT, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil notaris dan PPAT Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus notaris dan PPAT biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "pengacara-kantor-hukum",
+    "name": "Pengacara / kantor hukum",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "kantor hukum [kota]",
+      "pengacara [kota]",
+      "advokat [kota]",
+      "law firm [kota]",
+      "#pengacara[kota]",
+      "#advokat[kota]",
+      "#konsultanhukum"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil pengacara atau kantor hukum Bapak/Ibu di {{sumber}}. Profilnya keliatan cukup meyakinkan... tapi sayang kalau rekam jejak kasus & spesialisasi Bapak/Ibu belum ditampilkan di tempat yang lebih formal dari sekadar kartu nama pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche pengacara atau kantor hukum, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil pengacara atau kantor hukum Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus pengacara atau kantor hukum biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "travel-umroh",
+    "name": "Travel Umroh",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/travel-umroh-1/",
+      "link2": ""
+    },
+    "keywords": [
+      "travel umroh [kota]",
+      "biro umroh [kota]",
+      "agen umroh terpercaya [kota]",
+      "#travelumroh[kota]",
+      "#umrohaman",
+      "#ppiuresmi"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil travel umroh Bapak/Ibu di {{sumber}}. Profil biro umrohnya keliatan meyakinkan... tapi sayang kalau legalitas PPIU & testimoni jamaah belum ditampilkan di tempat resmi yang bisa nurunin kekhawatiran calon jamaah soal penipuan travel umroh pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche travel umroh, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil travel umroh Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus travel umroh biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "sedot-wc",
+    "name": "Sedot WC",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "sedot wc [kota]",
+      "sedot tinja [kota]",
+      "sedot wc terdekat [kota]",
+      "#sedotwc[kota]",
+      "#sedottinja[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil sedot WC Kakak di {{sumber}}. Responnya cepat dan keliatan profesional dari cara balesnya... tapi sayang kalau usaha sebagus ini cuma dikenal dari nomor WA yang dicoret di tiang listrik, belum ada tempat resmi yang bikin calon klien percaya sebelum manggil kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche sedot WC, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil sedot WC Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus sedot WC biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "service-ac",
+    "name": "Service AC",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "service ac [kota]",
+      "tukang ac panggilan [kota]",
+      "cuci ac [kota]",
+      "#serviceac[kota]",
+      "#tukangac[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil service AC Kakak di {{sumber}}. Ulasannya bagus-bagus dan responnya cepat... tapi sayang kalau usaha sebagus ini belum kelihatan pas orang cari 'service AC terdekat' di Google, padahal itu momen paling gampang buat dapet klien baru kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche service AC, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil service AC Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus service AC biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "tukang-listrik",
+    "name": "Tukang Listrik",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "tukang listrik panggilan [kota]",
+      "instalasi listrik [kota]",
+      "service listrik rumah [kota]",
+      "#tukanglistrik[kota]",
+      "#instalasilistrik[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil tukang listrik Kakak di {{sumber}}. Keliatan udah berpengalaman dari cara kerjanya... tapi sayang kalau belum ada tempat resmi yang bikin calon klien yakin sebelum masukin orang ke rumah buat urusan listrik yang riskan kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche tukang listrik, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil tukang listrik Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus tukang listrik biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "klinik-dokter-gigi",
+    "name": "Klinik & dokter gigi",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/klinik-gigi-1/",
+      "link2": ""
+    },
+    "keywords": [
+      "klinik gigi [kota]",
+      "dokter gigi praktik [kota]",
+      "dental clinic [kota]",
+      "#klinikgigi[kota]",
+      "#dokterGigi[kota]",
+      "#dentalclinic[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil klinik dan dokter gigi Kakak di {{sumber}}. Hasil treatment before-after-nya rapi banget... tapi sayang kalau itu cuma numpuk di feed IG, padahal orang yang takut ke dokter gigi biasanya pengen cek dulu fasilitas & ulasan sebelum berani datang kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche klinik dan dokter gigi, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil klinik dan dokter gigi Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus klinik dan dokter gigi biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "dokter-spesialis-praktek-mandiri",
+    "name": "Dokter spesialis praktek mandiri",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "dokter spesialis [kota]",
+      "praktek dokter spesialis [kota]",
+      "#dokterspesialis[kota]",
+      "#praktekdokter[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil dokter spesialis praktek mandiri Bapak/Ibu di {{sumber}}. Profilnya keliatan meyakinkan... tapi sayang kalau jadwal praktik & spesialisasi Bapak/Ibu belum ada di tempat yang gampang dicek pasien baru selain Halodoc/Alodokter pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche dokter spesialis praktek mandiri, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil dokter spesialis praktek mandiri Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus dokter spesialis praktek mandiri biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "psikolog-konselor",
+    "name": "Psikolog & konselor",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "psikolog [kota]",
+      "biro psikologi [kota]",
+      "konselor pernikahan [kota]",
+      "#psikolog[kota]",
+      "#konselingpsikologi",
+      "#kesehatanmental[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil psikolog dan konselor Kakak di {{sumber}}. Profilnya keliatan hangat dan meyakinkan... tapi sayang kalau latar belakang & pendekatan Kakak belum ditampilkan di tempat yang bisa bikin calon klien lebih nyaman sebelum menghubungi kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche psikolog dan konselor, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil psikolog dan konselor Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus psikolog dan konselor biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "akuntan-konsultan-pajak",
+    "name": "Akuntan & konsultan pajak",
+    "defaults": {
+      "sumber": "LinkedIn",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "kantor akuntan publik [kota]",
+      "konsultan pajak [kota]",
+      "jasa pembukuan UMKM [kota]",
+      "cari di LinkedIn: “konsultan pajak [kota]”",
+      "grup FB komunitas UMKM [kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil akuntan dan konsultan pajak Bapak/Ibu di {{sumber}}. Profilnya keliatan profesional... tapi sayang kalau sertifikasi & pengalaman Bapak/Ibu belum ditampilkan di tempat yang bisa bangun trust sebelum klien nyerahin data keuangan mereka pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche akuntan dan konsultan pajak, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil akuntan dan konsultan pajak Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus akuntan dan konsultan pajak biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "travel-tour-premium",
+    "name": "Travel & Tour Premium",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "tour operator [kota]",
+      "paket wisata premium [kota]",
+      "travel agent [kota]",
+      "#tourpremium[kota]",
+      "#paketwisata[kota]",
+      "#travelagent[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil tour & travel Bapak/Ibu di {{sumber}}. Paket wisatanya keliatan premium dan lengkap... tapi sayang kalau info sebagus itu cuma keliatan di Instagram atau numpuk di listing OTA, gak ada identitas brand sendiri yang gampang dicek calon klien pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche travel & tour, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil tour & travel Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus travel & tour biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "travel-antar-kota",
+    "name": "Travel Antar Kota",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "travel [kota asal]-[kota tujuan]",
+      "travel antar kota [kota]",
+      "travel door to door [kota]",
+      "#travel[kota]",
+      "#traveldoortodoor[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil travel antar kota Bapak/Ibu di {{sumber}}. Jadwalnya keliatan rutin dan terpercaya... tapi sayang kalau jadwal & harga sebagus itu cuma di-broadcast ke grup WA langganan, belum ada tempat resmi yang bikin penumpang baru yakin buat coba pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche travel antar kota, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil travel antar kota Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus travel antar kota biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "rental-mobil",
+    "name": "Rental Mobil",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/rental-mobil/",
+      "link2": ""
+    },
+    "keywords": [
+      "rental mobil [kota]",
+      "sewa mobil lepas kunci [kota]",
+      "rental mobil murah [kota]",
+      "#rentalmobil[kota]",
+      "#sewamobil[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil rental mobil Kakak di {{sumber}}. Armadanya keliatan terawat dan lengkap... tapi sayang kalau info sebagus itu cuma ada di grup FB/status WA, padahal banyak orang was-was soal sewa mobil online yang gak sesuai janji kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche rental mobil, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil rental mobil Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus rental mobil biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "klinik-kecantikan-estetika-medis",
+    "name": "Klinik kecantikan & estetika medis",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/klinik-kecantikan-1/",
+      "link2": ""
+    },
+    "keywords": [
+      "klinik kecantikan [kota]",
+      "klinik estetika [kota]",
+      "skincare clinic [kota]",
+      "#klinikkecantikan[kota]",
+      "#klinikestetika",
+      "#treatmentwajah[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil klinik kecantikan dan estetika medis Kakak di {{sumber}}. Before-after treatment-nya meyakinkan banget... tapi sayang kalau itu cuma numpuk di feed IG, padahal calon pelanggan biasanya riset dalam dulu soal dokter & sertifikasi sebelum berani treatment kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche klinik kecantikan dan estetika medis, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil klinik kecantikan dan estetika medis Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus klinik kecantikan dan estetika medis biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "mua-make-up-artist",
+    "name": "MUA & Make Up Artist",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "MUA [kota]",
+      "make up artist wedding [kota]",
+      "rias pengantin [kota]",
+      "#muawedding[kota]",
+      "#makeupartist[kota]",
+      "#riaspengantin[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat portofolio make up Kakak di {{sumber}} — rapi banget hasil riasannya 👍\n\nKak, biasanya calon pengantin nyari MUA lewat Instagram/TikTok, tapi begitu mau serius booking mereka susah bandingin paket harga & galeri per gaya riasan karena semua numpuk di feed.\n\nSaya sudah bikin contoh desain website khusus untuk niche MUA, boleh saya kirim linknya kalau Kakak penasaran? 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat portofolio make up Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus MUA & jasa rias pengantin biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "jasa-desain-interior",
+    "name": "Jasa desain interior",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "jasa desain interior [kota]",
+      "interior design [kota]",
+      "#desaininterior[kota]",
+      "#interiordesigner[kota]",
+      "#jasainteriorrumah"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil jasa desain interior Kakak di {{sumber}}. Proyeknya estetik banget... tapi sayang kalau portofolio sebagus itu cuma keliatan di feed yang isinya campur-campur, gak ada tempat khusus yang nunjukin konsistensi gaya Kakak kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche jasa desain interior, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil jasa desain interior Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus jasa desain interior biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "barbershop-kekinian",
+    "name": "Barbershop kekinian",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/barbershop/",
+      "link2": ""
+    },
+    "keywords": [
+      "barbershop [kota]",
+      "pangkas rambut pria [kota]",
+      "#barbershop[kota]",
+      "#barbershopindonesia",
+      "#pangkasrambutpria"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil barbershop kekinian Kakak di {{sumber}}. Konsepnya kekinian banget... tapi sayang kalau Kakak udah sejauh ini di Instagram, belum sekalian punya website biar makin gampang ditemukan calon pelanggan baru kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche barbershop kekinian, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil barbershop kekinian Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus barbershop kekinian biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "mc-event-organizer",
+    "name": "MC & event organizer",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "MC pernikahan [kota]",
+      "event organizer [kota]",
+      "jasa MC acara [kota]",
+      "#mcwedding[kota]",
+      "#eventorganizer[kota]",
+      "#mcacara"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil MC dan event organizer Kakak di {{sumber}}. Portofolio acaranya seru-seru banget... tapi sayang kalau video highlight & testimoni sebagus itu cuma numpuk di feed, gak ada tempat khusus buat calon klien lihat paket & rekam jejak Kakak kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche MC dan event organizer, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil MC dan event organizer Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus MC dan event organizer biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "aqiqah",
+    "name": "Aqiqah",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "aqiqah [kota]",
+      "jasa aqiqah [kota]",
+      "catering aqiqah [kota]",
+      "#aqiqah[kota]",
+      "#jasaaqiqah[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil aqiqah Kakak di {{sumber}}. Paketnya lengkap dan keliatan rapi... tapi sayang kalau info kehalalan & kualitas masakan sebagus itu belum ditampilkan di tempat resmi yang bisa nurunin keraguan calon klien kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche aqiqah, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil aqiqah Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus aqiqah biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "cuci-karpet",
+    "name": "Cuci Karpet",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/cuci-karpet/",
+      "link2": ""
+    },
+    "keywords": [
+      "cuci karpet [kota]",
+      "laundry karpet [kota]",
+      "cuci sofa karpet panggilan [kota]",
+      "#cucikarpet[kota]",
+      "#laundrykarpet[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil cuci karpet Kakak di {{sumber}}. Hasil kerjanya rapi banget dari foto before-after-nya... tapi sayang kalau itu cuma numpuk di status WA, padahal orang butuh yakin dulu sebelum masukin orang ke rumah buat nyuci karpet/sofa kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche cuci karpet, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil cuci karpet Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus cuci karpet biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "tk-paud",
+    "name": "TK & PAUD",
+    "defaults": {
+      "sumber": "grup Facebook",
+      "link1": "https://teraweb.id/demo/tk-paud/",
+      "link2": ""
+    },
+    "keywords": [
+      "TK [kota]",
+      "PAUD [kota]",
+      "sekolah TK swasta [kota]",
+      "#tk[kota]",
+      "#paud[kota]",
+      "grup FB “wali murid [kota]”"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil TK dan PAUD Bapak/Ibu di {{sumber}}. Kegiatan dan fasilitasnya keliatan seru dan lengkap... tapi sayang kalau kurikulum & testimoni wali murid belum ditampilkan di tempat yang gampang diakses orang tua yang lagi riset sebelum daftarin anaknya pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche TK dan PAUD, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil TK dan PAUD Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus TK dan PAUD biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "pesantren",
+    "name": "Pesantren",
+    "defaults": {
+      "sumber": "grup Facebook",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "pondok pesantren [daerah]",
+      "pesantren tahfidz [daerah]",
+      "#pesantren[daerah]",
+      "#pondokpesantren",
+      "grup FB alumni & wali santri"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil pesantren Bapak/Ibu di {{sumber}}. Fasilitas dan kegiatan santrinya keliatan bagus... tapi sayang kalau profil pengasuh, kurikulum, dan testimoni alumni belum ada di tempat yang gampang diakses orang tua yang lagi riset dalam-dalam sebelum menitipkan anaknya pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche pesantren, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil pesantren Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus pesantren biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "klinik-umum",
+    "name": "Klinik umum",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "klinik umum [kota]",
+      "klinik 24 jam [kota]",
+      "klinik pratama [kota]",
+      "#klinikumum[kota]",
+      "#klinik24jam"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil klinik umum Kakak di {{sumber}}. Profilnya keliatan cukup lengkap... tapi sayang kalau info dokter jaga & layanan belum gampang dicek pasien baru yang biasanya googling dulu sebelum datang kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche klinik umum, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil klinik umum Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus klinik umum biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "jasa-cleaning-service",
+    "name": "Jasa cleaning service",
+    "defaults": {
+      "sumber": "grup Facebook",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "cleaning service [kota]",
+      "jasa bersih rumah [kota]",
+      "general cleaning [kota]",
+      "#cleaningservice[kota]",
+      "grup FB “jasa cleaning [kota]”"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil jasa cleaning service Kakak di {{sumber}}. Hasil kerjanya rapi banget dari foto-fotonya... tapi sayang kalau foto serapi itu cuma andalin nomor WA di flyer, padahal ini bisa jadi nilai plus buat menang tender kantoran kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche jasa cleaning service, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil jasa cleaning service Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus jasa cleaning service biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "klinik-hewan-pet-shop",
+    "name": "Klinik hewan & pet shop",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "https://teraweb.id/demo/klinik-hewan-petshop/",
+      "link2": ""
+    },
+    "keywords": [
+      "klinik hewan [kota]",
+      "dokter hewan [kota]",
+      "pet shop [kota]",
+      "#klinikhewan[kota]",
+      "#dokterhewan[kota]",
+      "#petshop[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil klinik hewan dan pet shop Kakak di {{sumber}}. Profilnya keliatan ramah dan rapi... tapi sayang kalau profil dokter hewan & testimoni pemilik hewan lain belum ditampilkan di tempat yang lebih formal, apalagi kompetisi klinik hewan modern masih belum terlalu padat secara digital kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche klinik hewan dan pet shop, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil klinik hewan dan pet shop Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus klinik hewan dan pet shop biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "konveksi-jahit-custom",
+    "name": "Konveksi & jahit custom",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "konveksi [kota]",
+      "jasa jahit seragam [kota]",
+      "sablon kaos custom [kota]",
+      "#konveksi[kota]",
+      "#jahitcustom",
+      "#seragamkantor"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil konveksi dan jahit custom Kakak di {{sumber}}. Hasil jahitannya rapi banget dari foto-fotonya... tapi sayang kalau portofolio serapi itu cuma numpuk berantakan di story/status WA, padahal ini penting banget buat menggaet klien B2B/korporat dengan order rutin kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche konveksi dan jahit custom, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil konveksi dan jahit custom Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus konveksi dan jahit custom biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "les-privat-bimbel",
+    "name": "Les privat & bimbel",
+    "defaults": {
+      "sumber": "grup Facebook",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "les privat [kota]",
+      "bimbel [kota]",
+      "tempat kursus [kota]",
+      "#lesprivat[kota]",
+      "#bimbel[kota]",
+      "grup FB “info les privat [kota]”"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil les privat dan bimbel Kakak di {{sumber}}. Profilnya keliatan meyakinkan... tapi sayang kalau info program & testimoni Kakak cuma ada di WhatsApp, padahal orang tua biasanya pengen leluasa baca-baca dulu sebelum daftar kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche les privat dan bimbel, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil les privat dan bimbel Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus les privat dan bimbel biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "jasa-pindahan-ekspedisi",
+    "name": "Jasa pindahan & ekspedisi",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "jasa pindahan [kota]",
+      "ekspedisi pindahan [kota]",
+      "jasa angkut barang [kota]",
+      "#jasapindahan[kota]",
+      "#ekspedisi[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil jasa pindahan dan ekspedisi Kakak di {{sumber}}. Armada dan area layanannya keliatan lengkap... tapi sayang kalau info sebagus itu cuma ada di status WhatsApp, padahal ini bisa bangun kepercayaan lebih cepat kalau ditampilkan lebih formal kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche jasa pindahan dan ekspedisi, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil jasa pindahan dan ekspedisi Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus jasa pindahan dan ekspedisi biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "bengkel-motor-mobil",
+    "name": "Bengkel motor & mobil",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "bengkel motor [kota]",
+      "bengkel mobil [kota]",
+      "bengkel resmi [kota]",
+      "#bengkelmotor[kota]",
+      "#bengkelmobil[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil bengkel motor dan mobil Kakak di {{sumber}}. Bengkelnya keliatan rapi dan terpercaya... tapi sayang kalau Kakak belum gampang ditemukan pas orang cari “bengkel terdekat” di Google Maps kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche bengkel motor dan mobil, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil bengkel motor dan mobil Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus bengkel motor dan mobil biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "studio-musik-rental-alat-musik",
+    "name": "Studio musik / rental alat musik",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "studio musik [kota]",
+      "rental alat musik [kota]",
+      "studio rekaman [kota]",
+      "#studiomusik[kota]",
+      "#rentalalatmusik",
+      "#studiorekaman[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil studio musik atau rental alat musik Kakak di {{sumber}}. Fasilitas dan alat-alatnya keliatan lengkap... tapi sayang kalau info harga sewa per jam belum ditampilkan di tempat yang gampang dicek calon klien sebelum tanya-tanya manual kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche studio musik atau rental alat musik, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil studio musik atau rental alat musik Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus studio musik atau rental alat musik biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "toko-sepeda",
+    "name": "Toko sepeda",
+    "defaults": {
+      "sumber": "grup Facebook",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "toko sepeda [kota]",
+      "sepeda gunung [kota]",
+      "#tokosepeda[kota]",
+      "#sepedagunung",
+      "grup FB komunitas sepeda [kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil toko sepeda Kakak di {{sumber}}. Koleksi sepedanya keliatan lengkap dan rapi... tapi sayang kalau toko resmi sebagus ini belum kelihatan beda dari reseller abal-abal di marketplace & grup jual-beli sepeda bekas kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche toko sepeda, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil toko sepeda Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus toko sepeda biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "kafe-kedai-kopi",
+    "name": "Kafe & kedai kopi",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "kafe [kota]",
+      "kedai kopi [kota]",
+      "coffee shop [kota]",
+      "#kafe[kota]",
+      "#kedaikopi[kota]",
+      "#coffeeshop[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil kafe dan kedai kopi Kakak di {{sumber}}. Suasana kafenya estetik banget dari foto-fotonya... tapi sayang kalau itu cuma ada di Instagram, padahal Instagram gak muncul di pencarian Google kayak website kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche kafe dan kedai kopi, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil kafe dan kedai kopi Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus kafe dan kedai kopi biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "restoran-cafe",
+    "name": "Restoran & cafe",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "restoran [kota]",
+      "rumah makan [kota]",
+      "resto keluarga [kota]",
+      "#restoran[kota]",
+      "#kuliner[kota]",
+      "#resto[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil restoran dan cafe Kakak di {{sumber}}. Menu dan suasananya keliatan menarik banget... tapi sayang kalau paket buat acara keluarga (gathering, ulang tahun, arisan) belum ditampilkan di tempat khusus selain aplikasi ojek online kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche restoran dan cafe, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil restoran dan cafe Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus restoran dan cafe biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "toko-furniture-custom",
+    "name": "Toko furniture custom",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "furniture custom [kota]",
+      "toko mebel [kota]",
+      "jasa mebel custom [kota]",
+      "#furniturecustom[kota]",
+      "#mebel[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil toko furniture custom Kakak di {{sumber}}. Hasil karyanya rapi dan detail banget... tapi sayang kalau portofolio sebagus itu belum jadi katalog yang gampang diakses calon klien sebelum berani pesan kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche toko furniture custom, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil toko furniture custom Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus toko furniture custom biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "umkm-toko-online-kerajinan-tangan",
+    "name": "UMKM toko online / kerajinan tangan",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "cari via marketplace: Shopee/Tokopedia “kerajinan tangan [daerah]”",
+      "#umkm[daerah]",
+      "#kerajinantangan",
+      "#produklokal[daerah]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil umkm toko online atau kerajinan tangan Kakak di {{sumber}}. Produknya unik-unik dan rapi banget... tapi sayang kalau Kakak cuma keliatan sebagai satu dari ribuan toko di marketplace, padahal brand-nya sendiri sebenarnya kuat kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche umkm toko online atau kerajinan tangan, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil umkm toko online atau kerajinan tangan Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus umkm toko online atau kerajinan tangan biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "percetakan-sablon",
+    "name": "Percetakan & sablon",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "percetakan [kota]",
+      "sablon kaos [kota]",
+      "digital printing [kota]",
+      "#percetakan[kota]",
+      "#sablonkaos[kota]",
+      "#digitalprinting[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil percetakan dan sablon Kakak di {{sumber}}. Hasil cetakannya rapi banget dari contoh-contohnya... tapi sayang kalau order dari luar kota yang gak sempat datang langsung ke toko jadi kelewat begitu aja kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche percetakan dan sablon, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil percetakan dan sablon Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus percetakan dan sablon biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "toko-bunga-florist",
+    "name": "Toko bunga & florist",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "toko bunga [kota]",
+      "florist [kota]",
+      "karangan bunga [kota]",
+      "#tokobunga[kota]",
+      "#florist[kota]",
+      "#karangenbunga"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil toko bunga dan florist Kakak di {{sumber}}. Rangkaian bunganya cantik-cantik banget... tapi sayang kalau Kakak cuma ketemu pelanggan lewat marketplace bunga atau Instagram doang, padahal pas orang butuh dadakan buat momen tertentu (wisuda, ulang tahun, duka), biasanya mereka langsung searching cepat lewat Google kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche toko bunga dan florist, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil toko bunga dan florist Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus toko bunga dan florist biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "toko-kosmetik-skincare-retail",
+    "name": "Toko kosmetik & skincare (retail)",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "toko kosmetik [kota]",
+      "skincare store [kota]",
+      "#tokokosmetik[kota]",
+      "#skincarelokal",
+      "#skincarebrand[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil toko kosmetik dan skincare (retail) Kakak di {{sumber}}. Produknya keliatan menarik... tapi sayang kalau brand sendiri Kakak belum kelihatan beda dari reseller kebanyakan kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche toko kosmetik dan skincare (retail), boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil toko kosmetik dan skincare (retail) Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus toko kosmetik dan skincare (retail) biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "toko-bangunan-material",
+    "name": "Toko bangunan & material",
+    "defaults": {
+      "sumber": "Google Maps",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "toko bangunan [kota]",
+      "toko material [kota]",
+      "jarang aktif medsos — cek grup FB “jual beli material bangunan [kota]”"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Pak/Bu {{nama}},\n\nSaya baru saja lihat profil toko bangunan dan material Bapak/Ibu di {{sumber}}. Stok materialnya keliatan lengkap... tapi sayang kalau stok selengkap itu belum bisa dicek dari jauh sama kontraktor yang butuh cepat pak/bu..\n\nSaya sudah bikin contoh desain website khusus untuk niche toko bangunan dan material, boleh saya kirim linknya kalau Bapak/Ibu penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Pak/Bu 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Pak/Bu {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil toko bangunan dan material Bapak/Ibu di {{sumber}}, dan coba buatkan mockup desain website khusus toko bangunan dan material biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "apotek",
+    "name": "Apotek",
+    "defaults": {
+      "sumber": "Google Maps",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "apotek [kota]",
+      "apotek 24 jam [kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil apotek Kakak di {{sumber}}. Profilnya keliatan lengkap... tapi sayang kalau Kakak belum punya kanal khusus buat layanan antar atau konsultasi online kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche apotek, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil apotek Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus apotek biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "gym-fitness-center",
+    "name": "Gym / fitness center",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "gym [kota]",
+      "fitness center [kota]",
+      "tempat gym [kota]",
+      "#gym[kota]",
+      "#fitnesscenter[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil gym atau fitness center Kakak di {{sumber}}. Fasilitasnya keliatan lengkap dan modern... tapi sayang kalau promo membership Kakak cuma ada di Instagram/TikTok, gak ada website yang gampang muncul di pencarian Google kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche gym atau fitness center, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil gym atau fitness center Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus gym atau fitness center biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "kost-rumah-kontrakan",
+    "name": "Kost / rumah kontrakan",
+    "defaults": {
+      "sumber": "grup Facebook",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "kost [kota]",
+      "kos putra/putri [kota]",
+      "kontrakan [kota]",
+      "grup FB “info kost [kota]”"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil kost atau rumah kontrakan Kakak di {{sumber}}. Unitnya keliatan terawat dan nyaman... tapi sayang kalau Kakak cuma keliatan sebagai satu dari banyak listing di Mamikos/Rukita, padahal brand sendiri bisa lebih kuat kalau punya beberapa unit/cabang kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche kost atau rumah kontrakan, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil kost atau rumah kontrakan Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus kost atau rumah kontrakan biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  },
+  {
+    "id": "game-center-rental-ps-pc",
+    "name": "Game center / rental PS & PC",
+    "defaults": {
+      "sumber": "Instagram",
+      "link1": "",
+      "link2": ""
+    },
+    "keywords": [
+      "game center [kota]",
+      "rental PS [kota]",
+      "warnet [kota]",
+      "#gamecenter[kota]",
+      "#rentalps[kota]",
+      "#warnet[kota]"
+    ],
+    "variants": [
+      {
+        "label": "Observasi Spesifik",
+        "template": "Halo Kak {{nama}},\n\nSaya baru saja lihat profil game center atau rental PS dan PC Kakak di {{sumber}}. Tempatnya keliatan seru dan nyaman... tapi sayang kalau beberapa cabang Kakak belum ada tempat yang nunjukin semuanya sekaligus kak..\n\nSaya sudah bikin contoh desain website khusus untuk niche game center atau rental PS dan PC, boleh saya kirim linknya kalau Kakak penasaran? Kalau cocok, umumnya website bisa tayang dalam 3 sampai 5 hari kerja.\n\nTerima kasih Kak 🙏"
+      },
+      {
+        "label": "Demo Duluan",
+        "template": "Halo Kak {{nama}}, perkenalkan saya {{namaKamu}} dari TeraWeb.\n\nSaya sempat lihat profil game center atau rental PS dan PC Kakak di {{sumber}}, dan coba buatkan mockup desain website khusus game center atau rental PS dan PC biar tampilannya makin profesional dan terpercaya di mata calon pelanggan.\n\n{{intro}}\n{{links}}\n\n{{tanya}} saya bisa langsung sesuaikan pakai nama & info usaha {{sap}} sendiri, umumnya tayang dalam 3 sampai 5 hari kerja. Harganya jelas dan sekali bayar: website 4 halaman Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb 🙂"
+      }
+    ]
+  }
+];
+
+let currentId = DATA[0].id;
+let fieldState = {}; // per niche id -> {nama, sumber, link}
+let globalState = { namaKamu: "" }; // berlaku untuk semua niche
+
+DATA.forEach(n => {
+  fieldState[n.id] = { nama: "[Nama]", sumber: n.defaults.sumber, link1: n.defaults.link1, link2: n.defaults.link2 };
+});
+
+const tabList = document.getElementById('tabList');
+const mobileSelect = document.getElementById('mobileSelect');
+const content = document.getElementById('content');
+
+DATA.forEach((n, i) => {
+  const li = document.createElement('li');
+  li.className = 'tab-item';
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn' + (n.id === currentId ? ' active' : '');
+  btn.dataset.id = n.id;
+  btn.innerHTML = `<span class="tab-num mono">${String(i+1).padStart(2,'0')}</span>${n.name}`;
+  btn.addEventListener('click', () => selectNiche(n.id));
+  li.appendChild(btn);
+  tabList.appendChild(li);
+
+  const opt = document.createElement('option');
+  opt.value = n.id;
+  opt.textContent = n.name;
+  mobileSelect.appendChild(opt);
+});
+
+mobileSelect.addEventListener('change', (e) => selectNiche(e.target.value));
+
+const fNamaKamu = document.getElementById('fNamaKamu');
+const fNamaKamuMobile = document.getElementById('fNamaKamuMobile');
+
+function onNamaKamuInput(value){
+  globalState.namaKamu = value;
+  fNamaKamu.value = value;
+  fNamaKamuMobile.value = value;
+  document.querySelectorAll('.msg-card').forEach(c => c._update && c._update());
+}
+
+fNamaKamu.addEventListener('input', (e) => onNamaKamuInput(e.target.value));
+fNamaKamuMobile.addEventListener('input', (e) => onNamaKamuInput(e.target.value));
+
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = (el.scrollHeight + 3) + 'px';
+}
+
+function fill(template, state){
+  const sap = template.includes('Bapak/Ibu') ? 'Bapak/Ibu' : 'Kakak';
+  const links = [state.link1, state.link2].map(x => (x || '').trim()).filter(Boolean);
+  const intro = links.length > 1 ? 'Ini 2 contoh gayanya:' : 'Ini contohnya:';
+  const linkText = links.length ? links.join('\n') : '[link demo]';
+  const tanya = links.length > 1
+    ? 'Kira-kira ' + sap + ' lebih suka yang mana? Kalau ada yang cocok,'
+    : 'Kira-kira cocok, ' + sap + '? Kalau cocok,';
+  return template
+    .replaceAll('{{intro}}', intro)
+    .replaceAll('{{links}}', linkText)
+    .replaceAll('{{tanya}}', tanya)
+    .replaceAll('{{sap}}', sap)
+    .replaceAll('{{nama}}', state.nama || '[Nama]')
+    .replaceAll('{{sumber}}', state.sumber || '')
+    .replaceAll('{{namaKamu}}', globalState.namaKamu || '[Nama Kamu]');
+}
+
+function selectNiche(id){
+  currentId = id;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+  mobileSelect.value = id;
+  render();
+}
+
+function copyText(text, btn){
+  const done = () => {
+    const original = btn.textContent;
+    btn.textContent = 'Disalin ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+function fallbackCopy(text, done){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); done(); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+function render(){
+  const n = DATA.find(x => x.id === currentId);
+  const state = fieldState[n.id];
+
+  content.innerHTML = `
+    <div class="niche-title">${n.name}</div>
+    <div class="niche-sub">Keyword pencarian &amp; draft pesan outreach</div>
+
+    <div class="block">
+      <div class="block-label">
+        <span>Keyword Pencarian</span>
+        <button class="kw-copy" id="copyAllKw">Copy semua</button>
+      </div>
+      <div class="kw-list" id="kwList"></div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Isian (berlaku untuk kedua pesan di bawah)</div>
+      <div class="fields">
+        <div class="field">
+          <label for="fNama">Nama calon klien</label>
+          <input type="text" id="fNama" value="${state.nama}">
+        </div>
+        <div class="field">
+          <label for="fSumber">Sumber/platform observasi</label>
+          <input type="text" id="fSumber" value="${state.sumber}">
+        </div>
+        <div class="field field-link-stack">
+          <div>
+            <label for="fLink1">Link demo 1</label>
+            <input type="text" id="fLink1" value="${state.link1}">
+          </div>
+          <div>
+            <label for="fLink2">Link demo 2 (opsional)</label>
+            <input type="text" id="fLink2" value="${state.link2}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint">Daftar demo lengkap: <span class="mono">teraweb.id/demo/</span> (website 4 halaman) dan <span class="mono">teraweb.id/demolanding/</span> (landing page). Isi hanya Link demo 1 kalau mau kirim satu contoh; pesan menyesuaikan otomatis.</div>
+    <div class="msg-grid" id="msgGrid"></div>
+  `;
+
+  const kwList = document.getElementById('kwList');
+  n.keywords.forEach(k => {
+    const chip = document.createElement('div');
+    chip.className = 'kw-chip';
+    chip.innerHTML = `<span class="mono">${k}</span>`;
+    const b = document.createElement('button');
+    b.className = 'kw-copy';
+    b.textContent = 'Copy';
+    b.addEventListener('click', () => copyText(k, b));
+    chip.appendChild(b);
+    kwList.appendChild(chip);
+  });
+
+  document.getElementById('copyAllKw').addEventListener('click', (e) => {
+    copyText(n.keywords.join('\n'), e.target);
+  });
+
+  const msgGrid = document.getElementById('msgGrid');
+  n.variants.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'msg-card';
+    card.innerHTML = `
+      <div class="msg-head">
+        <div class="msg-label">${v.label}</div>
+        <div class="msg-head-actions">
+          <button class="reset-btn">Reset ke template</button>
+          <button class="copy-btn">Copy Pesan</button>
+        </div>
+      </div>
+      <textarea class="msg-preview"></textarea>
+    `;
+    const preview = card.querySelector('.msg-preview');
+    const btn = card.querySelector('.copy-btn');
+    const resetBtn = card.querySelector('.reset-btn');
+    let dirty = false;
+    const updatePreview = () => { if(!dirty){ preview.value = fill(v.template, fieldState[n.id]); } autoGrow(preview); };
+    preview.addEventListener('input', () => { dirty = true; autoGrow(preview); });
+    resetBtn.addEventListener('click', () => { dirty = false; updatePreview(); });
+    btn.addEventListener('click', () => copyText(preview.value, btn));
+    msgGrid.appendChild(card);
+    updatePreview();
+    card._update = updatePreview;
+  });
+
+  const fNama = document.getElementById('fNama');
+  const fSumber = document.getElementById('fSumber');
+  const fLink1 = document.getElementById('fLink1');
+  const fLink2 = document.getElementById('fLink2');
+
+  const onInput = () => {
+    fieldState[n.id] = { nama: fNama.value, sumber: fSumber.value, link1: fLink1.value, link2: fLink2.value };
+    document.querySelectorAll('.msg-card').forEach(c => c._update());
+  };
+  fNama.addEventListener('input', onInput);
+  fSumber.addEventListener('input', onInput);
+  fLink1.addEventListener('input', onInput);
+  fLink2.addEventListener('input', onInput);
+}
+
+render();
+
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => {
+    document.querySelectorAll('.msg-preview').forEach(autoGrow);
+  });
+}
+</script>
+
+</body>
+</html>

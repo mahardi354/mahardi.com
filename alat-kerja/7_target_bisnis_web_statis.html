@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Target Bisnis – Jasa Web Statis Profil Usaha</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.29.0/dist/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F4F1;
+      --surface: #FFFFFF;
+      --surface-1: #F0EEE9;
+      --border: rgba(0,0,0,0.10);
+      --border-strong: rgba(0,0,0,0.18);
+      --text-primary: #111827;
+      --text-secondary: #4B5563;
+      --text-muted: #9CA3AF;
+      --accent-bg: #EFF6FF;
+      --accent-text: #1D4ED8;
+
+      --c-kuliner-bg: #FAECE7; --c-kuliner-ico: #993C1D; --c-kuliner-dot: #D85A30;
+      --c-jasa-bg: #E6F1FB;   --c-jasa-ico: #185FA5;   --c-jasa-dot: #378ADD;
+      --c-retail-bg: #EAF3DE; --c-retail-ico: #3B6D11;  --c-retail-dot: #639922;
+      --c-pro-bg: #EEEDFE;    --c-pro-ico: #534AB7;     --c-pro-dot: #7F77DD;
+      --c-hiburan-bg: #FAEEDA;--c-hiburan-ico: #854F0B; --c-hiburan-dot: #BA7517;
+      --c-properti-bg:#E1F5EE;--c-properti-ico:#0F6E56; --c-properti-dot:#1D9E75;
+      --c-health-bg: #FBEAF0; --c-health-ico: #993556;  --c-health-dot: #D4537E;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1A1A1A;
+        --surface: #242424;
+        --surface-1: #2C2C2C;
+        --border: rgba(255,255,255,0.10);
+        --border-strong: rgba(255,255,255,0.20);
+        --text-primary: #F3F4F6;
+        --text-secondary: #9CA3AF;
+        --text-muted: #6B7280;
+        --accent-bg: #1E3A5F;
+        --accent-text: #93C5FD;
+
+        --c-kuliner-bg: #4A1B0C; --c-kuliner-ico: #F0997B;
+        --c-jasa-bg: #042C53;   --c-jasa-ico: #85B7EB;
+        --c-retail-bg: #173404; --c-retail-ico: #97C459;
+        --c-pro-bg: #26215C;    --c-pro-ico: #AFA9EC;
+        --c-hiburan-bg: #412402;--c-hiburan-ico: #EF9F27;
+        --c-properti-bg:#04342C;--c-properti-ico:#5DCAA5;
+        --c-health-bg: #4B1528; --c-health-ico: #ED93B1;
+      }
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .intro {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      line-height: 1.65;
+      max-width: 560px;
+    }
+
+    .cat { margin-bottom: 1.75rem; }
+
+    .cat-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .cat-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .cat-count {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--surface-1);
+      border: 0.5px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 6px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .card:hover {
+      border-color: var(--border-strong);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+
+    .ico {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 15px;
+    }
+
+    .card-body { flex: 1; min-width: 0; }
+
+    .card-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.35;
+    }
+
+    .card-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    /* Category icon colors */
+    .ico-kuliner  { background: var(--c-kuliner-bg);  color: var(--c-kuliner-ico); }
+    .ico-jasa     { background: var(--c-jasa-bg);     color: var(--c-jasa-ico); }
+    .ico-retail   { background: var(--c-retail-bg);   color: var(--c-retail-ico); }
+    .ico-pro      { background: var(--c-pro-bg);      color: var(--c-pro-ico); }
+    .ico-hiburan  { background: var(--c-hiburan-bg);  color: var(--c-hiburan-ico); }
+    .ico-properti { background: var(--c-properti-bg); color: var(--c-properti-ico); }
+    .ico-health   { background: var(--c-health-bg);   color: var(--c-health-ico); }
+
+    .dot-kuliner  { background: var(--c-kuliner-dot); }
+    .dot-jasa     { background: var(--c-jasa-dot); }
+    .dot-retail   { background: var(--c-retail-dot); }
+    .dot-pro      { background: var(--c-pro-dot); }
+    .dot-hiburan  { background: var(--c-hiburan-dot); }
+    .dot-properti { background: var(--c-properti-dot); }
+    .dot-health   { background: var(--c-health-dot); }
+
+    /* Total footer */
+    .total {
+      margin-top: 1.5rem;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .total-left { display: flex; align-items: center; gap: 12px; }
+
+    .total-ico {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+    }
+
+    .total-main { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .total-sub  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .total-num {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent-text);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 520px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+      .total { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 360px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <p class="intro">Bisnis-bisnis berikut cocok karena butuh web profil sederhana, tidak butuh fitur dinamis kompleks, dan sangat peduli tampil profesional di Google.</p>
+
+  <!-- Kuliner -->
+  <div class="cat">
+    <div class="cat-head">
+      <span class="dot dot-kuliner"></span>
+      <span class="cat-name">Kuliner &amp; F&amp;B</span>
+      <span class="cat-count">5 usaha</span>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ico ico-kuliner"><i class="ti ti-tools-kitchen-2" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Rumah makan &amp; warung</div><div class="card-note">Butuh menu &amp; lokasi online</div></div></div>
+      <div class="card"><div class="ico ico-kuliner"><i class="ti ti-coffee" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Kafe &amp; kedai kopi</div><div class="card-note">Estetika visual penting</div></div></div>
+      <div class="card"><div class="ico ico-kuliner"><i class="ti ti-bread" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Bakery &amp; toko kue</div><div class="card-note">Tampilan produk &amp; order</div></div></div>
+      <div class="card"><div class="ico ico-kuliner"><i class="ti ti-box" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Katering</div><div class="card-note">Portofolio &amp; paket harga</div></div></div>
+      <div class="card"><div class="ico ico-kuliner"><i class="ti ti-ice-cream" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Dessert &amp; minuman kekinian</div><div class="card-note">Konten visual menarik</div></div></div>
+    </div>
+  </div>
+
+  <!-- Jasa -->
+  <div class="cat">
+    <div class="cat-head">
+      <span class="dot dot-jasa"></span>
+      <span class="cat-name">Jasa &amp; Profesional</span>
+      <span class="cat-count">8 usaha</span>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ico ico-jasa"><i class="ti ti-camera" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Fotografer &amp; videografer</div><div class="card-note">Portofolio utama</div></div></div>
+      <div class="card"><div class="ico ico-jasa"><i class="ti ti-cut" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Barbershop &amp; salon</div><div class="card-note">Layanan, harga &amp; booking</div></div></div>
+      <div class="card"><div class="ico ico-jasa"><i class="ti ti-wash-machine" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Laundry &amp; dry clean</div><div class="card-note">Info layanan &amp; harga</div></div></div>
+      <div class="card"><div class="ico ico-jasa"><i class="ti ti-car" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Bengkel &amp; cuci mobil</div><div class="card-note">Layanan &amp; testimoni</div></div></div>
+      <div class="card"><div class="ico ico-jasa"><i class="ti ti-device-laptop" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Servis elektronik &amp; HP</div><div class="card-note">Jenis servis &amp; lokasi</div></div></div>
+      <div class="card"><div class="ico ico-jasa"><i class="ti ti-pencil" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Les privat &amp; bimbel</div><div class="card-note">Program &amp; info pengajar</div></div></div>
+      <div class="card"><div class="ico ico-jasa"><i class="ti ti-color-swatch" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Jasa desain interior</div><div class="card-note">Portofolio proyek</div></div></div>
+      <div class="card"><div class="ico ico-jasa"><i class="ti ti-printer" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Percetakan &amp; sablon</div><div class="card-note">Katalog &amp; info harga</div></div></div>
+    </div>
+  </div>
+
+  <!-- Profesi -->
+  <div class="cat">
+    <div class="cat-head">
+      <span class="dot dot-pro"></span>
+      <span class="cat-name">Profesi &amp; Konsultasi</span>
+      <span class="cat-count">6 usaha</span>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ico ico-pro"><i class="ti ti-stethoscope" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Klinik &amp; dokter praktek</div><div class="card-note">Jadwal &amp; layanan</div></div></div>
+      <div class="card"><div class="ico ico-pro"><i class="ti ti-tooth" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Dokter gigi</div><div class="card-note">Layanan &amp; jadwal praktek</div></div></div>
+      <div class="card"><div class="ico ico-pro"><i class="ti ti-scale" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Kantor pengacara/notaris</div><div class="card-note">Profil &amp; bidang hukum</div></div></div>
+      <div class="card"><div class="ico ico-pro"><i class="ti ti-calculator" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Konsultan pajak/akuntan</div><div class="card-note">Profil &amp; layanan</div></div></div>
+      <div class="card"><div class="ico ico-pro"><i class="ti ti-heartbeat" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Psikolog &amp; konselor</div><div class="card-note">Profil &amp; info sesi</div></div></div>
+      <div class="card"><div class="ico ico-pro"><i class="ti ti-activity" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Personal trainer &amp; gym kecil</div><div class="card-note">Program &amp; jadwal kelas</div></div></div>
+    </div>
+  </div>
+
+  <!-- Retail -->
+  <div class="cat">
+    <div class="cat-head">
+      <span class="dot dot-retail"></span>
+      <span class="cat-name">Retail &amp; Toko</span>
+      <span class="cat-count">5 usaha</span>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ico ico-retail"><i class="ti ti-shirt" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Toko pakaian &amp; konveksi</div><div class="card-note">Katalog &amp; info order</div></div></div>
+      <div class="card"><div class="ico ico-retail"><i class="ti ti-diamond" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Toko perhiasan</div><div class="card-note">Koleksi &amp; harga</div></div></div>
+      <div class="card"><div class="ico ico-retail"><i class="ti ti-gift" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Toko souvenir &amp; hampers</div><div class="card-note">Katalog &amp; kontak pesan</div></div></div>
+      <div class="card"><div class="ico ico-retail"><i class="ti ti-plant" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Toko tanaman &amp; florist</div><div class="card-note">Koleksi &amp; layanan antar</div></div></div>
+      <div class="card"><div class="ico ico-retail"><i class="ti ti-paw" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Pet shop &amp; grooming hewan</div><div class="card-note">Layanan &amp; harga grooming</div></div></div>
+    </div>
+  </div>
+
+  <!-- Properti -->
+  <div class="cat">
+    <div class="cat-head">
+      <span class="dot dot-properti"></span>
+      <span class="cat-name">Properti &amp; Konstruksi</span>
+      <span class="cat-count">4 usaha</span>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ico ico-properti"><i class="ti ti-building" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Agen properti independen</div><div class="card-note">Listing &amp; profil agen</div></div></div>
+      <div class="card"><div class="ico ico-properti"><i class="ti ti-hammer" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Kontraktor &amp; bangun rumah</div><div class="card-note">Portofolio proyek</div></div></div>
+      <div class="card"><div class="ico ico-properti"><i class="ti ti-home" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Kos-kosan &amp; penginapan</div><div class="card-note">Fasilitas &amp; cara booking</div></div></div>
+      <div class="card"><div class="ico ico-properti"><i class="ti ti-armchair" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Toko furnitur &amp; mebel</div><div class="card-note">Katalog &amp; info custom</div></div></div>
+    </div>
+  </div>
+
+  <!-- Hiburan -->
+  <div class="cat">
+    <div class="cat-head">
+      <span class="dot dot-hiburan"></span>
+      <span class="cat-name">Hiburan &amp; Event</span>
+      <span class="cat-count">4 usaha</span>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ico ico-hiburan"><i class="ti ti-music" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Musisi &amp; band</div><div class="card-note">Portofolio &amp; booking manggung</div></div></div>
+      <div class="card"><div class="ico ico-hiburan"><i class="ti ti-microphone" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">MC &amp; event organizer</div><div class="card-note">Profil &amp; portofolio acara</div></div></div>
+      <div class="card"><div class="ico ico-hiburan"><i class="ti ti-calendar-event" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">WO &amp; dekorasi pernikahan</div><div class="card-note">Paket &amp; galeri</div></div></div>
+      <div class="card"><div class="ico ico-hiburan"><i class="ti ti-device-gamepad" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Rental PS &amp; gaming center</div><div class="card-note">Harga &amp; fasilitas</div></div></div>
+    </div>
+  </div>
+
+  <!-- Kecantikan -->
+  <div class="cat">
+    <div class="cat-head">
+      <span class="dot dot-health"></span>
+      <span class="cat-name">Kecantikan &amp; Wellness</span>
+      <span class="cat-count">3 usaha</span>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ico ico-health"><i class="ti ti-spa" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Spa &amp; pijat refleksi</div><div class="card-note">Layanan &amp; harga</div></div></div>
+      <div class="card"><div class="ico ico-health"><i class="ti ti-eyeglass" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Toko optik</div><div class="card-note">Produk &amp; layanan periksa mata</div></div></div>
+      <div class="card"><div class="ico ico-health"><i class="ti ti-needle" aria-hidden="true"></i></div><div class="card-body"><div class="card-name">Klinik kecantikan &amp; skincare</div><div class="card-note">Treatment &amp; harga</div></div></div>
+    </div>
+  </div>
+
+  <!-- Total -->
+  <div class="total">
+    <div class="total-left">
+      <div class="total-ico"><i class="ti ti-list-check" aria-hidden="true"></i></div>
+      <div>
+        <div class="total-main">Total jenis usaha potensial</div>
+        <div class="total-sub">Semua cocok untuk web profil statis yang cepat dan ringan</div>
+      </div>
+    </div>
+    <div class="total-num">35</div>
+  </div>
+
+</div>
+</body>
+</html>

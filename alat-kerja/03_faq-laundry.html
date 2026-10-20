@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ Laundry — Klien & Mitra</title>
+<style>
+  :root{
+    --bg: #0c1116;
+    --panel: #151d24;
+    --panel-2: #1a242c;
+    --border: #263340;
+    --text: #eef3f7;
+    --muted: #8ea0af;
+    --sky: #4fb3d9;
+    --coral: #e8836a;
+    --sky-soft: rgba(79,179,217,0.14);
+    --coral-soft: rgba(232,131,106,0.14);
+    --mustard: #e0b34f;
+    --mustard-soft: rgba(224,179,79,0.14);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: radial-gradient(circle at 15% 0%, #16232c 0%, var(--bg) 45%) fixed;
+    color:var(--text);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 28px 16px 80px;
+  }
+  .wrap{ max-width: 920px; margin: 0 auto; }
+
+  header{ margin-bottom: 22px; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--sky); background:var(--sky-soft);
+    border:1px solid rgba(79,179,217,0.3);
+    padding:4px 12px; border-radius:100px; margin-bottom:14px;
+  }
+  h1{ font-size: 26px; margin:0 0 6px; font-weight:700; letter-spacing:-0.01em;}
+  h1 span{ color: var(--sky); }
+  .sub{ color:var(--muted); font-size:14.5px; line-height:1.55; max-width: 620px; }
+
+  .tabbar{
+    display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;
+    margin: 22px 0 18px;
+    background: var(--panel); border:1px solid var(--border);
+    border-radius: var(--radius); padding:6px;
+    position: sticky; top: 10px; z-index: 20;
+    backdrop-filter: blur(6px);
+  }
+  .tabbtn{
+    border:none; cursor:pointer; padding:13px 10px;
+    border-radius:10px; font-size:14.5px; font-weight:600;
+    background:transparent; color:var(--muted);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition: all .15s ease;
+  }
+  .tabbtn .count{
+    font-size:11.5px; font-weight:700; padding:1px 7px; border-radius:100px;
+    background:rgba(255,255,255,0.08); color:var(--muted);
+  }
+  .tabbtn.active{ color:#0c1116; }
+  .tabbtn.active .count{ background:rgba(12,17,22,0.18); color:#0c1116;}
+  #tab-klien.active{ background: var(--sky); }
+  #tab-mitra.active{ background: var(--coral); }
+  #tab-script.active{ background: var(--mustard); }
+
+  .searchrow{
+    display:flex; gap:10px; margin-bottom:18px;
+  }
+  .searchbox{
+    flex:1; position:relative;
+  }
+  .searchbox input{
+    width:100%; padding:11px 14px 11px 38px;
+    background: var(--panel); border:1px solid var(--border);
+    border-radius:10px; color:var(--text); font-size:14px;
+  }
+  .searchbox input:focus{ outline:none; border-color: var(--sky); }
+  .searchbox::before{
+    content:"⌕"; position:absolute; left:13px; top:50%; transform:translateY(-50%);
+    color:var(--muted); font-size:17px;
+  }
+  .hint{
+    font-size:12.5px; color:var(--muted); margin: -6px 0 18px 2px;
+  }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; animation: fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .card{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 16px 14px;
+    margin-bottom: 12px;
+    transition: border-color .15s ease;
+  }
+  .card:hover{ border-color: rgba(255,255,255,0.14); }
+  .qrow{
+    display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;
+  }
+  .qnum{
+    flex-shrink:0; width:26px; height:26px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; margin-top:1px;
+  }
+  .panel#klien .qnum{ background: var(--sky-soft); color: var(--sky); }
+  .panel#mitra .qnum{ background: var(--coral-soft); color: var(--coral); }
+  .panel#script .qnum{ background: var(--mustard-soft); color: var(--mustard); }
+  .qtext{ font-weight:600; font-size:15px; line-height:1.45; }
+
+  .answer{
+    background: var(--panel-2);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 12px 13px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #dce6ec;
+    outline:none;
+  }
+  .answer:focus{ border-color: rgba(255,255,255,0.25); border-style:solid; background:#20303a;}
+
+  .cardfoot{
+    display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:10px;
+  }
+  .editnote{ font-size:11.5px; color:var(--muted); margin-right:auto; }
+  .copybtn{
+    border:none; cursor:pointer; font-size:12.5px; font-weight:600;
+    padding:7px 13px; border-radius:8px;
+    display:flex; align-items:center; gap:6px;
+    background: rgba(255,255,255,0.06); color:var(--text);
+    border:1px solid var(--border);
+    transition: all .15s ease;
+  }
+  .copybtn:hover{ background: rgba(255,255,255,0.1); }
+  .copybtn.copied{ background: var(--sky); color:#0c1116; border-color:var(--sky); }
+
+  .empty{
+    text-align:center; color:var(--muted); padding: 40px 10px; font-size:14px;
+  }
+
+  footer{
+    text-align:center; color:var(--muted); font-size:12px; margin-top:30px;
+  }
+
+  @media (max-width:520px){
+    h1{ font-size:22px; }
+    .qtext{ font-size:14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">🧺 Niche: Laundry</div>
+    <h1>FAQ Siap Copas — <span>Klien</span> &amp; <span style="color:var(--coral)">Mitra</span></h1>
+    <p class="sub">Kumpulan jawaban template buat chat calon pelanggan laundry maupun calon mitra jasa lokal. Ada juga tab khusus script chat buat pendekatan ke calon mitra, lengkap dengan penjelasan dua skema kerja sama (komisi &amp; sewa halaman). Tinggal cari pertanyaannya, klik teks jawaban buat edit seperlunya (misal isi nominal/wilayah), lalu pencet copy.</p>
+  </header>
+
+  <div class="tabbar">
+    <button class="tabbtn active" id="tab-klien" onclick="switchTab('klien')">
+      Calon Klien <span class="count" id="count-klien">0</span>
+    </button>
+    <button class="tabbtn" id="tab-mitra" onclick="switchTab('mitra')">
+      Calon Mitra <span class="count" id="count-mitra">0</span>
+    </button>
+    <button class="tabbtn" id="tab-script" onclick="switchTab('script')">
+      Script &amp; Skema Mitra <span class="count" id="count-script">0</span>
+    </button>
+  </div>
+
+  <div class="searchrow">
+    <div class="searchbox">
+      <input type="text" id="searchInput" placeholder="Cari pertanyaan… misal: harga, antar jemput, komisi, luntur" oninput="filterCards()">
+    </div>
+  </div>
+  <div class="hint" id="resultHint"></div>
+
+  <div class="panel active" id="klien"></div>
+  <div class="panel" id="mitra"></div>
+  <div class="panel" id="script"></div>
+
+  <footer>Isi bertanda <b>[…]</b> perlu disesuaikan dulu (nominal, radius, wilayah) sebelum dipakai ya, Bun 😉</footer>
+</div>
+
+<script>
+const DATA = {
+  klien: [
+    ["Kalau saya baru pertama kali chat, balasan awalnya kira-kira gimana?",
+     "Halo Kak, terima kasih sudah menghubungi kami! 🙏\nKami ini jaringan laundry yang sudah punya mitra tepercaya di lebih dari 30 kota/kecamatan, Kak.\nPerlu diinfokan juga ya Kak, harga yang tertera di web itu harga estimasi/mulai dari — harga final nanti dikonfirmasi langsung sama mitra sesuai kondisi wilayah Kakak.\nSebentar ya, saya carikan dulu mitra yang paling pas dan dekat buat wilayah Kakak — mohon ditunggu sebentar 🙏"],
+    ["Berapa lama saya harus nunggu sampai dapat mitra?",
+     "Biasanya enggak lama kok, Kak, sekitar [15-60 menit] tergantung ketersediaan mitra di wilayah Kakak. Kalau ternyata prosesnya butuh waktu lebih lama dari itu, saya akan kabari juga biar Kakak enggak nunggu tanpa kepastian, misalnya: \"Mohon maaf ditunggu ya, Kak, saya masih carikan mitra terbaik buat wilayah Kakak. Enggak lama lagi kok, mohon sabar sebentar ya 🙏\""],
+    ["Setelah dapat mitra, saya bakal dihubungi siapa dan gimana prosesnya?",
+     "Begitu mitra sudah ketemu, saya akan kasih kontaknya ke Kakak biar Kakak bisa langsung WA duluan, kurang lebih seperti ini:\n\"Kak, alhamdulillah sudah dapat mitra buat wilayah Kakak — namanya Laundry Bersih Jaya, nomornya [nomor WA mitra]. Boleh langsung di-WA ya, Kak, biar prosesnya lebih cepat — pas chat nanti, tolong disebutkan juga kalau Kakak dapat kontaknya dari TeraWeb, biar mitranya langsung paham dan enggak perlu tanya-tanya dulu. Terima kasih sudah percaya sama kami, semoga lancar ya, Kak 🙏\"\nJadi Kakak tinggal chat duluan ke nomor itu ya, sebutkan juga asalnya dari kami, enggak perlu nunggu dihubungin."],
+    ["Bagaimana kalau ternyata belum ada mitra di wilayah saya?",
+     "Kalau kebetulan belum ada mitra laundry persis di kecamatan Kakak, saya akan coba carikan dulu dari wilayah terdekat atau saya infokan dengan jujur, misalnya:\n\"Mohon maaf Kak, untuk wilayah Kakak saat ini kami belum ada mitra yang standby. Tapi saya coba carikan opsi terdekat ya, atau kalau Kakak berkenan menunggu, saya kabari begitu ada mitra baru yang gabung di wilayah Kakak 🙏\""],
+    ["Sistem laundrynya kiloan atau satuan?",
+     "Kami sediakan dua-duanya, Kak. Kiloan cocok buat cucian harian yang enggak butuh perlakuan khusus, sedangkan satuan (Premium Care/Dry Clean) lebih pas buat pakaian tertentu seperti jas, gaun, atau batik yang butuh penanganan lebih hati-hati."],
+    ["Minimal berapa kg untuk laundry kiloan?",
+     "Minimal order kiloan biasanya [3-5 kg], Kak, karena disesuaikan sama kapasitas mesin cucinya. Kalau cucian Kakak di bawah itu, tetap bisa dilayani, cuma dihitung minimal segitu ya."],
+    ["Berapa harga per kg-nya?",
+     "Harga mulai dari [Rp7.000 - Rp10.000] per kg, Kak, tergantung layanan reguler atau kilat yang dipilih. Nanti aku kirim daftar harga lengkapnya ya."],
+    ["Kok harga yang ditawarkan mitra beda dari yang di web?",
+     "Mohon dimaklumi ya, Kak — harga di web itu memang harga estimasi/acuan awal, bukan harga final yang mengikat. Harga pastinya bisa sedikit berbeda tergantung mitra masing-masing wilayah, misalnya karena kondisi lokasi, ketersediaan bahan/alat, atau kebijakan harga masing-masing mitra. Tapi tenang, Kakak tetap bisa diskusikan langsung ke mitranya kalau memang jauh dari ekspektasi, biar dicarikan solusi terbaik."],
+    ["Ada layanan antar jemput enggak?",
+     "Ada, Kak, jadi Kakak enggak perlu repot dateng ke tempatnya. Tinggal kabari alamat dan jadwalnya, nanti tim kami yang jemput dan antar balik setelah selesai."],
+    ["Radius antar jemputnya sampai mana, kena ongkir enggak?",
+     "Untuk radius [maksimal 5 km] dari lokasi mitra biasanya gratis ongkir, Kak. Kalau lebih dari itu, mungkin ada tambahan biaya menyesuaikan jarak. Nanti kucekkan dulu sesuai alamat Kakak ya."],
+    ["Berapa lama proses cuciannya sampai selesai?",
+     "Untuk layanan reguler biasanya [1-3 hari], Kak, tergantung jumlah cucian dan cuaca (karena proses jemur sebagian masih mengandalkan sinar matahari). Kalau Kakak butuh lebih cepat, ada juga opsi layanan kilat."],
+    ["Ada layanan kilat/express yang bisa selesai hari yang sama?",
+     "Ada, Kak, biasanya disebut layanan express atau same-day. Tarifnya sedikit lebih tinggi dari yang reguler karena diprioritaskan pengerjaannya. Nanti kukabari tarif dan jam batas terakhir titip cucian buat bisa selesai hari itu juga."],
+    ["Kalau pakaian saya mudah luntur, gimana?",
+     "Tolong infokan dari awal ya, Kak, biar bisa kami pisahkan dan proses secara khusus (enggak dicampur kiloan). Kalau enggak diinfokan dan pakaian luntur tercampur cucian kiloan lain, itu di luar tanggung jawab kami karena semua cucian kiloan diperlakukan sama."],
+    ["Cucian saya dicampur enggak sama punya pelanggan lain?",
+     "Enggak, Kak, tenang aja. Sistem kami satu proses cuci untuk satu pelanggan, jadi cucian Kakak enggak akan tercampur atau tertukar sama punya orang lain."],
+    ["Bisa cuci barang khusus seperti bed cover, selimut, karpet, sepatu, atau boneka?",
+     "Bisa, Kak, tapi biasanya dihitung terpisah dari paket kiloan biasa karena butuh penanganan dan mesin yang beda. Kasih tau aja jenis dan ukurannya, nanti kukabari harga dan estimasi waktunya."],
+    ["Ada layanan dry cleaning untuk jas, gaun, atau batik?",
+     "Ada, Kak. Untuk bahan-bahan khusus seperti wol, sutra, atau pakaian berdetail rumit, kami sarankan pakai dry cleaning supaya kualitas dan bentuknya tetap terjaga."],
+    ["Pewangi cuciannya bisa pilih sendiri?",
+     "Bisa, Kak, biasanya ada beberapa pilihan aroma pewangi yang bisa Kakak tentukan sesuai selera. Kalau enggak dipilih, kami pakaikan pewangi standar."],
+    ["Bagaimana kalau pakaian saya hilang atau rusak di laundry?",
+     "Kalau ada kejadian seperti itu, langsung kabari kami ya, Kak, biar bisa segera ditindaklanjuti. Setiap mitra punya kebijakan penggantian masing-masing, nanti kubantu koordinasikan supaya ada solusi yang adil buat Kakak."],
+    ["Sistem pembayarannya gimana, bayar di depan atau belakang?",
+     "Bisa dua-duanya tergantung kebijakan mitra, Kak — ada yang minta bayar di awal pas nitip cucian, ada juga yang boleh bayar pas ambil. Nanti kukabari sistem yang berlaku di mitra wilayah Kakak."],
+    ["Bisa titip pakai deterjen sendiri?",
+     "Bisa didiskusikan, Kak, beberapa mitra memperbolehkan pakai deterjen favorit sendiri kalau Kakak punya. Nanti kutanyakan dulu ke mitra terkait."],
+    ["Berapa lama batas pengambilan cucian, kena biaya penyimpanan enggak?",
+     "Disarankan diambil maksimal [7 hari] setelah selesai ya, Kak, biar enggak numpuk di tempat mitra. Kalau lewat dari itu dan terlalu lama enggak diambil, biasanya ada kebijakan tersendiri dari mitra, nanti kukonfirmasi dulu detailnya."],
+    ["Cara pesan/order laundry-nya gimana?",
+     "Gampang kok, Kak. Tinggal kabari: (1) lokasi/kecamatan, (2) perkiraan berat cucian atau jenis barang yang mau dicuci, dan (3) mau dijemput atau anter sendiri. Nanti langsung kubantu carikan mitra terdekat di wilayah Kakak."],
+    ["Bisa langganan bulanan atau ada paket hemat?",
+     "Bisa, Kak, beberapa mitra menyediakan paket langganan bulanan yang lebih hemat buat pelanggan rutin. Kalau Kakak tertarik, nanti kucek dulu paket yang tersedia di wilayah Kakak."],
+    ["Bagaimana jaminan kebersihan dan higienitas prosesnya?",
+     "Mitra kami menjaga standar kebersihan mulai dari pemisahan cucian sesuai warna dan bahan, penggunaan deterjen berkualitas, sampai proses pengeringan dan setrika yang rapi, Kak. Jadi Kakak bisa tenang soal kebersihannya."],
+    ["Pakaian saya diberi label biar enggak tertukar?",
+     "Iya, Kak, setiap cucian biasanya diberi tanda/label pelanggan supaya enggak tertukar dengan punya pelanggan lain. Tapi tetap dicek ya pas ambil, biar sama-sama yakin enggak ada yang keliru."],
+  ],
+  mitra: [
+    ["Program kerja sama mitra laundry ini seperti apa?",
+     "Jadi gini, Kak. Kami itu istilahnya 'jembatan' antara calon pelanggan laundry dengan penyedia jasa laundry lokal seperti Kakak. Kami yang bantu carikan calon pelanggan lewat website dan promosi online, begitu ada yang cocok di wilayah Kakak, langsung kami hubungkan buat diproses."],
+    ["Bagaimana cara kerja samanya, apa saya harus bayar dulu?",
+     "Enggak perlu bayar di depan, Kak. Sistemnya bagi hasil per leads/order yang berhasil closing. Jadi Kakak enggak perlu keluar modal buat gabung, cukup fokus ke kualitas layanan laundry-nya aja."],
+    ["Apa saja syarat untuk jadi mitra?",
+     "Simpel kok, Kak. Yang penting Kakak memang aktif menjalankan usaha laundry (punya mesin cuci dengan kapasitas memadai), bisa menjaga kebersihan dan ketepatan waktu, dan responsif kalau ada calon pelanggan yang butuh info cepat."],
+    ["Katanya ada garansi kualitas lead, maksudnya gimana?",
+     "Betul, Kak. Setiap lead yang kami kirim tetap kena komisi normal kalau closing — enggak ada yang digratiskan. Tapi kalau ternyata lead-nya enggak valid (nomor mati, enggak nyambung, atau orangnya emang enggak niat order), Kakak enggak perlu bayar komisi sama sekali buat lead itu. Jadi Kakak cuma bayar buat lead yang beneran real dan closing."],
+    ["Kenapa dikasih garansi kualitas kayak gitu, apa untungnya buat kami?",
+     "Supaya Kakak enggak was-was bayar buat lead yang ternyata enggak jelas atau bohongan, Kak. Jaminan ini berlaku terus buat semua lead, bukan cuma yang pertama — jadi selama Kakak kerja sama sama kami, risiko dapat lead abal-abal itu ditanggung kami, bukan Kakak."],
+    ["Berapa besaran komisinya?",
+     "Komisinya flat Rp7.000 per order yang closing (bukan persentase, karena nilai order laundry biasanya kecil, jadi dihitung flat biar simpel buat dua belah pihak), Kak, berlaku sejak lead pertama (dengan garansi kualitas seperti yang saya jelaskan tadi). Nanti detail lengkapnya kujelaskan lagi begitu Kakak resmi gabung."],
+    ["Kalau harga saya beda dari yang tertera di web, apa saya wajib ikutin harga web?",
+     "Enggak wajib sama sekali, Kak. Harga di web itu cuma harga acuan/estimasi buat calon pelanggan, bukan harga yang mengikat ke mitra. Closing harga tetap sepenuhnya hak Kakak sesuai kondisi riil — nanti tinggal dijelasin aja ke calon pelanggan-nya kalau ada penyesuaian. Komisi ke kami tetap dihitung dari harga final yang Kakak sepakati sendiri, bukan dari harga yang tertera di web."],
+    ["Komisinya dibayar kapan dan gimana caranya?",
+     "Komisi dibayarkan setelah order selesai dan pembayaran dari klien sudah Kakak terima penuh, Kak. Caranya tinggal transfer ke rekening kami sesuai nominal yang disepakati — nanti kukirim rincian rekening dan cara laporannya."],
+    ["Leads/calon pelanggan itu datangnya dari mana?",
+     "Dari website dan iklan yang kami kelola khusus untuk niche laundry di banyak kecamatan, Kak. Jadi calon pelanggan itu memang cari sendiri lewat internet, masuk ke kami, baru kami teruskan ke mitra yang paling dekat dengan lokasi mereka."],
+    ["Apakah leads-nya eksklusif buat saya aja di wilayah saya?",
+     "Untuk satu kecamatan, biasanya kami utamakan satu mitra dulu, Kak, supaya enggak rebutan dan lebih fair. Tapi kalau order-nya ramai dan satu mitra sudah kewalahan, mungkin kami cari mitra tambahan di wilayah yang sama."],
+    ["Kalau ada 2 mitra di kecamatan yang sama, gimana pembagiannya?",
+     "Kami akan bagi berdasarkan kapasitas dan kesiapan masing-masing mitra, Kak, atau bergiliran supaya adil. Yang penting kualitas layanan ke klien tetap terjaga."],
+    ["Kalau leads yang dikasih ternyata enggak jadi order (cuma tanya-tanya doang), gimana?",
+     "Enggak masalah, Kak, itu risiko bisnis yang wajar dan enggak dikenakan biaya apapun. Yang dihitung komisi cuma yang benar-benar closing jadi order aja."],
+    ["Saya wajib lapor ke tim setelah order selesai?",
+     "Iya, Kak, mohon dikabari ya setiap ada order yang closing dari leads kami, supaya kami bisa hitung komisinya dengan benar dan datanya rapi buat kedua belah pihak."],
+    ["Boleh enggak kalau saya tolak lead yang dikasih, misal lagi enggak sanggup?",
+     "Boleh banget, Kak, enggak masalah sama sekali. Kalau lagi kewalahan atau kapasitas mesin lagi penuh, tinggal kabari aja, nanti lead-nya kami alihkan ke mitra lain biar calon klien tetap terlayani."],
+    ["Kalau saya ketahuan enggak jujur lapor order (biar enggak bayar komisi), gimana?",
+     "Kami sangat mengandalkan kejujuran dan kepercayaan dalam kerja sama ini, Kak. Kalau ada indikasi order enggak dilaporkan padahal closing dari leads kami, itu bisa jadi pertimbangan buat kami evaluasi ulang kerja samanya, termasuk kemungkinan dihentikan."],
+    ["Kalau ada komplain dari klien soal kualitas mitra, apa yang terjadi?",
+     "Kami akan tindak lanjuti dulu ke Kakak buat cari solusi terbaik, Kak. Tapi kalau komplainnya berulang dan enggak ada perbaikan, kami mungkin akan mengurangi atau menghentikan pengiriman leads ke Kakak demi menjaga nama baik layanan ke depannya."],
+    ["Bisa keluar dari kerja sama ini kapan aja kalau saya mau berhenti?",
+     "Bisa banget, Kak, kerja sama ini enggak mengikat. Kalau suatu saat Kakak mau berhenti, tinggal kabari aja, enggak ada penalti apapun."],
+    ["Setelah daftar, berapa lama sampai mulai dapat lead pertama?",
+     "Tergantung seberapa ramai permintaan laundry di wilayah Kakak, Kak, tapi biasanya begitu terdaftar dan wilayahnya cocok, kami langsung arahkan lead begitu ada yang masuk dari kecamatan Kakak."],
+    ["Saya harus punya mesin cuci berkapasitas besar untuk jadi mitra?",
+     "Enggak wajib mesin besar kok, Kak, yang penting Kakak sanggup memenuhi pesanan dengan waktu pengerjaan yang wajar dan hasil yang rapi. Kalau kapasitasnya masih kecil, boleh mulai dulu dari order-order kecil."],
+    ["Apa untungnya gabung jadi mitra dibanding jalan sendiri promosi usaha laundry saya?",
+     "Keuntungannya, Kak enggak perlu keluar biaya iklan atau bikin website sendiri buat dapat calon pelanggan. Kami yang urus promosi dan carikan calon klien, Kakak tinggal fokus ke kualitas cucian dan ketepatan waktu aja."],
+    ["Bagaimana proses daftarnya, apa saja yang perlu disiapkan?",
+     "Gampang, Kak, cukup siapkan info usaha (nama usaha, wilayah layanan, kontak aktif), daftar harga per kg atau per item yang biasa Kakak tawarkan, dan info soal layanan antar jemput kalau ada. Nanti kubantu proses pendaftarannya sampai selesai."],
+    ["Apakah wilayah kerja sama bisa lebih dari 1 kecamatan?",
+     "Bisa, Kak, asal memang kapasitas produksi dan layanan antar jemputnya sanggup menjangkau lebih dari 1 kecamatan. Nanti kita diskusikan wilayah mana aja yang realistis buat di-cover."],
+    ["Kalau saya juga jual niche lain (bukan cuma laundry), bisa gabung juga?",
+     "Bisa banget, Kak. Kami juga punya program kerja sama buat niche-niche lain seperti aqiqah, catering, servis AC, dan lainnya. Kalau Kakak berminat, nanti bisa didaftarkan sekalian di niche itu juga."],
+    ["Selain sistem komisi, katanya ada juga opsi sewa halaman? Itu apa?",
+     "Iya, Kak, betul. Selain sistem bagi hasil per order (komisi), kami juga punya opsi sewa halaman. Jadi nomor WA usaha laundry Kakak akan kami pasang langsung di halaman website kami untuk wilayah kecamatan Kakak, dan calon pembeli yang lihat halaman itu bisa langsung chat WA Kakak tanpa perlu lewat kami dulu."],
+    ["Bedanya sewa halaman sama sistem komisi apa?",
+     "Bedanya di cara bayarnya, Kak. Kalau sistem komisi, Kakak enggak bayar di depan tapi kami potong komisi tiap ada order yang closing. Kalau sewa halaman, Kakak bayar sewa di awal (biasanya bulanan/tahunan), tapi semua leads yang masuk dari halaman itu langsung ke WA Kakak tanpa potongan komisi sama sekali, walaupun order-nya banyak."],
+    ["Berapa biaya sewa halamannya?",
+     "Biaya sewa halaman mulai dari [Rp150.000/bulan atau Rp1.500.000/tahun], Kak, tergantung wilayah dan tingkat pencarian di kecamatan tersebut. Nanti kukabari detail harganya sesuai kecamatan Kakak."],
+    ["Kalau saya sewa halaman, otomatis semua order masuk ke saya?",
+     "Iya, Kak, karena nomor WA Kakak yang dipasang langsung di halaman, jadi semua yang chat dari halaman itu otomatis masuk ke Kakak. Kami enggak ambil komisi tambahan lagi karena Kakak sudah bayar sewa di depan."],
+    ["Enaknya pilih sewa halaman atau sistem komisi?",
+     "Tergantung kondisi usaha Kakak, Kak. Kalau baru mulai dan mau coba dulu tanpa risiko modal di depan, sistem komisi lebih pas karena bayar cuma kalau ada order closing. Tapi kalau Kakak yakin permintaan di wilayah itu ramai dan mau untung maksimal tanpa potongan komisi, sewa halaman bisa lebih hemat dalam jangka panjang."],
+    ["Bisa pindah dari sistem komisi ke sewa halaman, atau sebaliknya?",
+     "Bisa banget, Kak, fleksibel kok. Kalau di tengah jalan Kakak mau ganti skema, tinggal kabari aja, nanti kita sesuaikan ulang."],
+    ["Kalau sewa halaman, apakah halamannya eksklusif buat saya aja di kecamatan itu?",
+     "Iya, Kak, untuk satu halaman kecamatan biasanya cuma satu nomor WA yang dipasang, jadi selama masa sewa aktif, halaman itu eksklusif buat usaha Kakak di kecamatan tersebut."],
+    ["Kalau masa sewa habis dan enggak diperpanjang, gimana?",
+     "Nomor WA Kakak akan kami lepas dari halaman Laundry itu, Kak, dan slotnya bisa ditawarkan ke mitra lain yang berminat. Tapi kami infokan dulu sebelum masa sewa habis biar Kakak sempat memutuskan mau lanjut atau enggak."],
+  ],
+  script: [
+    ["1. Notifikasi ke Mitra — Ada Calon Klien yang Akan Menghubungi Langsung",
+     "Assalamu'alaikum, Kak. Mohon maaf sebelumnya, perkenalkan saya Widya dari TeraWeb — kami platform yang bantu carikan calon pelanggan buat usaha jasa laundry, sistemnya kerja sama komisi per order yang closing (bukan bayar di muka, Kak). Kebetulan pas ini ada calon pelanggan yang lagi cari jasa laundry di wilayah [kecamatan], dan saya lihat usaha Kakak yang paling representatif di sana. Saya sudah kasih kontak Kakak ke beliau ya, Kak, jadi kemungkinan sebentar lagi beliau yang akan langsung WA Kakak duluan dari nomor [nomor WA klien] — ini saya infokan nomornya sekalian ya, Kak, buat referensi aja biar Kakak tau itu memang klien dari kami begitu beliau chat nanti (enggak perlu dihubungin duluan, cukup ditunggu aja). Oh iya, untuk harga enggak masalah kok Kak kalau beda sama yang tertera di web kami — itu emang cuma harga acuan/estimasi awal buat calon pelanggan. Closing harga tetap hak Kakak sepenuhnya sesuai kondisi riil, nanti tinggal dijelasin aja ke beliau kalau ada penyesuaian. Komisi ke kami tetap sama walau harga akhir beda dari web. Mohon direspons cepat ya kalau ada yang chat dari nomor itu, biar calon pelanggan-nya enggak keburu nyari yang lain. Tenang aja, kalau ternyata nomornya enggak nyambung atau orangnya enggak niat order, Kakak enggak perlu bayar apa-apa kok — itu bagian dari garansi kualitas kami 🙏"],
+    ["2. Follow-up ke Klien — Sudah Sempat Hubungi Mitra?",
+     "Halo Kak, mau tanya nih, sudah sempat WA mitranya belum, Kak? Kalau ada kendala atau belum sempat, kabarin aja ya, biar saya bantu carikan solusinya."],
+    ["3. Kalau Klien Bilang Sudah Order — Follow-up ke Mitra untuk Ajak Lanjut Komisi",
+     "Alhamdulillah kalau jadi ya, Kak! 🎉 Klien tadi sudah konfirmasi ke saya katanya sudah order sama Kakak. Berarti lead kami emang valid ya sesuai janji di awal. Nah, kalau Kakak berkenan, ke depannya saya bisa terus kirim info kalau ada calon pelanggan lagi di wilayah Kakak. Sistemnya tetap sama — komisi jalan normal per order yang closing, dan tetap ada garansi kualitas kalau ternyata nanti ada lead yang enggak valid. Mau lanjut, Kak?"],
+    ["4. Kalau Klien Bilang Belum/Enggak Jadi — Tindak Lanjut ke Klien & Mitra",
+     "Kalau klien bilang belum sempat atau enggak jadi order, ada 2 pesan yang perlu dikirim ke masing-masing pihak:\n\nKe klien:\n\"Baik Kak, enggak masalah. Kalau masih butuh, boleh dicoba hubungi lagi mitranya, atau kalau Kakak mau, saya carikan mitra lain di wilayah Kakak?\"\n\nKe mitra:\n\"Oh sayang banget ya, Kak, kayaknya klien kemarin belum jadi order. Enggak masalah, mungkin belum jodoh aja. Kalau nanti ada calon pelanggan lain lagi di wilayah Kakak, boleh saya kirim kontaknya juga? Siapa tau yang berikutnya cocok.\""],
+    ["5. Penjelasan Program (Detail Skema Komisi)",
+     "Jadi gini, Kak. Kami itu website yang khusus bantu carikan calon pelanggan laundry lewat internet, sudah menjangkau ratusan kecamatan. Sistemnya bagi hasil per order yang closing — jadi Kakak enggak perlu bayar apapun di depan. Kami juga kasih garansi kualitas lead, Kak: kalau ternyata ada lead yang enggak valid (nomor mati atau memang enggak niat order), itu enggak dihitung komisi sama sekali. Jadi Kakak cuma bayar buat lead yang beneran closing."],
+    ["6. Kalimat Pemantik / Alasan Kenapa Harus Lanjut",
+     "Beberapa kalimat yang bisa diselipkan biar obrolannya makin meyakinkan (enggak harus semua dipakai sekaligus ya, Kak):\n\n• \"Order pertama tadi kan udah kebukti beneran ada dan closing, Kak — jadi ini bukan janji kosong.\"\n• \"Kami yang capek-capek urus iklan dan website, Kakak tinggal terima orderan yang udah siap closing.\"\n• \"Enggak ada kontrak mengikat, Kak, kalau merasa enggak cocok, bisa berhenti kapan aja tanpa penalti.\"\n• \"Sekarang orang cari jasa laundry lewat Google duluan, Kak, bukan dari mulut ke mulut aja. Ini kesempatan usaha Kakak dilihat lebih banyak calon pelanggan.\"\n• \"Kami cuma ambil komisi kalau Kakak beneran dapat cuan dari order itu — jadi kami juga sama-sama butuh Kakak sukses.\""],
+    ["7. Menjawab Keberatan — \"Saya udah rame, enggak butuh tambahan order\"",
+     "Wah alhamdulillah kalau usahanya udah rame, Kak! Enggak apa-apa kalau memang belum butuh sekarang. Tapi kalau nanti pas lagi butuh tambahan order atau mau ekspansi wilayah, boleh banget kontak saya lagi ya, programnya tetap terbuka kok."],
+    ["8. Menjawab Keberatan — \"Kayak MLM ya, saya kurang percaya\"",
+     "Hehe saya paham kekhawatirannya, Kak. Tapi ini beda ya, kami enggak jual produk atau minta modal ke Kakak sama sekali. Kami murni jembatan yang carikan calon pelanggan, dan Kakak cuma bayar komisi kalau order itu beneran closing dan Kakak dapat untungnya duluan. Kalau ternyata lead-nya enggak jelas/enggak valid, Kakak enggak perlu bayar — itu sudah kebukti kan dari lead kemarin, jadi ini bukan skema aneh-aneh."],
+    ["9. Menjawab Keberatan — \"Komisinya kok segini, kemahalan enggak sih?\"",
+     "Saya ngerti, Kak, wajar kalau ditanya gitu. Tapi coba dibandingkan sama biaya iklan atau bikin website sendiri buat dapat pelanggan baru — itu jauh lebih mahal dan enggak pasti hasilnya. Komisi ini kami ambil justru setelah Kakak dapat untung dari order-nya, jadi risikonya ada di kami, bukan di Kakak."],
+    ["10. Follow-up (Belum Dibalas Setelah Ditawari Lanjut Komisi)",
+     "Permisi Kak, mohon maaf mengganggu lagi. Cuma mau follow up soal tawaran lanjut kerja sama mitra laundry yang saya kirim beberapa hari lalu. Kalau Kakak berkenan, saya senang banget bisa cerita lebih lanjut soal skemanya. Kalau saat ini belum tertarik juga enggak apa-apa, Kak, terima kasih sudah meluangkan waktu bacanya 🙏"],
+    ["11. Closing — Ajakan Gabung Resmi",
+     "Baik, Kak, kalau begitu berarti sudah oke ya buat lanjut kerja sama? Kalau iya, saya minta info berikut buat proses pendaftarannya: (1) nama usaha, (2) wilayah/kecamatan layanan, (3) contoh paket & harga yang biasa ditawarkan, (4) nomor WA aktif buat koordinasi order. Setelah itu saya proses ya, Kak, dan begitu ada calon pelanggan lain di wilayah Kakak langsung saya hubungkan."],
+    ["12. Welcome Message — Setelah Resmi Jadi Mitra",
+     "Alhamdulillah, selamat resmi jadi mitra laundry kami ya, Kak! 🎉 Mulai sekarang begitu ada calon pelanggan di wilayah Kakak, saya langsung hubungi ya. Kalau ada pertanyaan kapan aja, jangan sungkan chat saya ya, Kak. Sukses terus buat usahanya! 🙏"],
+    ["13. Menjelaskan Ada 2 Pilihan Skema Kerja Sama",
+     "Oh iya, Kak, kerja sama kami ada dua pilihan skema, biar Kakak bisa pilih yang paling cocok:\n\n1) Sistem komisi — enggak bayar di depan, kami cuma potong komisi kalau order-nya closing.\n2) Sewa halaman — Kakak bayar sewa di awal, tapi nomor WA Kakak dipasang langsung di halaman kami, jadi semua leads dari situ langsung masuk ke Kakak tanpa potongan komisi sama sekali.\n\nMau saya jelaskan lebih detail yang mana dulu, Kak?"],
+    ["14. Menawarkan Upgrade ke Sewa Halaman (Kalau Mitra Sudah Yakin/Order Ramai)",
+     "Kak, ngomong-ngomong soal usaha laundry Kakak yang udah rame gini, saya rasa opsi sewa halaman bakal lebih menguntungkan buat Kakak lho. Soalnya kalau pakai sistem komisi, tiap order closing kena potongan. Tapi kalau sewa halaman, Kakak cukup bayar sewa di awal, terus semua order yang masuk dari situ full jadi milik Kakak tanpa potongan lagi. Mau saya hitungkan simulasinya, Kak?"],
+    ["15. Menjawab Keberatan — \"Sewa halaman mahal di depan, saya enggak yakin ada hasilnya\"",
+     "Saya paham, Kak, wajar kalau masih ragu. Makanya kami sarankan mulai dari sistem komisi dulu buat lihat seberapa ramai permintaan di wilayah Kakak. Begitu Kakak lihat sendiri order-nya cukup rutin, baru deh dipertimbangkan pindah ke sewa halaman biar lebih hemat dalam jangka panjang."],
+    ["16. Closing — Ambil Paket Sewa Halaman",
+     "Baik, Kak, kalau memang mau ambil paket sewa halaman, saya siapkan dulu ya rincian biaya dan durasi sewanya sesuai kecamatan Kakak. Setelah itu, begitu pembayaran sewa masuk, nomor WA Kakak langsung saya pasang di halaman Laundry wilayah kecamatan Kakak."],
+    ["17. Alternatif — Pembukaan Cold Message Tanpa Order di Tangan (Bangun Jaringan Duluan)",
+     "Assalamu'alaikum, Kak/Pak/Bu [nama]. Mohon maaf mengganggu waktunya. Perkenalkan saya Widya dari TeraWeb. Saya lihat usaha laundry Bapak/Ibu di [lokasi] terlihat sudah cukup dikenal dan dipercaya warga sekitar. Kebetulan kami sedang buka wilayah [kecamatan] untuk program kerja sama mitra kami, dan siapa tau nanti ada calon pelanggan yang cari jasa laundry di sana, saya bisa langsung arahkan ke Kakak duluan. Boleh saya ambil waktu sebentar buat cerita programnya, Kak?\n\n(Catatan: dipakai kalau belum ada order riil di tangan, misal pas mau bangun jaringan mitra di kecamatan baru.)"],
+    ["18. Alternatif — Pembukaan Dari Referensi/Rekomendasi",
+     "Assalamu'alaikum, Kak. Perkenalkan saya Widya dari TeraWeb. Saya dapat kontak Bapak/Ibu dari [nama yang merekomendasikan], katanya usaha laundrynya sudah dipercaya banyak pelanggan di wilayah [kecamatan]. Kebetulan kami sedang buka program kerja sama buat mitra laundry lokal di sana, boleh saya ceritakan sedikit, Kak?\n\n(Catatan: dipakai kalau belum ada order riil di tangan, sama seperti nomor 17.)"]
+  ]
+};
+
+function renderCards(){
+  ['klien','mitra','script'].forEach(key=>{
+    const container = document.getElementById(key);
+    container.innerHTML = '';
+    DATA[key].forEach((item, idx) => {
+      const [q, a] = item;
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.search = (q + ' ' + a).toLowerCase();
+      card.innerHTML = `
+        <div class="qrow">
+          <div class="qnum">${idx+1}</div>
+          <div class="qtext">${q}</div>
+        </div>
+        <div class="answer" contenteditable="true" spellcheck="false">${a}</div>
+        <div class="cardfoot">
+          <span class="editnote">✎ bisa diedit langsung</span>
+          <button class="copybtn" onclick="copyAnswer(this)">Copy</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  });
+  document.getElementById('count-klien').textContent = DATA.klien.length;
+  document.getElementById('count-mitra').textContent = DATA.mitra.length;
+  document.getElementById('count-script').textContent = DATA.script.length;
+}
+
+function switchTab(tab){
+  document.getElementById('klien').classList.toggle('active', tab==='klien');
+  document.getElementById('mitra').classList.toggle('active', tab==='mitra');
+  document.getElementById('script').classList.toggle('active', tab==='script');
+  document.getElementById('tab-klien').classList.toggle('active', tab==='klien');
+  document.getElementById('tab-mitra').classList.toggle('active', tab==='mitra');
+  document.getElementById('tab-script').classList.toggle('active', tab==='script');
+  document.getElementById('searchInput').value = '';
+  filterCards();
+}
+
+function copyAnswer(btn){
+  const card = btn.closest('.card');
+  const answerEl = card.querySelector('.answer');
+  const text = answerEl.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const original = btn.textContent;
+    btn.textContent = 'Tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  }).catch(()=>{
+    const range = document.createRange();
+    range.selectNodeContents(answerEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.execCommand('copy');
+    sel.removeAllRanges();
+    btn.textContent = 'Tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function filterCards(){
+  const activePanel = document.querySelector('.panel.active');
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  const cards = activePanel.querySelectorAll('.card');
+  let visible = 0;
+  cards.forEach(card=>{
+    const match = !query || card.dataset.search.includes(query);
+    card.style.display = match ? '' : 'none';
+    if(match) visible++;
+  });
+  const hint = document.getElementById('resultHint');
+  hint.textContent = query ? `Menampilkan ${visible} dari ${cards.length} pertanyaan` : '';
+
+  let empty = activePanel.querySelector('.empty');
+  if(visible === 0){
+    if(!empty){
+      empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'Enggak ketemu pertanyaan yang cocok. Coba kata kunci lain ya.';
+      activePanel.appendChild(empty);
+    }
+  } else if(empty){
+    empty.remove();
+  }
+}
+
+renderCards();
+</script>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeraWeb — Alat Kerja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0C0E12; --panel:#14171D; --panel-2:#1B1F27; --border:#262B34; --border-hi:#333a46;
+    --text:#E8EAEE; --muted:#8B93A1; --accent:#7C83FD; --accent-dim:#3B3E7A;
+    --good:#6FD6A8; --warn:#F2A65A;
+    --f-display:'Plus Jakarta Sans',sans-serif; --f-body:'Inter',sans-serif; --f-mono:'JetBrains Mono',monospace;
+    --c1:#6FD6A8; --c2:#F2A65A; --c3:#E8637A; --c4:#63B4E8; --c5:#C792EA; --c6:#4FD1C5; --c7:#FF9F5B; --c8:#8CA6FF; --c9:#E0C25A;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--f-body);
+    background:
+      radial-gradient(circle at 15% 0%, rgba(124,131,253,0.10), transparent 45%),
+      var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 40px 40px;
+    text-align: center;
+  }
+  .header-eyebrow {
+    font-family: var(--f-mono);
+    font-size: 12px; font-weight: 500; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .header-eyebrow::before{content:'$'; color:var(--muted);}
+  header h1 {
+    font-family: var(--f-display);
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 700; color: var(--text);
+    letter-spacing: -0.01em; margin-bottom: 10px;
+  }
+  header p {
+    color: var(--muted); font-size: 14px; margin-bottom: 18px;
+    max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.6;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--panel-2); color: var(--muted);
+    border: 1px solid var(--border);
+    font-family: var(--f-mono);
+    font-size: 12px; font-weight: 500;
+    padding: 6px 16px; border-radius: 20px;
+  }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 36px 24px 70px;
+  }
+
+  /* SEARCH */
+  .searchbar {
+    display:flex; align-items:center; gap:10px;
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    padding:12px 16px; font-family:var(--f-mono); font-size:13.5px;
+    margin-bottom: 28px;
+  }
+  .searchbar span.prompt{color:var(--accent);}
+  .searchbar input{
+    flex:1; background:transparent; border:none; outline:none; color:var(--text);
+    font-family:var(--f-mono); font-size:13.5px;
+  }
+  .searchbar input::placeholder{color:var(--muted);}
+  .searchbar .count{color:var(--muted); font-size:12px; white-space:nowrap;}
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px;
+  }
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--f-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    padding: 14px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .tab-btn:hover { background: var(--panel-2); color: var(--text); }
+  .tab-btn.active {
+    background: var(--accent-dim);
+    color: var(--text);
+  }
+  .tab-btn .tab-icon { font-size: 16px; }
+  .tab-btn .tab-count {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .toc {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 32px;
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  .toc-title {
+    font-family: var(--f-mono);
+    font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+  .toc a {
+    color: var(--text); text-decoration: none; margin-right: 14px;
+    border-bottom: 1px dotted var(--accent-dim);
+  }
+  .toc a:hover { color: var(--accent); }
+
+  .group {
+    margin-bottom: 30px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .group-head {
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; flex:none;}
+  .group-icon { font-size: 18px; }
+  .group-name {
+    font-family: var(--f-display);
+    color: var(--text); font-size: 15px; font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .group-count {
+    margin-left: auto;
+    font-family: var(--f-mono);
+    font-size: 11px; color: var(--muted); font-weight: 500;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    text-align: left;
+    font-family: var(--f-mono);
+    font-size: 11px; font-weight: 500; letter-spacing: 0.5px;
+    text-transform: uppercase; color: var(--muted);
+    padding: 10px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel-2);
+  }
+  tbody td {
+    padding: 12px 22px;
+    font-size: 13.5px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    color: var(--text);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--panel-2); }
+
+  .col-niche { width: 22%; color: var(--muted); }
+  .col-niche .niche-icon { margin-right: 6px; }
+  .col-title { width: 38%; font-weight: 600; color: var(--text); }
+  .col-desc { width: 24%; color: var(--muted); font-size: 12.5px; }
+  .col-file { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); width: 12%; }
+  .col-link { width: 12%; text-align: right; }
+
+  .open-btn {
+    display: inline-block;
+    font-family: var(--f-mono);
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 11.5px; font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 7px;
+    transition: border-color .15s, color .15s;
+  }
+  .open-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .pill {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.3px; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 20px;
+    margin-left: 6px;
+    vertical-align: middle;
+    border: 1px solid transparent;
+  }
+  .pill.sheets { background: rgba(111,214,168,0.12); color: var(--good); border-color: rgba(111,214,168,0.3); }
+  .pill.live { background: rgba(242,166,90,0.12); color: var(--warn); border-color: rgba(242,166,90,0.3); }
+  .pill.doc { background: rgba(124,131,253,0.12); color: var(--accent); border-color: rgba(124,131,253,0.3); }
+
+  .empty-state{
+    display:none; text-align:center; padding:40px 20px; color:var(--muted);
+    font-family:var(--f-mono); font-size:13px; border:1px dashed var(--border); border-radius:10px; margin-top:0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 26px;
+    font-size: 12px; color: var(--muted);
+  }
+  footer a{color:inherit; text-decoration:underline;}
+
+  @media (max-width: 700px) {
+    main { padding: 24px 14px 50px; }
+    .col-file { display: none; }
+    .col-desc { display: none; }
+    thead th:nth-child(3), thead th:nth-child(4) { display: none; }
+    .col-niche { width: 30%; }
+    .col-title { width: 45%; }
+    .col-link { width: 25%; }
+    table thead { display: none; }
+    tbody td { padding: 10px 16px; }
+    .tab-btn { font-size: 13px; padding: 12px 8px; }
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">TeraWeb</div>
+  <h1>📋 Alat Kerja Penjualan</h1>
+  <p>Kumpulan dokumen dan alat bantu untuk proses penjualan TeraWeb & Sentra Jasa Lokal — dari materi presentasi, pelacakan mitra & prospek, spreadsheet, hingga demo produk.</p>
+  <div class="badge">26 Alat Kerja · 2 Tab</div>
+</header>
+
+<main>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="pseo" onclick="switchTab('pseo')">
+      <span class="tab-icon">🗺️</span> pSEO <span class="tab-count">(16)</span>
+    </button>
+    <button class="tab-btn" data-tab="jasaweb" onclick="switchTab('jasaweb')">
+      <span class="tab-icon">🌐</span> Jasa Web <span class="tab-count">(10)</span>
+    </button>
+  </div>
+
+  <div class="searchbar">
+    <span class="prompt">&rsaquo;</span>
+    <input type="text" id="searchInput" placeholder="Cari alat kerja... (mis. faq, tracker, proposal)" autocomplete="off">
+    <span class="count" id="resultCount"></span>
+  </div>
+
+  <!-- ====================== TAB: pSEO ====================== -->
+  <div class="tab-panel active" id="tab-pseo">
+
+    <div class="toc">
+      <div class="toc-title">Lompat ke kelompok</div>
+      <a href="#wilayah">🗺️ Referensi Wilayah</a>
+      <a href="#tracker-pseo">📍 Tracker pSEO</a>
+      <a href="#faq">💬 FAQ per Niche</a>
+    </div>
+
+    <!-- REFERENSI WILAYAH -->
+    <div class="group" id="wilayah">
+      <div class="group-head">
+        <div class="dot" style="background:var(--c1)"></div>
+        <span class="group-icon">🗺️</span>
+        <span class="group-name">Referensi Wilayah</span>
+        <span class="group-count">2 dokumen</span>
+      </div>
+      <table>
+        <thead><tr><th class="col-niche">Jenis</th><th class="col-title">Nama Dokumen</th><th class="col-desc">Keterangan</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🗺️</span>Referensi Wilayah</td>
+            <td class="col-title">Daftar Kecamatan & Kabupaten</td>
+            <td class="col-desc">Daftar lengkap kecamatan & kabupaten cakupan pSEO</td>
+            <td class="col-file">daftar_kecamatan.html</td>
+            <td class="col-link"><a class="open-btn" href="daftar_kecamatan.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🗺️</span>Referensi Wilayah</td>
+            <td class="col-title">Daftar Kota & Provinsi Indonesia</td>
+            <td class="col-desc">Daftar lengkap kota & provinsi di Indonesia</td>
+            <td class="col-file">Daftar_Kota_Provinsi_horizontal.html</td>
+            <td class="col-link"><a class="open-btn" href="Daftar_Kota_Provinsi_horizontal.html" target="_blank">Buka</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TRACKER pSEO -->
+    <div class="group" id="tracker-pseo">
+      <div class="group-head">
+        <div class="dot" style="background:var(--c2)"></div>
+        <span class="group-icon">📍</span>
+        <span class="group-name">Tracker pSEO</span>
+        <span class="group-count">2 dokumen</span>
+      </div>
+      <table>
+        <thead><tr><th class="col-niche">Jenis</th><th class="col-title">Nama Dokumen</th><th class="col-desc">Keterangan</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">📍</span>Tracker pSEO</td>
+            <td class="col-title">Tracker pSEO — Sentra Jasa Lokal</td>
+            <td class="col-desc">Mitra usaha & lead dari halaman pSEO kecamatan</td>
+            <td class="col-file">tracker-mitra-sheets.html</td>
+            <td class="col-link"><a class="open-btn" href="tracker-mitra-sheets.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">📍</span>Tracker pSEO</td>
+            <td class="col-title">Tracker Leads — Sentra Jasa Lokal</td>
+            <td class="col-desc">Catat lead WA masuk per niche & kecamatan, laporan harian/bulanan</td>
+            <td class="col-file">tracker-leads.html</td>
+            <td class="col-link"><a class="open-btn" href="tracker-leads.html" target="_blank">Buka</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FAQ PER NICHE -->
+    <div class="group" id="faq">
+      <div class="group-head">
+        <div class="dot" style="background:var(--c3)"></div>
+        <span class="group-icon">💬</span>
+        <span class="group-name">FAQ per Niche</span>
+        <span class="group-count">12 dokumen</span>
+      </div>
+      <table>
+        <thead><tr><th class="col-niche">Niche</th><th class="col-title">Nama Dokumen</th><th class="col-desc">Keterangan</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🍱</span>Catering</td>
+            <td class="col-title">FAQ Catering</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche catering</td>
+            <td class="col-file">01_faq-catering.html</td>
+            <td class="col-link"><a class="open-btn" href="01_faq-catering.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🐑</span>Aqiqah</td>
+            <td class="col-title">FAQ Aqiqah</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche aqiqah</td>
+            <td class="col-file">02_faq-aqiqah.html</td>
+            <td class="col-link"><a class="open-btn" href="02_faq-aqiqah.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">👕</span>Laundry</td>
+            <td class="col-title">FAQ Laundry</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche laundry</td>
+            <td class="col-file">03_faq-laundry.html</td>
+            <td class="col-link"><a class="open-btn" href="03_faq-laundry.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🔨</span>Tukang Bangunan</td>
+            <td class="col-title">FAQ Tukang Bangunan</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche tukang bangunan</td>
+            <td class="col-file">04_faq-tukang-bangunan.html</td>
+            <td class="col-link"><a class="open-btn" href="04_faq-tukang-bangunan.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">⚡</span>Tukang Listrik</td>
+            <td class="col-title">FAQ Tukang Listrik</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche tukang listrik</td>
+            <td class="col-file">05_faq-tukang-listrik.html</td>
+            <td class="col-link"><a class="open-btn" href="05_faq-tukang-listrik.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">❄️</span>Service AC</td>
+            <td class="col-title">FAQ Service AC</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche service AC</td>
+            <td class="col-file">06_faq-service-ac.html</td>
+            <td class="col-link"><a class="open-btn" href="06_faq-service-ac.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🦷</span>Klinik Gigi</td>
+            <td class="col-title">FAQ Klinik Gigi</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche klinik/dokter gigi</td>
+            <td class="col-file">07_faq-klinik-gigi.html</td>
+            <td class="col-link"><a class="open-btn" href="07_faq-klinik-gigi.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🚽</span>Sedot WC</td>
+            <td class="col-title">FAQ Sedot WC</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche sedot WC</td>
+            <td class="col-file">07_faq-sedot-wc.html</td>
+            <td class="col-link"><a class="open-btn" href="07_faq-sedot-wc.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🚗</span>Rental Mobil</td>
+            <td class="col-title">FAQ Rental Mobil</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche rental mobil</td>
+            <td class="col-file">08_faq-rental-mobil.html</td>
+            <td class="col-link"><a class="open-btn" href="08_faq-rental-mobil.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🧹</span>Cuci Karpet</td>
+            <td class="col-title">FAQ Cuci Karpet</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche cuci karpet</td>
+            <td class="col-file">09_faq-cuci-karpet.html</td>
+            <td class="col-link"><a class="open-btn" href="09_faq-cuci-karpet.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🏗️</span>Kontraktor</td>
+            <td class="col-title">FAQ Kontraktor</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche kontraktor</td>
+            <td class="col-file">10_faq-kontraktor.html</td>
+            <td class="col-link"><a class="open-btn" href="10_faq-kontraktor.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">✈️</span>Travel Antar Kota</td>
+            <td class="col-title">FAQ Travel Antar Kota</td>
+            <td class="col-desc">Skrip & jawaban FAQ untuk niche travel antar kota</td>
+            <td class="col-file">11_faq-travel-antar-kota.html</td>
+            <td class="col-link"><a class="open-btn" href="11_faq-travel-antar-kota.html" target="_blank">Buka</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ====================== TAB: JASA WEB ====================== -->
+  <div class="tab-panel" id="tab-jasaweb">
+
+    <div class="toc">
+      <div class="toc-title">Lompat ke kelompok</div>
+      <a href="#sales-kit">🎯 Sales Kit</a>
+      <a href="#tracker-jw">📍 Tracker & Prospek</a>
+      <a href="#demo">🌐 Demo Website</a>
+      <a href="#proposal">📄 Proposal</a>
+    </div>
+
+    <!-- SALES KIT -->
+    <div class="group" id="sales-kit">
+      <div class="group-head">
+        <div class="dot" style="background:var(--c4)"></div>
+        <span class="group-icon">🎯</span>
+        <span class="group-name">Sales Kit</span>
+        <span class="group-count">3 dokumen</span>
+      </div>
+      <table>
+        <thead><tr><th class="col-niche">Jenis</th><th class="col-title">Nama Dokumen</th><th class="col-desc">Keterangan</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🎯</span>Sales Kit</td>
+            <td class="col-title">TeraWeb Sales Kit 1</td>
+            <td class="col-desc">Penjelasan layanan, harga, dan poin penjualan</td>
+            <td class="col-file">toolkit-gerilya.html</td>
+            <td class="col-link"><a class="open-btn" href="toolkit-gerilya.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🎯</span>Sales Kit</td>
+            <td class="col-title">TeraWeb Sales Kit 2</td>
+            <td class="col-desc">Penjelasan layanan, harga, dan poin penjualan</td>
+            <td class="col-file">toolkit-outreach-49niche.html</td>
+            <td class="col-link"><a class="open-btn" href="toolkit-outreach-49niche.html" target="_blank">Buka</a></td>
+          </tr>
+		  <tr>
+            <td class="col-niche"><span class="niche-icon">🎯</span>Penawaran</td>
+            <td class="col-title">Layanan & Harga TeraWeb <span class="pill live">Live</span></td>
+            <td class="col-desc">Paket, harga, dan simulasi biaya 3 tahun untuk calon klien</td>
+            <td class="col-file">Tautan eksternal</td>
+            <td class="col-link"><a class="open-btn" href="https://teraweb.id/layanan.html" target="_blank" rel="noopener">Lihat</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TRACKER & PROSPEK -->
+    <div class="group" id="tracker-jw">
+      <div class="group-head">
+        <div class="dot" style="background:var(--c5)"></div>
+        <span class="group-icon">📍</span>
+        <span class="group-name">Tracker & Prospek</span>
+        <span class="group-count">3 dokumen</span>
+      </div>
+      <table>
+        <thead><tr><th class="col-niche">Jenis</th><th class="col-title">Nama Dokumen</th><th class="col-desc">Keterangan</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">📍</span>Tracker Prospek</td>
+            <td class="col-title">Tracker Prospek — TeraWeb</td>
+            <td class="col-desc">Catatan & penyaringan calon klien website dan landing page</td>
+            <td class="col-file">tracker-prospek-sheets.html</td>
+            <td class="col-link"><a class="open-btn" href="tracker-prospek-sheets.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">📍</span>Daftar Prospek</td>
+            <td class="col-title">Daftar Prioritas Prospek</td>
+            <td class="col-desc">Calon klien terurut berdasarkan prioritas</td>
+            <td class="col-file">6_webvolt-daftar-prospek.html</td>
+            <td class="col-link"><a class="open-btn" href="6_webvolt-daftar-prospek.html" target="_blank">Buka</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🎯</span>Kriteria Target</td>
+            <td class="col-title">Target Bisnis</td>
+            <td class="col-desc">Kriteria usaha sasaran jasa web statis</td>
+            <td class="col-file">7_target_bisnis_web_statis.html</td>
+            <td class="col-link"><a class="open-btn" href="7_target_bisnis_web_statis.html" target="_blank">Buka</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- DEMO WEBSITE -->
+    <div class="group" id="demo">
+      <div class="group-head">
+        <div class="dot" style="background:var(--c6)"></div>
+        <span class="group-icon">🌐</span>
+        <span class="group-name">Demo Website</span>
+        <span class="group-count">3 dokumen</span>
+      </div>
+      <table>
+        <thead><tr><th class="col-niche">Jenis</th><th class="col-title">Nama Dokumen</th><th class="col-desc">Keterangan</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🌐</span>Demo Produk</td>
+            <td class="col-title">Demo Landing Page <span class="pill live">Live</span></td>
+            <td class="col-desc">Daftar isi demo landing page per niche</td>
+            <td class="col-file">Tautan eksternal</td>
+            <td class="col-link"><a class="open-btn" href="https://teraweb.id/demolanding/" target="_blank" rel="noopener">Lihat</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🌐</span>Demo Produk</td>
+            <td class="col-title">Demo Website 4 Halaman <span class="pill live">Live</span></td>
+            <td class="col-desc">Daftar isi demo website 4 halaman per niche</td>
+            <td class="col-file">Tautan eksternal</td>
+            <td class="col-link"><a class="open-btn" href="https://teraweb.id/demo/" target="_blank" rel="noopener">Lihat</a></td>
+          </tr>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">🌐</span>Website Resmi</td>
+            <td class="col-title">Beranda TeraWeb <span class="pill live">Live</span></td>
+            <td class="col-desc">Paket, harga, dan 12 demo unggulan siap kirim</td>
+            <td class="col-file">Tautan eksternal</td>
+            <td class="col-link"><a class="open-btn" href="https://teraweb.id/" target="_blank" rel="noopener">Lihat</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PROPOSAL -->
+    <div class="group" id="proposal">
+      <div class="group-head">
+        <div class="dot" style="background:var(--c7)"></div>
+        <span class="group-icon">📄</span>
+        <span class="group-name">Proposal</span>
+        <span class="group-count">1 dokumen</span>
+      </div>
+      <table>
+        <thead><tr><th class="col-niche">Jenis</th><th class="col-title">Nama Dokumen</th><th class="col-desc">Keterangan</th><th class="col-file">File</th><th class="col-link"></th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="col-niche"><span class="niche-icon">📄</span>Proposal</td>
+            <td class="col-title">Proposal TeraWeb <span class="pill doc">Word</span></td>
+            <td class="col-desc">Dokumen penawaran resmi untuk klien</td>
+            <td class="col-file">8_webvolt-proposal.docx</td>
+            <td class="col-link"><a class="open-btn" href="8_webvolt-proposal.docx">Unduh</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>TeraWeb — Landing page dan website bisnis, kilat dan sekali bayar.</footer>
+
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.querySelector('.tab-btn[data-tab="' + tab + '"]').classList.add('active');
+    filterRows();
+  }
+
+  const searchInput = document.getElementById('searchInput');
+  const resultCount = document.getElementById('resultCount');
+
+  function filterRows() {
+    const q = searchInput.value.trim().toLowerCase();
+    const activePanel = document.querySelector('.tab-panel.active');
+    const total = activePanel.querySelectorAll('tbody tr').length;
+    let visible = 0;
+
+    activePanel.querySelectorAll('.group').forEach(function(group) {
+      let groupVisible = 0;
+      group.querySelectorAll('tbody tr').forEach(function(row) {
+        const match = row.textContent.toLowerCase().includes(q);
+        row.style.display = match ? '' : 'none';
+        if (match) { groupVisible++; visible++; }
+      });
+      group.style.display = groupVisible ? '' : 'none';
+    });
+
+    resultCount.textContent = q ? `${visible}/${total}` : `${total} alat`;
+  }
+
+  searchInput.addEventListener('input', filterRows);
+  filterRows();
+</script>
+
+</body>
+</html>

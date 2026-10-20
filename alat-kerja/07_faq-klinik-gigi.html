@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ Klinik Gigi / Dokter Gigi — Klien & Mitra</title>
+<style>
+  :root{
+    --bg: #0b1015;
+    --panel: #131b21;
+    --panel-2: #182129;
+    --border: #243039;
+    --text: #eef3f7;
+    --muted: #8b9dab;
+    --c1: #5fb8dd;
+    --c2: #a8d95f;
+    --c3: #e0925f;
+    --c1-soft: rgba(95,184,221,0.14);
+    --c2-soft: rgba(168,217,95,0.14);
+    --c3-soft: rgba(224,146,95,0.14);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: radial-gradient(circle at 15% 0%, #16232c 0%, var(--bg) 45%) fixed;
+    color:var(--text);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 28px 16px 80px;
+  }
+  .wrap{ max-width: 920px; margin: 0 auto; }
+
+  header{ margin-bottom: 22px; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--c2); background:var(--c2-soft);
+    border:1px solid var(--border);
+    padding:4px 12px; border-radius:100px; margin-bottom:14px;
+  }
+  h1{ font-size: 26px; margin:0 0 6px; font-weight:700; letter-spacing:-0.01em;}
+  h1 span{ color: var(--c1); }
+  .sub{ color:var(--muted); font-size:14.5px; line-height:1.55; max-width: 640px; }
+
+  .tabbar{
+    display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;
+    margin: 22px 0 18px;
+    background: var(--panel); border:1px solid var(--border);
+    border-radius: var(--radius); padding:6px;
+    position: sticky; top: 10px; z-index: 20;
+    backdrop-filter: blur(6px);
+  }
+  .tabbtn{
+    border:none; cursor:pointer; padding:13px 10px;
+    border-radius:10px; font-size:14.5px; font-weight:600;
+    background:transparent; color:var(--muted);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition: all .15s ease;
+  }
+  .tabbtn .count{
+    font-size:11.5px; font-weight:700; padding:1px 7px; border-radius:100px;
+    background:rgba(255,255,255,0.08); color:var(--muted);
+  }
+  .tabbtn.active{ color:#0b1015; }
+  .tabbtn.active .count{ background:rgba(0,0,0,0.18); color:#0b1015;}
+  #tab-klien.active{ background: var(--c1); }
+  #tab-mitra.active{ background: var(--c2); }
+  #tab-script.active{ background: var(--c3); }
+
+  .searchrow{
+    display:flex; gap:10px; margin-bottom:18px;
+  }
+  .searchbox{
+    flex:1; position:relative;
+  }
+  .searchbox input{
+    width:100%; padding:11px 14px 11px 38px;
+    background: var(--panel); border:1px solid var(--border);
+    border-radius:10px; color:var(--text); font-size:14px;
+  }
+  .searchbox input:focus{ outline:none; border-color: var(--c1); }
+  .searchbox::before{
+    content:"⌕"; position:absolute; left:13px; top:50%; transform:translateY(-50%);
+    color:var(--muted); font-size:17px;
+  }
+  .hint{
+    font-size:12.5px; color:var(--muted); margin: -6px 0 18px 2px;
+  }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; animation: fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .card{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 16px 14px;
+    margin-bottom: 12px;
+    transition: border-color .15s ease;
+  }
+  .card:hover{ border-color: rgba(255,255,255,0.14); }
+  .qrow{
+    display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;
+  }
+  .qnum{
+    flex-shrink:0; width:26px; height:26px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; margin-top:1px;
+  }
+  .panel#klien .qnum{ background: var(--c1-soft); color: var(--c1); }
+  .panel#mitra .qnum{ background: var(--c2-soft); color: var(--c2); }
+  .panel#script .qnum{ background: var(--c3-soft); color: var(--c3); }
+  .qtext{ font-weight:600; font-size:15px; line-height:1.45; }
+
+  .answer{
+    background: var(--panel-2);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 12px 13px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #dbe6ec;
+    outline:none;
+    white-space: pre-wrap;
+  }
+  .answer:focus{ border-color: rgba(255,255,255,0.25); border-style:solid; background:#1e2b34;}
+
+  .cardfoot{
+    display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:10px;
+  }
+  .editnote{ font-size:11.5px; color:var(--muted); margin-right:auto; }
+  .copybtn{
+    border:none; cursor:pointer; font-size:12.5px; font-weight:600;
+    padding:7px 13px; border-radius:8px;
+    display:flex; align-items:center; gap:6px;
+    background: rgba(255,255,255,0.06); color:var(--text);
+    border:1px solid var(--border);
+    transition: all .15s ease;
+  }
+  .copybtn:hover{ background: rgba(255,255,255,0.1); }
+  .copybtn.copied{ background: var(--c1); color:#0b1015; border-color:var(--c1); }
+
+  .empty{
+    text-align:center; color:var(--muted); padding: 40px 10px; font-size:14px;
+  }
+
+  footer{
+    text-align:center; color:var(--muted); font-size:12px; margin-top:30px;
+  }
+
+  @media (max-width:520px){
+    h1{ font-size:22px; }
+    .qtext{ font-size:14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">🦷 Niche: Klinik Gigi / Dokter Gigi</div>
+    <h1>FAQ Siap Copas — <span>Klien</span> &amp; <span style="color:var(--c2)">Mitra</span></h1>
+    <p class="sub">Kumpulan jawaban template buat chat calon pasien klinik/dokter gigi, maupun calon mitra klinik gigi lokal (dua skema: komisi &amp; sewa halaman). Ada juga tab khusus script chat buat pendekatan ke calon mitra. Tinggal cari pertanyaannya, klik teks jawaban buat edit seperlunya (misal isi nominal/wilayah), lalu pencet copy.</p>
+  </header>
+
+  <div class="tabbar">
+    <button class="tabbtn active" id="tab-klien" onclick="switchTab('klien')">
+      Calon Pasien <span class="count" id="count-klien">0</span>
+    </button>
+    <button class="tabbtn" id="tab-mitra" onclick="switchTab('mitra')">
+      Calon Mitra <span class="count" id="count-mitra">0</span>
+    </button>
+    <button class="tabbtn" id="tab-script" onclick="switchTab('script')">
+      Script &amp; Skema Mitra <span class="count" id="count-script">0</span>
+    </button>
+  </div>
+
+  <div class="searchrow">
+    <div class="searchbox">
+      <input type="text" id="searchInput" placeholder="Cari pertanyaan… misal: behel, cabut gigi, BPJS, komisi, sewa halaman" oninput="filterCards()">
+    </div>
+  </div>
+  <div class="hint" id="resultHint"></div>
+
+  <div class="panel active" id="klien"></div>
+  <div class="panel" id="mitra"></div>
+  <div class="panel" id="script"></div>
+
+  <footer>Isi bertanda <b>[…]</b> perlu disesuaikan dulu (nominal, wilayah, nama klinik) sebelum dipakai ya, Bun 😉</footer>
+</div>
+
+<script>
+const DATA = {
+  klien: [
+    ["Kalau saya baru pertama kali chat, balasan awalnya kira-kira gimana?",
+     "Halo Kak, terima kasih sudah menghubungi kami! 🙏\nKami ini jaringan klinik gigi yang sudah punya mitra tepercaya di lebih dari 30 kota/kecamatan, Kak.\nSebentar ya, saya carikan dulu klinik/dokter gigi yang paling pas dan dekat buat wilayah Kakak — mohon ditunggu sebentar 🙏"],
+    ["Berapa lama saya harus nunggu sampai dapat klinik/dokter gigi?",
+     "Biasanya enggak lama kok, Kak, sekitar [15-60 menit] tergantung ketersediaan mitra di wilayah Kakak. Kalau ternyata prosesnya butuh waktu lebih lama dari itu, saya akan kabari juga biar Kakak enggak nunggu tanpa kepastian, misalnya: \"Mohon maaf ditunggu ya, Kak, saya masih carikan klinik terbaik buat wilayah Kakak. Enggak lama lagi kok, mohon sabar sebentar ya 🙏\""],
+    ["Setelah dapat klinik, saya bakal dihubungi siapa dan gimana prosesnya?",
+     "Begitu klinik/dokter gigi sudah ketemu, saya akan kasih kontaknya ke Kakak biar Kakak bisa langsung WA duluan, kurang lebih seperti ini:\n\"Kak, alhamdulillah sudah dapat klinik buat wilayah Kakak — namanya Klinik Gigi Sehat Ceria, nomornya [nomor WA klinik]. Boleh langsung di-WA ya, Kak, biar prosesnya lebih cepat — pas chat nanti, tolong disebutkan juga kalau Kakak dapat kontaknya dari TeraWeb, biar kliniknya langsung paham dan enggak perlu tanya-tanya dulu. Terima kasih sudah percaya sama kami, semoga lancar ya, Kak 🙏\"\nJadi Kakak tinggal chat duluan ke nomor itu ya, sebutkan juga asalnya dari kami, enggak perlu nunggu dihubungin."],
+    ["Bagaimana kalau ternyata belum ada mitra klinik gigi di wilayah saya?",
+     "Kalau kebetulan belum ada klinik/dokter gigi persis di kecamatan Kakak, saya akan coba carikan dulu dari wilayah terdekat atau saya infokan dengan jujur, misalnya:\n\"Mohon maaf Kak, untuk wilayah Kakak saat ini kami belum ada mitra klinik gigi yang standby. Tapi saya coba carikan opsi terdekat ya, atau kalau Kakak berkenan menunggu, saya kabari begitu ada mitra baru yang gabung di wilayah Kakak 🙏\""],
+    ["Layanan klinik gigi ini meliputi apa saja?",
+     "Lengkap kok, Kak — mulai dari scaling/bersihin karang gigi, tambal gigi, cabut gigi biasa maupun gigi bungsu, perawatan saraf gigi (root canal), pasang behel/kawat gigi, gigi palsu, veneer, whitening/pemutihan gigi, sampai pemeriksaan rutin buat anak dan dewasa. Tinggal ceritakan keluhannya, nanti kucek klinik yang paling pas buat menanganinya."],
+    ["Berapa biaya scaling/bersihin karang gigi?",
+     "Biaya scaling mulai dari [Rp150.000 - Rp350.000], Kak, tergantung tingkat kerak dan kondisi gusinya. Nanti kukirim rincian harganya sesuai kondisi gigi Kakak setelah diperiksa dulu ya."],
+    ["Berapa biaya tambal gigi?",
+     "Biaya tambal gigi mulai dari [Rp150.000 - Rp400.000] per gigi, Kak, tergantung bahan tambalan (komposit/GIC) dan tingkat kerusakannya. Kalau lubangnya sudah dalam dan kena saraf, mungkin perlu perawatan saraf dulu sebelum ditambal."],
+    ["Berapa biaya cabut gigi biasa dan cabut gigi bungsu?",
+     "Untuk cabut gigi biasa mulai dari [Rp150.000 - Rp300.000], Kak. Kalau cabut gigi bungsu (odontektomi), terutama yang posisinya miring/terpendam, biayanya lebih tinggi, sekitar [Rp800.000 - Rp2.500.000] tergantung tingkat kesulitannya. Nanti dokter akan cek dulu dari rontgen sebelum ambil tindakan."],
+    ["Berapa biaya pasang behel/kawat gigi?",
+     "Biaya pasang behel mulai dari [Rp3.500.000 - Rp8.000.000], Kak, tergantung jenis behel (metal/ceramic/self-ligating) dan tingkat kerumitan kasusnya. Biasanya ada juga biaya kontrol bulanan terpisah selama masa perawatan."],
+    ["Berapa biaya perawatan saraf gigi (root canal)?",
+     "Biaya perawatan saraf gigi mulai dari [Rp500.000 - Rp1.500.000] per gigi, Kak, tergantung jumlah saluran akar dan tingkat kerumitannya, biasanya perlu 2-3 kali kunjungan sampai selesai."],
+    ["Berapa biaya veneer dan whitening/pemutihan gigi?",
+     "Untuk veneer mulai dari [Rp800.000 - Rp2.500.000] per gigi, Kak, tergantung bahannya (komposit/porselen). Untuk whitening mulai dari [Rp500.000 - Rp1.500.000] tergantung metode (di klinik langsung atau home kit)."],
+    ["Apakah bisa pakai BPJS?",
+     "Untuk sebagian tindakan dasar seperti cabut dan tambal biasanya bisa dicover BPJS kalau kliniknya memang menerima BPJS gigi, Kak, tapi tindakan estetik seperti behel/veneer/whitening umumnya di luar tanggungan BPJS. Nanti kukonfirmasi dulu ke klinik yang bersangkutan apakah menerima BPJS."],
+    ["Apakah menerima asuransi kesehatan swasta/kantor?",
+     "Sebagian mitra klinik kami ada yang bekerja sama dengan asuransi swasta, Kak, tapi tergantung klinik masing-masing. Nanti coba kutanyakan dulu ke klinik yang Kakak dapat apakah asuransi Kakak bisa dipakai di sana."],
+    ["Apakah klinik buka di malam hari atau akhir pekan?",
+     "Tergantung klinik masing-masing, Kak, tapi banyak mitra kami yang praktik sampai malam dan tetap buka di hari Sabtu/Minggu. Nanti kucek dulu jadwal praktik klinik yang paling sesuai sama waktu luang Kakak."],
+    ["Apakah perlu rujukan dulu sebelum periksa ke klinik gigi?",
+     "Enggak perlu rujukan kalau Kakak periksa mandiri (bayar sendiri/umum), Kak, bisa langsung datang atau booking. Rujukan biasanya cuma diperlukan kalau mau pakai BPJS lewat FKTP/puskesmas terlebih dahulu."],
+    ["Apakah sakit waktu cabut atau tambal gigi?",
+     "Enggak akan terasa sakit kok pas prosesnya, Kak, karena area yang ditangani dibius lokal dulu sebelum tindakan. Paling terasa ngilu ringan setelah efek biusnya hilang, dan itu wajar."],
+    ["Berapa lama proses pemasangan behel dan kontrol rutinnya?",
+     "Pemasangan awal biasanya makan waktu [1-2 jam], Kak, tergantung jumlah gigi dan jenis braket. Setelah itu perlu kontrol rutin tiap [3-4 minggu] sekali buat penyesuaian kawat sampai target giginya tercapai."],
+    ["Apakah ada dokter gigi khusus anak (pedodontist)?",
+     "Ada, Kak, beberapa mitra kami memang fokus menangani gigi anak dengan pendekatan yang lebih sabar dan ramah anak. Kalau Kakak butuh yang khusus anak, nanti kuarahkan ke klinik yang memang berpengalaman di bidang itu."],
+    ["Apa tanda-tanda saya harus segera periksa ke dokter gigi?",
+     "Beberapa tandanya, Kak: gigi ngilu berkepanjangan, gusi bengkak atau berdarah terus-menerus, ada bau mulut yang enggak wajar, gigi goyang, atau muncul benjolan di gusi. Kalau ada salah satu gejala itu, sebaiknya segera diperiksa sebelum tambah parah."],
+    ["Gimana kalau gigi patah atau copot mendadak karena kecelakaan/jatuh (kondisi darurat)?",
+     "Ini termasuk kondisi darurat, Kak, sebaiknya langsung ditangani secepatnya. Kabari saya sekarang juga, nanti langsung kucarikan klinik terdekat yang bisa menangani kondisi darurat gigi buat Kakak."],
+    ["Berapa lama proses pemulihan setelah cabut gigi bungsu?",
+     "Umumnya pemulihan awal sekitar [3-7 hari], Kak, dengan sedikit bengkak dan ngilu di 1-2 hari pertama yang wajar. Dokter biasanya kasih obat pereda nyeri dan antibiotik kalau diperlukan, serta pantangan makanan tertentu selama masa pemulihan."],
+    ["Apakah ada garansi setelah tindakan (misal tambalan lepas/bermasalah)?",
+     "Ada, Kak, sebagian besar mitra kami kasih garansi untuk tindakan seperti tambal atau perawatan tertentu — jadi kalau ada masalah berulang dalam masa garansi, bisa diperbaiki lagi tanpa biaya tambahan sesuai kebijakan klinik masing-masing."],
+    ["Berapa lama masa garansinya?",
+     "Umumnya sekitar [7-30 hari] tergantung jenis tindakan, Kak. Untuk tambalan atau perawatan saraf biasanya ada masa garansi tersendiri sesuai kebijakan klinik yang menangani."],
+    ["Bisa konsultasi dulu sebelum tindakan tanpa harus langsung bayar mahal?",
+     "Bisa banget, Kak. Biasanya ada biaya konsultasi/pemeriksaan awal yang lebih terjangkau dulu, baru setelah itu dokter kasih rekomendasi tindakan beserta rincian biayanya sebelum Kakak memutuskan lanjut atau enggak."],
+    ["Cara pesan/booking jadwal periksa ke klinik gigi gimana?",
+     "Gampang kok, Kak. Tinggal kasih tau: (1) lokasi/kecamatan, (2) keluhan gigi yang dirasakan (ngilu, berlubang, mau pasang behel, dll), dan (3) waktu yang Kakak inginkan. Nanti langsung kubantu carikan klinik/dokter gigi terdekat di wilayah Kakak."],
+    ["Sistem pembayarannya gimana, bayar di depan atau setelah selesai?",
+     "Umumnya untuk pemeriksaan dan tindakan ringan dibayar setelah selesai, Kak. Tapi untuk tindakan besar seperti behel atau gigi palsu, biasanya ada uang muka dulu sebelum proses pengerjaan bahan dimulai."],
+    ["Apakah aman scaling buat gigi sensitif atau gusi yang mudah berdarah?",
+     "Aman, Kak, dokter akan menyesuaikan teknik dan tekanan alatnya buat gigi sensitif atau gusi yang sedang meradang. Kalau kondisinya cukup parah, biasanya perawatan gusi didahulukan sebelum scaling penuh dilakukan."],
+    ["Idealnya berapa kali kontrol/scaling rutin dalam setahun?",
+     "Disarankan periksa dan scaling rutin setiap [6 bulan] sekali, Kak, biar masalah gigi bisa terdeteksi lebih awal sebelum jadi lebih serius dan biayanya lebih mahal."]
+  ],
+  mitra: [
+    ["Program kerja sama mitra klinik gigi ini seperti apa?",
+     "Jadi gini, Kak/Dok. Kami itu istilahnya 'jembatan' antara calon pasien dengan klinik/dokter gigi lokal seperti Kakak. Kami yang bantu carikan calon pasien lewat website dan promosi online, begitu ada yang cocok di wilayah Kakak, langsung kami hubungkan buat proses booking."],
+    ["Bagaimana cara kerja samanya, apa saya harus bayar dulu?",
+     "Enggak perlu bayar di depan, Kak. Sistemnya bagi hasil per leads/kunjungan yang berhasil closing (pasien datang dan tindakan terlaksana). Jadi Kakak enggak perlu keluar modal buat gabung, cukup fokus ke kualitas layanannya aja."],
+    ["Apa saja syarat untuk jadi mitra klinik gigi?",
+     "Simpel kok, Kak/Dok. Yang penting Kakak memang praktik dokter gigi atau klinik gigi yang legal (punya STR/SIP aktif), bisa menjaga kualitas layanan dan ketepatan waktu, serta responsif kalau ada calon pasien yang butuh info cepat."],
+    ["Perlu lampirkan STR/SIP atau bukti legalitas praktik enggak?",
+     "Perlu, Kak/Dok, ini penting supaya calon pasien yang kami arahkan merasa aman dan terjamin keamanannya. Nanti tinggal kirim foto/scan STR-SIP aktif sekali di awal pendaftaran, buat verifikasi internal kami aja."],
+    ["Katanya ada garansi kualitas lead, maksudnya gimana?",
+     "Betul, Kak/Dok. Setiap lead yang kami kirim tetap kena komisi normal kalau closing — enggak ada yang digratiskan. Tapi kalau ternyata lead-nya enggak valid (nomor mati, enggak nyambung, atau orangnya emang enggak niat periksa), Kakak enggak perlu bayar komisi sama sekali buat lead itu. Jadi Kakak cuma bayar buat lead yang beneran real dan closing."],
+    ["Kenapa dikasih garansi kualitas kayak gitu, apa untungnya buat kami?",
+     "Supaya Kakak enggak was-was bayar buat lead yang ternyata enggak jelas atau bohongan, Kak/Dok. Jaminan ini berlaku terus buat semua lead, bukan cuma yang pertama — jadi selama Kakak kerja sama sama kami, risiko dapat lead abal-abal itu ditanggung kami, bukan Kakak."],
+    ["Berapa besaran komisinya?",
+     "Komisinya flat Rp20.000 per kunjungan/tindakan yang closing, Kak/Dok, berlaku sejak lead pertama (dengan garansi kualitas seperti yang saya jelaskan tadi). Nanti detail lengkapnya kujelaskan lagi begitu Kakak resmi gabung."],
+    ["Komisinya dihitung dari sekali kunjungan atau dari total biaya tindakan?",
+     "Komisinya flat per pasien yang datang dan closing, Kak/Dok, bukan persentase dari nilai tindakan. Jadi meskipun tindakannya besar seperti pasang behel atau gigi palsu, komisinya tetap flat sesuai kesepakatan di awal."],
+    ["Komisinya dibayar kapan dan gimana caranya?",
+     "Komisi dibayarkan setelah pasien datang dan tindakan/kunjungan terlaksana, Kak/Dok. Caranya tinggal transfer ke rekening kami sesuai nominal yang disepakati — nanti kukirim rincian rekening dan cara laporannya."],
+    ["Leads/calon pasien itu datangnya dari mana?",
+     "Dari website dan iklan yang kami kelola khusus untuk niche klinik gigi di banyak kecamatan, Kak/Dok. Jadi calon pasien itu memang cari sendiri lewat internet, masuk ke kami, baru kami teruskan ke mitra yang paling dekat dengan lokasi mereka."],
+    ["Apakah leads-nya eksklusif buat klinik saya aja di wilayah saya?",
+     "Untuk satu kecamatan, biasanya kami utamakan satu mitra dulu, Kak/Dok, supaya enggak rebutan dan lebih fair. Tapi kalau permintaan ramai dan satu mitra sudah kewalahan, mungkin kami cari mitra tambahan di wilayah yang sama."],
+    ["Kalau ada 2 mitra klinik gigi di kecamatan yang sama, gimana pembagiannya?",
+     "Kami akan bagi berdasarkan kapasitas dan kesiapan masing-masing mitra, Kak/Dok, atau bergiliran supaya adil. Yang penting kualitas layanan ke pasien tetap terjaga."],
+    ["Kalau leads yang dikasih ternyata enggak jadi datang periksa (cuma tanya-tanya doang), gimana?",
+     "Enggak masalah, Kak/Dok, itu risiko bisnis yang wajar dan enggak dikenakan biaya apapun. Yang dihitung komisi cuma yang benar-benar datang dan closing tindakan aja."],
+    ["Saya wajib lapor ke tim setelah pasien selesai ditangani?",
+     "Iya, Kak/Dok, mohon dikabari ya setiap ada pasien yang closing dari leads kami, supaya kami bisa hitung komisinya dengan benar dan datanya rapi buat kedua belah pihak."],
+    ["Boleh enggak kalau saya tolak lead yang dikasih, misal jadwal praktik lagi penuh?",
+     "Boleh banget, Kak/Dok, enggak masalah sama sekali. Kalau lagi penuh jadwal atau sedang menangani banyak pasien, tinggal kabari aja, nanti lead-nya kami alihkan ke mitra lain biar calon pasien tetap terlayani."],
+    ["Kalau saya ketahuan enggak jujur lapor kunjungan pasien (biar enggak bayar komisi), gimana?",
+     "Kami sangat mengandalkan kejujuran dan kepercayaan dalam kerja sama ini, Kak/Dok. Kalau ada indikasi kunjungan enggak dilaporkan padahal closing dari leads kami, itu bisa jadi pertimbangan buat kami evaluasi ulang kerja samanya, termasuk kemungkinan dihentikan."],
+    ["Kalau ada komplain dari pasien soal kualitas layanan mitra, apa yang terjadi?",
+     "Kami akan tindak lanjuti dulu ke Kakak/Dok buat cari solusi terbaik. Tapi kalau komplainnya berulang dan enggak ada perbaikan, kami mungkin akan mengurangi atau menghentikan pengiriman leads ke Kakak demi menjaga nama baik layanan ke depannya."],
+    ["Bisa keluar dari kerja sama ini kapan aja kalau saya mau berhenti?",
+     "Bisa banget, Kak/Dok, kerja sama ini enggak mengikat. Kalau suatu saat Kakak mau berhenti, tinggal kabari aja, enggak ada penalti apapun."],
+    ["Setelah daftar, berapa lama sampai mulai dapat lead pertama?",
+     "Tergantung seberapa ramai permintaan layanan gigi di wilayah Kakak, Kak/Dok, tapi biasanya begitu terdaftar dan wilayahnya cocok, kami langsung arahkan lead begitu ada yang masuk dari kecamatan Kakak."],
+    ["Apakah harus punya klinik besar untuk jadi mitra, atau dokter gigi praktik mandiri juga bisa?",
+     "Enggak wajib punya klinik besar kok, Kak/Dok, dokter gigi yang praktik mandiri di rumah/ruko juga bisa banget gabung. Yang penting Kakak sanggup memenuhi janji temu pasien dengan kualitas dan ketepatan waktu yang baik."],
+    ["Apa untungnya gabung jadi mitra dibanding promosi sendiri lewat sosial media?",
+     "Keuntungannya, Kak/Dok, enggak perlu keluar biaya iklan atau bikin website sendiri buat dapat calon pasien. Kami yang urus promosi dan carikan calon pasien lewat internet, Kakak tinggal fokus ke kualitas dan pelayanan aja."],
+    ["Bagaimana proses daftarnya, apa saja yang perlu disiapkan?",
+     "Gampang, Kak/Dok, cukup siapkan info klinik/praktik (nama klinik atau nama dokter, wilayah layanan, kontak aktif), STR/SIP, jenis layanan yang biasa Kakak tangani beserta kisaran harganya. Nanti kubantu proses pendaftarannya sampai selesai."],
+    ["Apakah wilayah kerja sama bisa lebih dari 1 kecamatan?",
+     "Bisa, Kak/Dok, asal memang kapasitas dan mobilitas pasiennya sanggup menjangkau lebih dari 1 kecamatan. Nanti kita diskusikan wilayah mana aja yang realistis buat di-cover."],
+    ["Kalau saya juga jual niche lain (bukan cuma klinik gigi), bisa gabung juga?",
+     "Bisa banget, Kak/Dok. Kami juga punya program kerja sama buat niche-niche lain seperti klinik kecantikan, klinik umum, notaris, dan lainnya. Kalau Kakak berminat, nanti bisa didaftarkan sekalian di niche itu juga."],
+    ["Selain sistem komisi, katanya ada juga opsi sewa halaman? Itu apa?",
+     "Iya, Kak/Dok, betul. Selain sistem bagi hasil per kunjungan (komisi), kami juga punya opsi sewa halaman. Jadi nomor WA klinik/praktik gigi Kakak akan kami pasang langsung di halaman website kami untuk wilayah kecamatan Kakak, dan calon pasien yang lihat halaman itu bisa langsung chat WA Kakak tanpa perlu lewat kami dulu."],
+    ["Bedanya sewa halaman sama sistem komisi apa?",
+     "Bedanya di cara bayarnya, Kak/Dok. Kalau sistem komisi, Kakak enggak bayar di depan tapi kami potong komisi tiap ada kunjungan yang closing. Kalau sewa halaman, Kakak bayar sewa di awal (biasanya bulanan/tahunan), tapi semua leads yang masuk dari halaman itu langsung ke WA Kakak tanpa potongan komisi sama sekali, walaupun pasiennya banyak."],
+    ["Berapa biaya sewa halamannya?",
+     "Biaya sewa halaman mulai dari [Rp150.000/bulan atau Rp1.500.000/tahun], Kak/Dok, tergantung wilayah dan tingkat pencarian di kecamatan tersebut. Nanti kukabari detail harganya sesuai kecamatan Kakak."],
+    ["Kalau saya sewa halaman, otomatis semua pasien masuk ke saya?",
+     "Iya, Kak/Dok, karena nomor WA Kakak yang dipasang langsung di halaman, jadi semua yang chat dari halaman itu otomatis masuk ke Kakak. Kami enggak ambil komisi tambahan lagi karena Kakak sudah bayar sewa di depan."],
+    ["Enaknya pilih sewa halaman atau sistem komisi?",
+     "Tergantung kondisi praktik/klinik Kakak, Kak/Dok. Kalau baru mulai dan mau coba dulu tanpa risiko modal di depan, sistem komisi lebih pas karena bayar cuma kalau ada kunjungan closing. Tapi kalau Kakak yakin permintaan di wilayah itu ramai, sewa halaman bisa lebih hemat dalam jangka panjang."],
+    ["Bisa pindah dari sistem komisi ke sewa halaman, atau sebaliknya?",
+     "Bisa banget, Kak/Dok, fleksibel kok. Kalau di tengah jalan Kakak mau ganti skema, tinggal kabari aja, nanti kita sesuaikan ulang."],
+    ["Kalau sewa halaman, apakah halamannya eksklusif buat klinik saya aja di kecamatan itu?",
+     "Iya, Kak/Dok, untuk satu halaman kecamatan biasanya cuma satu nomor WA yang dipasang, jadi selama masa sewa aktif, halaman itu eksklusif buat klinik/praktik Kakak di kecamatan tersebut."],
+    ["Kalau masa sewa habis dan enggak diperpanjang, gimana?",
+     "Nomor WA Kakak akan kami lepas dari halaman Klinik Gigi itu, Kak/Dok, dan slotnya bisa ditawarkan ke mitra lain yang berminat. Tapi kami infokan dulu sebelum masa sewa habis biar Kakak sempat memutuskan mau lanjut atau enggak."]
+  ],
+  script: [
+    ["1. Notifikasi ke Mitra — Ada Calon Pasien yang Akan Menghubungi Langsung",
+     "Assalamu'alaikum, Kak/Dok. Mohon maaf sebelumnya, perkenalkan saya Widya dari TeraWeb — kami platform yang bantu carikan calon pasien buat klinik/praktik dokter gigi, sistemnya kerja sama komisi per kunjungan yang closing (bukan bayar di muka, Kak). Kebetulan pas ini ada calon pasien yang lagi cari layanan gigi di wilayah [kecamatan], dan saya lihat klinik/praktik Kakak yang paling representatif di sana. Saya sudah kasih kontak Kakak ke beliau ya, Kak, jadi kemungkinan sebentar lagi beliau yang akan langsung WA Kakak duluan dari nomor [nomor WA pasien] — ini saya infokan nomornya sekalian ya, Kak, buat referensi aja biar Kakak tau itu memang pasien dari kami begitu beliau chat nanti (enggak perlu dihubungin duluan, cukup ditunggu aja). Mohon direspons cepat ya kalau ada yang chat dari nomor itu, biar calon pasien-nya enggak keburu nyari yang lain. Tenang aja, kalau ternyata nomornya enggak nyambung atau orangnya enggak niat periksa, Kakak enggak perlu bayar apa-apa kok — itu bagian dari garansi kualitas kami 🙏"],
+    ["2. Follow-up ke Pasien — Sudah Sempat Hubungi Klinik?",
+     "Halo Kak, mau tanya nih, sudah sempat WA kliniknya belum, Kak? Kalau ada kendala atau belum sempat, kabarin aja ya, biar saya bantu carikan solusinya."],
+    ["3. Kalau Pasien Bilang Sudah Booking/Periksa — Follow-up ke Mitra untuk Ajak Lanjut Komisi",
+     "Alhamdulillah kalau jadi ya, Kak/Dok! 🎉 Pasien tadi sudah konfirmasi ke saya katanya sudah periksa ke Kakak. Berarti lead kami emang valid ya sesuai janji di awal. Nah, kalau Kakak berkenan, ke depannya saya bisa terus kirim info kalau ada calon pasien lagi di wilayah Kakak. Sistemnya tetap sama — komisi jalan normal per kunjungan yang closing, dan tetap ada garansi kualitas kalau ternyata nanti ada lead yang enggak valid. Mau lanjut, Kak?"],
+    ["4. Kalau Pasien Bilang Belum/Enggak Jadi — Tindak Lanjut ke Pasien & Mitra",
+     "Kalau pasien bilang belum sempat atau enggak jadi periksa, ada 2 pesan yang perlu dikirim ke masing-masing pihak:\n\nKe pasien:\n\"Baik Kak, enggak masalah. Kalau masih butuh, boleh dicoba hubungi lagi kliniknya, atau kalau Kakak mau, saya carikan klinik lain di wilayah Kakak?\"\n\nKe mitra:\n\"Oh sayang banget ya, Kak/Dok, kayaknya pasien kemarin belum jadi periksa. Enggak masalah, mungkin belum jodoh aja. Kalau nanti ada calon pasien lain lagi di wilayah Kakak, boleh saya kirim kontaknya juga? Siapa tau yang berikutnya cocok.\""],
+    ["5. Penjelasan Program (Detail Skema Komisi)",
+     "Jadi gini, Kak/Dok. Kami itu website yang khusus bantu carikan calon pasien klinik gigi lewat internet, sudah menjangkau ratusan kecamatan. Sistemnya bagi hasil per kunjungan yang closing — jadi Kakak enggak perlu bayar apapun di depan. Kami juga kasih garansi kualitas lead, Kak: kalau ternyata ada lead yang enggak valid (nomor mati atau memang enggak niat periksa), itu enggak dihitung komisi sama sekali. Jadi Kakak cuma bayar buat lead yang beneran closing."],
+    ["6. Kalimat Pemantik / Alasan Kenapa Harus Lanjut",
+     "Beberapa kalimat yang bisa diselipkan biar obrolannya makin meyakinkan (enggak harus semua dipakai sekaligus ya, Kak):\n\n• \"Pasien pertama tadi kan udah kebukti beneran ada dan closing, Kak/Dok — jadi ini bukan janji kosong.\"\n• \"Kami yang capek-capek urus iklan dan website, Kakak tinggal terima janji temu yang udah siap closing.\"\n• \"Enggak ada kontrak mengikat, Kak, kalau merasa enggak cocok, bisa berhenti kapan aja tanpa penalti.\"\n• \"Sekarang orang cari klinik gigi lewat Google duluan, Kak, bukan dari mulut ke mulut aja. Ini kesempatan praktik Kakak dilihat lebih banyak calon pasien.\"\n• \"Kami cuma ambil komisi kalau Kakak beneran dapat pasien dari lead itu — jadi kami juga sama-sama butuh Kakak sukses.\""],
+    ["7. Menjawab Keberatan — \"Praktik saya udah penuh, enggak butuh tambahan pasien\"",
+     "Wah alhamdulillah kalau praktiknya udah rame, Kak/Dok! Enggak apa-apa kalau memang belum butuh sekarang. Tapi kalau nanti pas lagi butuh tambahan pasien atau mau ekspansi wilayah, boleh banget kontak saya lagi ya, programnya tetap terbuka kok."],
+    ["8. Menjawab Keberatan — \"Kayak MLM ya, saya kurang percaya\"",
+     "Hehe saya paham kekhawatirannya, Kak/Dok. Tapi ini beda ya, kami enggak jual produk atau minta modal ke Kakak sama sekali. Kami murni jembatan yang carikan calon pasien, dan Kakak cuma bayar komisi kalau kunjungan itu beneran closing dan Kakak dapat pasiennya duluan. Kalau ternyata lead-nya enggak jelas/enggak valid, Kakak enggak perlu bayar — itu sudah kebukti kan dari lead kemarin, jadi ini bukan skema aneh-aneh."],
+    ["9. Menjawab Keberatan — \"Komisinya kok segini, kemahalan enggak sih?\"",
+     "Saya ngerti, Kak/Dok, wajar kalau ditanya gitu. Tapi coba dibandingkan sama biaya iklan atau bikin website sendiri buat dapat pasien baru — itu jauh lebih mahal dan enggak pasti hasilnya. Komisi ini kami ambil justru setelah Kakak dapat pasien dari kunjungan itu, jadi risikonya ada di kami, bukan di Kakak."],
+    ["10. Follow-up (Belum Dibalas Setelah Ditawari Lanjut Komisi)",
+     "Permisi Kak/Dok, mohon maaf mengganggu lagi. Cuma mau follow up soal tawaran lanjut kerja sama mitra klinik gigi yang saya kirim beberapa hari lalu. Kalau Kakak berkenan, saya senang banget bisa cerita lebih lanjut soal skemanya. Kalau saat ini belum tertarik juga enggak apa-apa, Kak, terima kasih sudah meluangkan waktu bacanya 🙏"],
+    ["11. Closing — Ajakan Gabung Resmi",
+     "Baik, Kak/Dok, kalau begitu berarti sudah oke ya buat lanjut kerja sama? Kalau iya, saya minta info berikut buat proses pendaftarannya: (1) nama klinik/praktik, (2) wilayah/kecamatan layanan, (3) STR/SIP aktif, (4) contoh layanan & kisaran harga yang biasa ditawarkan, (5) nomor WA aktif buat koordinasi pasien. Setelah itu saya proses ya, Kak, dan begitu ada calon pasien lain di wilayah Kakak langsung saya hubungkan."],
+    ["12. Welcome Message — Setelah Resmi Jadi Mitra",
+     "Alhamdulillah, selamat resmi jadi mitra klinik gigi kami ya, Kak/Dok! 🎉 Mulai sekarang begitu ada calon pasien di wilayah Kakak, saya langsung hubungi ya. Kalau ada pertanyaan kapan aja, jangan sungkan chat saya ya, Kak. Sukses terus buat praktiknya! 🙏"],
+    ["13. Menjelaskan Ada 2 Pilihan Skema Kerja Sama",
+     "Oh iya, Kak/Dok, kerja sama kami ada dua pilihan skema, biar Kakak bisa pilih yang paling cocok:\n\n1) Sistem komisi — enggak bayar di depan, kami cuma potong komisi kalau kunjungan-nya closing.\n2) Sewa halaman — Kakak bayar sewa di awal, tapi nomor WA Kakak dipasang langsung di halaman kami, jadi semua leads dari situ langsung masuk ke Kakak tanpa potongan komisi sama sekali.\n\nMau saya jelaskan lebih detail yang mana dulu, Kak?"],
+    ["14. Menawarkan Upgrade ke Sewa Halaman (Kalau Mitra Sudah Yakin/Pasien Ramai)",
+     "Kak/Dok, ngomong-ngomong soal praktik gigi Kakak yang udah rame gini, saya rasa opsi sewa halaman bakal lebih menguntungkan buat Kakak lho. Soalnya kalau pakai sistem komisi, tiap kunjungan closing kena potongan. Tapi kalau sewa halaman, Kakak cukup bayar sewa di awal, terus semua pasien yang masuk dari situ full jadi milik Kakak tanpa potongan lagi. Mau saya hitungkan simulasinya, Kak?"],
+    ["15. Menjawab Keberatan — \"Sewa halaman mahal di depan, saya enggak yakin ada hasilnya\"",
+     "Saya paham, Kak/Dok, wajar kalau masih ragu. Makanya kami sarankan mulai dari sistem komisi dulu buat lihat seberapa ramai permintaan di wilayah Kakak. Begitu Kakak lihat sendiri kunjungannya cukup rutin, baru deh dipertimbangkan pindah ke sewa halaman biar lebih hemat dalam jangka panjang."],
+    ["16. Closing — Ambil Paket Sewa Halaman",
+     "Baik, Kak/Dok, kalau memang mau ambil paket sewa halaman, saya siapkan dulu ya rincian biaya dan durasi sewanya sesuai kecamatan Kakak. Setelah itu, begitu pembayaran sewa masuk, nomor WA Kakak langsung saya pasang di halaman Klinik Gigi wilayah kecamatan Kakak."],
+    ["17. Alternatif — Pembukaan Cold Message Tanpa Order di Tangan (Bangun Jaringan Duluan)",
+     "Assalamu'alaikum, Kak/Dok/Pak/Bu [nama]. Mohon maaf mengganggu waktunya. Perkenalkan saya Widya dari TeraWeb. Saya lihat praktik/klinik gigi Bapak/Ibu di [lokasi] terlihat sudah cukup dikenal dan dipercaya warga sekitar. Kebetulan kami sedang buka wilayah [kecamatan] untuk program kerja sama mitra kami, dan siapa tau nanti ada calon pasien yang cari layanan gigi di sana, saya bisa langsung arahkan ke Kakak duluan. Boleh saya ambil waktu sebentar buat cerita programnya, Kak?\n\n(Catatan: dipakai kalau belum ada pasien riil di tangan, misal pas mau bangun jaringan mitra di kecamatan baru.)"],
+    ["18. Alternatif — Pembukaan Dari Referensi/Rekomendasi",
+     "Assalamu'alaikum, Kak/Dok. Perkenalkan saya Widya dari TeraWeb. Saya dapat kontak Bapak/Ibu dari [nama yang merekomendasikan], katanya praktik/klinik giginya sudah dipercaya banyak pasien di wilayah [kecamatan]. Kebetulan kami sedang buka program kerja sama buat mitra klinik gigi lokal di sana, boleh saya ceritakan sedikit, Kak?\n\n(Catatan: dipakai kalau belum ada pasien riil di tangan, sama seperti nomor 17.)"]
+  ]
+};
+
+function renderCards(){
+  ['klien','mitra','script'].forEach(key=>{
+    const container = document.getElementById(key);
+    container.innerHTML = '';
+    DATA[key].forEach((item, idx) => {
+      const [q, a] = item;
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.search = (q + ' ' + a).toLowerCase();
+      card.innerHTML = `
+        <div class="qrow">
+          <div class="qnum">${idx+1}</div>
+          <div class="qtext">${q}</div>
+        </div>
+        <div class="answer" contenteditable="true" spellcheck="false">${a}</div>
+        <div class="cardfoot">
+          <span class="editnote">✎ bisa diedit langsung</span>
+          <button class="copybtn" onclick="copyAnswer(this)">Copy</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  });
+  document.getElementById('count-klien').textContent = DATA.klien.length;
+  document.getElementById('count-mitra').textContent = DATA.mitra.length;
+  document.getElementById('count-script').textContent = DATA.script.length;
+}
+
+function switchTab(tab){
+  document.getElementById('klien').classList.toggle('active', tab==='klien');
+  document.getElementById('mitra').classList.toggle('active', tab==='mitra');
+  document.getElementById('script').classList.toggle('active', tab==='script');
+  document.getElementById('tab-klien').classList.toggle('active', tab==='klien');
+  document.getElementById('tab-mitra').classList.toggle('active', tab==='mitra');
+  document.getElementById('tab-script').classList.toggle('active', tab==='script');
+  document.getElementById('searchInput').value = '';
+  filterCards();
+}
+
+function copyAnswer(btn){
+  const card = btn.closest('.card');
+  const answerEl = card.querySelector('.answer');
+  const text = answerEl.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const original = btn.textContent;
+    btn.textContent = 'Tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  }).catch(()=>{
+    const range = document.createRange();
+    range.selectNodeContents(answerEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.execCommand('copy');
+    sel.removeAllRanges();
+    btn.textContent = 'Tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function filterCards(){
+  const activePanel = document.querySelector('.panel.active');
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  const cards = activePanel.querySelectorAll('.card');
+  let visible = 0;
+  cards.forEach(card=>{
+    const match = !query || card.dataset.search.includes(query);
+    card.style.display = match ? '' : 'none';
+    if(match) visible++;
+  });
+  const hint = document.getElementById('resultHint');
+  hint.textContent = query ? `Menampilkan ${visible} dari ${cards.length} pertanyaan` : '';
+
+  let empty = activePanel.querySelector('.empty');
+  if(visible === 0){
+    if(!empty){
+      empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'Enggak ketemu pertanyaan yang cocok. Coba kata kunci lain ya.';
+      activePanel.appendChild(empty);
+    }
+  } else if(empty){
+    empty.remove();
+  }
+}
+
+renderCards();
+</script>
+</body>
+</html>

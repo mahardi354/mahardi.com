@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toolkit Bergerilya TeraWeb — Script & FAQ Jasa Website</title>
+<style>
+  :root{
+    --bg: #0b0b0d;
+    --panel: #161615;
+    --panel-2: #1c1c1a;
+    --border: #2e2c27;
+    --text: #f4f2ee;
+    --muted: #a39c8e;
+    --orange: #ff6a3d;
+    --cyan: #4fc3c9;
+    --gold: #e0b24f;
+    --green: #7cc576;
+    --purple: #b48fe0;
+    --orange-soft: rgba(255,106,61,0.14);
+    --cyan-soft: rgba(79,195,201,0.14);
+    --gold-soft: rgba(224,178,79,0.14);
+    --green-soft: rgba(124,197,118,0.14);
+    --purple-soft: rgba(180,143,224,0.14);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: radial-gradient(circle at 15% 0%, #201a14 0%, var(--bg) 45%) fixed;
+    color:var(--text);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 28px 16px 80px;
+  }
+  .wrap{ max-width: 920px; margin: 0 auto; }
+
+  header{ margin-bottom: 22px; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--orange); background:var(--orange-soft);
+    border:1px solid rgba(255,106,61,0.3);
+    padding:4px 12px; border-radius:100px; margin-bottom:14px;
+  }
+  h1{ font-size: 26px; margin:0 0 6px; font-weight:700; letter-spacing:-0.01em;}
+  h1 span{ color: var(--orange); }
+  .sub{ color:var(--muted); font-size:14.5px; line-height:1.55; max-width: 680px; }
+
+  .flow{
+    display:flex; flex-wrap:wrap; gap:6px; margin: 14px 0 4px;
+    font-size:12px; color:var(--muted);
+  }
+  .flow b{ color: var(--text); }
+  .flow .arrow{ color: var(--border); }
+
+  .tabbar{
+    display:flex; gap:8px; overflow-x:auto;
+    margin: 22px 0 18px;
+    background: var(--panel); border:1px solid var(--border);
+    border-radius: var(--radius); padding:6px;
+    position: sticky; top: 10px; z-index: 20;
+    backdrop-filter: blur(6px);
+    scrollbar-width: thin;
+  }
+  .tabbtn{
+    border:none; cursor:pointer; padding:12px 14px;
+    border-radius:10px; font-size:13.5px; font-weight:600;
+    background:transparent; color:var(--muted);
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    transition: all .15s ease;
+    white-space:nowrap; flex:0 0 auto;
+  }
+  .tabbtn .count{
+    font-size:11px; font-weight:700; padding:1px 7px; border-radius:100px;
+    background:rgba(255,255,255,0.08); color:var(--muted);
+  }
+  .tabbtn.active{ color:#0b0b0d; }
+  .tabbtn.active .count{ background:rgba(11,11,13,0.18); color:#0b0b0d;}
+  #tab-prospek.active{ background: var(--green); }
+  #tab-opener.active{ background: var(--gold); }
+  #tab-followup.active{ background: var(--purple); }
+  #tab-closing.active{ background: var(--orange); }
+  #tab-faq.active{ background: var(--cyan); }
+
+  .fieldspanel{
+    background: var(--panel); border:1px solid var(--border);
+    border-radius: var(--radius); margin: 0 0 16px; overflow:hidden;
+  }
+  .fieldspanel summary{
+    cursor:pointer; list-style:none; padding:12px 15px;
+    display:flex; align-items:center; gap:8px;
+    font-size:13px; font-weight:700; color:var(--text);
+  }
+  .fieldspanel summary::-webkit-details-marker{ display:none; }
+  .fieldspanel summary::before{ content:"⚙️"; }
+  .fieldspanel summary .chev{ margin-left:auto; color:var(--muted); font-size:11px; }
+  .fieldspanel-body{ padding: 4px 15px 15px; }
+  .fieldsrow{
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+    gap:10px; margin-bottom:10px;
+  }
+  .fieldgroup label{
+    display:block; font-size:11px; color:var(--muted); margin-bottom:4px;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .fieldgroup input{
+    width:100%; padding:8px 10px; background:var(--panel-2);
+    border:1px solid var(--border); border-radius:8px; color:var(--text);
+    font-size:13px;
+  }
+  .fieldgroup select{
+    width:100%; padding:8px 10px; background:var(--panel-2);
+    border:1px solid var(--border); border-radius:8px; color:var(--text);
+    font-size:13px;
+  }
+  .fieldgroup input:focus, .fieldgroup select:focus{ outline:none; border-color:var(--orange); }
+  .sapaanToggle{ display:flex; gap:6px; }
+  .sapaanBtn{
+    flex:1; border:1px solid var(--border); background:var(--panel-2);
+    color:var(--muted); padding:8px 10px; border-radius:8px; font-size:13px;
+    font-weight:600; cursor:pointer;
+  }
+  .sapaanBtn.active{ background:var(--orange); color:#0b0b0d; border-color:var(--orange); }
+  .fieldshint{ font-size:11.5px; color:var(--muted); line-height:1.5; }
+
+  .searchrow{
+    display:flex; gap:10px; margin-bottom:18px;
+  }
+  .searchbox{
+    flex:1; position:relative;
+  }
+  .searchbox input{
+    width:100%; padding:11px 14px 11px 38px;
+    background: var(--panel); border:1px solid var(--border);
+    border-radius:10px; color:var(--text); font-size:14px;
+  }
+  .searchbox input:focus{ outline:none; border-color: var(--orange); }
+  .searchbox::before{
+    content:"⌕"; position:absolute; left:13px; top:50%; transform:translateY(-50%);
+    color:var(--muted); font-size:17px;
+  }
+  .hint{
+    font-size:12.5px; color:var(--muted); margin: -6px 0 18px 2px;
+  }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; animation: fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .panelnote{
+    font-size:12.5px; color:var(--muted); background:var(--panel);
+    border:1px solid var(--border); border-radius:10px;
+    padding:10px 13px; margin-bottom:14px; line-height:1.5;
+  }
+
+  .sectiongroup{ margin-bottom: 6px; }
+  .sectiontitle{
+    display:flex; align-items:center; gap:10px;
+    font-size:12.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--muted); margin: 22px 2px 12px;
+  }
+  .sectiontitle::after{
+    content:""; flex:1; height:1px; background:var(--border);
+  }
+  .sectiongroup:first-child .sectiontitle{ margin-top:4px; }
+
+  .card{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 16px 14px;
+    margin-bottom: 12px;
+    transition: border-color .15s ease;
+  }
+  .card:hover{ border-color: rgba(255,255,255,0.14); }
+  .qrow{
+    display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;
+  }
+  .qnum{
+    flex-shrink:0; width:26px; height:26px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; margin-top:1px;
+  }
+  .panel#prospek .qnum{ background: var(--green-soft); color: var(--green); }
+  .panel#opener .qnum{ background: var(--gold-soft); color: var(--gold); }
+  .panel#followup .qnum{ background: var(--purple-soft); color: var(--purple); }
+  .panel#closing .qnum{ background: var(--orange-soft); color: var(--orange); }
+  .panel#faq .qnum{ background: var(--cyan-soft); color: var(--cyan); }
+  .qtext{ font-weight:600; font-size:15px; line-height:1.45; }
+
+  .answer{
+    background: var(--panel-2);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 12px 13px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #ece7de;
+    outline:none;
+    white-space: pre-wrap;
+  }
+  .answer:focus{ border-color: rgba(255,255,255,0.25); border-style:solid; background:#232019;}
+
+  .cardfoot{
+    display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:10px;
+  }
+  .editnote{ font-size:11.5px; color:var(--muted); margin-right:auto; }
+  .copybtn{
+    border:none; cursor:pointer; font-size:12.5px; font-weight:600;
+    padding:7px 13px; border-radius:8px;
+    display:flex; align-items:center; gap:6px;
+    background: rgba(255,255,255,0.06); color:var(--text);
+    border:1px solid var(--border);
+    transition: all .15s ease;
+  }
+  .copybtn:hover{ background: rgba(255,255,255,0.1); }
+  .copybtn.copied{ background: var(--orange); color:#0b0b0d; border-color:var(--orange); }
+
+  .empty{
+    text-align:center; color:var(--muted); padding: 40px 10px; font-size:14px;
+  }
+
+  footer{
+    text-align:center; color:var(--muted); font-size:12px; margin-top:30px;
+  }
+
+  @media (max-width:520px){
+    h1{ font-size:22px; }
+    .qtext{ font-size:14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">🔦 Toolkit Bergerilya TeraWeb — Website 4 Halaman Rp750.000 · Landing Page Rp450.000</div>
+    <h1>Script & <span>FAQ</span> Siap Copas — Alur Bergerilya</h1>
+    <p class="sub">Disusun mengikuti urutan alami bergerilya: cari & kualifikasi prospek dulu, baru buka percakapan (termasuk penjelasan penawaran & jawab keberatan di tab yang sama), kalau belum dibalas jalankan follow-up bertahap, baru masuk closing buat proses DP sampai serah terima. FAQ tetap ada buat jawab pertanyaan detail kapan aja dibutuhin. Klik teks jawaban buat edit seperlunya, lalu pencet copy.</p>
+    <div class="flow">
+      <b>1. Cari Prospek</b><span class="arrow">→</span><b>2. Percakapan</b><span class="arrow">→</span><b>3. Follow-Up</b><span class="arrow">→</span><b>4. Closing</b><span class="arrow">→</span><b>5. FAQ</b>
+    </div>
+  </header>
+
+  <details class="fieldspanel" open>
+    <summary>Pengaturan Cepat — isi sekali, otomatis kepakai ke semua tab <span class="chev">▾</span></summary>
+    <div class="fieldspanel-body">
+      <div class="fieldsrow">
+        <div class="fieldgroup">
+          <label>Sapaan</label>
+          <div class="sapaanToggle">
+            <button type="button" class="sapaanBtn active" id="sapaan-kak" onclick="setSapaan('kak')">Kak / Kakak</button>
+            <button type="button" class="sapaanBtn" id="sapaan-formal" onclick="setSapaan('formal')">Pak/Bu / Bapak-Ibu</button>
+          </div>
+        </div>
+        <div class="fieldgroup"><label>Nama Pengirim</label><input id="f-namaPengirim" placeholder="Widya" oninput="onFieldInput()"></div>
+        <div class="fieldgroup"><label>Nama Usaha Prospek</label><input id="f-namaBisnis" placeholder="misal: Kedai Kopi Senja" oninput="onFieldInput()"></div>
+        <div class="fieldgroup"><label>Jenis Usaha / Niche</label><input id="f-niche" placeholder="misal: fotografer" oninput="onFieldInput()"></div>
+        <div class="fieldgroup"><label>Nama Pemberi Referensi</label><input id="f-namaReferensi" placeholder="opsional" oninput="onFieldInput()"></div>
+        <div class="fieldgroup"><label>Pilih Demo Siap Kirim</label><select id="f-demoPick" onchange="pickDemo(this.value)">
+            <option value="">— pilih niche —</option>
+            <option value="https://teraweb.id/demo/klinik-gigi-1/">Klinik gigi — Amara Dental Studio</option>
+            <option value="https://teraweb.id/demo/klinik-kecantikan-1/">Klinik kecantikan — LUMORA Aesthetic Clinic</option>
+            <option value="https://teraweb.id/demo/kontraktor-arsitek-1/">Kontraktor &amp; arsitek — Karsa Studio</option>
+            <option value="https://teraweb.id/demo/cuci-karpet/">Cuci karpet — ANYAM Karpet &amp; Sofa Care</option>
+            <option value="https://teraweb.id/demo/barbershop/">Barbershop — GARIS. Barbershop</option>
+            <option value="https://teraweb.id/demo/wedding-organizer-1/">Wedding organizer — Suvarna &amp; Co</option>
+            <option value="https://teraweb.id/demo/klinik-hewan-petshop/">Klinik hewan &amp; pet shop — Griya Satwa</option>
+            <option value="https://teraweb.id/demo/catering-1/">Katering — SAJI Catering &amp; Event</option>
+            <option value="https://teraweb.id/demo/notaris-ppat-1/">Jasa hukum &amp; notaris — Notaris &amp; PPAT Adiwangsa</option>
+            <option value="https://teraweb.id/demo/tk-paud/">Sekolah &amp; PAUD — Ceria Kids</option>
+            <option value="https://teraweb.id/demo/rental-mobil/">Rental mobil — Laju Rental Mobil</option>
+            <option value="https://teraweb.id/demo/">Daftar semua demo website 4 halaman</option>
+            <option value="https://teraweb.id/demolanding/">Daftar semua demo landing page</option>
+          </select></div>
+        <div class="fieldgroup"><label>Link Demo/Portofolio</label><input id="f-linkDemo" placeholder="https://teraweb.id/demo/..." oninput="onFieldInput()"></div>
+        <div class="fieldgroup"><label>Link Website Jadi</label><input id="f-linkFinal" placeholder="https://..." oninput="onFieldInput()"></div>
+        <div class="fieldgroup"><label>Estimasi Selesai</label><input id="f-estimasiSelesai" placeholder="misal: Jumat, 24 Oktober" oninput="onFieldInput()"></div>
+        <div class="fieldgroup"><label>Harga Partner Reseller</label><input id="f-hargaPartner" placeholder="isi sesuai skema partner" oninput="onFieldInput()"></div>
+        <div class="fieldgroup"><label>Insentif Referral</label><input id="f-insentifReferral" placeholder="misal: diskon 20%" oninput="onFieldInput()"></div>
+      </div>
+      <div class="fieldshint">Field yang dikosongin bakal tetap nampilin placeholder <b>[...]</b> di jawabannya, biar keinget masih perlu diisi manual. Kalau kamu udah ngetik langsung di jawaban (klik &amp; edit), perubahan field di atas nggak akan menimpa editan itu lagi.</div>
+    </div>
+  </details>
+
+  <div class="tabbar">
+    <button class="tabbtn active" id="tab-prospek" onclick="switchTab('prospek')">
+      🔍 Cari Prospek <span class="count" id="count-prospek">0</span>
+    </button>
+    <button class="tabbtn" id="tab-opener" onclick="switchTab('opener')">
+      💬 Percakapan <span class="count" id="count-opener">0</span>
+    </button>
+    <button class="tabbtn" id="tab-followup" onclick="switchTab('followup')">
+      📅 Follow-Up <span class="count" id="count-followup">0</span>
+    </button>
+    <button class="tabbtn" id="tab-closing" onclick="switchTab('closing')">
+      🎯 Closing <span class="count" id="count-closing">0</span>
+    </button>
+    <button class="tabbtn" id="tab-faq" onclick="switchTab('faq')">
+      ❓ FAQ <span class="count" id="count-faq">0</span>
+    </button>
+  </div>
+
+  <div class="searchrow">
+    <div class="searchbox">
+      <input type="text" id="searchInput" placeholder="Cari… misal: instagram, harga, domain, demo, breakup" oninput="filterCards()">
+    </div>
+  </div>
+  <div class="hint" id="resultHint"></div>
+
+  <div class="panel active" id="prospek"></div>
+  <div class="panel" id="opener"></div>
+  <div class="panel" id="followup"></div>
+  <div class="panel" id="closing"></div>
+  <div class="panel" id="faq"></div>
+
+  <footer>Isi bertanda <b>[…]</b> perlu disesuaikan dulu (nama usaha, nominal, link, tanggal) sebelum dipakai ya 😉</footer>
+</div>
+
+<script>
+const DATA = {
+ "prospek": [
+  [
+   "1. Checklist Kualifikasi Cepat — Sebelum DM",
+   "Sebelum DM, cek dulu di profil calon prospek:\n\n✅ Usaha aktif & keliatan serius (posting rutin, ada testimoni/review, produk/jasa jelas)\n✅ Ada cara dihubungi (nomor WA di bio, atau sering ditandai orang lain)\n❌ Kolom link di bio kosong, atau cuma Linktree sederhana tanpa branding\n❌ Nggak ada website sendiri (coba googling nama usahanya — kalau nggak muncul web resmi, itu lampu hijau)\n\nBonus poin kalau ada badge \"Bersponsor\"/\"Sponsored\" di salah satu postnya — tandanya dia lagi keluar budget iklan, kemungkinan besar trafiknya cuma nyasar ke DM tanpa halaman pendaratan."
+  ],
+  [
+   "2. Cara Cari via Instagram — Hashtag & Lokasi",
+   "Gunakan kombinasi hashtag niche + kota (misal #fotograferweddingsemarang, #klinikgigipurwokerto, #kontraktorcilacap), atau fitur pencarian lokasi (search nama kecamatan/kota tujuan). Jelajahi juga tab \"akun serupa\" dari kompetitor yang udah punya website bagus — biasanya di situ nongol akun-akun sejenis yang belum sebagus itu, artinya kemungkinan besar belum punya website juga."
+  ],
+  [
+   "3. Cara Cari via Google Maps",
+   "Search [niche] + [kota/kecamatan] di Google Maps (misal \"kontraktor Purwokerto\" atau \"klinik gigi Cilacap\"). Perhatikan usaha dengan rating bagus dan banyak review, tapi kolom \"Website\" di profil Maps-nya kosong — ini sinyal kuat: usahanya udah dipercaya orang, tapi belum digital. Prospek kayak gini biasanya lebih gampang diyakinkan karena mereka udah punya bukti sosial (review bagus), tinggal kurang kehadiran online yang proper."
+  ],
+  [
+   "4. Cara Cari via Referral/Rekomendasi",
+   "Tanya ke klien yang udah pernah pakai jasa kamu: \"Kak, ada kenalan sesama pelaku usaha yang mungkin juga butuh website?\" Referral biasanya closing jauh lebih cepat dibanding cold DM, karena udah ada kepercayaan yang \"dipinjam\" dari orang yang merekomendasikan — nggak perlu bangun trust dari nol."
+  ],
+  [
+   "5. Batas Aman Kirim DM per Hari (Biar Akun Nggak Kena Restrict)",
+   "Kirim maksimal sekitar 15-20 DM cold (ke orang yang belum pernah interaksi sama sekali) per hari, apalagi kalau akun IG-nya masih baru atau jarang dipakai buat chat — Instagram gampang mendeteksi pola pengiriman pesan yang mirip-mirip ke banyak akun berbeda dalam waktu singkat, dan bisa kena block sementara. Lebih baik 15 pesan personal per hari yang konsisten tiap hari, daripada 100 pesan sekaligus yang berisiko bikin akun kena suspend."
+  ],
+  [
+   "6. Waktu Terbaik Kirim Pesan",
+   "Waktu terbaik kirim pesan: Selasa–Kamis, jam 09.00–11.00 atau 13.00–15.00. Hindari Senin pagi dan Jumat sore, biasanya respons rate lebih rendah di jam-jam itu karena orang lagi sibuk mulai/nutup minggu kerja."
+  ],
+  [
+   "7. Personalisasi Dulu Sebelum Kirim",
+   "Sebelum kirim, luangkan 2 menit buat cek nama owner (kalau ada), jenis usaha, dan satu hal menarik dari bisnis mereka (produk andalan, lokasi, atau review yang bagus). Personalisasi kecil ini yang bikin pesan enggak terasa kayak blast massal, dan jadi salah satu faktor yang bikin akun kamu enggak gampang ke-flag sebagai spam."
+  ]
+ ],
+ "opener": {
+  "Buka Percakapan": [
+   [
+    "Nemu di Instagram, Belum Ada Web",
+    "Halo kak, izin kenalan, aku {{namaPengirim}} dari TeraWeb 👋 Tadi lihat-lihat feed {{namaBisnis}}, foto-fotonya bagus banget. Eh tapi kayaknya belum ada website ya? Kebetulan aku suka bantu usaha kayak gini bikinin website yang ringan & cepat, biar orang yang nemu dari Google bisa langsung lihat semua info tanpa harus nanya-nanya dulu di DM. Mau aku kirimin contoh dulu, kak, biar ada gambarannya? Belum ada kewajiban beli kok."
+   ],
+   [
+    "Nemu di Google Maps",
+    "Halo kak, aku {{namaPengirim}} dari TeraWeb 👋 Tadi nemu {{namaBisnis}} di Google Maps, review-nya bagus-bagus semua! Cuma pas aku cek kok belum ada website ya. Padahal biasanya itu bikin orang yang lagi cari-cari makin yakin sebelum datang/hubungin. Aku bikin website yang ringan & cepat buat usaha kayak ini, mau aku kirimin contohnya dulu?"
+   ],
+   [
+    "Dari Referensi/Rekomendasi",
+    "Halo kak, aku {{namaPengirim}} dari TeraWeb. Dapat kontaknya dari {{namaReferensi}}, katanya kakak lagi mikirin bikin website buat usahanya. Kebetulan itu emang yang aku kerjain sehari-hari — boleh cerita dikit nggak soal kebutuhannya, kak? Biar aku bisa kasih gambaran yang pas."
+   ],
+   [
+    "Kelihatan Aktif Ngiklan tapi Diarahin ke WA",
+    "Halo kak, aku {{namaPengirim}} dari TeraWeb 👋 Lihat {{namaBisnis}} lagi aktif promosi, keren! Kebetulan aku sering bantu usaha yang lagi ngiklan buat ngecek gratis, apakah alur dari orang klik iklan sampai ke WA udah pas atau ada yang bisa dirapihin dikit. Boleh aku intip sebentar, kak? Gratis, dan kalau ternyata udah oke ya nggak masalah, no pressure."
+   ],
+   [
+    "Prospek Umum (Sumber Campuran)",
+    "Halo kak, salam kenal, aku {{namaPengirim}} dari TeraWeb 👋 Aku bikin website simpel & cepat buat usaha kecil-menengah, biasanya ini yang bikin orang gampang percaya sebelum beli/booking. Lihat usahanya kayaknya cocok nih — boleh kenalan dulu, kak, usahanya bergerak di bidang apa?"
+   ]
+  ],
+  "Dialog Natural": [
+   [
+    "Prospek: \"Selanjutnya gimana?\"",
+    "Kalau kakak tertarik, cukup siapin: (1) logo usaha kalau ada, (2) nama dan deskripsi singkat usaha, (3) daftar layanan/produk beserta harga, (4) nomor WA aktif, dan (5) beberapa foto pendukung (opsional). Semakin lengkap dan rapi bahannya, semakin cepat juga prosesnya."
+   ],
+   [
+    "Prospek: \"Ada contohnya nggak? Pengen lihat dulu\"",
+    "Ada kak, bentar aku kirimin ya {{linkDemo}}. Itu contoh buat usaha sejenis, biar ada gambaran tampilan & isinya kayak gimana. Semuanya bisa dibuka langsung, bukan sekadar screenshot. Kalau usahanya belum ada di daftar contoh, sebutin aja jenis usahanya, nanti aku siapin yang paling sesuai. Belum ada pembayaran di tahap ini ya kak."
+   ],
+   [
+    "Prospek: \"Ini beneran 750rb doang? Kirain lebih mahal\"",
+    "Iya kak, Rp750.000 untuk 4 halaman, sekali bayar, nggak ada perpanjangan tahunan ke TeraWeb. Bisa segitu karena nggak pakai WordPress dan prosesnya udah aku sistemin, jadi nggak develop dari nol tiap kali. Yang di luar itu cuma nama domain, dibayar langsung ke penyedia domain tanpa tambahan dari kami. Kalau mau lebih hemat, ada juga landing page 1 halaman Rp450.000."
+   ],
+   [
+    "Prospek: \"Widih, 750rb kemahalan buat saya\"",
+    "Aku ngerti kak, tiap usaha budgetnya beda-beda. Coba dibandingin dulu ya: paket website tahunan di pasaran umumnya sekitar Rp1,7 juta per tahun dan diperpanjang tiap tahun, sedangkan punya TeraWeb bayar sekali aja. Atau kalau budgetnya lebih mepet, ada landing page Rp450.000. Tapi santai aja kalau memang belum pas waktunya, kak, nggak dipaksa kok 🙂"
+   ],
+   [
+    "Prospek: \"Kakak kerja sendiri atau ada tim?\"",
+    "Aku kerjain prosesnya sendiri kak, biar konsisten kualitasnya. Kalau soal komunikasi/CS ada istriku yang bantu, jadi kalau kakak chat siang atau malam tetap ada yang respon."
+   ],
+   [
+    "Prospek: \"Boleh saya pikir-pikir dulu?\"",
+    "Boleh banget kak, santai aja nggak ada buru-buru. Kalau nanti udah yakin atau ada pertanyaan tambahan, tinggal chat lagi aja ya."
+   ],
+   [
+    "Prospek: \"Kalau nanti saya batal gimana, DP-nya hangus?\"",
+    "Kalau prosesnya belum mulai sama sekali (aku belum mulai kerjain), DP masih bisa dibicarain kok kak, nggak langsung hangus. Tapi kalau udah mulai dikerjain, itu dihitung sebagai biaya kerja ya. Intinya aku nggak mau kakak ngerasa dirugiin."
+   ],
+   [
+    "Prospek: \"Saya belum kepikiran mau isi apa aja di websitenya\"",
+    "Nggak masalah kak, nanti aku bantu arahin. Kakak cukup kasih tau nama usaha, jenis usahanya apa, sama layanan/produk andalan aja, sisanya biar aku yang susun jadi enak dibaca."
+   ],
+   [
+    "Prospek: \"Ini legit kan? Ada yang udah pernah pakai?\"",
+    "Legit kak, hehe wajar kok curiga. Ini contoh website yang udah jadi: {{linkDemo}}. Bisa dibuka langsung dan dicek sendiri. Kami juga udah bikin website untuk berbagai usaha sejak 2010, dan kakak lihat contohnya dulu sebelum bayar apa pun, jadi nggak ada risiko di awal."
+   ],
+   [
+    "Prospek: \"Bisa nego nggak harganya?\"",
+    "Harganya aku tulis tetap kak: Rp750.000 untuk website 4 halaman dan Rp450.000 untuk landing page. Sengaja nggak main harga coret atau hitung mundur biar adil buat semua. Tapi kalau kebutuhannya lebih luas (misalnya halaman per layanan atau per cabang) atau butuh beberapa website sekaligus, ada paket Kustom yang harganya kita sepakati dulu sebelum mulai."
+   ],
+   [
+    "Prospek: \"Wah kebetulan lagi butuh nih!\"",
+    "Wah pas banget, kak! Kalau gitu biar cepat, boleh langsung kirim nama usaha & jenis usahanya apa? Nanti aku siapin gambaran & prosesnya."
+   ],
+   [
+    "Prospek Cuma Balas Singkat (\"Oke\"/\"Boleh\")",
+    "Kalau dapat respon singkat kayak gini, jangan langsung kirim proposal panjang — mancing detail dulu dengan pertanyaan ringan, misal: \"Sip kak! Usahanya di bidang apa ya, biar aku kasih gambaran yang pas.\""
+   ],
+   [
+    "Prospek: \"Makasih infonya ya\" (Tanda Belum Tertarik)",
+    "Sama-sama kak, santai aja. Kalau nanti butuh, tinggal chat lagi ya, aku bantu kapan pun 🙏 — biarkan obrolan berhenti di sini, jangan dipaksa lanjut. Simpan kontaknya buat masuk ke sequence follow-up H+3/H+7/H+14."
+   ]
+  ],
+  "Jelaskan Penawaran & Jawab Keberatan": [
+   [
+    "Penjelasan Penawaran Utama",
+    "Jadi gini, Kak, TeraWeb bikin website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak) yang isinya lengkap: profil usaha, daftar layanan, galeri foto, Google Maps, dan tombol WhatsApp langsung di tiap halaman. Teksnya juga kami yang tulis, pakai kata kunci kota/kecamatan Kakak biar lebih mudah ditemukan di Google. Harganya Rp750.000 sekali bayar, tanpa perpanjangan tahunan ke TeraWeb (yang dibayar rutin cuma nama domain, langsung ke penyedia domain). Kodingnya HTML statis, bukan WordPress, jadi tiap halaman ringan dan cepat dibuka di HP. Umumnya selesai 3 sampai 5 hari kerja sejak materi lengkap, dan Kakak bisa lihat contohnya dulu sebelum bayar. Rincian paket ada di teraweb.id/layanan.html."
+   ],
+   [
+    "Kalimat Pemantik / Alasan Kenapa Harus Pakai Jasa Ini",
+    "Beberapa kalimat yang bisa diselipkan biar obrolannya makin meyakinkan (enggak harus semua dipakai sekaligus):\n\n• \"Kakak bisa lihat contoh yang sesuai dulu sebelum bayar apa pun. Kalau belum cocok, enggak ada kewajiban lanjut.\"\n• \"Paket website tahunan di pasaran umumnya sekitar Rp1,7 juta per tahun dan diperpanjang tiap tahun. Punya kami Rp750.000 sekali bayar, tanpa perpanjangan ke TeraWeb. Dalam 3 tahun selisihnya sekitar Rp3,75 juta (simulasinya ada di teraweb.id/layanan.html).\"\n• \"Website yang lemot itu bikin calon pelanggan kabur sebelum sempat baca. Halaman kami statis, dikirim siap saji dari jaringan server global, jadi tetap terbuka cepat di HP dengan sinyal pas-pasan.\"\n• \"Semua file diserahkan ke Kakak saat website tayang, jadi mau pindah hosting atau pindah vendor kapan pun bebas. Enggak ada akun yang menyandera website Kakak.\"\n• \"Tanpa WordPress dan tanpa plugin, jadi enggak ada plugin usang yang bisa jadi pintu masuk peretas.\""
+   ],
+   [
+    "Menjawab Keberatan — \"Kok murah banget, jangan-jangan abal-abal?\"",
+    "Wajar kalau curiga, Kak. Makanya Kakak bisa lihat contoh yang sesuai dulu sebelum bayar apa pun, dan harga serta isi paketnya (termasuk yang tidak termasuk) kami tulis terang, enggak ada biaya yang muncul belakangan. Harganya bisa segini karena kami pakai HTML statis tanpa WordPress/plugin dan prosesnya sudah disistemkan, bukan dikerjakan dari nol tiap kali. Kami juga sudah membuat website untuk berbagai usaha sejak 2010."
+   ],
+   [
+    "Menjawab Keberatan — \"Kok mahal banget, ada yang lebih murah tuh\"",
+    "Saya paham, Kak. Coba dicek dulu apa saja yang termasuk dan berapa biaya lanjutannya. Banyak paket yang murah di awal tapi diperpanjang tiap tahun (paket tahunan di pasaran umumnya sekitar Rp1,7 juta per tahun). Di TeraWeb, Rp750.000 itu sekali bayar, tanpa perpanjangan ke TeraWeb, dan semua file diserahkan ke Kakak. Jadi sebaiknya dibandingkan total 3 tahunnya, bukan harga awalnya saja."
+   ],
+   [
+    "Menjawab Keberatan — \"Bisa kurang jadi 500rb aja?\" (Tawarkan Landing Page Rp450.000)",
+    "Untuk website 4 halaman harganya tetap Rp750.000 ya, Kak (harga tertulis, tanpa harga coret). Tapi kalau budgetnya memang lebih mepet, ada Landing Page Hemat Rp450.000: 1 halaman dengan 1 tujuan (calon pelanggan langsung chat WhatsApp), alamat gratis di domain bersama TeraWeb, penulisan teks, tampilan rapi di HP dan komputer, plus HTTPS dan SEO on-page. Mau saya kirim contoh landing page-nya, Kak?"
+   ],
+   [
+    "Menjawab Keberatan — \"Saya udah punya Instagram, ngapain masih perlu web?\"",
+    "Instagram itu bagus buat awareness, Kak, tapi Kakak enggak punya kendali penuh — sewaktu-waktu akun bisa kena suspend, algoritma berubah, atau followers enggak lihat post Kakak. Website itu 'rumah' sendiri yang Kakak kontrol penuh, dan penting banget kalau Kakak jalanin iklan berbayar, karena traffic-nya bisa didaratkan ke tempat yang benar-benar bikin orang percaya dan langsung chat WA."
+   ],
+   [
+    "Menjawab Keberatan — \"Saya pernah kena tipu/di-php-in developer lain\"",
+    "Saya paham banget kekhawatirannya, Kak, itu memang sering kejadian. Makanya saya kerja dengan cara yang terang: Kakak lihat contoh dulu sebelum bayar apa pun, harga dan isi paket tertulis jelas, ada DP di awal dan progresnya bisa dipantau, revisi sampai Kakak puas sebelum tayang, dan semua file diserahkan ke Kakak begitu website tayang. Jadi enggak ada yang \"ditahan\" dari Kakak."
+   ],
+   [
+    "Menjawab Keberatan — \"Gimana kalau nanti saya mau ubah-ubah sendiri kontennya?\"",
+    "Website kami statis, jadi memang enggak ada dashboard buat edit sendiri. Tapi gampang kok, Kak: kirim perubahan teks atau foto lewat WhatsApp dan kami yang mengerjakan. Sebelum tayang, revisi sampai Kakak puas. Setelah tayang, perubahan kecil (ganti teks/foto/warna) Rp50.000 per request. Filenya juga diserahkan penuh ke Kakak, jadi kalau Kakak atau developer lain mau edit langsung, bisa."
+   ]
+  ],
+  "Channel Reseller/Partner": [
+   [
+    "Opener — Ke Freelancer/Admin Ads",
+    "Halo Kak, perkenalkan saya {{namaPengirim}}. Saya dari TeraWeb, kami bikin landing page (mulai Rp450.000) dan website bisnis yang kilat dan sekali bayar, cocok buat kebutuhan campaign iklan. Saya lihat Kakak sering handle ads buat klien-klien UMKM — nah, kadang kan klien butuh landing page tapi enggak mau ribet develop sendiri, ya? Saya bisa bantu suplai landing page-nya dengan harga khusus partner, Kakak tinggal jual lagi ke klien Kakak dengan margin sendiri. Mau saya ceritain detailnya, Kak?"
+   ],
+   [
+    "Skema Kerja Sama (Reseller Pitch)",
+    "Kak, jadi sistemnya gini: Kakak dapat harga khusus partner {{hargaPartner}} per website, terus Kakak bisa jual lagi ke klien Kakak dengan harga berapa pun sesuai kebijakan Kakak sendiri. Saya yang kerjain teknisnya di belakang layar, Kakak tinggal fokus closing klien dan pegang relasinya. Cocok banget buat Kakak yang udah punya banyak klien ads tapi belum nawarin landing page."
+   ]
+  ]
+ },
+ "followup": [
+  [
+   "1. Kenapa Perlu Follow-Up Berurutan (Bukan Cuma Sekali)",
+   "Kebanyakan orang cuma DM sekali terus nyerah kalau nggak dibales. Padahal butuh beberapa kali sentuhan sebelum orang beneran nge-respon, apalagi buat keputusan yang nggak mendesak kayak bikin website. Urutan yang dipakai di sini: H+3 (nada ringan, tambahan info kecil, bukan ngulang demo yang udah dikirim), H+7 (kasih value/observasi personal, bukan jualan lagi), H+14 (pesan penutup yang santai — justru ini yang paling sering dibales karena nggak ada tekanan sama sekali)."
+  ],
+  [
+   "2. H+3 — Follow-Up Ringan + Info Tambahan",
+   "Halo Kak, nyambung dari demo kemarin 🙂 Oh iya, itu template websitenya juga bisa disesuaiin warna & font-nya sesuai branding {{namaBisnis}}, jadi enggak keliatan template pasaran. Kalau ada yang mau ditanyain soal itu, saya standby ya, Kak."
+  ],
+  [
+   "3. H+7 — Value Add: Observasi Personal (Opsi A)",
+   "Kak, saya sempet lihat-lihat feed/profil {{namaBisnis}} — [sebutkan 1 hal spesifik & positif, misal: fotonya bagus-bagus banget]. Sayangnya orang yang nemu dari situ belum ada tempat buat lihat portofolio lengkap atau langsung cek harga paket ya, Kak — biasanya itu yang bikin calon pelanggan capek nanya di DM satu-satu sebelum akhirnya mutusin."
+  ],
+  [
+   "H+7 — Value Add: Contoh Hasil yang Relevan (Opsi B)",
+   "Kak, ini contoh website {{niche}} yang bisa jadi gambaran: {{linkDemo}}. Intinya, calon pelanggan bisa langsung lihat layanan, harga, dan lokasi dari website, jadi chat WA-nya lebih ke closing aja dan enggak perlu jelasin dari nol tiap kali ada yang tanya."
+  ],
+  [
+   "5. H+14 — Breakup Message (Penutup Sopan)",
+   "Saya paham Kak, mungkin sekarang belum waktu yang pas buat mikirin ini. Saya tutup dulu ya obrolannya, enggak akan saya follow-up lagi — tapi kalau nanti berubah pikiran atau butuh, tinggal chat aja, saya bantu kapan pun 🙏"
+  ],
+  [
+   "6. Kalau Tiba-Tiba Dibales Setelah Lama",
+   "Santai aja walau responnya telat, Kak. Jangan buru-buru jualan lagi dari awal — cukup jawab pertanyaannya dan tanya kabar dulu. Contoh: \"Wah, makasih udah balas Kak! Masih relevan nih kebutuhan websitenya? Kalau iya, saya bantu jelasin ulang ya.\""
+  ]
+ ],
+ "closing": [
+  [
+   "Ajak Mulai (DP)",
+   "Baik, Kak, kalau sudah oke, saya siapkan dulu invoice-nya ya. Prosesnya: (1) DP 30% buat mulai kerja, (2) Kakak kirim materi (logo, foto, info usaha, daftar layanan & harga, nomor WA), (3) saya kerjakan, umumnya 3 sampai 5 hari kerja sejak materi lengkap, (4) preview & revisi sampai Kakak puas, (5) pelunasan begitu Kakak setuju dan website tayang."
+  ],
+  [
+   "Setelah Deal — Minta Bahan",
+   "Alhamdulillah, makasih ya Kak udah percaya! Biar prosesnya cepat, boleh dikirim bahan-bahan berikut: (1) logo usaha kalau ada, (2) nama & deskripsi singkat usaha, (3) daftar layanan/produk beserta harga, (4) nomor WA aktif buat tombol chat, (5) warna/tema yang disukai (opsional). Begitu bahan lengkap, saya langsung mulai kerjakan ya, Kak."
+  ],
+  [
+   "Update Saat Pengerjaan",
+   "Kak, update progress ya — websitenya lagi saya kerjakan, estimasi selesai {{estimasiSelesai}}. Nanti begitu jadi saya kirim link preview-nya duluan buat Kakak cek sebelum live."
+  ],
+  [
+   "Serah Terima Website Selesai",
+   "Alhamdulillah, website Kakak sudah jadi dan tayang ya, Kak! 🎉 Ini link-nya: {{linkFinal}}. Boleh dicek dulu semua isinya. Kalau semua sudah oke, mohon pelunasannya ya, Kak. Semua file website-nya saya serahkan ke Kakak, dan kalau nanti mau ubah teks atau foto, tinggal kirim lewat WhatsApp."
+  ],
+  [
+   "Minta Testimoni + Referral",
+   "Kak, seneng banget bisa bantu usahanya online sekarang! Kalau Kakak berkenan, boleh minta testimoni singkat enggak buat saya pajang di portofolio? Dan kalau ada teman/kenalan yang juga butuh website, saya kasih {{insentifReferral}} buat setiap yang Kakak referensikan ya, Kak 🙏"
+  ]
+ ],
+ "faq": [
+  [
+   "Kenapa harganya bisa semurah itu, ini bukan abal-abal kan?",
+   "Bisa murah karena kami pakai HTML statis tanpa WordPress/plugin dan prosesnya udah aku sistemin, jadi enggak develop dari nol tiap kali. Kualitasnya tetap dijaga, dan kamu lihat contohnya dulu sebelum bayar apa pun. Harga, isi paket, dan yang tidak termasuk juga kami tulis terang, jadi enggak ada biaya yang muncul belakangan."
+  ],
+  [
+   "Apa bedanya TeraWeb dengan layanan website pada umumnya?",
+   "Bedanya di cara kerjanya, kak: (1) kamu lihat contoh yang sesuai dulu sebelum bayar, (2) HTML statis tanpa WordPress dan plugin, (3) sekali bayar tanpa perpanjangan tahunan ke TeraWeb, cuma domain yang dibayar ke penyedia domain, (4) semua file diserahkan ke kamu, dan (5) harga tetap tertulis jelas tanpa harga coret atau hitung mundur. Simulasi biaya 3 tahunnya ada di teraweb.id/layanan.html."
+  ],
+  [
+   "Ada garansi skor kecepatan atau jaminan peringkat Google enggak?",
+   "Aku jujur aja ya, kak: yang aku janjiin itu website yang rapi, meyakinkan, dan gampang dihubungi, dengan kecepatan yang dioptimalkan (statis, tanpa WordPress). Aku enggak janjiin skor atau peringkat tertentu di Google, karena posisi di Google tetap tergantung persaingan dan enggak ada yang bisa menjamin itu."
+  ],
+  [
+   "Kecepatan websitenya bisa dicek sendiri enggak?",
+   "Bisa kak, pakai PageSpeed Insights dari Google (gratis dan resmi), tinggal masukin link websitenya. Itu alat bantu buat cek kecepatan, bukan janji skor tertentu. Tapi website statis tanpa WordPress/plugin umumnya ringan dan cepat dibuka di HP."
+  ],
+  [
+   "Kenapa 4 halaman, apa enggak lebih lama/berat dibanding cuma 1 halaman?",
+   "Enggak, karena tetap dikerjain pakai HTML/CSS murni tanpa CMS berat — jadi meskipun 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), tiap halamannya tetap ringan dan cepat diakses. Justru dengan 4 halaman terpisah, usaha Kakak kelihatan lebih lengkap dan profesional dibanding kebanyakan jasa murah yang cuma kasih 1 halaman doang — calon pelanggan bisa eksplor lebih detail sebelum mutusin hubungin."
+  ],
+  [
+   "Kalau nanti mau nambah halaman/menu baru, bisa?",
+   "Bisa kak. Halaman tambahan di luar 4 halaman standar masuk paket Kustom, harganya kita sepakati dulu sebelum mulai (misalnya halaman per layanan atau per cabang). Tapi buat kebutuhan standar UMKM, biasanya 4 halaman (Beranda, Layanan, Tentang Kami, Kontak) udah cukup lengkap kok."
+  ],
+  [
+   "Apa saja yang tidak termasuk di paketnya?",
+   "Aku tulis dari awal biar enggak ada kejutan, kak: biaya nama domain, email bisnis, produksi foto atau video profesional, halaman tambahan di luar paket, dan fitur toko online dengan keranjang belanja. Untuk jualan, pelanggan diarahkan langsung ke WhatsApp kamu."
+  ],
+  [
+   "Kenapa pakai HTML/CSS murni, bukan WordPress?",
+   "Karena jauh lebih ringan dan cepat diakses — enggak ada beban plugin atau database kayak WordPress yang sering bikin lemot. Selain performa, ini juga lebih aman dari celah hack yang biasanya muncul dari plugin pihak ketiga, dan enggak ada biaya hosting/maintenance bulanan yang biasanya diminta penyedia berbasis WordPress."
+  ],
+  [
+   "Kalau aku enggak paham teknis, gimana cara ubah teks atau foto nanti?",
+   "Website kami statis, jadi enggak ada dashboard atau WordPress yang perlu dipelajari. Kalau mau ubah teks atau foto, kirim aja lewat WhatsApp dan kami yang mengerjakan. Sebelum tayang, revisi sampai kamu puas. Setelah tayang, perubahan kecil (ganti teks/foto/warna) Rp50.000 per request. File website juga diserahkan ke kamu, jadi kalau kamu atau developer lain mau edit langsung, bisa."
+  ],
+  [
+   "Domain enggak termasuk, itu artinya aku harus beli sendiri?",
+   "Iya kak, harga Rp750.000 itu belum termasuk biaya nama domain (misal usahakamu.com atau .id). Domainnya dibayar langsung ke penyedia domain sesuai harga mereka, tanpa tambahan dari kami, dan kami bantu pilihin serta sambungin ke websitenya. Kalau udah punya domain, tinggal dipakai."
+  ],
+  [
+   "Kalau belum punya domain, bisa dibantu?",
+   "Dibantu pilih dan sambungin kak, tapi pembeliannya langsung kamu ke penyedia domain (biar domainnya atas nama kamu dan enggak ada markup dari kami). Perkiraan biayanya sekitar Rp200.000 per tahun, beda-beda tiap penyedia dan ekstensi, di luar paket Rp750.000."
+  ],
+  [
+   "Websitenya disimpan di mana, cepat dan aman enggak?",
+   "Karena websitenya statis, halamannya dikirim siap saji dari jaringan server global, jadi terbuka cepat di HP bahkan dengan sinyal pas-pasan dan enggak ada plugin usang yang bisa jadi pintu masuk peretas. Enggak ada biaya hosting bulanan dari kami."
+  ],
+  [
+   "Pengerjaannya berapa lama, dihitung dari kapan?",
+   "Umumnya 3 sampai 5 hari kerja, dihitung sejak materi (logo, foto, dan info usaha) lengkap. Kalau materinya belum siap, aku bantu susun dari yang ada, tapi pengerjaannya nunggu sampai bahan cukup."
+  ],
+  [
+   "Apa aja yang perlu disiapkan biar prosesnya cepat?",
+   "Siapin aja: (1) logo usaha kalau ada, (2) nama & deskripsi singkat usaha, (3) daftar layanan/produk beserta harga, (4) nomor WA aktif, (5) beberapa foto pendukung (opsional). Makin lengkap dan rapi bahannya, makin cepat juga prosesnya."
+  ],
+  [
+   "Pembayarannya gimana, transfer ke mana?",
+   "Transfer ke rekening/e-wallet atas nama aku, nanti detailnya aku kirim begitu deal. Alurnya DP dulu buat mulai kerja, pelunasan setelah website tayang dan kamu setuju."
+  ],
+  [
+   "Bisa dicicil enggak bayarnya?",
+   "Untuk paket standar sistemnya DP + pelunasan, bukan cicilan panjang, soalnya harganya udah cukup terjangkau di 750rb. Tapi kalau ada kendala khusus, boleh banget diomongin, aku coba cariin jalan tengahnya."
+  ],
+  [
+   "Bisa dipasangi kode pelacak iklan (Pixel)?",
+   "Bisa kak. Kalau kamu jalanin iklan berbayar, kirim aja ID Pixel dari akun ads kamu (Google Ads, Meta, atau TikTok), nanti aku tanamin kodenya biar kamu bisa lihat data pengunjung dan efektivitas campaign. Kalau belum tahu cara dapetin ID-nya, aku arahin langkah-langkahnya."
+  ],
+  [
+   "Tombol WhatsApp di web itu ngarah ke nomor siapa, bisa diganti?",
+   "Ngarah ke nomor WA usaha kamu sendiri, bukan nomor aku. Bisa diganti kapan aja kalau nomornya berubah, tinggal infoin aja."
+  ],
+  [
+   "Websitenya bisa dipakai buat jualan produk, bukan cuma jasa?",
+   "Bisa, cocok juga buat usaha yang jual produk — daftar produk beserta harga ditampilkan rapi, pembeli tinggal klik tombol WA buat pesan. Kalau butuh sistem keranjang/checkout otomatis, itu di luar paket dasar, bisa didiskusikan terpisah."
+  ],
+  [
+   "Amankah dari hack atau virus?",
+   "Insya Allah aman, karena kodingnya HTML/CSS murni tanpa database atau plugin pihak ketiga — itu biasanya jadi celah keamanan utama di website berbasis WordPress/CMS."
+  ],
+  [
+   "Siapa yang pegang file website dan aksesnya setelah selesai?",
+   "Full punya kamu. Semua file diserahkan saat website tayang, jadi kamu bebas pindahin ke hosting mana pun kapan aja. Enggak ada akun yang menyandera website kamu."
+  ],
+  [
+   "Ada biaya bulanan/tahunan lagi setelah website jadi?",
+   "Enggak ada perpanjangan atau biaya hosting bulanan ke TeraWeb. Satu-satunya biaya berulang cuma nama domain, yang kamu bayar langsung ke penyedia domain tanpa tambahan dari kami."
+  ],
+  [
+   "Kalau ada error setelah web jadi, dibantu perbaiki enggak?",
+   "Dibantu, terutama kalau errornya masih terkait proses pengerjaan awal. Kalau di luar itu (revisi teks/foto/warna), kena Rp50.000 per request revisi kecil — kalau perubahan besar (tambah section, ubah struktur), itu dihitung custom terpisah."
+  ],
+  [
+   "Bedanya revisi kecil sama request custom apa, kira-kira biayanya berapa?",
+   "Catatan: selama pengerjaan sebelum tayang, revisi tetap sampai kamu puas ya. Pembagian ini berlaku buat perubahan setelah website tayang:\n\nRevisi kecil (Rp50.000/request): ganti teks, ganti 1-2 foto, ganti warna tema, update kontak, atau update harga di daftar layanan.\n\nRequest custom (di luar itu): tambah section baru (misal galeri/testimoni), ubah struktur/layout total, tambah fitur baru (form pemesanan, kalkulator harga), atau ganti keseluruhan desain.\n\nUntuk request custom, mulai dari Rp150.000 tergantung kerumitannya — nanti aku kasih penawaran pasti setelah tau detail requestnya."
+  ],
+  [
+   "Bisa request desain sesuai warna/logo brand aku?",
+   "Bisa, tinggal kasih tau warna atau tema yang sesuai brand kamu, nanti aku sesuaikan desainnya."
+  ],
+  [
+   "Websitenya otomatis muncul di Google enggak?",
+   "Setiap halaman kami susun dengan judul, deskripsi, dan kata kunci lokal (kota atau kecamatan kamu), plus Google Maps, jadi fondasinya bagus buat mulai terindeks. Tapi aku enggak janjiin peringkat tertentu, karena posisi di Google tetap tergantung persaingan. Kalau mau bersaing lebih jauh, butuh proses tambahan (konten, backlink) di luar paket ini."
+  ],
+  [
+   "Ada bagian FAQ atau galeri foto juga enggak di website aku nanti?",
+   "Galeri foto produk atau hasil kerja selalu ada di paket website. Untuk FAQ, tergantung jenis usahanya: buat klinik/apotek biasanya aku sertain section FAQ khusus biar calon pasien dapet jawaban cepat tanpa harus chat dulu. Disesuaikan sama kebutuhan usaha kamu."
+  ],
+  [
+   "Desainnya beda-beda tiap jenis usaha, atau semua sama templatenya?",
+   "Beda, enggak disamaratain. Warna, font, dan section yang ditampilkan disesuaikan sama karakter usahanya — kafe pakai nuansa hangat dan galeri produk, klinik pakai nuansa bersih dan tenang dengan FAQ, properti pakai tampilan formal dan elegan. Jadi hasilnya enggak keliatan template asal cetak ulang."
+  ],
+  [
+   "Kalau abis lihat demo terus ada yang mau diubah dulu sebelum deal, boleh?",
+   "Boleh banget, itu wajar kok. Demo itu contoh gambaran aja, belum final — begitu deal, semua detail (warna, teks, section) disesuaikan lagi sama kebutuhan usaha kamu."
+  ],
+  [
+   "Aku cuma butuh landing page buat iklan doang, bukan profil usaha lengkap, bisa?",
+   "Bisa kak, itu paket Landing Page Hemat Rp450.000: 1 halaman dengan 1 tujuan (chat WhatsApp), alamat gratis di domain bersama TeraWeb, penulisan teks, tampilan rapi di HP dan komputer, plus HTTPS dan SEO on-page. Beda dari website 4 halaman yang Rp750.000. Contoh landing page bisa dilihat di teraweb.id/demolanding/. Kalau kamu jalanin iklan berbayar, Pixel juga bisa dipasang."
+  ],
+  [
+   "Landing page atau website 4 halaman, mana yang cocok buat usahaku?",
+   "Landing page (Rp450.000) cocok kalau kamu lagi jalanin iklan atau promo tertentu, atau punya satu layanan andalan yang mau ditonjolkan. Website 4 halaman (Rp750.000) cocok kalau pelanggan biasanya bandingin beberapa penyedia dulu, atau kamu punya beberapa layanan yang perlu dijelasin dan mau lebih mudah ditemukan di Google. Aku bakal sarankan yang paling masuk akal buat usaha kamu, termasuk kalau yang termurah udah cukup."
+  ],
+  [
+   "Bedanya sama beli template jadi di marketplace (Tokopedia/Shopee)?",
+   "Template marketplace biasanya kamu edit sendiri dan belum tentu dioptimasi kecepatannya. Punya TeraWeb dikerjain sesuai usaha kamu: teksnya kami tulis, halamannya disusun, WhatsApp, Maps, dan SEO dipasang, dan kamu lihat contoh dulu sebelum bayar. Jadi kamu tinggal terima beres."
+  ],
+  [
+   "Kalau nanti aku mau pindah ke developer lain, filenya bisa dibawa?",
+   "Bisa banget, karena filenya HTML/CSS biasa (bukan sistem tertutup), jadi gampang dipindah atau dilanjutin developer mana pun."
+  ],
+  [
+   "Gimana cara mulai pesannya?",
+   "Tinggal kabarin aku: (1) nama usaha, (2) jenis usaha/bidangnya apa, (3) mau landing page atau website 4 halaman (belum tahu juga boleh, nanti aku sarankan). Bisa juga lewat formulir di teraweb.id/kontak.html. Nanti aku kirim contoh yang sesuai dulu, dan kalau cocok baru kita sepakati paket dan DP."
+  ]
+ ]
+};
+
+const TABS = ['prospek','opener','followup','closing','faq'];
+
+const FIELD_KEYS = ['namaPengirim','namaBisnis','niche','namaReferensi','linkDemo','linkFinal','estimasiSelesai','hargaPartner','insentifReferral'];
+const FIELD_FALLBACK = {
+  namaPengirim: 'Widya',
+  namaBisnis: '[nama usaha]',
+  niche: '[jenis usaha]',
+  namaReferensi: '[nama referensi]',
+  linkDemo: '[link demo]',
+  linkFinal: '[link website]',
+  estimasiSelesai: '[tanggal/jam]',
+  hargaPartner: '[Rp X]',
+  insentifReferral: '[insentif referral]'
+};
+
+let FIELDS = { sapaan: 'kak' };
+FIELD_KEYS.forEach(k => FIELDS[k] = '');
+
+function loadFields(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('gerilyaFields') || '{}');
+    Object.assign(FIELDS, saved);
+  }catch(e){}
+  FIELD_KEYS.forEach(k => {
+    const el = document.getElementById('f-' + k);
+    if(el) el.value = FIELDS[k] || '';
+  });
+  setSapaan(FIELDS.sapaan || 'kak', false);
+}
+
+function saveFields(){
+  try{ localStorage.setItem('gerilyaFields', JSON.stringify(FIELDS)); }catch(e){}
+}
+
+function setSapaan(val, doUpdate){
+  FIELDS.sapaan = val;
+  document.getElementById('sapaan-kak').classList.toggle('active', val === 'kak');
+  document.getElementById('sapaan-formal').classList.toggle('active', val === 'formal');
+  saveFields();
+  if(doUpdate !== false) updateAllCards();
+}
+
+function pickDemo(url){
+  if(!url) return;
+  const el = document.getElementById('f-linkDemo');
+  if(el){ el.value = url; }
+  onFieldInput();
+}
+function onFieldInput(){
+  FIELD_KEYS.forEach(k => {
+    const el = document.getElementById('f-' + k);
+    if(el) FIELDS[k] = el.value;
+  });
+  saveFields();
+  updateAllCards();
+}
+
+function fillTemplate(text){
+  let t = text;
+  FIELD_KEYS.forEach(k => {
+    const val = FIELDS[k] && FIELDS[k].trim() ? FIELDS[k].trim() : FIELD_FALLBACK[k];
+    t = t.split('{{' + k + '}}').join(val);
+  });
+  if (FIELDS.sapaan === 'formal'){
+    t = t.replace(/\bKakak\b/g, 'Bapak/Ibu')
+         .replace(/\bkakak\b/g, 'bapak/ibu')
+         .replace(/\bKak\b/g, 'Pak/Bu')
+         .replace(/\bkak\b/g, 'pak/bu');
+  }
+  return t;
+}
+
+function updateAllCards(){
+  document.querySelectorAll('.card').forEach(c => { if (c._update) c._update(); });
+}
+
+function buildCard(q, a, num){
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.rawA = a;
+  card.dataset.search = (q + ' ' + a).toLowerCase();
+  card.innerHTML = `
+    <div class="qrow">
+      <div class="qnum">${num}</div>
+      <div class="qtext">${q}</div>
+    </div>
+    <div class="answer" contenteditable="true" spellcheck="false"></div>
+    <div class="cardfoot">
+      <span class="editnote">✎ bisa diedit langsung</span>
+      <button class="copybtn" onclick="copyAnswer(this)">Copy</button>
+    </div>
+  `;
+  const answerEl = card.querySelector('.answer');
+  let dirty = false;
+  const update = () => {
+    if(!dirty){
+      const filled = fillTemplate(a);
+      answerEl.innerText = filled;
+      card.dataset.search = (q + ' ' + filled).toLowerCase();
+    }
+  };
+  answerEl.addEventListener('input', () => { dirty = true; });
+  update();
+  card._update = update;
+  return card;
+}
+
+function renderCards(){
+  TABS.forEach(key=>{
+    const container = document.getElementById(key);
+    container.innerHTML = '';
+    const data = DATA[key];
+
+    if (Array.isArray(data)) {
+      data.forEach((item, idx) => container.appendChild(buildCard(item[0], item[1], idx + 1)));
+      document.getElementById('count-' + key).textContent = data.length;
+    } else {
+      let running = 1;
+      let total = 0;
+      Object.keys(data).forEach(sectionName => {
+        const items = data[sectionName];
+        const group = document.createElement('div');
+        group.className = 'sectiongroup';
+        const heading = document.createElement('div');
+        heading.className = 'sectiontitle';
+        heading.textContent = sectionName;
+        group.appendChild(heading);
+        items.forEach(item => {
+          group.appendChild(buildCard(item[0], item[1], running));
+          running++;
+        });
+        container.appendChild(group);
+        total += items.length;
+      });
+      document.getElementById('count-' + key).textContent = total;
+    }
+  });
+}
+
+function switchTab(tab){
+  TABS.forEach(key=>{
+    document.getElementById(key).classList.toggle('active', tab===key);
+    document.getElementById('tab-' + key).classList.toggle('active', tab===key);
+  });
+  document.getElementById('searchInput').value = '';
+  filterCards();
+}
+
+function copyAnswer(btn){
+  const card = btn.closest('.card');
+  const answerEl = card.querySelector('.answer');
+  const text = answerEl.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const original = btn.textContent;
+    btn.textContent = 'Tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  }).catch(()=>{
+    const range = document.createRange();
+    range.selectNodeContents(answerEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.execCommand('copy');
+    sel.removeAllRanges();
+    btn.textContent = 'Tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function filterCards(){
+  const activePanel = document.querySelector('.panel.active');
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  const cards = activePanel.querySelectorAll('.card');
+  let visible = 0;
+  cards.forEach(card=>{
+    const match = !query || card.dataset.search.includes(query);
+    card.style.display = match ? '' : 'none';
+    if(match) visible++;
+  });
+
+  activePanel.querySelectorAll('.sectiongroup').forEach(group=>{
+    const anyVisible = Array.from(group.querySelectorAll('.card')).some(c => c.style.display !== 'none');
+    group.style.display = anyVisible ? '' : 'none';
+  });
+
+  const hint = document.getElementById('resultHint');
+  hint.textContent = query ? `Menampilkan ${visible} dari ${cards.length} item` : '';
+
+  let empty = activePanel.querySelector('.empty');
+  if(visible === 0){
+    if(!empty){
+      empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'Enggak ketemu yang cocok. Coba kata kunci lain ya.';
+      activePanel.appendChild(empty);
+    }
+  } else if(empty){
+    empty.remove();
+  }
+}
+
+loadFields();
+renderCards();
+</script>
+</body>
+</html>

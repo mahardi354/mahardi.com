@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracker Leads pSEO — TeraWeb</title>
+<style>
+  :root {
+    --bg: #F8F9FA; --white: #FFFFFF; --border: #E2E8F0;
+    --blue: #3B82F6; --blue-l: #EFF6FF; --blue-d: #1D4ED8;
+    --green: #10B981; --green-l: #ECFDF5; --green-d: #047857;
+    --yellow: #F59E0B; --yellow-l: #FFFBEB;
+    --red: #EF4444; --red-l: #FEF2F2;
+    --purple: #8B5CF6; --purple-l: #F5F3FF;
+    --gray: #64748B; --dark: #1E293B;
+    --font: 'Inter', -apple-system, sans-serif;
+    --r: 8px; --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--dark); font-size: 14px; }
+
+  .app-header {
+    background: var(--dark); color: white;
+    padding: 0 24px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50; height: 52px;
+  }
+  .app-brand { display: flex; align-items: center; gap: 10px; }
+  .app-logo { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px; }
+  .app-logo span { color: #38BDF8; }
+  .app-tag { font-size: 0.68rem; background: rgba(255,255,255,0.12); padding: 2px 8px; border-radius: 100px; color: rgba(255,255,255,0.7); }
+  .header-right { font-size: 0.75rem; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 14px; }
+  .header-right button { background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.75); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-family: var(--font); }
+  .header-right button:hover { background: rgba(255,255,255,0.2); }
+
+  .tabs-bar {
+    background: var(--white); border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; padding: 0 24px; gap: 2px;
+    position: sticky; top: 52px; z-index: 40;
+  }
+  .tab-btn {
+    padding: 14px 18px; border: none; background: none; cursor: pointer;
+    font-size: 0.86rem; font-weight: 600; color: var(--gray);
+    font-family: var(--font); border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: all 0.15s; white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tab-btn:hover { color: var(--dark); }
+  .tab-btn.active { color: var(--blue-d); border-bottom-color: var(--blue-d); }
+  .tab-panel { display: none; padding: 24px; max-width: 1100px; margin: 0 auto; }
+  .tab-panel.active { display: block; }
+
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+  .card-pad { padding: 22px; }
+
+  /* ── INPUT FORM ── */
+  .input-wrap { max-width: 520px; margin: 0 auto; }
+  .input-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; }
+  .input-sub { font-size: 0.82rem; color: var(--gray); margin-bottom: 22px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--gray); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .form-input, .form-select {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: var(--font); font-size: 0.95rem; color: var(--dark); background: var(--white);
+  }
+  .form-input:focus, .form-select:focus { outline: none; border-color: var(--blue); }
+  .btn { border: none; border-radius: 8px; font-family: var(--font); font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .btn-primary { background: var(--blue-d); color: white; padding: 14px 20px; font-size: 0.95rem; width: 100%; }
+  .btn-primary:hover { background: #1e40af; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-sm { padding: 6px 12px; font-size: 0.78rem; border-radius: 6px; }
+  .btn-outline { background: none; border: 1.5px solid var(--border); color: var(--gray); }
+  .btn-outline:hover { border-color: var(--blue); color: var(--blue-d); }
+  .btn-danger-sm { background: var(--red-l); color: var(--red); padding: 5px 10px; font-size: 0.75rem; border-radius: 6px; }
+  .btn-danger-sm:hover { background: #fee2e2; }
+
+  .today-count { display: flex; align-items: center; justify-content: space-between; background: var(--blue-l); border: 1px solid #BFDBFE; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; }
+  .today-count .num { font-size: 1.6rem; font-weight: 800; color: var(--blue-d); }
+  .today-count .lbl { font-size: 0.78rem; color: var(--blue-d); font-weight: 600; }
+
+  .toast { position: fixed; top: 70px; right: 24px; background: var(--green-d); color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 200; display: none; }
+  .toast.show { display: block; animation: slideIn 0.2s ease; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-8px);} to {opacity:1; transform: translateY(0);} }
+
+  /* ── DASHBOARD ── */
+  .filter-pills { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .pill { padding: 8px 16px; border-radius: 100px; border: 1.5px solid var(--border); background: var(--white); font-size: 0.8rem; font-weight: 600; color: var(--gray); cursor: pointer; font-family: var(--font); }
+  .pill.active { background: var(--blue-d); border-color: var(--blue-d); color: white; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 22px; }
+  .stat-box { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .stat-box .num { font-size: 1.6rem; font-weight: 800; }
+  .stat-box .lbl { font-size: 0.75rem; color: var(--gray); font-weight: 600; margin-top: 2px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { text-align: left; padding: 10px 12px; background: var(--bg); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.3px; color: var(--gray); font-weight: 700; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
+  th:hover { color: var(--dark); }
+  th.sorted { color: var(--blue-d); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #FAFBFC; }
+  .num-cell { font-weight: 700; text-align: right; }
+  .niche-badge { display: inline-block; padding: 2px 9px; border-radius: 100px; font-size: 0.72rem; font-weight: 700; background: var(--purple-l); color: #6D28D9; }
+
+  .section-title { font-size: 0.92rem; font-weight: 800; margin: 26px 0 12px; }
+  .section-title:first-child { margin-top: 0; }
+
+  .detail-picker { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
+  .detail-picker select, .detail-picker input { flex: 1; }
+  .detail-picker button { flex-shrink: 0; }
+  .detail-result { background: var(--bg); border-radius: 8px; padding: 14px 16px; font-size: 0.85rem; }
+  .detail-result .big { font-size: 1.8rem; font-weight: 800; color: var(--blue-d); }
+
+  /* ── LOG TAB ── */
+  .log-toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .log-toolbar input, .log-toolbar select { flex: 1; min-width: 140px; }
+  .log-toolbar button { flex-shrink: 0; }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--gray); font-size: 0.88rem; }
+
+  /* ── LOGIN ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.55); z-index: 300; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--white); border-radius: 14px; padding: 26px; width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
+  .modal-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 18px; }
+  .modal-actions { margin-top: 18px; }
+
+  @media (max-width: 640px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .tabs-bar { padding: 0 12px; overflow-x: auto; }
+    .tab-panel { padding: 16px; }
+    .app-header { padding: 0 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div class="modal-overlay open" id="loginOverlay">
+  <div class="modal">
+    <div class="modal-title">🔒 Masuk ke Tracker Leads</div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div style="position:relative">
+        <input type="password" class="form-input" id="loginPass" placeholder="Masukkan password" style="padding-right:38px">
+        <button type="button" onclick="toggleLoginPass()" title="Tampilkan/sembunyikan password"
+          style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;padding:4px;line-height:1;color:var(--gray)">
+          <span id="loginPassIcon">👁️</span>
+        </button>
+      </div>
+    </div>
+    <div id="loginError" style="color:var(--red);font-size:0.8rem;margin-top:8px;display:none">Password salah, coba lagi.</div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="doLogin()">Masuk</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="app-brand">
+    <div class="app-logo">Tera<span>Web</span></div>
+    <span class="app-tag">Tracker Leads</span>
+  </div>
+  <div class="header-right">
+    <span id="headerSyncStatus"></span>
+    <button onclick="doLogout()">Keluar</button>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" data-tab="input" onclick="switchTab('input')">✍️ Input Lead</button>
+  <button class="tab-btn" data-tab="dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
+  <button class="tab-btn" data-tab="log" onclick="switchTab('log')">📋 Log Semua Lead</button>
+</div>
+
+<!-- TAB: INPUT -->
+<div class="tab-panel active" id="panel-input">
+  <div class="input-wrap">
+    <div class="today-count">
+      <div>
+        <div class="lbl">LEAD TERCATAT HARI INI</div>
+      </div>
+      <div class="num" id="todayCount">0</div>
+    </div>
+    <div class="card card-pad">
+      <div class="input-title">Catat Lead Baru</div>
+      <div class="input-sub">Isi begitu ada WA masuk. Niche &amp; kecamatan otomatis tersimpan ke laporan.</div>
+
+      <div class="form-group">
+        <label class="form-label">Niche</label>
+        <select class="form-select" id="inNiche"></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kecamatan</label>
+        <input class="form-input" id="inKecamatan" list="kecamatanList" placeholder="Ketik untuk cari kecamatan..." autocomplete="off">
+        <datalist id="kecamatanList"></datalist>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">No. HP / WA</label>
+        <input class="form-input" id="inHp" placeholder="081234567890" inputmode="tel">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Catatan (opsional)</label>
+        <input class="form-input" id="inCatatan" placeholder="mis. sudah dilempar ke mitra X">
+      </div>
+
+      <button class="btn btn-primary" id="btnSimpan" onclick="saveLead()">💾 Simpan Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: DASHBOARD -->
+<div class="tab-panel" id="panel-dashboard">
+  <div class="filter-pills" id="filterPills">
+    <button class="pill active" data-range="today" onclick="setRange('today')">Hari Ini</button>
+    <button class="pill" data-range="week" onclick="setRange('week')">Minggu Ini</button>
+    <button class="pill" data-range="month" onclick="setRange('month')">Bulan Ini</button>
+    <button class="pill" data-range="all" onclick="setRange('all')">Semua</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box"><div class="num" id="statTotal">0</div><div class="lbl">Total Lead (periode ini)</div></div>
+    <div class="stat-box"><div class="num" id="statTopNiche">-</div><div class="lbl">Niche Terbanyak</div></div>
+    <div class="stat-box"><div class="num" id="statTopKec">-</div><div class="lbl">Kecamatan Teraktif</div></div>
+  </div>
+
+  <div class="card card-pad">
+    <div class="section-title">Jumlah Lead per Niche (semua kecamatan)</div>
+    <table>
+      <thead><tr>
+        <th onclick="sortNicheTable('niche')">Niche</th>
+        <th onclick="sortNicheTable('all')" style="text-align:right">Total (all-time)</th>
+        <th onclick="sortNicheTable('month')" style="text-align:right">Bulan Ini</th>
+        <th onclick="sortNicheTable('today')" style="text-align:right">Hari Ini</th>
+      </tr></thead>
+      <tbody id="nicheTableBody"></tbody>
+    </table>
+
+    <div class="section-title">Cek Detail per Kecamatan</div>
+    <div class="detail-picker">
+      <select id="detailNiche" class="form-select"></select>
+      <input class="form-input" id="detailKec" list="kecamatanList" placeholder="Ketik untuk cari kecamatan (kosongkan = semua)..." autocomplete="off" oninput="updateDetailResult()">
+      <button class="btn btn-outline btn-sm" type="button" onclick="document.getElementById('detailKec').value='';updateDetailResult()">✕</button>
+    </div>
+    <div class="detail-result" id="detailResult">Pilih niche &amp; kecamatan untuk lihat jumlah lead-nya.</div>
+  </div>
+</div>
+
+<!-- TAB: LOG -->
+<div class="tab-panel" id="panel-log">
+  <div class="card card-pad">
+    <div class="log-toolbar">
+      <input type="text" id="logSearch" placeholder="Cari no HP / catatan..." oninput="renderLog()">
+      <select id="logFilterNiche" onchange="renderLog()"><option value="">Semua Niche</option></select>
+      <input class="form-input" id="logFilterKec" list="kecamatanList" placeholder="Cari kecamatan..." autocomplete="off" oninput="renderLog()">
+      <button class="btn btn-outline btn-sm" type="button" onclick="document.getElementById('logFilterKec').value='';renderLog()">✕</button>
+    </div>
+    <table>
+      <thead><tr>
+        <th>Tanggal</th><th>Niche</th><th>Kecamatan</th><th>Kabupaten</th><th>No HP</th><th>Catatan</th><th></th>
+      </tr></thead>
+      <tbody id="logTableBody"></tbody>
+    </table>
+    <div id="logEmpty" class="empty-state" style="display:none">Belum ada lead tercatat.</div>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // GANTI URL INI dengan URL Web App dari Google Apps Script kamu
+  // (Deploy > New deployment > Web app). Lihat CARA-INSTALL-TRACKER-LEADS.txt
+  // ============================================================
+  const API_URL = 'https://script.google.com/macros/s/AKfycbzpqcMOBfBYPcbxOyK7RnGUwjLyMKLHPDu5-t9Nmvw3eS5KSsePo1KgKxdqe6I8JhiA/exec';
+  let sessionPassword = localStorage.getItem('trackerLeadsPass') || '';
+
+  async function apiGet() {
+    const res = await fetch(API_URL + '?password=' + encodeURIComponent(sessionPassword));
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || 'Gagal ambil data dari server.');
+    return json;
+  }
+  async function apiPost(payload) {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ ...payload, password: sessionPassword })
+    });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || 'Terjadi kesalahan di server.');
+    return json;
+  }
+
+  let LEADS = [];
+
+  async function loadAllData() {
+    const result = await apiGet();
+    LEADS = result.leads || [];
+  }
+
+  async function initApp() {
+    if (!sessionPassword) return;
+    try {
+      await loadAllData();
+      document.getElementById('loginOverlay').classList.remove('open');
+      populateDropdowns();
+      renderTodayCount();
+      renderDashboard();
+      renderLog();
+    } catch (err) {
+      if (String(err.message).includes('Password')) {
+        sessionPassword = '';
+        localStorage.removeItem('trackerLeadsPass');
+        document.getElementById('loginOverlay').classList.add('open');
+        return;
+      }
+      alert('❌ Gagal memuat data dari server: ' + err.message);
+    }
+  }
+
+  async function doLogin() {
+    const pass = document.getElementById('loginPass').value;
+    sessionPassword = pass;
+    document.getElementById('loginError').style.display = 'none';
+    try {
+      await loadAllData();
+      localStorage.setItem('trackerLeadsPass', pass);
+      await initApp();
+    } catch (err) {
+      sessionPassword = '';
+      document.getElementById('loginError').textContent = err.message.includes('Password') ? 'Password salah, coba lagi.' : ('Gagal: ' + err.message);
+      document.getElementById('loginError').style.display = 'block';
+    }
+  }
+  function doLogout() {
+    sessionPassword = '';
+    localStorage.removeItem('trackerLeadsPass');
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginOverlay').classList.add('open');
+  }
+  function toggleLoginPass() {
+    const input = document.getElementById('loginPass');
+    const icon = document.getElementById('loginPassIcon');
+    if (input.type === 'password') { input.type = 'text'; icon.textContent = '🙈'; }
+    else { input.type = 'password'; icon.textContent = '👁️'; }
+  }
+  document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+  // ─── SHARED MASTER DATA: 738 KECAMATAN & NICHE ───
+  const KECAMATAN_DATA = [{"kec": "Babakan Madang", "kab": "Bogor"}, {"kec": "Bojonggede", "kab": "Bogor"}, {"kec": "Caringin", "kab": "Bogor"}, {"kec": "Cariu", "kab": "Bogor"}, {"kec": "Ciampea", "kab": "Bogor"}, {"kec": "Ciawi", "kab": "Bogor"}, {"kec": "Cibinong", "kab": "Bogor"}, {"kec": "Cibungbulang", "kab": "Bogor"}, {"kec": "Cigombong", "kab": "Bogor"}, {"kec": "Cigudeg", "kab": "Bogor"}, {"kec": "Cijeruk", "kab": "Bogor"}, {"kec": "Cileungsi", "kab": "Bogor"}, {"kec": "Ciomas", "kab": "Bogor"}, {"kec": "Cisarua", "kab": "Bogor"}, {"kec": "Ciseeng", "kab": "Bogor"}, {"kec": "Citeureup", "kab": "Bogor"}, {"kec": "Dramaga", "kab": "Bogor"}, {"kec": "Gunung Putri", "kab": "Bogor"}, {"kec": "Gunungsindur", "kab": "Bogor"}, {"kec": "Jasinga", "kab": "Bogor"}, {"kec": "Jonggol", "kab": "Bogor"}, {"kec": "Kemang", "kab": "Bogor"}, {"kec": "Klapanunggal", "kab": "Bogor"}, {"kec": "Leuwiliang", "kab": "Bogor"}, {"kec": "Leuwisadeng", "kab": "Bogor"}, {"kec": "Megamendung", "kab": "Bogor"}, {"kec": "Nanggung", "kab": "Bogor"}, {"kec": "Pamijahan", "kab": "Bogor"}, {"kec": "Parung", "kab": "Bogor"}, {"kec": "Parung Panjang", "kab": "Bogor"}, {"kec": "Rancabungur", "kab": "Bogor"}, {"kec": "Rumpin", "kab": "Bogor"}, {"kec": "Sukajaya", "kab": "Bogor"}, {"kec": "Sukamakmur", "kab": "Bogor"}, {"kec": "Sukaraja", "kab": "Bogor"}, {"kec": "Tajurhalang", "kab": "Bogor"}, {"kec": "Tamansari", "kab": "Bogor"}, {"kec": "Tanjungsari", "kab": "Bogor"}, {"kec": "Tenjo", "kab": "Bogor"}, {"kec": "Tenjolaya", "kab": "Bogor"}, {"kec": "Babelan", "kab": "Bekasi"}, {"kec": "Bojongmangu", "kab": "Bekasi"}, {"kec": "Cabangbungin", "kab": "Bekasi"}, {"kec": "Cibarusah", "kab": "Bekasi"}, {"kec": "Cibitung", "kab": "Bekasi"}, {"kec": "Cikarang Barat", "kab": "Bekasi"}, {"kec": "Cikarang Pusat", "kab": "Bekasi"}, {"kec": "Cikarang Selatan", "kab": "Bekasi"}, {"kec": "Cikarang Timur", "kab": "Bekasi"}, {"kec": "Cikarang Utara", "kab": "Bekasi"}, {"kec": "Karangbahagia", "kab": "Bekasi"}, {"kec": "Kedungwaringin", "kab": "Bekasi"}, {"kec": "Muara Gembong", "kab": "Bekasi"}, {"kec": "Pebayuran", "kab": "Bekasi"}, {"kec": "Serang Baru", "kab": "Bekasi"}, {"kec": "Setu", "kab": "Bekasi"}, {"kec": "Sukakarya", "kab": "Bekasi"}, {"kec": "Sukatani", "kab": "Bekasi"}, {"kec": "Sukawangi", "kab": "Bekasi"}, {"kec": "Tambelang", "kab": "Bekasi"}, {"kec": "Tambun Selatan", "kab": "Bekasi"}, {"kec": "Tambun Utara", "kab": "Bekasi"}, {"kec": "Tarumajaya", "kab": "Bekasi"}, {"kec": "Balaraja", "kab": "Tangerang"}, {"kec": "Cikupa", "kab": "Tangerang"}, {"kec": "Cisauk", "kab": "Tangerang"}, {"kec": "Cisoka", "kab": "Tangerang"}, {"kec": "Curug", "kab": "Tangerang"}, {"kec": "Gunung Kaler", "kab": "Tangerang"}, {"kec": "Jambe", "kab": "Tangerang"}, {"kec": "Jayanti", "kab": "Tangerang"}, {"kec": "Kelapa Dua", "kab": "Tangerang"}, {"kec": "Kemiri", "kab": "Tangerang"}, {"kec": "Kresek", "kab": "Tangerang"}, {"kec": "Kronjo", "kab": "Tangerang"}, {"kec": "Kosambi", "kab": "Tangerang"}, {"kec": "Legok", "kab": "Tangerang"}, {"kec": "Mauk", "kab": "Tangerang"}, {"kec": "Mekarbaru", "kab": "Tangerang"}, {"kec": "Pagedangan", "kab": "Tangerang"}, {"kec": "Pakuhaji", "kab": "Tangerang"}, {"kec": "Panongan", "kab": "Tangerang"}, {"kec": "Pasar Kemis", "kab": "Tangerang"}, {"kec": "Rajeg", "kab": "Tangerang"}, {"kec": "Sepatan", "kab": "Tangerang"}, {"kec": "Sepatan Timur", "kab": "Tangerang"}, {"kec": "Sindang Jaya", "kab": "Tangerang"}, {"kec": "Solear", "kab": "Tangerang"}, {"kec": "Sukadiri", "kab": "Tangerang"}, {"kec": "Sukamulya", "kab": "Tangerang"}, {"kec": "Teluknaga", "kab": "Tangerang"}, {"kec": "Tigaraksa", "kab": "Tangerang"}, {"kec": "Arjasari", "kab": "Bandung"}, {"kec": "Baleendah", "kab": "Bandung"}, {"kec": "Banjaran", "kab": "Bandung"}, {"kec": "Bojongsoang", "kab": "Bandung"}, {"kec": "Cangkuang", "kab": "Bandung"}, {"kec": "Cicalengka", "kab": "Bandung"}, {"kec": "Cikancung", "kab": "Bandung"}, {"kec": "Cilengkrang", "kab": "Bandung"}, {"kec": "Cileunyi", "kab": "Bandung"}, {"kec": "Cimaung", "kab": "Bandung"}, {"kec": "Cimenyan", "kab": "Bandung"}, {"kec": "Ciparay", "kab": "Bandung"}, {"kec": "Ciwidey", "kab": "Bandung"}, {"kec": "Dayeuhkolot", "kab": "Bandung"}, {"kec": "Ibun", "kab": "Bandung"}, {"kec": "Katapang", "kab": "Bandung"}, {"kec": "Kertasari", "kab": "Bandung"}, {"kec": "Kutawaringin", "kab": "Bandung"}, {"kec": "Majalaya", "kab": "Bandung"}, {"kec": "Margaasih", "kab": "Bandung"}, {"kec": "Margahayu", "kab": "Bandung"}, {"kec": "Nagreg", "kab": "Bandung"}, {"kec": "Pacet", "kab": "Bandung"}, {"kec": "Pameungpeuk", "kab": "Bandung"}, {"kec": "Pangalengan", "kab": "Bandung"}, {"kec": "Paseh", "kab": "Bandung"}, {"kec": "Pasirjambu", "kab": "Bandung"}, {"kec": "Rancabali", "kab": "Bandung"}, {"kec": "Rancaekek", "kab": "Bandung"}, {"kec": "Solokanjeruk", "kab": "Bandung"}, {"kec": "Soreang", "kab": "Bandung"}, {"kec": "Banyusari", "kab": "Karawang"}, {"kec": "Batujaya", "kab": "Karawang"}, {"kec": "Ciampel", "kab": "Karawang"}, {"kec": "Cibuaya", "kab": "Karawang"}, {"kec": "Cikampek", "kab": "Karawang"}, {"kec": "Cilamaya Kulon", "kab": "Karawang"}, {"kec": "Cilamaya Wetan", "kab": "Karawang"}, {"kec": "Cilebar", "kab": "Karawang"}, {"kec": "Jatisari", "kab": "Karawang"}, {"kec": "Jayakerta", "kab": "Karawang"}, {"kec": "Karawang Barat", "kab": "Karawang"}, {"kec": "Karawang Timur", "kab": "Karawang"}, {"kec": "Klari", "kab": "Karawang"}, {"kec": "Kotabaru", "kab": "Karawang"}, {"kec": "Kutawaluya", "kab": "Karawang"}, {"kec": "Lemahabang", "kab": "Karawang"}, {"kec": "Majalaya", "kab": "Karawang"}, {"kec": "Pakisjaya", "kab": "Karawang"}, {"kec": "Pangkalan", "kab": "Karawang"}, {"kec": "Pedes", "kab": "Karawang"}, {"kec": "Purwasari", "kab": "Karawang"}, {"kec": "Rawamerta", "kab": "Karawang"}, {"kec": "Rengasdengklok", "kab": "Karawang"}, {"kec": "Tegalwaru", "kab": "Karawang"}, {"kec": "Talagasari", "kab": "Karawang"}, {"kec": "Telukjambe Barat", "kab": "Karawang"}, {"kec": "Telukjambe Timur", "kab": "Karawang"}, {"kec": "Tempuran", "kab": "Karawang"}, {"kec": "Tirtajaya", "kab": "Karawang"}, {"kec": "Tirtamulya", "kab": "Karawang"}, {"kec": "Anyar", "kab": "Serang"}, {"kec": "Bandung", "kab": "Serang"}, {"kec": "Baros", "kab": "Serang"}, {"kec": "Binuang", "kab": "Serang"}, {"kec": "Bojonegara", "kab": "Serang"}, {"kec": "Carenang", "kab": "Serang"}, {"kec": "Cikande", "kab": "Serang"}, {"kec": "Cikeusal", "kab": "Serang"}, {"kec": "Cinangka", "kab": "Serang"}, {"kec": "Ciomas", "kab": "Serang"}, {"kec": "Ciruas", "kab": "Serang"}, {"kec": "Gunung Sari", "kab": "Serang"}, {"kec": "Jawilan", "kab": "Serang"}, {"kec": "Kibin", "kab": "Serang"}, {"kec": "Kopo", "kab": "Serang"}, {"kec": "Kragilan", "kab": "Serang"}, {"kec": "Kramatwatu", "kab": "Serang"}, {"kec": "Lebak Wangi", "kab": "Serang"}, {"kec": "Mancak", "kab": "Serang"}, {"kec": "Pabuaran", "kab": "Serang"}, {"kec": "Padarincang", "kab": "Serang"}, {"kec": "Pamarayan", "kab": "Serang"}, {"kec": "Petir", "kab": "Serang"}, {"kec": "Pontang", "kab": "Serang"}, {"kec": "Pulo Ampel", "kab": "Serang"}, {"kec": "Tanara", "kab": "Serang"}, {"kec": "Tirtayasa", "kab": "Serang"}, {"kec": "Tunjungteja", "kab": "Serang"}, {"kec": "Waringinkurung", "kab": "Serang"}, {"kec": "Arjawinangun", "kab": "Cirebon"}, {"kec": "Astanajapura", "kab": "Cirebon"}, {"kec": "Babakan", "kab": "Cirebon"}, {"kec": "Beber", "kab": "Cirebon"}, {"kec": "Ciledug", "kab": "Cirebon"}, {"kec": "Ciwaringin", "kab": "Cirebon"}, {"kec": "Depok", "kab": "Cirebon"}, {"kec": "Dukupuntang", "kab": "Cirebon"}, {"kec": "Gebang", "kab": "Cirebon"}, {"kec": "Gegesik", "kab": "Cirebon"}, {"kec": "Gempol", "kab": "Cirebon"}, {"kec": "Greged", "kab": "Cirebon"}, {"kec": "Gunungjati", "kab": "Cirebon"}, {"kec": "Jamblang", "kab": "Cirebon"}, {"kec": "Kaliwedi", "kab": "Cirebon"}, {"kec": "Kapetakan", "kab": "Cirebon"}, {"kec": "Karangsembung", "kab": "Cirebon"}, {"kec": "Karangwareng", "kab": "Cirebon"}, {"kec": "Kedawung", "kab": "Cirebon"}, {"kec": "Klangenan", "kab": "Cirebon"}, {"kec": "Lemahabang", "kab": "Cirebon"}, {"kec": "Losari", "kab": "Cirebon"}, {"kec": "Mundu", "kab": "Cirebon"}, {"kec": "Pabedilan", "kab": "Cirebon"}, {"kec": "Pabuaran", "kab": "Cirebon"}, {"kec": "Palimanan", "kab": "Cirebon"}, {"kec": "Pangenan", "kab": "Cirebon"}, {"kec": "Panguragan", "kab": "Cirebon"}, {"kec": "Pasaleman", "kab": "Cirebon"}, {"kec": "Plered", "kab": "Cirebon"}, {"kec": "Plumbon", "kab": "Cirebon"}, {"kec": "Sedong", "kab": "Cirebon"}, {"kec": "Sumber", "kab": "Cirebon"}, {"kec": "Suranenggala", "kab": "Cirebon"}, {"kec": "Susukan", "kab": "Cirebon"}, {"kec": "Susukanlebak", "kab": "Cirebon"}, {"kec": "Talun", "kab": "Cirebon"}, {"kec": "Tengahtani", "kab": "Cirebon"}, {"kec": "Waled", "kab": "Cirebon"}, {"kec": "Weru", "kab": "Cirebon"}, {"kec": "Bantargadung", "kab": "Sukabumi"}, {"kec": "Bojonggenteng", "kab": "Sukabumi"}, {"kec": "Caringin", "kab": "Sukabumi"}, {"kec": "Ciambar", "kab": "Sukabumi"}, {"kec": "Cibadak", "kab": "Sukabumi"}, {"kec": "Cibitung", "kab": "Sukabumi"}, {"kec": "Cicantayan", "kab": "Sukabumi"}, {"kec": "Cicurug", "kab": "Sukabumi"}, {"kec": "Cidadap", "kab": "Sukabumi"}, {"kec": "Cidahu", "kab": "Sukabumi"}, {"kec": "Cidolog", "kab": "Sukabumi"}, {"kec": "Ciemas", "kab": "Sukabumi"}, {"kec": "Cikakak", "kab": "Sukabumi"}, {"kec": "Cikembar", "kab": "Sukabumi"}, {"kec": "Cikidang", "kab": "Sukabumi"}, {"kec": "Cimanggu", "kab": "Sukabumi"}, {"kec": "Ciracap", "kab": "Sukabumi"}, {"kec": "Cireunghas", "kab": "Sukabumi"}, {"kec": "Cisaat", "kab": "Sukabumi"}, {"kec": "Cisolok", "kab": "Sukabumi"}, {"kec": "Curugkembar", "kab": "Sukabumi"}, {"kec": "Gegerbitung", "kab": "Sukabumi"}, {"kec": "Gunungguruh", "kab": "Sukabumi"}, {"kec": "Jampang Kulon", "kab": "Sukabumi"}, {"kec": "Jampang Tengah", "kab": "Sukabumi"}, {"kec": "Kabandungan", "kab": "Sukabumi"}, {"kec": "Kadudampit", "kab": "Sukabumi"}, {"kec": "Kalapanunggal", "kab": "Sukabumi"}, {"kec": "Kalibunder", "kab": "Sukabumi"}, {"kec": "Kebonpedes", "kab": "Sukabumi"}, {"kec": "Lengkong", "kab": "Sukabumi"}, {"kec": "Nagrak", "kab": "Sukabumi"}, {"kec": "Nyalindung", "kab": "Sukabumi"}, {"kec": "Pabuaran", "kab": "Sukabumi"}, {"kec": "Palabuhanratu", "kab": "Sukabumi"}, {"kec": "Parakansalak", "kab": "Sukabumi"}, {"kec": "Parungkuda", "kab": "Sukabumi"}, {"kec": "Purabaya", "kab": "Sukabumi"}, {"kec": "Sagaranten", "kab": "Sukabumi"}, {"kec": "Simpenan", "kab": "Sukabumi"}, {"kec": "Sukabumi", "kab": "Sukabumi"}, {"kec": "Sukalarang", "kab": "Sukabumi"}, {"kec": "Sukaraja", "kab": "Sukabumi"}, {"kec": "Surade", "kab": "Sukabumi"}, {"kec": "Tegalbuleud", "kab": "Sukabumi"}, {"kec": "Waluran", "kab": "Sukabumi"}, {"kec": "Warung Kiara", "kab": "Sukabumi"}, {"kec": "Banjarwangi", "kab": "Garut"}, {"kec": "Banyuresmi", "kab": "Garut"}, {"kec": "Bayongbong", "kab": "Garut"}, {"kec": "Balubur Limbangan", "kab": "Garut"}, {"kec": "Bungbulang", "kab": "Garut"}, {"kec": "Caringin", "kab": "Garut"}, {"kec": "Cibalong", "kab": "Garut"}, {"kec": "Cibatu", "kab": "Garut"}, {"kec": "Cibiuk", "kab": "Garut"}, {"kec": "Cigedug", "kab": "Garut"}, {"kec": "Cihurip", "kab": "Garut"}, {"kec": "Cikajang", "kab": "Garut"}, {"kec": "Cikelet", "kab": "Garut"}, {"kec": "Cilawu", "kab": "Garut"}, {"kec": "Cisewu", "kab": "Garut"}, {"kec": "Cisompet", "kab": "Garut"}, {"kec": "Cisurupan", "kab": "Garut"}, {"kec": "Garut Kota", "kab": "Garut"}, {"kec": "Kadungora", "kab": "Garut"}, {"kec": "Karangpawitan", "kab": "Garut"}, {"kec": "Karangtengah", "kab": "Garut"}, {"kec": "Kersamanah", "kab": "Garut"}, {"kec": "Leles", "kab": "Garut"}, {"kec": "Leuwigoong", "kab": "Garut"}, {"kec": "Malangbong", "kab": "Garut"}, {"kec": "Mekarmukti", "kab": "Garut"}, {"kec": "Pakenjeng", "kab": "Garut"}, {"kec": "Pameungpeuk", "kab": "Garut"}, {"kec": "Pamulihan", "kab": "Garut"}, {"kec": "Pangatikan", "kab": "Garut"}, {"kec": "Pasirwangi", "kab": "Garut"}, {"kec": "Peundeuy", "kab": "Garut"}, {"kec": "Samarang", "kab": "Garut"}, {"kec": "Selaawi", "kab": "Garut"}, {"kec": "Singajaya", "kab": "Garut"}, {"kec": "Sucinaraja", "kab": "Garut"}, {"kec": "Sukaresmi", "kab": "Garut"}, {"kec": "Sukawening", "kab": "Garut"}, {"kec": "Talegong", "kab": "Garut"}, {"kec": "Tarogong Kaler", "kab": "Garut"}, {"kec": "Tarogong Kidul", "kab": "Garut"}, {"kec": "Wanaraja", "kab": "Garut"}, {"kec": "Beji", "kab": "Depok"}, {"kec": "Bojongsari", "kab": "Depok"}, {"kec": "Cilodong", "kab": "Depok"}, {"kec": "Cimanggis", "kab": "Depok"}, {"kec": "Cinere", "kab": "Depok"}, {"kec": "Cipayung", "kab": "Depok"}, {"kec": "Limo", "kab": "Depok"}, {"kec": "Pancoran Mas", "kab": "Depok"}, {"kec": "Sawangan", "kab": "Depok"}, {"kec": "Sukmajaya", "kab": "Depok"}, {"kec": "Tapos", "kab": "Depok"}, {"kec": "Ciputat", "kab": "Tangerang Selatan"}, {"kec": "Ciputat Timur", "kab": "Tangerang Selatan"}, {"kec": "Pamulang", "kab": "Tangerang Selatan"}, {"kec": "Pondok Aren", "kab": "Tangerang Selatan"}, {"kec": "Serpong", "kab": "Tangerang Selatan"}, {"kec": "Serpong Utara", "kab": "Tangerang Selatan"}, {"kec": "Setu", "kab": "Tangerang Selatan"}, {"kec": "Berbah", "kab": "Sleman"}, {"kec": "Cangkringan", "kab": "Sleman"}, {"kec": "Depok", "kab": "Sleman"}, {"kec": "Gamping", "kab": "Sleman"}, {"kec": "Godean", "kab": "Sleman"}, {"kec": "Kalasan", "kab": "Sleman"}, {"kec": "Minggir", "kab": "Sleman"}, {"kec": "Mlati", "kab": "Sleman"}, {"kec": "Moyudan", "kab": "Sleman"}, {"kec": "Ngaglik", "kab": "Sleman"}, {"kec": "Ngemplak", "kab": "Sleman"}, {"kec": "Pakem", "kab": "Sleman"}, {"kec": "Prambanan", "kab": "Sleman"}, {"kec": "Seyegan", "kab": "Sleman"}, {"kec": "Sleman", "kab": "Sleman"}, {"kec": "Tempel", "kab": "Sleman"}, {"kec": "Turi", "kab": "Sleman"}, {"kec": "Adipala", "kab": "Cilacap"}, {"kec": "Bantarsari", "kab": "Cilacap"}, {"kec": "Binangun", "kab": "Cilacap"}, {"kec": "Cilacap Selatan", "kab": "Cilacap"}, {"kec": "Cilacap Tengah", "kab": "Cilacap"}, {"kec": "Cilacap Utara", "kab": "Cilacap"}, {"kec": "Cimanggu", "kab": "Cilacap"}, {"kec": "Cipari", "kab": "Cilacap"}, {"kec": "Dayeuhluhur", "kab": "Cilacap"}, {"kec": "Gandrungmangu", "kab": "Cilacap"}, {"kec": "Jeruklegi", "kab": "Cilacap"}, {"kec": "Kampung Laut", "kab": "Cilacap"}, {"kec": "Karangpucung", "kab": "Cilacap"}, {"kec": "Kawunganten", "kab": "Cilacap"}, {"kec": "Kedungreja", "kab": "Cilacap"}, {"kec": "Kesugihan", "kab": "Cilacap"}, {"kec": "Kroya", "kab": "Cilacap"}, {"kec": "Majenang", "kab": "Cilacap"}, {"kec": "Maos", "kab": "Cilacap"}, {"kec": "Nusawungu", "kab": "Cilacap"}, {"kec": "Patimuan", "kab": "Cilacap"}, {"kec": "Sampang", "kab": "Cilacap"}, {"kec": "Sidareja", "kab": "Cilacap"}, {"kec": "Wanareja", "kab": "Cilacap"}, {"kec": "Ajibarang", "kab": "Banyumas"}, {"kec": "Banyumas", "kab": "Banyumas"}, {"kec": "Baturaden", "kab": "Banyumas"}, {"kec": "Cilongok", "kab": "Banyumas"}, {"kec": "Gumelar", "kab": "Banyumas"}, {"kec": "Kalibagor", "kab": "Banyumas"}, {"kec": "Karanglewas", "kab": "Banyumas"}, {"kec": "Kebasen", "kab": "Banyumas"}, {"kec": "Kedung Banteng", "kab": "Banyumas"}, {"kec": "Kembaran", "kab": "Banyumas"}, {"kec": "Kemranjen", "kab": "Banyumas"}, {"kec": "Jatilawang", "kab": "Banyumas"}, {"kec": "Lumbir", "kab": "Banyumas"}, {"kec": "Patikraja", "kab": "Banyumas"}, {"kec": "Pekuncen", "kab": "Banyumas"}, {"kec": "Purwojati", "kab": "Banyumas"}, {"kec": "Purwokerto Barat", "kab": "Banyumas"}, {"kec": "Purwokerto Selatan", "kab": "Banyumas"}, {"kec": "Purwokerto Timur", "kab": "Banyumas"}, {"kec": "Purwokerto Utara", "kab": "Banyumas"}, {"kec": "Rawalo", "kab": "Banyumas"}, {"kec": "Sokaraja", "kab": "Banyumas"}, {"kec": "Somagede", "kab": "Banyumas"}, {"kec": "Sumbang", "kab": "Banyumas"}, {"kec": "Sumpiuh", "kab": "Banyumas"}, {"kec": "Tambak", "kab": "Banyumas"}, {"kec": "Wangon", "kab": "Banyumas"}, {"kec": "Bambanglipuro", "kab": "Bantul"}, {"kec": "Banguntapan", "kab": "Bantul"}, {"kec": "Bantul", "kab": "Bantul"}, {"kec": "Dlingo", "kab": "Bantul"}, {"kec": "Imogiri", "kab": "Bantul"}, {"kec": "Jetis", "kab": "Bantul"}, {"kec": "Kasihan", "kab": "Bantul"}, {"kec": "Kretek", "kab": "Bantul"}, {"kec": "Pajangan", "kab": "Bantul"}, {"kec": "Pandak", "kab": "Bantul"}, {"kec": "Piyungan", "kab": "Bantul"}, {"kec": "Pleret", "kab": "Bantul"}, {"kec": "Pundong", "kab": "Bantul"}, {"kec": "Sanden", "kab": "Bantul"}, {"kec": "Sedayu", "kab": "Bantul"}, {"kec": "Sewon", "kab": "Bantul"}, {"kec": "Srandakan", "kab": "Bantul"}, {"kec": "Adimulyo", "kab": "Kebumen"}, {"kec": "Alian", "kab": "Kebumen"}, {"kec": "Ambal", "kab": "Kebumen"}, {"kec": "Ayah", "kab": "Kebumen"}, {"kec": "Bonorowo", "kab": "Kebumen"}, {"kec": "Buayan", "kab": "Kebumen"}, {"kec": "Buluspesantren", "kab": "Kebumen"}, {"kec": "Gombong", "kab": "Kebumen"}, {"kec": "Karanganyar", "kab": "Kebumen"}, {"kec": "Karanggayam", "kab": "Kebumen"}, {"kec": "Karangsambung", "kab": "Kebumen"}, {"kec": "Kebumen", "kab": "Kebumen"}, {"kec": "Klirong", "kab": "Kebumen"}, {"kec": "Kutowinangun", "kab": "Kebumen"}, {"kec": "Kuwarasan", "kab": "Kebumen"}, {"kec": "Mirit", "kab": "Kebumen"}, {"kec": "Padureso", "kab": "Kebumen"}, {"kec": "Pejagoan", "kab": "Kebumen"}, {"kec": "Petanahan", "kab": "Kebumen"}, {"kec": "Poncowarno", "kab": "Kebumen"}, {"kec": "Prembun", "kab": "Kebumen"}, {"kec": "Puring", "kab": "Kebumen"}, {"kec": "Rowokele", "kab": "Kebumen"}, {"kec": "Sadang", "kab": "Kebumen"}, {"kec": "Sempor", "kab": "Kebumen"}, {"kec": "Sruweng", "kab": "Kebumen"}, {"kec": "Bayat", "kab": "Klaten"}, {"kec": "Cawas", "kab": "Klaten"}, {"kec": "Ceper", "kab": "Klaten"}, {"kec": "Delanggu", "kab": "Klaten"}, {"kec": "Gantiwarno", "kab": "Klaten"}, {"kec": "Jatinom", "kab": "Klaten"}, {"kec": "Jogonalan", "kab": "Klaten"}, {"kec": "Juwiring", "kab": "Klaten"}, {"kec": "Kalikotes", "kab": "Klaten"}, {"kec": "Karanganom", "kab": "Klaten"}, {"kec": "Karangdowo", "kab": "Klaten"}, {"kec": "Karangnongko", "kab": "Klaten"}, {"kec": "Kebonarum", "kab": "Klaten"}, {"kec": "Kemalang", "kab": "Klaten"}, {"kec": "Klaten Selatan", "kab": "Klaten"}, {"kec": "Klaten Tengah", "kab": "Klaten"}, {"kec": "Klaten Utara", "kab": "Klaten"}, {"kec": "Manisrenggo", "kab": "Klaten"}, {"kec": "Ngawen", "kab": "Klaten"}, {"kec": "Pedan", "kab": "Klaten"}, {"kec": "Polanharjo", "kab": "Klaten"}, {"kec": "Prambanan", "kab": "Klaten"}, {"kec": "Trucuk", "kab": "Klaten"}, {"kec": "Tulung", "kab": "Klaten"}, {"kec": "Wedi", "kab": "Klaten"}, {"kec": "Wonosari", "kab": "Klaten"}, {"kec": "Ampel", "kab": "Boyolali"}, {"kec": "Andong", "kab": "Boyolali"}, {"kec": "Banyudono", "kab": "Boyolali"}, {"kec": "Boyolali", "kab": "Boyolali"}, {"kec": "Cepogo", "kab": "Boyolali"}, {"kec": "Gladagsari", "kab": "Boyolali"}, {"kec": "Juwangi", "kab": "Boyolali"}, {"kec": "Karanggede", "kab": "Boyolali"}, {"kec": "Kemusu", "kab": "Boyolali"}, {"kec": "Klego", "kab": "Boyolali"}, {"kec": "Mojosongo", "kab": "Boyolali"}, {"kec": "Musuk", "kab": "Boyolali"}, {"kec": "Ngemplak", "kab": "Boyolali"}, {"kec": "Nogosari", "kab": "Boyolali"}, {"kec": "Sambi", "kab": "Boyolali"}, {"kec": "Sawit", "kab": "Boyolali"}, {"kec": "Selo", "kab": "Boyolali"}, {"kec": "Simo", "kab": "Boyolali"}, {"kec": "Tamansari", "kab": "Boyolali"}, {"kec": "Teras", "kab": "Boyolali"}, {"kec": "Wonosamodro", "kab": "Boyolali"}, {"kec": "Wonosegoro", "kab": "Boyolali"}, {"kec": "Balongbendo", "kab": "Sidoarjo"}, {"kec": "Buduran", "kab": "Sidoarjo"}, {"kec": "Candi", "kab": "Sidoarjo"}, {"kec": "Gedangan", "kab": "Sidoarjo"}, {"kec": "Jabon", "kab": "Sidoarjo"}, {"kec": "Krembung", "kab": "Sidoarjo"}, {"kec": "Krian", "kab": "Sidoarjo"}, {"kec": "Prambon", "kab": "Sidoarjo"}, {"kec": "Porong", "kab": "Sidoarjo"}, {"kec": "Sedati", "kab": "Sidoarjo"}, {"kec": "Sidoarjo", "kab": "Sidoarjo"}, {"kec": "Sukodono", "kab": "Sidoarjo"}, {"kec": "Taman", "kab": "Sidoarjo"}, {"kec": "Tanggulangin", "kab": "Sidoarjo"}, {"kec": "Tarik", "kab": "Sidoarjo"}, {"kec": "Tulangan", "kab": "Sidoarjo"}, {"kec": "Waru", "kab": "Sidoarjo"}, {"kec": "Wonoayu", "kab": "Sidoarjo"}, {"kec": "Ampelgading", "kab": "Malang"}, {"kec": "Bantur", "kab": "Malang"}, {"kec": "Bululawang", "kab": "Malang"}, {"kec": "Dampit", "kab": "Malang"}, {"kec": "Dau", "kab": "Malang"}, {"kec": "Donomulyo", "kab": "Malang"}, {"kec": "Gedangan", "kab": "Malang"}, {"kec": "Gondanglegi", "kab": "Malang"}, {"kec": "Jabung", "kab": "Malang"}, {"kec": "Kalipare", "kab": "Malang"}, {"kec": "Karangploso", "kab": "Malang"}, {"kec": "Kasembon", "kab": "Malang"}, {"kec": "Kepanjen", "kab": "Malang"}, {"kec": "Kromengan", "kab": "Malang"}, {"kec": "Lawang", "kab": "Malang"}, {"kec": "Ngajum", "kab": "Malang"}, {"kec": "Ngantang", "kab": "Malang"}, {"kec": "Pagak", "kab": "Malang"}, {"kec": "Pagelaran", "kab": "Malang"}, {"kec": "Pakis", "kab": "Malang"}, {"kec": "Pakisaji", "kab": "Malang"}, {"kec": "Poncokusumo", "kab": "Malang"}, {"kec": "Pujon", "kab": "Malang"}, {"kec": "Singosari", "kab": "Malang"}, {"kec": "Sumbermanjing Wetan", "kab": "Malang"}, {"kec": "Sumberpucung", "kab": "Malang"}, {"kec": "Tajinan", "kab": "Malang"}, {"kec": "Tirtoyudo", "kab": "Malang"}, {"kec": "Tumpang", "kab": "Malang"}, {"kec": "Turen", "kab": "Malang"}, {"kec": "Wagir", "kab": "Malang"}, {"kec": "Wajak", "kab": "Malang"}, {"kec": "Wonosari", "kab": "Malang"}, {"kec": "Bangil", "kab": "Pasuruan"}, {"kec": "Beji", "kab": "Pasuruan"}, {"kec": "Gempol", "kab": "Pasuruan"}, {"kec": "Gondang Wetan", "kab": "Pasuruan"}, {"kec": "Grati", "kab": "Pasuruan"}, {"kec": "Kejayan", "kab": "Pasuruan"}, {"kec": "Kraton", "kab": "Pasuruan"}, {"kec": "Lekok", "kab": "Pasuruan"}, {"kec": "Lumbang", "kab": "Pasuruan"}, {"kec": "Nguling", "kab": "Pasuruan"}, {"kec": "Pandaan", "kab": "Pasuruan"}, {"kec": "Pasrepan", "kab": "Pasuruan"}, {"kec": "Prigen", "kab": "Pasuruan"}, {"kec": "Pohjentrek", "kab": "Pasuruan"}, {"kec": "Purwodadi", "kab": "Pasuruan"}, {"kec": "Purwosari", "kab": "Pasuruan"}, {"kec": "Puspo", "kab": "Pasuruan"}, {"kec": "Rejoso", "kab": "Pasuruan"}, {"kec": "Rembang", "kab": "Pasuruan"}, {"kec": "Sukorejo", "kab": "Pasuruan"}, {"kec": "Tosari", "kab": "Pasuruan"}, {"kec": "Tutur", "kab": "Pasuruan"}, {"kec": "Winongan", "kab": "Pasuruan"}, {"kec": "Wonorejo", "kab": "Pasuruan"}, {"kec": "Balongpanggang", "kab": "Gresik"}, {"kec": "Benjeng", "kab": "Gresik"}, {"kec": "Bungah", "kab": "Gresik"}, {"kec": "Cerme", "kab": "Gresik"}, {"kec": "Driyorejo", "kab": "Gresik"}, {"kec": "Duduk Sampeyan", "kab": "Gresik"}, {"kec": "Dukun", "kab": "Gresik"}, {"kec": "Gresik", "kab": "Gresik"}, {"kec": "Kebomas", "kab": "Gresik"}, {"kec": "Kedamean", "kab": "Gresik"}, {"kec": "Manyar", "kab": "Gresik"}, {"kec": "Menganti", "kab": "Gresik"}, {"kec": "Panceng", "kab": "Gresik"}, {"kec": "Sangkapura", "kab": "Gresik"}, {"kec": "Sidayu", "kab": "Gresik"}, {"kec": "Tambak", "kab": "Gresik"}, {"kec": "Ujung Pangkah", "kab": "Gresik"}, {"kec": "Wringinanom", "kab": "Gresik"}, {"kec": "Ajung", "kab": "Jember"}, {"kec": "Ambulu", "kab": "Jember"}, {"kec": "Arjasa", "kab": "Jember"}, {"kec": "Bangsalsari", "kab": "Jember"}, {"kec": "Balung", "kab": "Jember"}, {"kec": "Gumukmas", "kab": "Jember"}, {"kec": "Jelbuk", "kab": "Jember"}, {"kec": "Jenggawah", "kab": "Jember"}, {"kec": "Jombang", "kab": "Jember"}, {"kec": "Kalisat", "kab": "Jember"}, {"kec": "Kaliwates", "kab": "Jember"}, {"kec": "Kencong", "kab": "Jember"}, {"kec": "Ledokombo", "kab": "Jember"}, {"kec": "Mayang", "kab": "Jember"}, {"kec": "Mumbulsari", "kab": "Jember"}, {"kec": "Panti", "kab": "Jember"}, {"kec": "Pakusari", "kab": "Jember"}, {"kec": "Patrang", "kab": "Jember"}, {"kec": "Puger", "kab": "Jember"}, {"kec": "Rambipuji", "kab": "Jember"}, {"kec": "Semboro", "kab": "Jember"}, {"kec": "Silo", "kab": "Jember"}, {"kec": "Sukorambi", "kab": "Jember"}, {"kec": "Sukowono", "kab": "Jember"}, {"kec": "Sumberbaru", "kab": "Jember"}, {"kec": "Sumberjambe", "kab": "Jember"}, {"kec": "Sumbersari", "kab": "Jember"}, {"kec": "Tanggul", "kab": "Jember"}, {"kec": "Tempurejo", "kab": "Jember"}, {"kec": "Umbulsari", "kab": "Jember"}, {"kec": "Wuluhan", "kab": "Jember"}, {"kec": "Bangsal", "kab": "Mojokerto"}, {"kec": "Dawarblandong", "kab": "Mojokerto"}, {"kec": "Dlanggu", "kab": "Mojokerto"}, {"kec": "Gedeg", "kab": "Mojokerto"}, {"kec": "Gondang", "kab": "Mojokerto"}, {"kec": "Jatirejo", "kab": "Mojokerto"}, {"kec": "Jetis", "kab": "Mojokerto"}, {"kec": "Kemlagi", "kab": "Mojokerto"}, {"kec": "Kutorejo", "kab": "Mojokerto"}, {"kec": "Mojoanyar", "kab": "Mojokerto"}, {"kec": "Mojosari", "kab": "Mojokerto"}, {"kec": "Ngoro", "kab": "Mojokerto"}, {"kec": "Pacet", "kab": "Mojokerto"}, {"kec": "Pungging", "kab": "Mojokerto"}, {"kec": "Puri", "kab": "Mojokerto"}, {"kec": "Sooko", "kab": "Mojokerto"}, {"kec": "Trawas", "kab": "Mojokerto"}, {"kec": "Trowulan", "kab": "Mojokerto"}, {"kec": "Sibolangit", "kab": "Deli Serdang"}, {"kec": "Pancur Batu", "kab": "Deli Serdang"}, {"kec": "Kutalimbaru", "kab": "Deli Serdang"}, {"kec": "Sunggal", "kab": "Deli Serdang"}, {"kec": "Hamparan Perak", "kab": "Deli Serdang"}, {"kec": "Labuhan Deli", "kab": "Deli Serdang"}, {"kec": "Percut Sei Tuan", "kab": "Deli Serdang"}, {"kec": "Batang Kuis", "kab": "Deli Serdang"}, {"kec": "Pantai Labu", "kab": "Deli Serdang"}, {"kec": "Beringin", "kab": "Deli Serdang"}, {"kec": "Pagar Merbau", "kab": "Deli Serdang"}, {"kec": "Lubuk Pakam", "kab": "Deli Serdang"}, {"kec": "Galang", "kab": "Deli Serdang"}, {"kec": "Bangun Purba", "kab": "Deli Serdang"}, {"kec": "Gunung Meriah", "kab": "Deli Serdang"}, {"kec": "Sinembah Tanjung Muda Hulu", "kab": "Deli Serdang"}, {"kec": "Sinembah Tanjung Muda Hilir", "kab": "Deli Serdang"}, {"kec": "Tanjung Morawa", "kab": "Deli Serdang"}, {"kec": "Patumbak", "kab": "Deli Serdang"}, {"kec": "Sibiru-biru", "kab": "Deli Serdang"}, {"kec": "Deli Tua", "kab": "Deli Serdang"}, {"kec": "Namorambe", "kab": "Deli Serdang"}, {"kec": "Anggana", "kab": "Kutai Kartanegara"}, {"kec": "Kembang Janggut", "kab": "Kutai Kartanegara"}, {"kec": "Kenohan", "kab": "Kutai Kartanegara"}, {"kec": "Kota Bangun", "kab": "Kutai Kartanegara"}, {"kec": "Loa Janan", "kab": "Kutai Kartanegara"}, {"kec": "Loa Kulu", "kab": "Kutai Kartanegara"}, {"kec": "Marang Kayu", "kab": "Kutai Kartanegara"}, {"kec": "Muara Badak", "kab": "Kutai Kartanegara"}, {"kec": "Muara Jawa", "kab": "Kutai Kartanegara"}, {"kec": "Muara Kaman", "kab": "Kutai Kartanegara"}, {"kec": "Muara Muntai", "kab": "Kutai Kartanegara"}, {"kec": "Muara Wis", "kab": "Kutai Kartanegara"}, {"kec": "Samboja", "kab": "Kutai Kartanegara"}, {"kec": "Sanga-Sanga", "kab": "Kutai Kartanegara"}, {"kec": "Sebulu", "kab": "Kutai Kartanegara"}, {"kec": "Tabang", "kab": "Kutai Kartanegara"}, {"kec": "Tenggarong", "kab": "Kutai Kartanegara"}, {"kec": "Tenggarong Seberang", "kab": "Kutai Kartanegara"}, {"kec": "Aluh Aluh", "kab": "Banjar"}, {"kec": "Aranio", "kab": "Banjar"}, {"kec": "Astambul", "kab": "Banjar"}, {"kec": "Beruntung Baru", "kab": "Banjar"}, {"kec": "Cintapuri Darussalam", "kab": "Banjar"}, {"kec": "Gambut", "kab": "Banjar"}, {"kec": "Karang Intan", "kab": "Banjar"}, {"kec": "Kertak Hanyar", "kab": "Banjar"}, {"kec": "Mataraman", "kab": "Banjar"}, {"kec": "Martapura", "kab": "Banjar"}, {"kec": "Martapura Barat", "kab": "Banjar"}, {"kec": "Martapura Timur", "kab": "Banjar"}, {"kec": "Paramasan", "kab": "Banjar"}, {"kec": "Pengaron", "kab": "Banjar"}, {"kec": "Sambung Makmur", "kab": "Banjar"}, {"kec": "Simpang Empat", "kab": "Banjar"}, {"kec": "Sungai Pinang", "kab": "Banjar"}, {"kec": "Sungai Tabuk", "kab": "Banjar"}, {"kec": "Tatah Makmur", "kab": "Banjar"}, {"kec": "Telaga Bauntung", "kab": "Banjar"}, {"kec": "XIII Koto Kampar", "kab": "Kampar"}, {"kec": "Bangkinang", "kab": "Kampar"}, {"kec": "Bangkinang Kota", "kab": "Kampar"}, {"kec": "Gunung Sahilan", "kab": "Kampar"}, {"kec": "Kampa", "kab": "Kampar"}, {"kec": "Kampar", "kab": "Kampar"}, {"kec": "Kampar Kiri", "kab": "Kampar"}, {"kec": "Kampar Kiri Hilir", "kab": "Kampar"}, {"kec": "Kampar Kiri Hulu", "kab": "Kampar"}, {"kec": "Kampar Kiri Tengah", "kab": "Kampar"}, {"kec": "Kampar Utara", "kab": "Kampar"}, {"kec": "Koto Kampar Hulu", "kab": "Kampar"}, {"kec": "Kuok", "kab": "Kampar"}, {"kec": "Perhentian Raja", "kab": "Kampar"}, {"kec": "Rumbio Jaya", "kab": "Kampar"}, {"kec": "Salo", "kab": "Kampar"}, {"kec": "Siak Hulu", "kab": "Kampar"}, {"kec": "Tambang", "kab": "Kampar"}, {"kec": "Tapung", "kab": "Kampar"}, {"kec": "Tapung Hilir", "kab": "Kampar"}, {"kec": "Tapung Hulu", "kab": "Kampar"}, {"kec": "Batu Ampar", "kab": "Kubu Raya"}, {"kec": "Kuala Mandor B", "kab": "Kubu Raya"}, {"kec": "Kubu", "kab": "Kubu Raya"}, {"kec": "Rasau Jaya", "kab": "Kubu Raya"}, {"kec": "Sungai Ambawang", "kab": "Kubu Raya"}, {"kec": "Sungai Kakap", "kab": "Kubu Raya"}, {"kec": "Sungai Raya", "kab": "Kubu Raya"}, {"kec": "Teluk Pakedai", "kab": "Kubu Raya"}, {"kec": "Terentang", "kab": "Kubu Raya"}, {"kec": "Bajeng", "kab": "Gowa"}, {"kec": "Bajeng Barat", "kab": "Gowa"}, {"kec": "Barombong", "kab": "Gowa"}, {"kec": "Biringbulu", "kab": "Gowa"}, {"kec": "Bontolempangan", "kab": "Gowa"}, {"kec": "Bontomarannu", "kab": "Gowa"}, {"kec": "Bontonompo", "kab": "Gowa"}, {"kec": "Bontonompo Selatan", "kab": "Gowa"}, {"kec": "Bungaya", "kab": "Gowa"}, {"kec": "Manuju", "kab": "Gowa"}, {"kec": "Pallangga", "kab": "Gowa"}, {"kec": "Parangloe", "kab": "Gowa"}, {"kec": "Parigi", "kab": "Gowa"}, {"kec": "Pattallassang", "kab": "Gowa"}, {"kec": "Somba Opu", "kab": "Gowa"}, {"kec": "Tinggimoncong", "kab": "Gowa"}, {"kec": "Tompobulu", "kab": "Gowa"}, {"kec": "Tombolo Pao", "kab": "Gowa"}];
+  const NICHE_LIST = ["Sedot WC", "Service AC", "Tukang Listrik", "Laundry", "Rental Mobil", "Dokter Gigi", "Travel Antar Kota", "Tukang Bangunan", "Kontraktor", "Catering", "Aqiqah", "Cuci Karpet"];
+  const KEC_MAP = {};
+  KECAMATAN_DATA.forEach(r => { KEC_MAP[r.kec + ' — ' + r.kab] = r; });
+
+  function populateDropdowns() {
+    const nicheOpts = NICHE_LIST.map(n => `<option value="${n}">${n}</option>`).join('');
+    document.getElementById('inNiche').innerHTML = nicheOpts;
+    document.getElementById('detailNiche').innerHTML = '<option value="">Semua Niche</option>' + nicheOpts;
+
+    const kecOpts = KECAMATAN_DATA.map(r => `<option value="${r.kec} — ${r.kab}">`).join('');
+    document.getElementById('kecamatanList').innerHTML = kecOpts;
+
+    document.getElementById('logFilterNiche').innerHTML = '<option value="">Semua Niche</option>' + nicheOpts;
+  }
+
+  // ─── TABS ───
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    if (name === 'dashboard') renderDashboard();
+    if (name === 'log') renderLog();
+  }
+
+  // ─── SAVE LEAD ───
+  function todayStr() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function timeStr() {
+    const d = new Date();
+    return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  async function saveLead() {
+    const niche = document.getElementById('inNiche').value;
+    const kecInput = document.getElementById('inKecamatan').value.trim();
+    const hp = document.getElementById('inHp').value.trim();
+    const catatan = document.getElementById('inCatatan').value.trim();
+
+    if (!kecInput) { alert('Pilih kecamatan dulu ya.'); return; }
+    const kecRow = KEC_MAP[kecInput];
+    if (!kecRow) { alert('Kecamatan tidak dikenali. Pilih dari daftar yang muncul saat mengetik.'); return; }
+    if (!hp) { alert('No HP belum diisi.'); return; }
+
+    const btn = document.getElementById('btnSimpan');
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+
+    const newLead = {
+      id: 'L' + Date.now(),
+      tanggal: todayStr(),
+      waktu: timeStr(),
+      niche: niche,
+      kecamatan: kecRow.kec,
+      kabupaten: kecRow.kab,
+      no_hp: hp,
+      catatan: catatan
+    };
+    const updated = [...LEADS, newLead];
+
+    try {
+      await apiPost({ action: 'save', key: 'leads', value: updated });
+      LEADS = updated;
+      document.getElementById('inKecamatan').value = '';
+      document.getElementById('inHp').value = '';
+      document.getElementById('inCatatan').value = '';
+      document.getElementById('inHp').focus();
+      renderTodayCount();
+      showToast('✅ Lead tersimpan: ' + niche + ' — ' + kecRow.kec);
+    } catch (err) {
+      alert('❌ Gagal menyimpan: ' + err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = '💾 Simpan Lead';
+    }
+  }
+
+  function renderTodayCount() {
+    const t = todayStr();
+    document.getElementById('todayCount').textContent = LEADS.filter(l => l.tanggal === t).length;
+  }
+
+  // ─── DASHBOARD ───
+  let currentRange = 'today';
+  let nicheSortKey = 'all';
+  let nicheSortDir = -1;
+
+  function setRange(r) {
+    currentRange = r;
+    document.querySelectorAll('#filterPills .pill').forEach(p => p.classList.toggle('active', p.dataset.range === r));
+    renderDashboard();
+  }
+
+  function inRange(lead, range) {
+    if (range === 'all') return true;
+    const d = new Date(lead.tanggal + 'T00:00:00');
+    const now = new Date();
+    if (range === 'today') return lead.tanggal === todayStr();
+    if (range === 'week') {
+      const start = new Date(now); start.setDate(now.getDate() - now.getDay());
+      start.setHours(0,0,0,0);
+      return d >= start;
+    }
+    if (range === 'month') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    return true;
+  }
+
+  function renderDashboard() {
+    const filtered = LEADS.filter(l => inRange(l, currentRange));
+    document.getElementById('statTotal').textContent = filtered.length;
+
+    const byNiche = {};
+    NICHE_LIST.forEach(n => byNiche[n] = 0);
+    filtered.forEach(l => { byNiche[l.niche] = (byNiche[l.niche]||0) + 1; });
+    let topNiche = '-', topNicheCount = 0;
+    Object.entries(byNiche).forEach(([n,c]) => { if (c > topNicheCount) { topNiche = n; topNicheCount = c; } });
+    document.getElementById('statTopNiche').textContent = topNicheCount > 0 ? topNiche : '-';
+
+    const byKec = {};
+    filtered.forEach(l => { const k = l.kecamatan+' — '+l.kabupaten; byKec[k] = (byKec[k]||0)+1; });
+    let topKec = '-', topKecCount = 0;
+    Object.entries(byKec).forEach(([k,c]) => { if (c > topKecCount) { topKec = k; topKecCount = c; } });
+    document.getElementById('statTopKec').textContent = topKecCount > 0 ? topKec : '-';
+
+    renderNicheTable();
+    renderDetailPicker();
+  }
+
+  function renderNicheTable() {
+    const now = new Date();
+    const t = todayStr();
+    const rows = NICHE_LIST.map(n => {
+      const all = LEADS.filter(l => l.niche === n).length;
+      const month = LEADS.filter(l => l.niche === n && (() => { const d=new Date(l.tanggal+'T00:00:00'); return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth(); })()).length;
+      const today = LEADS.filter(l => l.niche === n && l.tanggal === t).length;
+      return { n, all, month, today };
+    });
+    const key = nicheSortKey === 'niche' ? 'n' : nicheSortKey;
+    rows.sort((a,b) => nicheSortKey === 'niche' ? a.n.localeCompare(b.n)*nicheSortDir*-1 : (b[key]-a[key])*(nicheSortDir===-1?1:-1));
+
+    document.getElementById('nicheTableBody').innerHTML = rows.map(r => `
+      <tr>
+        <td><span class="niche-badge">${r.n}</span></td>
+        <td class="num-cell">${r.all}</td>
+        <td class="num-cell">${r.month}</td>
+        <td class="num-cell">${r.today}</td>
+      </tr>`).join('') || '<tr><td colspan="4" class="empty-state">Belum ada data.</td></tr>';
+  }
+  function sortNicheTable(key) {
+    if (nicheSortKey === key) nicheSortDir *= -1; else { nicheSortKey = key; nicheSortDir = -1; }
+    renderNicheTable();
+  }
+
+  function renderDetailPicker() {
+    document.getElementById('detailNiche').onchange = updateDetailResult;
+    updateDetailResult();
+  }
+  function updateDetailResult() {
+    const niche = document.getElementById('detailNiche').value;
+    const kecTyped = document.getElementById('detailKec').value.trim();
+    const kr = kecTyped ? KEC_MAP[kecTyped] : null;
+    let filtered = LEADS;
+    if (niche) filtered = filtered.filter(l => l.niche === niche);
+    if (kr) filtered = filtered.filter(l => l.kecamatan === kr.kec && l.kabupaten === kr.kab);
+
+    const now = new Date();
+    const t = todayStr();
+    const month = filtered.filter(l => { const d=new Date(l.tanggal+'T00:00:00'); return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth(); }).length;
+    const today = filtered.filter(l => l.tanggal === t).length;
+
+    const kecLabel = kr ? kecTyped : (kecTyped ? 'mengetik...' : 'semua kecamatan');
+    const label = (niche || 'Semua niche') + ' — ' + kecLabel;
+    document.getElementById('detailResult').innerHTML = `
+      <div style="margin-bottom:8px;font-weight:600">${label}</div>
+      <div style="display:flex;gap:24px">
+        <div><span class="big">${filtered.length}</span><br><span style="color:var(--gray);font-size:0.75rem">Total all-time</span></div>
+        <div><span class="big">${month}</span><br><span style="color:var(--gray);font-size:0.75rem">Bulan ini</span></div>
+        <div><span class="big">${today}</span><br><span style="color:var(--gray);font-size:0.75rem">Hari ini</span></div>
+      </div>`;
+  }
+
+  // ─── LOG TAB ───
+  async function deleteLead(id) {
+    if (!confirm('Hapus lead ini?')) return;
+    const updated = LEADS.filter(l => l.id !== id);
+    try {
+      await apiPost({ action: 'save', key: 'leads', value: updated });
+      LEADS = updated;
+      renderTodayCount();
+      renderLog();
+    } catch (err) {
+      alert('❌ Gagal menghapus: ' + err.message);
+    }
+  }
+
+  function renderLog() {
+    const search = (document.getElementById('logSearch').value || '').toLowerCase();
+    const fNiche = document.getElementById('logFilterNiche').value;
+    const fKecTyped = document.getElementById('logFilterKec').value.trim();
+    const fKr = fKecTyped ? KEC_MAP[fKecTyped] : null;
+
+    let rows = [...LEADS].sort((a,b) => (b.tanggal+b.waktu).localeCompare(a.tanggal+a.waktu));
+    if (fNiche) rows = rows.filter(l => l.niche === fNiche);
+    if (fKr) rows = rows.filter(l => l.kecamatan === fKr.kec && l.kabupaten === fKr.kab);
+    if (search) rows = rows.filter(l => (l.no_hp||'').toLowerCase().includes(search) || (l.catatan||'').toLowerCase().includes(search));
+
+    document.getElementById('logEmpty').style.display = rows.length ? 'none' : 'block';
+    document.getElementById('logTableBody').innerHTML = rows.map(l => `
+      <tr>
+        <td>${l.tanggal} <span style="color:var(--gray)">${l.waktu||''}</span></td>
+        <td><span class="niche-badge">${l.niche}</span></td>
+        <td>${l.kecamatan}</td>
+        <td style="color:var(--gray)">${l.kabupaten}</td>
+        <td>${l.no_hp}</td>
+        <td style="color:var(--gray)">${l.catatan||'-'}</td>
+        <td><button class="btn btn-danger-sm" onclick="deleteLead('${l.id}')">Hapus</button></td>
+      </tr>`).join('');
+  }
+
+  initApp();
+</script>
+</body>
+</html>

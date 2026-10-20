@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ Cuci Karpet — TeraWeb</title>
+<style>
+  :root{
+    --bg: #0e1114;
+    --panel: #171b1f;
+    --panel-2: #1c2126;
+    --border: #2a3038;
+    --text: #eef3f7;
+    --muted: #8f9ba5;
+    --c1: #5aa8c2;
+    --c2: #c2a05a;
+    --c3: #8a7ac2;
+    --c1-soft: rgba(90,168,194,0.14);
+    --c2-soft: rgba(194,160,90,0.14);
+    --c3-soft: rgba(138,122,194,0.14);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: radial-gradient(circle at 15% 0%, #182229 0%, var(--bg) 45%) fixed;
+    color:var(--text);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 28px 16px 80px;
+  }
+  .wrap{ max-width: 920px; margin: 0 auto; }
+
+  header{ margin-bottom: 22px; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--c2); background:var(--c2-soft);
+    border:1px solid var(--border);
+    padding:4px 12px; border-radius:100px; margin-bottom:14px;
+  }
+  h1{ font-size: 26px; margin:0 0 6px; font-weight:700; letter-spacing:-0.01em;}
+  h1 span{ color: var(--c1); }
+  .sub{ color:var(--muted); font-size:14.5px; line-height:1.55; max-width: 640px; }
+
+  .tabbar{
+    display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;
+    margin: 22px 0 18px;
+    background: var(--panel); border:1px solid var(--border);
+    border-radius: var(--radius); padding:6px;
+    position: sticky; top: 10px; z-index: 20;
+    backdrop-filter: blur(6px);
+  }
+  .tabbtn{
+    border:none; cursor:pointer; padding:13px 10px;
+    border-radius:10px; font-size:14.5px; font-weight:600;
+    background:transparent; color:var(--muted);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition: all .15s ease;
+  }
+  .tabbtn .count{
+    font-size:11.5px; font-weight:700; padding:1px 7px; border-radius:100px;
+    background:rgba(255,255,255,0.08); color:var(--muted);
+  }
+  .tabbtn.active{ color:#0e1114; }
+  .tabbtn.active .count{ background:rgba(0,0,0,0.18); color:#0e1114;}
+  #tab-faq.active{ background: var(--c1); }
+  #tab-harga.active{ background: var(--c2); }
+  #tab-script.active{ background: var(--c3); }
+
+  .searchrow{
+    display:flex; gap:10px; margin-bottom:18px;
+  }
+  .searchbox{
+    flex:1; position:relative;
+  }
+  .searchbox input{
+    width:100%; padding:11px 14px 11px 38px;
+    background: var(--panel); border:1px solid var(--border);
+    border-radius:10px; color:var(--text); font-size:14px;
+  }
+  .searchbox input:focus{ outline:none; border-color: var(--c1); }
+  .searchbox::before{
+    content:"⌕"; position:absolute; left:13px; top:50%; transform:translateY(-50%);
+    color:var(--muted); font-size:17px;
+  }
+  .hint{
+    font-size:12.5px; color:var(--muted); margin: -6px 0 18px 2px;
+  }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; animation: fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .card{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 16px 14px;
+    margin-bottom: 12px;
+    transition: border-color .15s ease;
+  }
+  .card:hover{ border-color: rgba(255,255,255,0.14); }
+  .qrow{
+    display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;
+  }
+  .qnum{
+    flex-shrink:0; width:26px; height:26px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; margin-top:1px;
+  }
+  .panel#faq .qnum{ background: var(--c1-soft); color: var(--c1); }
+  .panel#harga .qnum{ background: var(--c2-soft); color: var(--c2); }
+  .panel#script .qnum{ background: var(--c3-soft); color: var(--c3); }
+  .qtext{ font-weight:600; font-size:15px; line-height:1.45; }
+
+  .answer{
+    background: var(--panel-2);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 12px 13px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #dbe6ec;
+    outline:none;
+    white-space: pre-wrap;
+  }
+  .answer:focus{ border-color: rgba(255,255,255,0.25); border-style:solid; background:#222830;}
+
+  .cardfoot{
+    display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:10px;
+  }
+  .editnote{ font-size:11.5px; color:var(--muted); margin-right:auto; }
+  .copybtn{
+    border:none; cursor:pointer; font-size:12.5px; font-weight:600;
+    padding:7px 13px; border-radius:8px;
+    display:flex; align-items:center; gap:6px;
+    background: rgba(255,255,255,0.06); color:var(--text);
+    border:1px solid var(--border);
+    transition: all .15s ease;
+  }
+  .copybtn:hover{ background: rgba(255,255,255,0.1); }
+  .copybtn.copied{ background: var(--c1); color:#0e1114; border-color:var(--c1); }
+
+  .empty{
+    text-align:center; color:var(--muted); padding: 40px 10px; font-size:14px;
+  }
+
+  footer{
+    text-align:center; color:var(--muted); font-size:12px; margin-top:30px;
+  }
+
+  @media (max-width:520px){
+    h1{ font-size:22px; }
+    .qtext{ font-size:14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">🧼 Niche: Cuci Karpet · TeraWeb</div>
+    <h1>FAQ Siap Copas — <span>TeraWeb</span> untuk <span style="color:var(--c2)">Cuci Karpet</span></h1>
+    <p class="sub">Kumpulan jawaban template buat chat calon faq TeraWeb dari pemilik usaha cuci karpet: tanya jawab umum, harga &amp; keberatan, plus script chat dari pembukaan sampai serah terima. Harga dan paket mengacu ke teraweb.id (landing page mulai Rp450.000, website 4 halaman mulai Rp750.000). Klik teks jawaban buat edit seperlunya, lalu pencet copy.</p>
+  </header>
+
+  <div class="tabbar">
+    <button class="tabbtn active" id="tab-faq" onclick="switchTab('faq')">
+      Tanya Jawab <span class="count" id="count-faq">0</span>
+    </button>
+    <button class="tabbtn" id="tab-harga" onclick="switchTab('harga')">
+      Harga &amp; Keberatan <span class="count" id="count-harga">0</span>
+    </button>
+    <button class="tabbtn" id="tab-script" onclick="switchTab('script')">
+      Script Chat <span class="count" id="count-script">0</span>
+    </button>
+  </div>
+
+  <div class="searchrow">
+    <div class="searchbox">
+      <input type="text" id="searchInput" placeholder="Cari pertanyaan… misal: harga, domain, demo, revisi" oninput="filterCards()">
+    </div>
+  </div>
+  <div class="hint" id="resultHint"></div>
+
+  <div class="panel active" id="faq"></div>
+  <div class="panel" id="harga"></div>
+  <div class="panel" id="script"></div>
+
+  <footer>Isi bertanda <b>[…]</b> perlu disesuaikan dulu (pembayaran, tanggal, link preview, kota) sebelum dipakai ya, Bun 😉</footer>
+</div>
+
+<script>
+const DATA = {
+ "faq": [
+  [
+   "Kalau calon faq baru pertama kali chat, balasan awalnya gimana?",
+   "Halo Kak, terima kasih sudah menghubungi TeraWeb! 🙏\nKami bantu bikin landing page dan website bisnis yang kilat dan sekali bayar: landing page mulai Rp450.000, website 4 halaman mulai Rp750.000, tanpa biaya perpanjangan tahunan ke TeraWeb.\nBoleh ceritakan usaha cuci karpet Kakak (nama usaha, kota, dan tujuannya)? Nanti saya kirim contoh website yang paling sesuai, belum ada kewajiban membeli 🙏"
+  ],
+  [
+   "Apa itu TeraWeb, dan bedanya apa dari jasa website lain?",
+   "TeraWeb membuat landing page dan website bisnis untuk UMKM, sejak 2010. Bedanya: sekali bayar tanpa perpanjangan tahunan ke kami, tanpa WordPress (HTML statis, jadi cepat dan minim perawatan), semua file diserahkan ke Kakak, dan harga serta isi paket ditulis terang, termasuk yang tidak termasuk."
+  ],
+  [
+   "Pilihan paket dan harganya apa saja?",
+   "Ada tiga, Kak:\n1) Landing Page Hemat Rp450.000: 1 halaman dengan 1 tujuan (chat WhatsApp), alamat gratis di domain bersama TeraWeb.\n2) Website Multi-Halaman Rp750.000: 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), domain milik Kakak, galeri foto, Google Maps, tombol WhatsApp di tiap halaman.\n3) Website Kustom: harga disepakati sebelum mulai, untuk kebutuhan yang lebih luas.\nSemuanya sekali bayar, sudah termasuk penulisan teks, tampilan HP, HTTPS, dan SEO on-page."
+  ],
+  [
+   "Pilih landing page atau website 4 halaman untuk usaha cuci karpet?",
+   "Kalau layanan Kakak banyak (karpet, sofa, kasur, gorden, jok mobil) dan pelanggan suka membandingkan, website 4 halaman lebih lengkap. Kalau mau fokus promo satu layanan (misal paket karpet masjid menjelang Ramadan), landing page sudah cukup. Ceritakan kondisinya, nanti saya sarankan yang paling masuk akal, termasuk kalau yang termurah sudah cukup."
+  ],
+  [
+   "Ada contoh yang bisa saya lihat?",
+   "Ada, Kak, dan bukan sekadar gambar: semuanya bisa dibuka langsung.\n• Website 4 halaman, ANYAM Karpet & Sofa Care: https://teraweb.id/demo/cuci-karpet/\n  (ada daftar layanan dengan harga per m², foto before-after, galeri pekerjaan, testimoni, FAQ, dan tombol booking WhatsApp)\n• Landing page, SparkClean (contoh jasa kebersihan): https://teraweb.id/demolanding/24-cleaning-service.html\nDaftar demo niche lain: https://teraweb.id/demo/ (website 4 halaman) dan https://teraweb.id/demolanding/ (landing page)."
+  ],
+  [
+   "Isi website 4 halamannya apa saja?",
+   "Standarnya Beranda, Layanan, Tentang Kami, dan Kontak. Di setiap halaman ada tombol WhatsApp, plus galeri foto dan Google Maps. Teks kami tulis dengan kata kunci lokal seperti “cuci karpet [kota/kecamatan]” supaya lebih mudah ditemukan orang di sekitar."
+  ],
+  [
+   "Prosesnya dari awal sampai tayang gimana?",
+   "Ada 4 langkah:\n1) Kakak sebutkan usaha, kota, dan tujuan lewat WhatsApp.\n2) Kami kirim demo yang paling sesuai, Kakak nilai dulu, belum ada pembayaran.\n3) Kami kerjakan: tulis teks, susun halaman, pasang WhatsApp, Maps, dan SEO.\n4) Website tayang dan semua file diserahkan. Revisi sampai Kakak puas."
+  ],
+  [
+   "Berapa lama pengerjaannya?",
+   "Umumnya 3 sampai 5 hari kerja sejak materi (logo, foto, dan informasi usaha) lengkap, Kak. Kalau materinya belum siap, kami bantu susun dari yang ada."
+  ],
+  [
+   "Apa saja yang harus saya siapkan?",
+   "Cukup siapkan: foto hasil kerja (idealnya before-after), daftar layanan dan harga (misal per m²), area layanan, jam operasional, dan nomor WhatsApp. Kalau ada yang belum lengkap, kabari saja, nanti kami bantu arahkan."
+  ],
+  [
+   "Saya belum punya logo dan foto yang bagus, tetap bisa?",
+   "Bisa, Kak. Kami bantu menyusun dari materi yang ada dan kasih tahu apa saja yang sebaiknya disiapkan. Tapi produksi foto atau video profesional tidak termasuk di paket."
+  ],
+  [
+   "Domain itu apa, dan bayarnya ke siapa?",
+   "Domain itu alamat website, misalnya namausaha.com atau namausaha.id. Biayanya dibayar langsung ke penyedia domain tanpa markup dari kami, perkiraan sekitar Rp200.000 per tahun (beda-beda tiap penyedia). Kami bantu memilih dan menyambungkannya. Untuk paket Landing Page Hemat, alamatnya gratis di domain bersama TeraWeb."
+  ],
+  [
+   "Apakah ada biaya hosting atau perpanjangan tahunan?",
+   "Tidak ada biaya perpanjangan ke TeraWeb dan tidak ada biaya hosting bulanan dari kami, Kak. Satu-satunya biaya berulang adalah nama domain yang dibayar langsung ke penyedia domain."
+  ],
+  [
+   "Kalau mau ubah teks atau foto, gimana caranya?",
+   "Kirim perubahannya lewat WhatsApp, kami yang mengerjakan. Kakak tidak perlu login dashboard atau belajar WordPress. Konsekuensinya memang tidak ada dashboard untuk edit sendiri, supaya website tetap cepat dan sederhana. [Sesuaikan ketentuan biaya update setelah tayang]"
+  ],
+  [
+   "Apakah file websitenya jadi milik saya?",
+   "Ya, Kak. Semua file diserahkan saat website tayang, jadi bisa dipindah ke hosting mana pun kapan saja. Tidak ada akun yang menyandera website Kakak."
+  ],
+  [
+   "Website statis bisa muncul di Google?",
+   "Bisa. Google membaca halaman statis dengan baik, dan tiap halaman kami susun dengan judul, deskripsi, serta kata kunci lokal. Tapi posisi di Google tetap bergantung persaingan, jadi kami tidak menjanjikan peringkat tertentu."
+  ],
+  [
+   "Saya di luar kota, apakah bisa dilayani?",
+   "Bisa, Kak. Semua proses online lewat WhatsApp, jadi lokasi usaha di mana pun di Indonesia tidak masalah."
+  ],
+  [
+   "Apa saja yang tidak termasuk di paket?",
+   "Biar tidak ada kejutan, Kak: biaya nama domain, email bisnis, produksi foto atau video profesional, halaman tambahan di luar paket, dan fitur toko online dengan keranjang belanja. Untuk penjualan atau pemesanan, pelanggan diarahkan langsung ke WhatsApp Kakak."
+  ],
+  [
+   "Revisinya dibatasi berapa kali?",
+   "Revisi sampai Kakak puas, Kak. Tinggal kirim catatannya lewat WhatsApp."
+  ],
+  [
+   "Sistem pembayarannya bagaimana?",
+   "[Sesuaikan: misal DP di awal, pelunasan saat tayang, rekening tujuan]. Yang pasti, Kakak lihat demo dulu sebelum ada pembayaran apa pun."
+  ],
+  [
+   "Bisa menampilkan harga per m² dan foto before-after?",
+   "Bisa, Kak. Daftar layanan dan harga (misal per m²) tampil di halaman Layanan, dan foto sebelum-sesudah bisa masuk galeri. Fotonya dari Kakak ya, karena produksi foto profesional tidak termasuk."
+  ],
+  [
+   "Layanan saya banyak (karpet, sofa, kasur, gorden, jok mobil), muat?",
+   "Muat, Kak. Semua layanan dijelaskan di halaman Layanan. Kalau mau halaman terpisah per layanan, itu masuk Website Kustom dengan harga yang disepakati sebelum mulai."
+  ],
+  [
+   "Area layanan saya beberapa kecamatan, bisa dicantumkan?",
+   "Bisa, Kak. Area layanan dicantumkan di teks dan Google Maps, dan kata kunci kecamatan membantu orang sekitar menemukan Kakak. Untuk halaman khusus per kecamatan, itu lewat Website Kustom."
+  ]
+ ],
+ "harga": [
+  [
+   "Kok murah, apa ada biaya tersembunyi?",
+   "Tidak ada, Kak. Harga, isi paket, dan hal yang tidak termasuk kami tulis terang sejak awal. Biaya di luar paket (domain, email bisnis, foto atau video profesional, halaman tambahan) kami sebutkan di depan, jadi tidak ada kejutan belakangan."
+  ],
+  [
+   "Kemahalan, saya pikir-pikir dulu ya",
+   "Wajar, Kak. Sebagai gambaran, website 4 halaman Rp750.000 sekali bayar, tanpa perpanjangan ke TeraWeb. Sebelum memutuskan, Kakak bisa lihat demonya dulu tanpa kewajiban beli:\nhttps://teraweb.id/demo/cuci-karpet/\nKalau budget lebih terbatas, Landing Page Hemat Rp450.000 sudah cukup untuk mulai tampil rapi."
+  ],
+  [
+   "Bandingannya dengan paket website tahunan gimana, dalam 3 tahun?",
+   "Simulasi untuk 1 website bisnis:\n• Paket website tahunan di pasaran: ± Rp1.700.000 per tahun, jadi ± Rp5.100.000 dalam 3 tahun.\n• TeraWeb (Website Multi-Halaman): Rp750.000 sekali bayar + domain ± Rp600.000 (3 tahun) = ± Rp1.350.000.\nSelisih ± Rp3.750.000. Catatan jujur: paket pasaran biasanya sudah termasuk domain, hosting, dan email bisnis, sedangkan TeraWeb tidak menyertakan email bisnis. Angka pembanding per September 2026, dan domain ± Rp200.000 per tahun (beda tiap penyedia)."
+  ],
+  [
+   "Saya sudah punya Instagram dan Google Maps, masih perlu website?",
+   "Instagram dan Maps bagus, Kak. Orang yang butuh cuci karpet biasanya cari yang dekat, lalu cek dulu hasil kerja dan kisaran harganya. Website menjawab semua itu di satu alamat, lengkap dengan Maps dan tombol WhatsApp, dan lebih mudah ditemukan lewat pencarian lokal seperti “cuci karpet [kota/kecamatan]”. Bukan pengganti Instagram, tapi pelengkap yang bikin makin meyakinkan."
+  ],
+  [
+   "Bisa dijamin nomor 1 di Google?",
+   "Jujur, tidak ada yang bisa menjamin itu, Kak, dan kami tidak menjanjikannya. Yang kami janjikan: website rapi, cepat, meyakinkan, dan disusun dengan SEO on-page serta kata kunci lokal supaya peluang ditemukannya lebih baik."
+  ],
+  [
+   "Kenapa pakai HTML statis, bukan WordPress?",
+   "Karena lebih cepat dan lebih aman, Kak. Tanpa WordPress, tema, dan plugin, halaman dikirim siap saji sehingga terbuka cepat di HP walau sinyal pas-pasan, dan tidak ada plugin usang yang jadi celah peretas. Konsekuensinya tidak ada dashboard, jadi perubahan teks atau foto dikirim lewat WhatsApp dan kami yang mengerjakan."
+  ],
+  [
+   "Teman atau keponakan saya bisa bikinin website gratis",
+   "Boleh dipertimbangkan, Kak. Tinggal pastikan hasilnya rapi di HP, sudah ada HTTPS, Maps, tombol WhatsApp, dan SEO lokal, serta Kakak memegang semua filenya. Kalau mau, lihat dulu demo kami sebagai pembanding, tanpa kewajiban apa pun."
+  ],
+  [
+   "Takut sudah bayar tapi hasilnya tidak sesuai",
+   "Makanya kami tunjukkan demo yang sesuai dulu sebelum Kakak membayar apa pun, dan revisi sampai Kakak puas. Sebelum mulai, kita sepakati paket, materi, dan jadwal secara jelas."
+  ],
+  [
+   "Bedanya dengan layanan website yang bayar tahunan apa?",
+   "Bedanya di biaya lanjutan dan kepemilikan: layanan seperti itu umumnya memakai perpanjangan paket tiap tahun, sedangkan di TeraWeb tidak ada perpanjangan ke kami, hanya domain yang dibayar ke penyedia domain. Semua file juga diserahkan ke Kakak. Ini perbandingan pendekatan saja, silakan pilih yang paling cocok dengan cara Kakak berbisnis."
+  ],
+  [
+   "Mau yang paling murah saja, boleh?",
+   "Boleh banget, Kak. Landing Page Hemat Rp450.000 cocok untuk iklan, promo, atau mulai tampil online dengan cepat dan hemat. Kalau nanti butuh yang lebih lengkap, upgrade ke website bisa dibahas: [cek selisih biaya dan ketentuan dulu]."
+  ],
+  [
+   "Nanti saja deh, belum butuh",
+   "Siap, Kak, tidak ada paksaan. Kalau berkenan, saya kirimkan demonya dulu sebagai referensi:\nhttps://teraweb.id/demo/cuci-karpet/\nSupaya kapan pun Kakak siap, tinggal chat lagi. Konsultasi dan contoh website tidak dipungut biaya."
+  ],
+  [
+   "Ada diskon atau promo?",
+   "Kami memang tidak pakai harga coret atau hitung mundur, Kak. Harga yang tertulis adalah harga sebenarnya: Rp450.000 untuk landing page dan Rp750.000 untuk website 4 halaman. [Tulis di sini kalau ada promo resmi]"
+  ],
+  [
+   "Pelanggan saya kebanyakan dari mulut ke mulut, perlu website?",
+   "Mulut ke mulut itu bagus, Kak. Tapi sekarang orang yang butuh cuci karpet sering cari “cuci karpet [kota/kecamatan]” lalu cek dulu hasil kerja dan kisaran harganya. Website jadi tempat bukti kerja Kakak (before-after, harga, Maps), dan tinggal dikirim link-nya ke calon pelanggan."
+  ]
+ ],
+ "script": [
+  [
+   "1. Pembukaan Cold Chat ke Pemilik usaha cuci karpet (Belum Ada Kontak Sebelumnya)",
+   "Assalamu'alaikum, Kak/Pak/Bu [nama]. Mohon maaf mengganggu waktunya. Perkenalkan saya Widya dari TeraWeb. Saya lihat usaha cuci karpet Kakak di [Google Maps/Instagram/lokasi] sudah cukup dikenal di [kota/kecamatan]. Orang yang butuh cuci karpet biasanya cari yang dekat, lalu cek dulu hasil kerja dan kisaran harganya. Kami bantu bikin landing page atau website yang menjawab semuanya di satu alamat, mulai Rp450.000 sekali bayar, tanpa perpanjangan tahunan ke kami. Boleh saya kirim contoh website usaha cuci karpet yang sudah jadi, Kak? Cukup dilihat dulu, tanpa kewajiban 🙏"
+  ],
+  [
+   "2. Pembukaan dari Referensi/Rekomendasi",
+   "Assalamu'alaikum, Kak. Perkenalkan saya Widya dari TeraWeb. Saya dapat kontak Bapak/Ibu dari [nama yang merekomendasikan], katanya usaha cuci karpet Kakak sudah dipercaya pelanggan di [kota/kecamatan]. Kami bantu bikin landing page dan website bisnis yang kilat dan sekali bayar. Boleh saya kirim contoh websitenya dulu, Kak? Tanpa kewajiban membeli 🙏"
+  ],
+  [
+   "3. Kirim Demo (Setelah Tanya Jawab Setuju Lihat Contoh)",
+   "Baik Kak, ini contohnya ya:\n• Website 4 halaman, ANYAM Karpet & Sofa Care: https://teraweb.id/demo/cuci-karpet/\n  (ada daftar layanan dengan harga per m², foto before-after, galeri pekerjaan, testimoni, FAQ, dan tombol booking WhatsApp)\n• Landing page, SparkClean (contoh jasa kebersihan): https://teraweb.id/demolanding/24-cleaning-service.html\nSemuanya bisa dibuka langsung di HP. Kalau ada yang Kakak suka atau mau disesuaikan, kabari saja, nanti kami buatkan untuk usaha cuci karpet Kakak. Belum ada pembayaran di tahap ini 🙏"
+  ],
+  [
+   "4. Follow-up 1: Demo Sudah Dikirim, Belum Dibalas",
+   "Permisi Kak, mau tanya, demo website yang kemarin sudah sempat dibuka? Kalau ada bagian yang kurang cocok, atau pertanyaan soal paket dan harga, kabari saja ya, saya bantu 🙏"
+  ],
+  [
+   "5. Follow-up 2: Soft Close (Belum Dibalas Lagi)",
+   "Permisi Kak, mohon maaf mengganggu lagi. Cuma mau follow up soal website untuk usaha cuci karpet Kakak. Kalau saat ini belum butuh juga tidak apa-apa, Kak, kapan pun siap tinggal chat saya. Terima kasih sudah meluangkan waktu 🙏"
+  ],
+  [
+   "6. Penjelasan Singkat Layanan & Harga",
+   "Jadi gini, Kak. TeraWeb bikin landing page dan website bisnis yang kilat, tanpa WordPress, dan sekali bayar:\n• Landing Page Hemat Rp450.000 (1 halaman, 1 tujuan: chat WhatsApp)\n• Website Multi-Halaman Rp750.000 (4 halaman: Beranda, Layanan, Tentang Kami, Kontak)\n• Website Kustom: harga disepakati sebelum mulai\nTidak ada perpanjangan tahunan ke TeraWeb, semua file diserahkan ke Kakak. Biaya domain dibayar langsung ke penyedia domain."
+  ],
+  [
+   "7. Tanya Kebutuhan Sebelum Rekomendasi Paket",
+   "Biar saya sarankan yang paling pas, boleh tahu Kak:\n(1) Kakak lebih butuh halaman untuk iklan atau promo tertentu, atau tampil lengkap di depan pelanggan yang suka membandingkan?\n(2) Ada berapa layanan atau produk yang mau ditampilkan?\n(3) Sudah punya domain, logo, dan foto?\nDari situ saya bantu pilihkan, termasuk kalau yang termurah sudah cukup 🙏"
+  ],
+  [
+   "8. Closing: Ajakan Lanjut",
+   "Baik, Kak, kalau cocok berarti kita lanjut ya. Saya minta info berikut: (1) nama usaha, (2) kota/kecamatan, (3) paket yang dipilih, (4) materi: foto hasil kerja (idealnya before-after), daftar layanan dan harga (misal per m²), area layanan, jam operasional, dan nomor WhatsApp. [Info pembayaran sesuai aturan]. Estimasi pengerjaan 3 sampai 5 hari kerja sejak materi lengkap."
+  ],
+  [
+   "9. Konfirmasi Pembayaran Masuk & Jadwal",
+   "Terima kasih Kak, pembayarannya sudah kami terima ✅ Pengerjaan kami mulai ya. Estimasi tayang [tanggal], atau 3 sampai 5 hari kerja sejak materi lengkap. Kalau ada materi yang belum dikirim, boleh dilengkapi lewat chat ini 🙏"
+  ],
+  [
+   "10. Kirim Draft/Preview untuk Direvisi",
+   "Kak, draft website usaha cuci karpet Kakak sudah siap: [link preview]. Silakan dicek teks, foto, dan nomor WhatsApp-nya. Kalau ada yang mau diubah, kirim catatannya lewat chat ini, revisi sampai Kakak puas ya 🙏"
+  ],
+  [
+   "11. Serah Terima: Website Tayang",
+   "Alhamdulillah, website usaha cuci karpet Kakak sudah tayang di [alamat website] 🎉 Semua file kami serahkan dan sepenuhnya milik Kakak. Kalau nanti mau ubah teks, foto, atau harga, tinggal kirim lewat chat ini ya. Semoga makin ramai pelanggannya! 🙏"
+  ],
+  [
+   "12. Minta Testimoni/Referensi Setelah Tayang",
+   "Kak, kalau Kakak puas dengan hasilnya, boleh minta tolong testimoni singkat soal pengalaman bikin website di TeraWeb? Dan kalau ada kenalan yang punya usaha dan butuh website, boleh kenalkan ke saya ya. Terima kasih banyak, Kak 🙏"
+  ],
+  [
+   "13. Hubungi Lagi Kontak Lama",
+   "Assalamu'alaikum Kak, lama tidak berkabar. Dulu Kakak sempat lihat demo website usaha cuci karpet dari TeraWeb. Kalau sekarang sudah siap, saya senang bantu mulai. Saat ini paketnya: landing page Rp450.000 dan website 4 halaman Rp750.000, sekali bayar. Contoh terbarunya bisa dilihat di https://teraweb.id/demo/cuci-karpet/ 🙏"
+  ]
+ ]
+};
+
+function renderCards(){
+  ['faq','harga','script'].forEach(key=>{
+    const container = document.getElementById(key);
+    container.innerHTML = '';
+    DATA[key].forEach((item, idx) => {
+      const [q, a] = item;
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.search = (q + ' ' + a).toLowerCase();
+      card.innerHTML = `
+        <div class="qrow">
+          <div class="qnum">${idx+1}</div>
+          <div class="qtext">${q}</div>
+        </div>
+        <div class="answer" contenteditable="true" spellcheck="false">${a}</div>
+        <div class="cardfoot">
+          <span class="editnote">✎ bisa diedit langsung</span>
+          <button class="copybtn" onclick="copyAnswer(this)">Copy</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  });
+  document.getElementById('count-faq').textContent = DATA.faq.length;
+  document.getElementById('count-harga').textContent = DATA.harga.length;
+  document.getElementById('count-script').textContent = DATA.script.length;
+}
+
+function switchTab(tab){
+  document.getElementById('faq').classList.toggle('active', tab==='faq');
+  document.getElementById('harga').classList.toggle('active', tab==='harga');
+  document.getElementById('script').classList.toggle('active', tab==='script');
+  document.getElementById('tab-faq').classList.toggle('active', tab==='faq');
+  document.getElementById('tab-harga').classList.toggle('active', tab==='harga');
+  document.getElementById('tab-script').classList.toggle('active', tab==='script');
+  document.getElementById('searchInput').value = '';
+  filterCards();
+}
+
+function copyAnswer(btn){
+  const card = btn.closest('.card');
+  const answerEl = card.querySelector('.answer');
+  const text = answerEl.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const original = btn.textContent;
+    btn.textContent = 'Tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  }).catch(()=>{
+    const range = document.createRange();
+    range.selectNodeContents(answerEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.execCommand('copy');
+    sel.removeAllRanges();
+    btn.textContent = 'Tersalin ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function filterCards(){
+  const activePanel = document.querySelector('.panel.active');
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  const cards = activePanel.querySelectorAll('.card');
+  let visible = 0;
+  cards.forEach(card=>{
+    const match = !query || card.dataset.search.includes(query);
+    card.style.display = match ? '' : 'none';
+    if(match) visible++;
+  });
+  const hint = document.getElementById('resultHint');
+  hint.textContent = query ? `Menampilkan ${visible} dari ${cards.length} pertanyaan` : '';
+
+  let empty = activePanel.querySelector('.empty');
+  if(visible === 0){
+    if(!empty){
+      empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'Enggak ketemu pertanyaan yang cocok. Coba kata kunci lain ya.';
+      activePanel.appendChild(empty);
+    }
+  } else if(empty){
+    empty.remove();
+  }
+}
+
+renderCards();
+</script>
+</body>
+</html>

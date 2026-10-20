@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracker Prospek — TeraWeb</title>
+<style>
+  :root {
+    --bg: #F8F9FA;
+    --white: #FFFFFF;
+    --border: #E2E8F0;
+    --blue: #3B82F6;
+    --blue-l: #EFF6FF;
+    --green: #10B981;
+    --green-l: #ECFDF5;
+    --yellow: #F59E0B;
+    --yellow-l: #FFFBEB;
+    --red: #EF4444;
+    --red-l: #FEF2F2;
+    --gray: #64748B;
+    --dark: #1E293B;
+    --purple: #8B5CF6;
+    --purple-l: #F5F3FF;
+    --orange: #F97316;
+    --orange-l: #FFF7ED;
+    --font: 'Inter', -apple-system, sans-serif;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--dark); font-size: 14px; }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .app-title { font-size: 1rem; font-weight: 700; color: var(--dark); }
+  .app-subtitle { font-size: 0.75rem; color: var(--gray); margin-top: 1px; }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 12px; padding: 16px 24px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-card {
+    background: var(--bg); border-radius: var(--radius);
+    padding: 12px 16px; border: 1px solid var(--border);
+  }
+  .stat-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray); }
+  .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--dark); line-height: 1.2; margin-top: 4px; }
+  .stat-value.blue { color: var(--blue); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.yellow { color: var(--yellow); }
+  .stat-value.purple { color: var(--purple); }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    padding: 12px 24px;
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;
+    font-size: 0.82rem; font-weight: 600; font-family: var(--font);
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: #2563EB; }
+  .btn-export { background: var(--green); color: white; }
+  .btn-export:hover { background: #059669; }
+  .btn-import { background: var(--purple); color: white; }
+  .btn-import:hover { background: #7C3AED; }
+  .btn-ghost { background: var(--white); color: var(--dark); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--bg); }
+
+  .filter-group { display: flex; gap: 6px; margin-left: auto; }
+  .filter-btn {
+    padding: 6px 12px; border-radius: 100px; border: 1px solid var(--border);
+    background: var(--white); color: var(--gray); font-size: 0.75rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; font-family: var(--font);
+  }
+  .filter-btn.active { background: var(--blue); color: white; border-color: var(--blue); }
+  .search-input {
+    padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border);
+    font-size: 0.82rem; font-family: var(--font); color: var(--dark);
+    background: var(--white); outline: none; width: 200px;
+  }
+  .search-input:focus { border-color: var(--blue); }
+
+  /* ── TABLE ── */
+  .table-wrap { padding: 0 24px 24px; overflow-x: auto; }
+  table {
+    width: 100%; border-collapse: collapse;
+    background: var(--white); border-radius: var(--radius);
+    overflow: hidden; box-shadow: var(--shadow);
+    border: 1px solid var(--border); min-width: 1100px;
+  }
+  thead { background: var(--dark); }
+  thead th {
+    padding: 11px 14px; text-align: left;
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7); white-space: nowrap;
+    cursor: pointer; user-select: none;
+  }
+  thead th:hover { color: white; }
+  thead th.sort-asc::after { content: ' ↑'; color: var(--blue); }
+  thead th.sort-desc::after { content: ' ↓'; color: var(--blue); }
+
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #F8FAFF; }
+  tbody td { padding: 10px 14px; vertical-align: middle; }
+  td.col-no { font-size: 0.75rem; color: var(--gray); font-weight: 500; width: 40px; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 100px;
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .badge-kontraktor { background: #FEF3C7; color: #92400E; }
+  .badge-dokter { background: #DBEAFE; color: #1E40AF; }
+  .badge-wo { background: #FCE7F3; color: #9D174D; }
+  .badge-ig { background: #FEE2E2; color: #991B1B; }
+  .badge-tiktok { background: #F3E8FF; color: #6B21A8; }
+  .badge-prospect { background: var(--bg); color: var(--gray); border: 1px solid var(--border); }
+  .badge-dm-sent { background: #DBEAFE; color: #1E40AF; }
+  .badge-dm-reply { background: #FEF3C7; color: #92400E; }
+  .badge-wa { background: #D1FAE5; color: #065F46; }
+  .badge-demo { background: #EDE9FE; color: #5B21B6; }
+  .badge-followup { background: #FEE2E2; color: #991B1B; }
+  .badge-closing { background: #D1FAE5; color: #065F46; }
+  .badge-skip { background: #F1F5F9; color: #94A3B8; }
+
+  .notes-cell {
+    max-width: 160px; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; font-size: 0.78rem; color: var(--gray);
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 12px;
+    padding: 28px; width: 560px; max-width: 95vw;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-title { font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: span 2; }
+  .form-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray); }
+  .form-input, .form-select, .form-textarea {
+    padding: 9px 12px; border-radius: 6px; border: 1.5px solid var(--border);
+    font-size: 0.88rem; font-family: var(--font); color: var(--dark);
+    outline: none; transition: border-color 0.15s; background: var(--white);
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--blue); }
+  .form-textarea { resize: vertical; min-height: 72px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+  /* ── REMINDER MODAL ── */
+  .reminder-modal {
+    background: var(--white); border-radius: 12px;
+    padding: 28px; width: 520px; max-width: 95vw;
+    max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .reminder-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  }
+  .reminder-icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--orange-l); display: flex; align-items: center;
+    justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+  }
+  .reminder-title { font-size: 1.05rem; font-weight: 700; color: var(--dark); }
+  .reminder-subtitle { font-size: 0.78rem; color: var(--gray); margin-top: 2px; }
+
+  .reminder-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .reminder-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .reminder-item.overdue { background: var(--red-l); border-color: #FECACA; }
+  .reminder-item.today { background: var(--orange-l); border-color: #FED7AA; }
+
+  .reminder-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+  }
+  .reminder-dot.overdue { background: var(--red); }
+  .reminder-dot.today { background: var(--orange); }
+
+  .reminder-item-name { font-weight: 700; font-size: 0.88rem; color: var(--dark); }
+  .reminder-item-meta { font-size: 0.75rem; color: var(--gray); margin-top: 2px; }
+  .reminder-item-tag {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 2px 8px; border-radius: 100px;
+    margin-left: auto; flex-shrink: 0; align-self: flex-start;
+  }
+  .reminder-item-tag.overdue { background: var(--red); color: white; }
+  .reminder-item-tag.today { background: var(--orange); color: white; }
+
+  /* ── PRIORITY ── */
+  .priority-high { color: var(--red); font-weight: 700; font-size: 0.82rem; }
+  .priority-med { color: var(--yellow); font-weight: 600; font-size: 0.82rem; }
+  .priority-low { color: var(--gray); font-size: 0.82rem; }
+
+  .action-btns { display: flex; gap: 6px; }
+  .btn-icon {
+    width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--white); cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 0.8rem; transition: all 0.15s;
+  }
+  .btn-icon:hover { background: var(--blue-l); border-color: var(--blue); }
+  .btn-icon.danger:hover { background: var(--red-l); border-color: var(--red); }
+
+  /* ── EMPTY ── */
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--gray); }
+  .empty-state-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+  /* ── IMPORT AREA ── */
+  #importFile { display: none; }
+  .import-info {
+    background: var(--purple-l); border: 1px solid #DDD6FE;
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 0.8rem; color: #5B21B6; margin-bottom: 16px; line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div>
+    <div class="app-title">📋 Tracker Prospek — TeraWeb (Landing Page &amp; Website)</div>
+    <div class="app-subtitle">Kelola semua prospek kontraktor, dokter gigi, dan WO dalam satu tempat</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-import" onclick="triggerImport()">⬆ Import CSV</button>
+    <button class="btn btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+    <input type="file" id="importFile" accept=".csv" onchange="importCSV(event)">
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-label">Total Prospek</div>
+    <div class="stat-value blue" id="stat-total">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Sudah di WA</div>
+    <div class="stat-value yellow" id="stat-wa">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Demo Terkirim</div>
+    <div class="stat-value purple" id="stat-demo">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Closing 🎉</div>
+    <div class="stat-value green" id="stat-closing">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Konversi</div>
+    <div class="stat-value green" id="stat-rate">0%</div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button class="btn btn-primary" onclick="openModal()">+ Tambah Prospek</button>
+  <input type="text" class="search-input" placeholder="🔍 Cari nama, kota, catatan..." oninput="render()" id="searchInput">
+  <div class="filter-group">
+    <button class="filter-btn active" onclick="setFilter('semua', this)">Semua</button>
+    <button class="filter-btn" onclick="setFilter('Kontraktor', this)">Kontraktor</button>
+    <button class="filter-btn" onclick="setFilter('Dokter Gigi', this)">Dokter Gigi</button>
+    <button class="filter-btn" onclick="setFilter('WO', this)">WO</button>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="mainTable">
+    <thead>
+      <tr>
+        <th style="width:40px">#</th>
+        <th onclick="sortTable('tanggal')">Tanggal</th>
+        <th onclick="sortTable('nama')">Nama Usaha / Akun</th>
+        <th onclick="sortTable('niche')">Niche</th>
+        <th onclick="sortTable('platform')">Platform</th>
+        <th onclick="sortTable('kota')">Kota</th>
+        <th onclick="sortTable('status')">Status</th>
+        <th onclick="sortTable('prioritas')">Prioritas</th>
+        <th onclick="sortTable('followup')">Follow-up</th>
+        <th>Nilai (Rp)</th>
+        <th>Catatan</th>
+        <th style="width:80px">Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-state-icon">📭</div>
+    <div>Belum ada prospek. Klik <strong>+ Tambah Prospek</strong> untuk mulai.</div>
+  </div>
+</div>
+
+<!-- MODAL TAMBAH/EDIT -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Tambah Prospek Baru</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tanggal DM</label>
+        <input type="date" class="form-input" id="f-tanggal">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Niche</label>
+        <select class="form-select" id="f-niche">
+          <option value="Kontraktor">Kontraktor</option>
+          <option value="Dokter Gigi">Dokter Gigi</option>
+          <option value="WO">WO</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Nama Usaha / Nama Akun</label>
+        <input type="text" class="form-input" id="f-nama" placeholder="misal: @kontraktorjayabaru / KBN Kontraktor">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Platform</label>
+        <select class="form-select" id="f-platform">
+          <option value="Instagram">Instagram</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Referral">Referral</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kota</label>
+        <input type="text" class="form-input" id="f-kota" placeholder="misal: Purwokerto">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="f-status">
+          <option value="Prospek">Prospek (belum DM)</option>
+          <option value="DM Terkirim">DM Terkirim</option>
+          <option value="DM Dibalas">DM Dibalas</option>
+          <option value="Sudah di WA">Sudah di WA</option>
+          <option value="Demo Terkirim">Demo Terkirim</option>
+          <option value="Follow Up">Follow Up</option>
+          <option value="Closing">Closing ✅</option>
+          <option value="Skip">Skip ❌</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prioritas</label>
+        <select class="form-select" id="f-prioritas">
+          <option value="Tinggi">🔴 Tinggi</option>
+          <option value="Sedang">🟡 Sedang</option>
+          <option value="Rendah">⚪ Rendah</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal Follow-up</label>
+        <input type="date" class="form-input" id="f-followup">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estimasi Nilai (Rp)</label>
+        <select class="form-select" id="f-nilai">
+          <option value="450.000">450.000 — Landing Page</option>
+          <option value="750.000">750.000 — Website 4 halaman</option>
+          <option value="-">Belum tahu / Kustom</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Catatan</label>
+        <textarea class="form-textarea" id="f-catatan" placeholder="misal: Tertarik tapi minta pikir dulu. Follow up Senin."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" onclick="saveProspek()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- REMINDER MODAL -->
+<div class="modal-overlay" id="reminderOverlay">
+  <div class="reminder-modal">
+    <div class="reminder-header">
+      <div class="reminder-icon">🔔</div>
+      <div>
+        <div class="reminder-title">Pengingat Follow-up Hari Ini</div>
+        <div class="reminder-subtitle" id="reminderDate"></div>
+      </div>
+    </div>
+    <div class="reminder-list" id="reminderList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeReminder()">Tutup</button>
+      <button class="btn btn-primary" onclick="closeReminder()">Siap, Mulai Kerja! 💪</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="importOverlay">
+  <div class="modal">
+    <div class="modal-title">⬆ Import Data dari CSV</div>
+    <div class="import-info">
+      <strong>Cara pakai:</strong><br>
+      1. Pilih file CSV yang sebelumnya di-export dari aplikasi ini.<br>
+      2. Pilih apakah mau <strong>mengganti semua data</strong> atau <strong>menambahkan</strong> ke data yang sudah ada.<br>
+      3. Klik Import.
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label class="form-label">Mode Import</label>
+      <select class="form-select" id="importMode">
+        <option value="replace">Ganti semua data (replace)</option>
+        <option value="merge">Tambahkan ke data yang ada (merge)</option>
+      </select>
+    </div>
+    <div id="importPreview" style="font-size:0.82rem;color:var(--gray);min-height:32px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeImportModal()">Batal</button>
+      <button class="btn btn-import" id="doImportBtn" onclick="doImport()" disabled>Import</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let data = JSON.parse(localStorage.getItem('prospek-tracker') || '[]');
+  let editId = null;
+  let activeFilter = 'semua';
+  let sortKey = 'tanggal';
+  let sortDir = 'desc';
+  let pendingImportData = null;
+
+  // ── HELPERS ──
+  function today() { return new Date().toISOString().split('T')[0]; }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    const [y, m, day] = d.split('-');
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+    return `${day} ${months[parseInt(m)-1]} ${y}`;
+  }
+
+  function isOverdue(d) {
+    if (!d) return false;
+    const t = new Date(); t.setHours(0,0,0,0);
+    return new Date(d) < t;
+  }
+
+  function isToday(d) {
+    if (!d) return false;
+    return d === today();
+  }
+
+  function nicheBadge(n) {
+    return { 'Kontraktor':'badge-kontraktor','Dokter Gigi':'badge-dokter','WO':'badge-wo' }[n] || '';
+  }
+  function platformBadge(p) {
+    return { 'Instagram':'badge-ig','TikTok':'badge-tiktok' }[p] || 'badge-prospect';
+  }
+  function statusBadge(s) {
+    return {
+      'Prospek':'badge-prospect','DM Terkirim':'badge-dm-sent',
+      'DM Dibalas':'badge-dm-reply','Sudah di WA':'badge-wa',
+      'Demo Terkirim':'badge-demo','Follow Up':'badge-followup',
+      'Closing':'badge-closing','Skip':'badge-skip'
+    }[s] || 'badge-prospect';
+  }
+  function prioritasCls(p) {
+    return {'Tinggi':'priority-high','Sedang':'priority-med','Rendah':'priority-low'}[p]||'';
+  }
+  function prioritasIcon(p) {
+    return {'Tinggi':'🔴','Sedang':'🟡','Rendah':'⚪'}[p]||'';
+  }
+
+  // ── INIT ──
+  function init() {
+    if (!localStorage.getItem('prospek-tracker-seeded')) {
+      localStorage.setItem('prospek-tracker-seeded', '1');
+      if (data.length === 0) {
+        const nw = today();
+        const d2 = new Date(); d2.setDate(d2.getDate()+3);
+        const nw3 = d2.toISOString().split('T')[0];
+        data = [
+          { id: 1, tanggal: nw, niche:'Kontraktor', nama:'@kontraktor_maju_jaya', platform:'Instagram', kota:'Purwokerto', status:'DM Terkirim', prioritas:'Tinggi', followup: nw, nilai:'750.000', catatan:'Feed rapi, proyek rumah 2 lantai. Belum balas.' },
+          { id: 2, tanggal: nw, niche:'Dokter Gigi', nama:'Drg. Sari Klinik', platform:'TikTok', kota:'Cilacap', status:'Sudah di WA', prioritas:'Tinggi', followup: nw3, nilai:'750.000', catatan:'Minta lihat contoh dulu. Sudah kirim demo.' },
+          { id: 3, tanggal: nw, niche:'WO', nama:'@mahakarya_event', platform:'Instagram', kota:'Banyumas', status:'Demo Terkirim', prioritas:'Sedang', followup: nw, nilai:'450.000', catatan:'Bilang bagus, lagi pikir-pikir.' },
+        ];
+        save();
+      }
+    }
+    render();
+    checkReminders();
+  }
+
+  // ── RENDER ──
+  function render() {
+    let filtered = [...data];
+    if (activeFilter !== 'semua') filtered = filtered.filter(r => r.niche === activeFilter);
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    if (q) filtered = filtered.filter(r =>
+      r.nama.toLowerCase().includes(q) || r.kota.toLowerCase().includes(q) ||
+      r.catatan.toLowerCase().includes(q) || r.status.toLowerCase().includes(q)
+    );
+    filtered.sort((a,b) => {
+      let va = a[sortKey]||'', vb = b[sortKey]||'';
+      return sortDir === 'asc' ? (va>vb?1:-1) : (va<vb?1:-1);
+    });
+
+    // Stats
+    document.getElementById('stat-total').textContent = data.length;
+    document.getElementById('stat-wa').textContent = data.filter(r=>['Sudah di WA','Demo Terkirim','Follow Up','Closing'].includes(r.status)).length;
+    document.getElementById('stat-demo').textContent = data.filter(r=>['Demo Terkirim','Follow Up','Closing'].includes(r.status)).length;
+    document.getElementById('stat-closing').textContent = data.filter(r=>r.status==='Closing').length;
+    const rate = data.length ? Math.round(data.filter(r=>r.status==='Closing').length/data.length*100) : 0;
+    document.getElementById('stat-rate').textContent = rate+'%';
+
+    const tbody = document.getElementById('tableBody');
+    const empty = document.getElementById('emptyState');
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = filtered.map((r,i) => {
+      const fuOverdue = isOverdue(r.followup);
+      const fuToday = isToday(r.followup);
+      const fuColor = fuOverdue ? 'var(--red)' : fuToday ? 'var(--orange)' : 'var(--gray)';
+      const fuIcon = fuOverdue ? '🚨 ' : fuToday ? '⏰ ' : '';
+      return `
+        <tr>
+          <td class="col-no">${i+1}</td>
+          <td style="font-size:0.78rem;white-space:nowrap">${formatDate(r.tanggal)}</td>
+          <td><div style="font-weight:600;font-size:0.85rem">${r.nama}</div></td>
+          <td><span class="badge ${nicheBadge(r.niche)}">${r.niche}</span></td>
+          <td><span class="badge ${platformBadge(r.platform)}">${r.platform}</span></td>
+          <td style="font-size:0.82rem">${r.kota}</td>
+          <td><span class="badge ${statusBadge(r.status)}">${r.status}</span></td>
+          <td><span class="${prioritasCls(r.prioritas)}">${prioritasIcon(r.prioritas)} ${r.prioritas}</span></td>
+          <td style="font-size:0.78rem;white-space:nowrap;color:${fuColor};font-weight:${fuOverdue||fuToday?'600':'400'}">${fuIcon}${r.followup ? formatDate(r.followup) : '—'}</td>
+          <td style="font-size:0.82rem;font-weight:500">${r.nilai!=='-'?'Rp '+r.nilai:'—'}</td>
+          <td><div class="notes-cell" title="${r.catatan}">${r.catatan||'—'}</div></td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-icon" onclick="editRow(${r.id})" title="Edit">✏️</button>
+              <button class="btn-icon danger" onclick="deleteRow(${r.id})" title="Hapus">🗑</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  // ── REMINDER ──
+  function checkReminders() {
+    const items = data.filter(r =>
+      r.status !== 'Closing' && r.status !== 'Skip' &&
+      r.followup && (isOverdue(r.followup) || isToday(r.followup))
+    );
+    if (items.length === 0) return;
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    document.getElementById('reminderDate').textContent = dateStr;
+
+    const overdueItems = items.filter(r => isOverdue(r.followup));
+    const todayItems = items.filter(r => isToday(r.followup));
+
+    document.getElementById('reminderList').innerHTML = [
+      ...overdueItems.map(r => reminderItem(r, 'overdue')),
+      ...todayItems.map(r => reminderItem(r, 'today'))
+    ].join('');
+
+    document.getElementById('reminderOverlay').classList.add('open');
+  }
+
+  function reminderItem(r, type) {
+    const label = type === 'overdue' ? 'Terlambat!' : 'Hari ini';
+    return `
+      <div class="reminder-item ${type}">
+        <div class="reminder-dot ${type}"></div>
+        <div style="flex:1">
+          <div class="reminder-item-name">${r.nama}</div>
+          <div class="reminder-item-meta">${r.niche} · ${r.platform} · ${r.kota} · Status: <strong>${r.status}</strong></div>
+          ${r.catatan ? `<div class="reminder-item-meta" style="margin-top:4px;font-style:italic">"${r.catatan}"</div>` : ''}
+        </div>
+        <span class="reminder-item-tag ${type}">${label}</span>
+      </div>`;
+  }
+
+  function closeReminder() {
+    document.getElementById('reminderOverlay').classList.remove('open');
+  }
+
+  // ── MODAL PROSPEK ──
+  function openModal(id = null) {
+    editId = id;
+    document.getElementById('modalTitle').textContent = id ? 'Edit Prospek' : 'Tambah Prospek Baru';
+    if (id) {
+      const r = data.find(d => d.id === id);
+      document.getElementById('f-tanggal').value = r.tanggal;
+      document.getElementById('f-niche').value = r.niche;
+      document.getElementById('f-nama').value = r.nama;
+      document.getElementById('f-platform').value = r.platform;
+      document.getElementById('f-kota').value = r.kota;
+      document.getElementById('f-status').value = r.status;
+      document.getElementById('f-prioritas').value = r.prioritas;
+      document.getElementById('f-followup').value = r.followup;
+      const selNilai = document.getElementById('f-nilai');
+      if (r.nilai && ![...selNilai.options].some(o => o.value === r.nilai)) {
+        selNilai.add(new Option(r.nilai + ' (data lama)', r.nilai));
+      }
+      selNilai.value = r.nilai;
+      document.getElementById('f-catatan').value = r.catatan;
+    } else {
+      document.getElementById('f-tanggal').value = today();
+      document.getElementById('f-niche').value = 'Kontraktor';
+      document.getElementById('f-nama').value = '';
+      document.getElementById('f-platform').value = 'Instagram';
+      document.getElementById('f-kota').value = '';
+      document.getElementById('f-status').value = 'Prospek';
+      document.getElementById('f-prioritas').value = 'Sedang';
+      document.getElementById('f-followup').value = '';
+      document.getElementById('f-nilai').value = '750.000';
+      document.getElementById('f-catatan').value = '';
+    }
+    document.getElementById('modalOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('f-nama').focus(), 100);
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    editId = null;
+  }
+
+  function saveProspek() {
+    const nama = document.getElementById('f-nama').value.trim();
+    if (!nama) { alert('Nama usaha / akun wajib diisi.'); return; }
+    const row = {
+      id: editId || Date.now(),
+      tanggal: document.getElementById('f-tanggal').value,
+      niche: document.getElementById('f-niche').value,
+      nama,
+      platform: document.getElementById('f-platform').value,
+      kota: document.getElementById('f-kota').value,
+      status: document.getElementById('f-status').value,
+      prioritas: document.getElementById('f-prioritas').value,
+      followup: document.getElementById('f-followup').value,
+      nilai: document.getElementById('f-nilai').value,
+      catatan: document.getElementById('f-catatan').value,
+    };
+    if (editId) data = data.map(d => d.id === editId ? row : d);
+    else data.push(row);
+    save(); closeModal(); render();
+  }
+
+  function editRow(id) { openModal(id); }
+  function deleteRow(id) {
+    if (!confirm('Hapus prospek ini?')) return;
+    data = data.filter(d => d.id !== id);
+    save(); render();
+  }
+
+  // ── FILTER & SORT ──
+  function setFilter(f, btn) {
+    activeFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function sortTable(key) {
+    if (sortKey === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+    else { sortKey = key; sortDir = 'asc'; }
+    render();
+  }
+
+  // ── EXPORT CSV ──
+  function exportCSV() {
+    const headers = ['No','Tanggal','Nama','Niche','Platform','Kota','Status','Prioritas','Follow-up','Nilai','Catatan'];
+    const rows = data.map((r,i) => [
+      i+1, r.tanggal, r.nama, r.niche, r.platform, r.kota,
+      r.status, r.prioritas, r.followup, r.nilai,
+      `"${(r.catatan||'').replace(/"/g,'""')}"`
+    ]);
+    const csv = [headers,...rows].map(r=>r.join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `prospek-tracker-${today()}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  // ── IMPORT CSV ──
+  function triggerImport() {
+    pendingImportData = null;
+    document.getElementById('importPreview').textContent = 'Belum ada file dipilih.';
+    document.getElementById('doImportBtn').disabled = true;
+    document.getElementById('importFile').value = '';
+    document.getElementById('importOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('importFile').click(), 200);
+  }
+
+  function closeImportModal() {
+    document.getElementById('importOverlay').classList.remove('open');
+    pendingImportData = null;
+  }
+
+  function importCSV(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const text = e.target.result.replace(/^\uFEFF/, '');
+        const lines = text.split('\n').filter(l => l.trim());
+        if (lines.length < 2) throw new Error('File kosong atau tidak valid.');
+
+        // Skip header row
+        const rows = lines.slice(1).map(line => {
+          // Handle quoted fields
+          const fields = [];
+          let cur = ''; let inQ = false;
+          for (let i = 0; i < line.length; i++) {
+            if (line[i] === '"') { inQ = !inQ; }
+            else if (line[i] === ',' && !inQ) { fields.push(cur); cur = ''; }
+            else { cur += line[i]; }
+          }
+          fields.push(cur);
+          return fields;
+        });
+
+        pendingImportData = rows.map((f, i) => ({
+          id: Date.now() + i,
+          tanggal: f[1] || today(),
+          nama: f[2] || '',
+          niche: f[3] || 'Kontraktor',
+          platform: f[4] || 'Instagram',
+          kota: f[5] || '',
+          status: f[6] || 'Prospek',
+          prioritas: f[7] || 'Sedang',
+          followup: f[8] || '',
+          nilai: f[9] || '750.000',
+          catatan: f[10] || '',
+        })).filter(r => r.nama);
+
+        document.getElementById('importPreview').innerHTML =
+          `<span style="color:var(--green);font-weight:600">✅ ${pendingImportData.length} baris siap diimport</span> dari file <strong>${file.name}</strong>`;
+        document.getElementById('doImportBtn').disabled = false;
+      } catch(err) {
+        document.getElementById('importPreview').innerHTML =
+          `<span style="color:var(--red)">❌ Gagal baca file: ${err.message}</span>`;
+        document.getElementById('doImportBtn').disabled = true;
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  function doImport() {
+    if (!pendingImportData) return;
+    const mode = document.getElementById('importMode').value;
+    if (mode === 'replace') {
+      if (!confirm(`Ini akan MENGGANTI semua data yang ada (${data.length} baris) dengan ${pendingImportData.length} baris dari file CSV. Lanjutkan?`)) return;
+      data = pendingImportData;
+    } else {
+      data = [...data, ...pendingImportData];
+    }
+    save(); render(); closeImportModal();
+    alert(`✅ Berhasil import ${pendingImportData.length} prospek!`);
+  }
+
+  // ── STORAGE ──
+  function save() { localStorage.setItem('prospek-tracker', JSON.stringify(data)); }
+
+  // ── EVENTS ──
+  document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+  document.getElementById('reminderOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeReminder(); });
+  document.getElementById('importOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeImportModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal(); closeReminder(); closeImportModal(); }
+    if (e.key === 'n' && !e.target.closest('input,textarea,select')) openModal();
+  });
+
+  init();
+</script>
+</body>
+</html>

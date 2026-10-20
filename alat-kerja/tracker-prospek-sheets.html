@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracker Prospek — TeraWeb</title>
+<style>
+  :root {
+    --bg: #F8F9FA;
+    --white: #FFFFFF;
+    --border: #E2E8F0;
+    --blue: #3B82F6;
+    --blue-l: #EFF6FF;
+    --green: #10B981;
+    --green-l: #ECFDF5;
+    --yellow: #F59E0B;
+    --yellow-l: #FFFBEB;
+    --red: #EF4444;
+    --red-l: #FEF2F2;
+    --gray: #64748B;
+    --dark: #1E293B;
+    --purple: #8B5CF6;
+    --purple-l: #F5F3FF;
+    --orange: #F97316;
+    --orange-l: #FFF7ED;
+    --font: 'Inter', -apple-system, sans-serif;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--dark); font-size: 14px; }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .app-title { font-size: 1rem; font-weight: 700; color: var(--dark); }
+  .app-subtitle { font-size: 0.75rem; color: var(--gray); margin-top: 1px; }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 12px; padding: 16px 24px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-card {
+    background: var(--bg); border-radius: var(--radius);
+    padding: 12px 16px; border: 1px solid var(--border);
+  }
+  .stat-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray); }
+  .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--dark); line-height: 1.2; margin-top: 4px; }
+  .stat-value.blue { color: var(--blue); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.yellow { color: var(--yellow); }
+  .stat-value.purple { color: var(--purple); }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    padding: 12px 24px;
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;
+    font-size: 0.82rem; font-weight: 600; font-family: var(--font);
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: #2563EB; }
+  .btn-export { background: var(--green); color: white; }
+  .btn-export:hover { background: #059669; }
+  .btn-import { background: var(--purple); color: white; }
+  .btn-import:hover { background: #7C3AED; }
+  .btn-ghost { background: var(--white); color: var(--dark); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--bg); }
+
+  .filter-group { display: flex; gap: 6px; margin-left: auto; }
+  .filter-btn {
+    padding: 6px 12px; border-radius: 100px; border: 1px solid var(--border);
+    background: var(--white); color: var(--gray); font-size: 0.75rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; font-family: var(--font);
+  }
+  .filter-btn.active { background: var(--blue); color: white; border-color: var(--blue); }
+  .search-input {
+    padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border);
+    font-size: 0.82rem; font-family: var(--font); color: var(--dark);
+    background: var(--white); outline: none; width: 200px;
+  }
+  .search-input:focus { border-color: var(--blue); }
+
+  /* ── TABLE ── */
+  .table-wrap { padding: 0 24px 24px; overflow-x: auto; }
+  table {
+    width: 100%; border-collapse: collapse;
+    background: var(--white); border-radius: var(--radius);
+    overflow: hidden; box-shadow: var(--shadow);
+    border: 1px solid var(--border); min-width: 1100px;
+  }
+  thead { background: var(--dark); }
+  thead th {
+    padding: 11px 14px; text-align: left;
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7); white-space: nowrap;
+    cursor: pointer; user-select: none;
+  }
+  thead th:hover { color: white; }
+  thead th.sort-asc::after { content: ' ↑'; color: var(--blue); }
+  thead th.sort-desc::after { content: ' ↓'; color: var(--blue); }
+
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #F8FAFF; }
+  tbody td { padding: 10px 14px; vertical-align: middle; }
+  td.col-no { font-size: 0.75rem; color: var(--gray); font-weight: 500; width: 40px; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 100px;
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .badge-n1 { background: #FEF3C7; color: #92400E; }
+  .badge-n2 { background: #DBEAFE; color: #1E40AF; }
+  .badge-n3 { background: #FCE7F3; color: #9D174D; }
+  .badge-n4 { background: #DCFCE7; color: #166534; }
+  .badge-n5 { background: #EDE9FE; color: #5B21B6; }
+  .badge-n6 { background: #FFE4E6; color: #9F1239; }
+  .badge-n7 { background: #E0F2FE; color: #075985; }
+  .badge-n8 { background: #FEF9C3; color: #854D0E; }
+  .badge-n9 { background: #F3E8FF; color: #6B21A8; }
+  .badge-n10 { background: #FFEDD5; color: #9A3412; }
+  .badge-n11 { background: #CCFBF1; color: #115E59; }
+  .badge-n12 { background: #FEE2E2; color: #991B1B; }
+  .badge-ig { background: #FEE2E2; color: #991B1B; }
+  .badge-tiktok { background: #F3E8FF; color: #6B21A8; }
+  .badge-prospect { background: var(--bg); color: var(--gray); border: 1px solid var(--border); }
+  .badge-dm-sent { background: #DBEAFE; color: #1E40AF; }
+  .badge-dm-reply { background: #FEF3C7; color: #92400E; }
+  .badge-wa { background: #D1FAE5; color: #065F46; }
+  .badge-demo { background: #EDE9FE; color: #5B21B6; }
+  .badge-followup { background: #FEE2E2; color: #991B1B; }
+  .badge-closing { background: #D1FAE5; color: #065F46; }
+  .badge-skip { background: #F1F5F9; color: #94A3B8; }
+
+  .notes-cell {
+    max-width: 160px; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; font-size: 0.78rem; color: var(--gray);
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 12px;
+    padding: 28px; width: 560px; max-width: 95vw;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-title { font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: span 2; }
+  .form-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray); }
+  .form-input, .form-select, .form-textarea {
+    padding: 9px 12px; border-radius: 6px; border: 1.5px solid var(--border);
+    font-size: 0.88rem; font-family: var(--font); color: var(--dark);
+    outline: none; transition: border-color 0.15s; background: var(--white);
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--blue); }
+  .form-textarea { resize: vertical; min-height: 72px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+  /* ── REMINDER MODAL ── */
+  .reminder-modal {
+    background: var(--white); border-radius: 12px;
+    padding: 28px; width: 520px; max-width: 95vw;
+    max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .reminder-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  }
+  .reminder-icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--orange-l); display: flex; align-items: center;
+    justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+  }
+  .reminder-title { font-size: 1.05rem; font-weight: 700; color: var(--dark); }
+  .reminder-subtitle { font-size: 0.78rem; color: var(--gray); margin-top: 2px; }
+
+  .reminder-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .reminder-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .reminder-item.overdue { background: var(--red-l); border-color: #FECACA; }
+  .reminder-item.today { background: var(--orange-l); border-color: #FED7AA; }
+
+  .reminder-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+  }
+  .reminder-dot.overdue { background: var(--red); }
+  .reminder-dot.today { background: var(--orange); }
+
+  .reminder-item-name { font-weight: 700; font-size: 0.88rem; color: var(--dark); }
+  .reminder-item-meta { font-size: 0.75rem; color: var(--gray); margin-top: 2px; }
+  .reminder-item-tag {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 2px 8px; border-radius: 100px;
+    margin-left: auto; flex-shrink: 0; align-self: flex-start;
+  }
+  .reminder-item-tag.overdue { background: var(--red); color: white; }
+  .reminder-item-tag.today { background: var(--orange); color: white; }
+
+  /* ── PRIORITY ── */
+  .priority-high { color: var(--red); font-weight: 700; font-size: 0.82rem; }
+  .priority-med { color: var(--yellow); font-weight: 600; font-size: 0.82rem; }
+  .priority-low { color: var(--gray); font-size: 0.82rem; }
+
+  .action-btns { display: flex; gap: 6px; }
+  .btn-icon {
+    width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--white); cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 0.8rem; transition: all 0.15s;
+  }
+  .btn-icon:hover { background: var(--blue-l); border-color: var(--blue); }
+  .btn-icon.danger:hover { background: var(--red-l); border-color: var(--red); }
+
+  /* ── EMPTY ── */
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--gray); }
+  .empty-state-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+  /* ── IMPORT AREA ── */
+  #importFile { display: none; }
+  .import-info {
+    background: var(--purple-l); border: 1px solid #DDD6FE;
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 0.8rem; color: #5B21B6; margin-bottom: 16px; line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div class="modal-overlay open" id="loginOverlay" style="z-index:200">
+  <div class="modal" style="width:380px">
+    <div class="modal-title">🔒 Masuk ke Tracker</div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div style="position:relative">
+        <input type="password" class="form-input" id="loginPass" placeholder="Masukkan password" style="padding-right:38px">
+        <button type="button" onclick="toggleLoginPass()" title="Tampilkan/sembunyikan password"
+          style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;padding:4px;line-height:1;color:var(--gray)">
+          <span id="loginPassIcon">👁️</span>
+        </button>
+      </div>
+    </div>
+    <div id="loginError" style="color:var(--red);font-size:0.8rem;margin-top:8px;display:none">Password salah, coba lagi.</div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="doLogin()">Masuk</button>
+    </div>
+  </div>
+</div>
+
+<div class="app-header">
+  <div>
+    <div class="app-title">📋 Tracker Prospek — TeraWeb</div>
+    <div class="app-subtitle">Kelola semua prospek dari 49 niche TeraWeb dalam satu tempat</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-import" onclick="triggerImport()">⬆ Import CSV</button>
+    <button class="btn btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn btn-ghost" onclick="doLogout()">🔒 Keluar</button>
+    <input type="file" id="importFile" accept=".csv" onchange="importCSV(event)">
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-label">Total Prospek</div>
+    <div class="stat-value blue" id="stat-total">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Sudah di WA</div>
+    <div class="stat-value yellow" id="stat-wa">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Demo Terkirim</div>
+    <div class="stat-value purple" id="stat-demo">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Closing 🎉</div>
+    <div class="stat-value green" id="stat-closing">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Konversi</div>
+    <div class="stat-value green" id="stat-rate">0%</div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button class="btn btn-primary" onclick="openModal()">+ Tambah Prospek</button>
+  <input type="text" class="search-input" placeholder="🔍 Cari nama, no. HP, kota, catatan..." oninput="render()" id="searchInput">
+  <div class="filter-group">
+    <select class="form-select" id="filterNiche" style="width:220px" onchange="setFilter(this.value)">
+      <option value="semua">Semua Niche</option>
+    </select>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="mainTable">
+    <thead>
+      <tr>
+        <th style="width:40px">#</th>
+        <th onclick="sortTable('tanggal')">Tanggal</th>
+        <th onclick="sortTable('nama')">Nama Usaha / Akun</th>
+        <th>No. HP</th>
+        <th onclick="sortTable('niche')">Niche</th>
+        <th onclick="sortTable('platform')">Platform</th>
+        <th onclick="sortTable('kota')">Kota</th>
+        <th onclick="sortTable('status')">Status</th>
+        <th onclick="sortTable('prioritas')">Prioritas</th>
+        <th onclick="sortTable('followup')">Follow-up</th>
+        <th>Nilai (Rp)</th>
+        <th>Catatan</th>
+        <th style="width:80px">Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-state-icon">📭</div>
+    <div>Belum ada prospek. Klik <strong>+ Tambah Prospek</strong> untuk mulai.</div>
+  </div>
+</div>
+
+<!-- MODAL TAMBAH/EDIT -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Tambah Prospek Baru</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tanggal DM</label>
+        <input type="date" class="form-input" id="f-tanggal">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Niche</label>
+        <select class="form-select" id="f-niche"></select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Nama Usaha / Nama Akun</label>
+        <input type="text" class="form-input" id="f-nama" placeholder="misal: @kontraktorjayabaru / KBN Kontraktor">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nomor HP / WhatsApp</label>
+        <input type="tel" class="form-input" id="f-nomorhp" placeholder="misal: 0812xxxxxxxx" oninput="checkPhoneDuplicate()" onblur="checkPhoneDuplicate()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Platform</label>
+        <select class="form-select" id="f-platform">
+          <option value="Instagram">Instagram</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Referral">Referral</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div class="form-group full" id="phoneWarning" style="display:none;background:var(--red-l);border:1px solid #FECACA;border-radius:6px;padding:10px 12px;font-size:0.8rem;color:#991B1B;line-height:1.5"></div>
+      <div class="form-group">
+        <label class="form-label">Kota</label>
+        <input type="text" class="form-input" id="f-kota" placeholder="misal: Purwokerto">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="f-status">
+          <option value="Prospek">Prospek (belum DM)</option>
+          <option value="DM Terkirim">DM Terkirim</option>
+          <option value="DM Dibalas">DM Dibalas</option>
+          <option value="Sudah di WA">Sudah di WA</option>
+          <option value="Demo Terkirim">Demo Terkirim</option>
+          <option value="Follow Up">Follow Up</option>
+          <option value="Closing">Closing ✅</option>
+          <option value="Skip">Skip ❌</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prioritas</label>
+        <select class="form-select" id="f-prioritas">
+          <option value="Tinggi">🔴 Tinggi</option>
+          <option value="Sedang">🟡 Sedang</option>
+          <option value="Rendah">⚪ Rendah</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal Follow-up</label>
+        <input type="date" class="form-input" id="f-followup">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estimasi Nilai (Rp)</label>
+        <select class="form-select" id="f-nilai">
+          <option value="450.000">450.000 (Landing Page)</option>
+          <option value="750.000">750.000 (Website 4 halaman)</option>
+          <option value="Kustom">Kustom (disepakati)</option>
+          <option value="-">Belum tahu</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Catatan</label>
+        <textarea class="form-textarea" id="f-catatan" placeholder="misal: Tertarik tapi minta pikir dulu. Follow up Senin."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" onclick="saveProspek()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- REMINDER MODAL -->
+<div class="modal-overlay" id="reminderOverlay">
+  <div class="reminder-modal">
+    <div class="reminder-header">
+      <div class="reminder-icon">🔔</div>
+      <div>
+        <div class="reminder-title">Pengingat Follow-up Hari Ini</div>
+        <div class="reminder-subtitle" id="reminderDate"></div>
+      </div>
+    </div>
+    <div class="reminder-list" id="reminderList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeReminder()">Tutup</button>
+      <button class="btn btn-primary" onclick="closeReminder()">Siap, Mulai Kerja! 💪</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="importOverlay">
+  <div class="modal">
+    <div class="modal-title">⬆ Import Data dari CSV</div>
+    <div class="import-info">
+      <strong>Cara pakai:</strong><br>
+      1. Pilih file CSV yang sebelumnya di-export dari aplikasi ini.<br>
+      2. Pilih apakah mau <strong>mengganti semua data</strong> atau <strong>menambahkan</strong> ke data yang sudah ada.<br>
+      3. Klik Import.
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label class="form-label">Mode Import</label>
+      <select class="form-select" id="importMode">
+        <option value="replace">Ganti semua data (replace)</option>
+        <option value="merge">Tambahkan ke data yang ada (merge)</option>
+      </select>
+    </div>
+    <div id="importPreview" style="font-size:0.82rem;color:var(--gray);min-height:32px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeImportModal()">Batal</button>
+      <button class="btn btn-import" id="doImportBtn" onclick="doImport()" disabled>Import</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // GANTI URL INI dengan URL Web App dari Google Apps Script kamu
+  // (didapat setelah Deploy > New deployment, lihat CARA-INSTALL-SHEETS.txt)
+  // Contoh: 'https://script.google.com/macros/s/AKfycb.../exec'
+  // ============================================================
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyGnPKQI4_5F4wjfO99agC89Q7JpXGyL7fES26Cn71yXKxuh0i0mroExJAT6jfBmEkz/exec';
+
+  // 49 niche TeraWeb (sumber: toolkit-outreach-49niche.html)
+  const NICHES = [
+    'Fotografer & videografer',
+    'WO & dekorasi pernikahan',
+    'Catering',
+    'Tukang Bangunan',
+    'Agen properti independen',
+    'Travel Agent Individual/Open Trip Organizer',
+    'Notaris & PPAT',
+    'Pengacara / kantor hukum',
+    'Travel Umroh',
+    'Sedot WC',
+    'Service AC',
+    'Tukang Listrik',
+    'Klinik & dokter gigi',
+    'Dokter spesialis praktek mandiri',
+    'Psikolog & konselor',
+    'Akuntan & konsultan pajak',
+    'Travel & Tour Premium',
+    'Travel Antar Kota',
+    'Rental Mobil',
+    'Klinik kecantikan & estetika medis',
+    'MUA & Make Up Artist',
+    'Jasa desain interior',
+    'Barbershop kekinian',
+    'MC & event organizer',
+    'Aqiqah',
+    'Cuci Karpet',
+    'TK & PAUD',
+    'Pesantren',
+    'Klinik umum',
+    'Jasa cleaning service',
+    'Klinik hewan & pet shop',
+    'Konveksi & jahit custom',
+    'Les privat & bimbel',
+    'Jasa pindahan & ekspedisi',
+    'Bengkel motor & mobil',
+    'Studio musik / rental alat musik',
+    'Toko sepeda',
+    'Kafe & kedai kopi',
+    'Restoran & cafe',
+    'Toko furniture custom',
+    'UMKM toko online / kerajinan tangan',
+    'Percetakan & sablon',
+    'Toko bunga & florist',
+    'Toko kosmetik & skincare (retail)',
+    'Toko bangunan & material',
+    'Apotek',
+    'Gym / fitness center',
+    'Kost / rumah kontrakan',
+    'Game center / rental PS & PC'
+  ];
+
+  function populateNicheSelects() {
+    const fSelect = document.getElementById('f-niche');
+    fSelect.innerHTML = NICHES.map(n => `<option value="${n}">${n}</option>`).join('');
+
+    const filterSelect = document.getElementById('filterNiche');
+    filterSelect.innerHTML = '<option value="semua">Semua Niche</option>' +
+      NICHES.map(n => `<option value="${n}">${n}</option>`).join('');
+  }
+
+  let data = [];
+  let editId = null;
+  let activeFilter = 'semua';
+  let sortKey = 'tanggal';
+  let sortDir = 'desc';
+  let pendingImportData = null;
+  let sessionPassword = localStorage.getItem('trackerPass') || '';
+
+  // ── API HELPERS ──
+  async function apiGet() {
+    const res = await fetch(API_URL + '?password=' + encodeURIComponent(sessionPassword));
+    if (!res.ok) throw new Error('Gagal ambil data dari server.');
+    const json = await res.json();
+    if (json && json.error) throw new Error(json.error);
+    return json;
+  }
+  async function apiPost(payload) {
+    // Content-Type 'text/plain' dipakai supaya browser tidak mengirim
+    // preflight OPTIONS request, karena Google Apps Script Web App
+    // tidak menangani preflight itu. Apps Script tetap membaca isinya
+    // sebagai JSON biasa lewat e.postData.contents.
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ ...payload, password: sessionPassword })
+    });
+    const json = await res.json();
+    if (!res.ok || json.error) throw new Error(json.error || 'Terjadi kesalahan di server.');
+    return json;
+  }
+
+  // ── LOGIN ──
+  async function doLogin() {
+    const pass = document.getElementById('loginPass').value;
+    sessionPassword = pass;
+    document.getElementById('loginError').style.display = 'none';
+    try {
+      await apiGet(); // dipakai sekaligus buat validasi password
+      localStorage.setItem('trackerPass', pass);
+      document.getElementById('loginOverlay').classList.remove('open');
+      render();
+      checkReminders();
+    } catch (err) {
+      sessionPassword = '';
+      document.getElementById('loginError').textContent = err.message.includes('Password') ? 'Password salah, coba lagi.' : ('Gagal: ' + err.message);
+      document.getElementById('loginError').style.display = 'block';
+    }
+  }
+  function toggleLoginPass() {
+    const input = document.getElementById('loginPass');
+    const icon = document.getElementById('loginPassIcon');
+    if (input.type === 'password') { input.type = 'text'; icon.textContent = '🙈'; }
+    else { input.type = 'password'; icon.textContent = '👁️'; }
+  }
+  document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+  function doLogout() {
+    sessionPassword = '';
+    localStorage.removeItem('trackerPass');
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginOverlay').classList.add('open');
+  }
+
+  // ── HELPERS ──
+  function today() { return new Date().toISOString().split('T')[0]; }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    const [y, m, day] = d.split('-');
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+    return `${day} ${months[parseInt(m)-1]} ${y}`;
+  }
+
+  function isOverdue(d) {
+    if (!d) return false;
+    const t = new Date(); t.setHours(0,0,0,0);
+    return new Date(d) < t;
+  }
+
+  function isToday(d) {
+    if (!d) return false;
+    return d === today();
+  }
+
+  function nicheBadge(n) {
+    if (!n) return '';
+    let hash = 0;
+    for (let i = 0; i < n.length; i++) hash = (hash * 31 + n.charCodeAt(i)) >>> 0;
+    return 'badge-n' + (hash % 12 + 1);
+  }
+  function platformBadge(p) {
+    return { 'Instagram':'badge-ig','TikTok':'badge-tiktok' }[p] || 'badge-prospect';
+  }
+  function statusBadge(s) {
+    return {
+      'Prospek':'badge-prospect','DM Terkirim':'badge-dm-sent',
+      'DM Dibalas':'badge-dm-reply','Sudah di WA':'badge-wa',
+      'Demo Terkirim':'badge-demo','Follow Up':'badge-followup',
+      'Closing':'badge-closing','Skip':'badge-skip'
+    }[s] || 'badge-prospect';
+  }
+  function prioritasCls(p) {
+    return {'Tinggi':'priority-high','Sedang':'priority-med','Rendah':'priority-low'}[p]||'';
+  }
+  function prioritasIcon(p) {
+    return {'Tinggi':'🔴','Sedang':'🟡','Rendah':'⚪'}[p]||'';
+  }
+
+  // ── CEK NOMOR HP DUPLIKAT ──
+  // Normalisasi nomor supaya format 0812xxx, +62812xxx, 62812xxx, atau yang ada
+  // spasi/strip/tanda kurung tetap dianggap nomor yang sama.
+  function normalizePhone(v) {
+    let digits = (v || '').replace(/\D/g, '');
+    if (!digits) return '';
+    if (digits.startsWith('0')) digits = '62' + digits.slice(1);
+    else if (digits.startsWith('620')) digits = '62' + digits.slice(3);
+    return digits;
+  }
+
+  function findDuplicatePhone(phone, excludeId = null) {
+    const norm = normalizePhone(phone);
+    if (!norm) return null;
+    return data.find(r => r.id !== excludeId && normalizePhone(r.nomorhp) === norm) || null;
+  }
+
+  function checkPhoneDuplicate() {
+    const val = document.getElementById('f-nomorhp').value;
+    const box = document.getElementById('phoneWarning');
+    const dup = findDuplicatePhone(val, editId);
+    if (dup) {
+      box.style.display = 'block';
+      box.innerHTML = `⚠️ <strong>Nomor ini sudah pernah digarap sebelumnya!</strong><br>
+        Atas nama: <strong>${dup.nama}</strong> · Niche: ${dup.niche} · Status: <strong>${dup.status}</strong> · Tanggal: ${formatDate(dup.tanggal)}
+        ${dup.catatan ? `<br><span style="font-style:italic">"${dup.catatan}"</span>` : ''}`;
+    } else {
+      box.style.display = 'none';
+      box.innerHTML = '';
+    }
+    return dup;
+  }
+
+  // ── INIT ──
+  async function init() {
+    if (!sessionPassword) {
+      // Belum ada password tersimpan, biarkan layar login tampil dan tunggu user isi
+      return;
+    }
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--gray)">⏳ Memuat data dari server...</td></tr>';
+    try {
+      data = await apiGet();
+      document.getElementById('loginOverlay').classList.remove('open');
+      render();
+      checkReminders();
+    } catch (err) {
+      if (err.message.includes('Password')) {
+        // Password tersimpan sudah tidak valid, minta login ulang
+        sessionPassword = '';
+        localStorage.removeItem('trackerPass');
+        document.getElementById('loginOverlay').classList.add('open');
+        return;
+      }
+      tbody.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--red)">
+        ❌ Gagal terhubung ke Google Sheets: ${err.message}<br>
+        <span style="font-size:0.78rem;color:var(--gray)">Cek apakah URL Apps Script di bagian atas script sudah benar, dan deployment-nya diset akses "Anyone".</span>
+      </td></tr>`;
+    }
+  }
+
+  // ── RENDER ──
+  function render() {
+    let filtered = [...data];
+    if (activeFilter !== 'semua') filtered = filtered.filter(r => r.niche === activeFilter);
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    if (q) filtered = filtered.filter(r =>
+      r.nama.toLowerCase().includes(q) || r.kota.toLowerCase().includes(q) ||
+      r.catatan.toLowerCase().includes(q) || r.status.toLowerCase().includes(q) ||
+      (r.nomorhp||'').toLowerCase().includes(q)
+    );
+    filtered.sort((a,b) => {
+      let va = a[sortKey]||'', vb = b[sortKey]||'';
+      return sortDir === 'asc' ? (va>vb?1:-1) : (va<vb?1:-1);
+    });
+
+    // Stats
+    document.getElementById('stat-total').textContent = data.length;
+    document.getElementById('stat-wa').textContent = data.filter(r=>['Sudah di WA','Demo Terkirim','Follow Up','Closing'].includes(r.status)).length;
+    document.getElementById('stat-demo').textContent = data.filter(r=>['Demo Terkirim','Follow Up','Closing'].includes(r.status)).length;
+    document.getElementById('stat-closing').textContent = data.filter(r=>r.status==='Closing').length;
+    const rate = data.length ? Math.round(data.filter(r=>r.status==='Closing').length/data.length*100) : 0;
+    document.getElementById('stat-rate').textContent = rate+'%';
+
+    const tbody = document.getElementById('tableBody');
+    const empty = document.getElementById('emptyState');
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = filtered.map((r,i) => {
+      const fuOverdue = isOverdue(r.followup);
+      const fuToday = isToday(r.followup);
+      const fuColor = fuOverdue ? 'var(--red)' : fuToday ? 'var(--orange)' : 'var(--gray)';
+      const fuIcon = fuOverdue ? '🚨 ' : fuToday ? '⏰ ' : '';
+      return `
+        <tr>
+          <td class="col-no">${i+1}</td>
+          <td style="font-size:0.78rem;white-space:nowrap">${formatDate(r.tanggal)}</td>
+          <td><div style="font-weight:600;font-size:0.85rem">${r.nama}</div></td>
+          <td style="font-size:0.82rem;white-space:nowrap">${r.nomorhp || '—'}</td>
+          <td><span class="badge ${nicheBadge(r.niche)}">${r.niche}</span></td>
+          <td><span class="badge ${platformBadge(r.platform)}">${r.platform}</span></td>
+          <td style="font-size:0.82rem">${r.kota}</td>
+          <td><span class="badge ${statusBadge(r.status)}">${r.status}</span></td>
+          <td><span class="${prioritasCls(r.prioritas)}">${prioritasIcon(r.prioritas)} ${r.prioritas}</span></td>
+          <td style="font-size:0.78rem;white-space:nowrap;color:${fuColor};font-weight:${fuOverdue||fuToday?'600':'400'}">${fuIcon}${r.followup ? formatDate(r.followup) : '—'}</td>
+          <td style="font-size:0.82rem;font-weight:500">${/^\d/.test(r.nilai||'') ? 'Rp '+r.nilai : ((r.nilai && r.nilai!=='-') ? r.nilai : '—')}</td>
+          <td><div class="notes-cell" title="${r.catatan}">${r.catatan||'—'}</div></td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-icon" onclick="editRow(${r.id})" title="Edit">✏️</button>
+              <button class="btn-icon danger" onclick="deleteRow(${r.id})" title="Hapus">🗑</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  // ── REMINDER ──
+  function checkReminders() {
+    const items = data.filter(r =>
+      r.status !== 'Closing' && r.status !== 'Skip' &&
+      r.followup && (isOverdue(r.followup) || isToday(r.followup))
+    );
+    if (items.length === 0) return;
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    document.getElementById('reminderDate').textContent = dateStr;
+
+    const overdueItems = items.filter(r => isOverdue(r.followup));
+    const todayItems = items.filter(r => isToday(r.followup));
+
+    document.getElementById('reminderList').innerHTML = [
+      ...overdueItems.map(r => reminderItem(r, 'overdue')),
+      ...todayItems.map(r => reminderItem(r, 'today'))
+    ].join('');
+
+    document.getElementById('reminderOverlay').classList.add('open');
+  }
+
+  function reminderItem(r, type) {
+    const label = type === 'overdue' ? 'Terlambat!' : 'Hari ini';
+    return `
+      <div class="reminder-item ${type}">
+        <div class="reminder-dot ${type}"></div>
+        <div style="flex:1">
+          <div class="reminder-item-name">${r.nama}</div>
+          <div class="reminder-item-meta">${r.niche} · ${r.platform} · ${r.kota} · Status: <strong>${r.status}</strong></div>
+          ${r.catatan ? `<div class="reminder-item-meta" style="margin-top:4px;font-style:italic">"${r.catatan}"</div>` : ''}
+        </div>
+        <span class="reminder-item-tag ${type}">${label}</span>
+      </div>`;
+  }
+
+  function closeReminder() {
+    document.getElementById('reminderOverlay').classList.remove('open');
+  }
+
+  // ── MODAL PROSPEK ──
+  function openModal(id = null) {
+    editId = id;
+    document.getElementById('modalTitle').textContent = id ? 'Edit Prospek' : 'Tambah Prospek Baru';
+    if (id) {
+      const r = data.find(d => d.id === id);
+      document.getElementById('f-tanggal').value = r.tanggal;
+      document.getElementById('f-niche').value = r.niche;
+      document.getElementById('f-nama').value = r.nama;
+      document.getElementById('f-nomorhp').value = r.nomorhp || '';
+      document.getElementById('f-platform').value = r.platform;
+      document.getElementById('f-kota').value = r.kota;
+      document.getElementById('f-status').value = r.status;
+      document.getElementById('f-prioritas').value = r.prioritas;
+      document.getElementById('f-followup').value = r.followup;
+      const nilaiSel = document.getElementById('f-nilai');
+      if (r.nilai && ![...nilaiSel.options].some(o => o.value === r.nilai)) {
+        nilaiSel.add(new Option(r.nilai + ' (lama)', r.nilai));
+      }
+      nilaiSel.value = r.nilai;
+      document.getElementById('f-catatan').value = r.catatan;
+    } else {
+      document.getElementById('f-tanggal').value = today();
+      document.getElementById('f-niche').value = NICHES[0];
+      document.getElementById('f-nama').value = '';
+      document.getElementById('f-nomorhp').value = '';
+      document.getElementById('f-platform').value = 'Instagram';
+      document.getElementById('f-kota').value = '';
+      document.getElementById('f-status').value = 'Prospek';
+      document.getElementById('f-prioritas').value = 'Sedang';
+      document.getElementById('f-followup').value = '';
+      document.getElementById('f-nilai').value = '750.000';
+      document.getElementById('f-catatan').value = '';
+    }
+    document.getElementById('phoneWarning').style.display = 'none';
+    document.getElementById('phoneWarning').innerHTML = '';
+    document.getElementById('modalOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('f-nama').focus(), 100);
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    editId = null;
+  }
+
+  async function saveProspek() {
+    const nama = document.getElementById('f-nama').value.trim();
+    if (!nama) { alert('Nama usaha / akun wajib diisi.'); return; }
+    const nomorhp = document.getElementById('f-nomorhp').value.trim();
+
+    const dup = findDuplicatePhone(nomorhp, editId);
+    if (dup) {
+      const lanjut = confirm(
+        `⚠️ Nomor ini sudah pernah digarap sebelumnya!\n\n` +
+        `Atas nama: ${dup.nama}\nNiche: ${dup.niche}\nStatus: ${dup.status}\nTanggal: ${formatDate(dup.tanggal)}` +
+        (dup.catatan ? `\nCatatan: "${dup.catatan}"` : '') +
+        `\n\nTetap simpan sebagai prospek baru?`
+      );
+      if (!lanjut) return;
+    }
+
+    const row = {
+      id: editId,
+      tanggal: document.getElementById('f-tanggal').value,
+      niche: document.getElementById('f-niche').value,
+      nama,
+      nomorhp,
+      platform: document.getElementById('f-platform').value,
+      kota: document.getElementById('f-kota').value,
+      status: document.getElementById('f-status').value,
+      prioritas: document.getElementById('f-prioritas').value,
+      followup: document.getElementById('f-followup').value,
+      nilai: document.getElementById('f-nilai').value,
+      catatan: document.getElementById('f-catatan').value,
+    };
+    try {
+      const result = await apiPost({ action: 'save', ...row });
+      if (editId) {
+        data = data.map(d => d.id === editId ? { ...row, id: editId } : d);
+      } else {
+        data.push({ ...row, id: result.id });
+      }
+      closeModal(); render();
+    } catch (err) {
+      alert('❌ Gagal menyimpan: ' + err.message);
+    }
+  }
+
+  function editRow(id) { openModal(id); }
+  async function deleteRow(id) {
+    if (!confirm('Hapus prospek ini?')) return;
+    try {
+      await apiPost({ action: 'delete', id });
+      data = data.filter(d => d.id !== id);
+      render();
+    } catch (err) {
+      alert('❌ Gagal menghapus: ' + err.message);
+    }
+  }
+
+  // ── FILTER & SORT ──
+  function setFilter(f) {
+    activeFilter = f;
+    render();
+  }
+
+  function sortTable(key) {
+    if (sortKey === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+    else { sortKey = key; sortDir = 'asc'; }
+    render();
+  }
+
+  // ── EXPORT CSV ──
+  function exportCSV() {
+    const headers = ['No','Tanggal','Nama','Nomor HP','Niche','Platform','Kota','Status','Prioritas','Follow-up','Nilai','Catatan'];
+    const rows = data.map((r,i) => [
+      i+1, r.tanggal, r.nama, r.nomorhp||'', r.niche, r.platform, r.kota,
+      r.status, r.prioritas, r.followup, r.nilai,
+      `"${(r.catatan||'').replace(/"/g,'""')}"`
+    ]);
+    const csv = [headers,...rows].map(r=>r.join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `prospek-tracker-${today()}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  // ── IMPORT CSV ──
+  function triggerImport() {
+    pendingImportData = null;
+    document.getElementById('importPreview').textContent = 'Belum ada file dipilih.';
+    document.getElementById('doImportBtn').disabled = true;
+    document.getElementById('importFile').value = '';
+    document.getElementById('importOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('importFile').click(), 200);
+  }
+
+  function closeImportModal() {
+    document.getElementById('importOverlay').classList.remove('open');
+    pendingImportData = null;
+  }
+
+  function importCSV(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const text = e.target.result.replace(/^\uFEFF/, '');
+        const lines = text.split('\n').filter(l => l.trim());
+        if (lines.length < 2) throw new Error('File kosong atau tidak valid.');
+
+        // Skip header row
+        const rows = lines.slice(1).map(line => {
+          // Handle quoted fields
+          const fields = [];
+          let cur = ''; let inQ = false;
+          for (let i = 0; i < line.length; i++) {
+            if (line[i] === '"') { inQ = !inQ; }
+            else if (line[i] === ',' && !inQ) { fields.push(cur); cur = ''; }
+            else { cur += line[i]; }
+          }
+          fields.push(cur);
+          return fields;
+        });
+
+        pendingImportData = rows.map((f, i) => ({
+          id: Date.now() + i,
+          tanggal: f[1] || today(),
+          nama: f[2] || '',
+          nomorhp: f[3] || '',
+          niche: f[4] || NICHES[0],
+          platform: f[5] || 'Instagram',
+          kota: f[6] || '',
+          status: f[7] || 'Prospek',
+          prioritas: f[8] || 'Sedang',
+          followup: f[9] || '',
+          nilai: f[10] || '750.000',
+          catatan: f[11] || '',
+        })).filter(r => r.nama);
+
+        document.getElementById('importPreview').innerHTML =
+          `<span style="color:var(--green);font-weight:600">✅ ${pendingImportData.length} baris siap diimport</span> dari file <strong>${file.name}</strong>`;
+        document.getElementById('doImportBtn').disabled = false;
+      } catch(err) {
+        document.getElementById('importPreview').innerHTML =
+          `<span style="color:var(--red)">❌ Gagal baca file: ${err.message}</span>`;
+        document.getElementById('doImportBtn').disabled = true;
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  async function doImport() {
+    if (!pendingImportData) return;
+    const mode = document.getElementById('importMode').value;
+    if (mode === 'replace') {
+      if (!confirm(`Ini akan MENGGANTI semua data yang ada (${data.length} baris) dengan ${pendingImportData.length} baris dari file CSV. Lanjutkan?`)) return;
+    }
+    try {
+      const result = await apiPost({ action: 'import', rows: pendingImportData, mode });
+      data = await apiGet();
+      render(); closeImportModal();
+      alert(`✅ Berhasil import ${result.imported} prospek!`);
+    } catch (err) {
+      alert('❌ Gagal import: ' + err.message);
+    }
+  }
+
+  // ── EVENTS ──
+  document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+  document.getElementById('reminderOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeReminder(); });
+  document.getElementById('importOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeImportModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal(); closeReminder(); closeImportModal(); }
+    if (e.key === 'n' && !e.target.closest('input,textarea,select')) openModal();
+  });
+
+  populateNicheSelects();
+  init();
+</script>
+</body>
+</html>

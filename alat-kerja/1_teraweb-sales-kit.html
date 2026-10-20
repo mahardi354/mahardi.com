@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeraWeb — Sales Kit</title>
+<style>
+  :root {
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --border: #E4E2DC;
+    --border-strong: #C8C5BC;
+    --text: #1A1917;
+    --text-2: #5A5854;
+    --text-3: #9A9791;
+    --accent: #1F3FBF;
+    --accent-bg: #EEF3FD;
+    --accent-text: #1F3FBF;
+    --green: #166534;
+    --green-bg: #DCFCE7;
+    --radius: 10px;
+    --font: 'Inter', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--font);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 0 0 60px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--text);
+    color: #fff;
+    padding: 28px 32px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-brand { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+  .header-sub { font-size: 13px; color: #999; margin-top: 2px; }
+  .header-badge {
+    font-size: 12px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 5px 14px;
+    color: #ccc;
+  }
+
+  /* NAV TABS */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    padding: 0 24px;
+    overflow-x: auto;
+  }
+  .nav-btn {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-3);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--text); border-bottom-color: var(--text); }
+
+  /* MAIN */
+  .main { max-width: 740px; margin: 0 auto; padding: 32px 24px 0; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SECTION HEADINGS */
+  .sec-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  .sec-desc { font-size: 13px; color: var(--text-2); margin-bottom: 24px; }
+
+  /* SCENARIO PILLS */
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .pill {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pill:hover { border-color: var(--text); color: var(--text); }
+  .pill.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  /* MESSAGE CARD */
+  .msg-wrap { display: none; }
+  .msg-wrap.active { display: block; }
+
+  .msg-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .msg-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-3);
+    margin-bottom: 14px;
+  }
+  .msg-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.8;
+    white-space: pre-line;
+  }
+  .msg-tip {
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: var(--accent-bg);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--accent-text);
+    line-height: 1.6;
+  }
+  .copy-btn {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--bg); color: var(--text); }
+  .copy-btn.ok { color: var(--green); border-color: #86efac; background: var(--green-bg); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* PROPOSAL */
+  .proposal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .prop-top {
+    padding: 24px 26px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .prop-brand { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .prop-tagline { font-size: 13px; color: var(--text-2); margin-top: 3px; }
+  .prop-meta { font-size: 12px; color: var(--text-3); line-height: 1.8; text-align: right; }
+  .prop-body { padding: 22px 26px; }
+  .prop-intro {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.75;
+    padding: 14px 16px;
+    background: var(--bg);
+    border-radius: 8px;
+    margin-bottom: 22px;
+    border-left: 3px solid var(--border-strong);
+  }
+  .prop-sec-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .prop-rows { margin-bottom: 20px; }
+  .prop-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    gap: 12px;
+  }
+  .prop-row:last-child { border-bottom: none; }
+  .prop-row .val { color: var(--text-2); font-size: 13px; flex-shrink: 0; }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-blue { background: var(--accent-bg); color: var(--accent-text); }
+  .prop-highlight {
+    background: var(--accent-bg);
+    border: 1px solid #BFCEF5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--accent-text);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+  .prop-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--text);
+    color: #fff;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+  }
+  .prop-total .t-label { font-size: 14px; color: #aaa; }
+  .prop-total .t-price { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .prop-steps {
+    counter-reset: steps;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .prop-steps li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  .step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .prop-footer {
+    font-size: 12px;
+    color: var(--text-3);
+    line-height: 1.75;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* FAQ */
+  .faq-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 28px; }
+  .faq-cat {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-3);
+    margin: 20px 0 8px;
+  }
+  .faq-cat:first-child { margin-top: 0; }
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    user-select: none;
+  }
+  .faq-q:hover { background: var(--bg); }
+  .faq-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    color: var(--text-3);
+    transition: transform 0.2s, background 0.15s;
+  }
+  .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--text); border-color: var(--text); color: #fff; }
+  .faq-item.open .faq-q { background: var(--bg); }
+  .faq-a {
+    display: none;
+    padding: 12px 16px 16px;
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.75;
+    border-top: 1px solid var(--border);
+  }
+  .faq-item.open .faq-a { display: block; }
+  .faq-a-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .faq-a-text { flex: 1; }
+  .faq-copy-btn {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text-3);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .faq-copy-btn:hover { background: var(--bg); color: var(--text); }
+  .faq-copy-btn.ok { color: var(--green); border-color: #86efac; background: var(--green-bg); }
+
+  /* DEMO TAB */
+  .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; margin-bottom: 8px; }
+  .demo-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .demo-info { min-width: 0; }
+  .demo-niche { font-size: 12px; color: var(--text-3); }
+  .demo-name { font-size: 14px; font-weight: 600; }
+  .demo-url { font-size: 12px; color: var(--accent-text); word-break: break-all; }
+  .demo-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .open-btn { font-family: var(--font); font-size: 12px; font-weight: 500; text-decoration: none; color: var(--text-2); background: var(--surface); border: 1px solid var(--border-strong); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  .open-btn:hover { background: var(--bg); color: var(--text); }
+  .demo-index { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 4px; }
+
+  /* PRINT */
+  @media print {
+    .nav, .pill-row, .copy-btn, .header-badge { display: none !important; }
+    .panel { display: block !important; }
+    body { background: #fff; }
+    .prop-total { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 540px) {
+    .header { padding: 20px 18px; }
+    .main { padding: 20px 14px 0; }
+    .prop-top { flex-direction: column; }
+    .prop-meta { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-brand">TeraWeb</div>
+    <div class="header-sub">Sales Kit — Widya</div>
+  </div>
+  <div class="header-badge">Landing Page &amp; Website Bisnis untuk UMKM</div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="switchTab('wa', this)">💬 Script WA</button>
+  <button class="nav-btn" onclick="switchTab('proposal', this)">📄 Template Proposal</button>
+  <button class="nav-btn" onclick="switchTab('faq', this)">❓ FAQ</button>
+  <button class="nav-btn" onclick="switchTab('demo', this)">🔗 Link Demo</button>
+</nav>
+
+<div class="main">
+
+  <!-- ===== PANEL: SCRIPT WA ===== -->
+  <div id="wa" class="panel active">
+    <div class="sec-title">Script WhatsApp</div>
+    <p class="sec-desc">Pilih skenario sesuai situasi, lalu salin teks pesannya.</p>
+
+    <div class="pill-row">
+      <button class="pill active" onclick="setScenario('cold', this)">Prospek dingin</button>
+      <button class="pill" onclick="setScenario('gmaps', this)">Ketemu di Google Maps</button>
+      <button class="pill" onclick="setScenario('ig', this)">Lihat dari Instagram</button>
+      <button class="pill" onclick="setScenario('followup', this)">Follow-up proposal</button>
+      <button class="pill" onclick="setScenario('kirimdemo', this)">Kirim contoh demo</button>
+    </div>
+
+    <div id="cold" class="msg-wrap active">
+      <div class="msg-card">
+        <div class="msg-label">Pesan pembuka — prospek dingin</div>
+        <div class="msg-text" id="t-cold">Halo Kak, salam kenal ya — saya Widya dari TeraWeb 👋
+
+Saya lihat usaha [nama bisnis]-nya, keren! Saya spesialis bikin website profil usaha yang ringan dan cepat — skor Google-nya bisa 90 ke atas, jadi lebih gampang muncul di pencarian.
+
+Cocok banget buat usaha kayak [nama bisnis] yang butuh kehadiran online yang proper tapi nggak ribet.
+
+Kalau Kak tertarik, saya bisa kirim contoh websitenya yang paling cocok buat usaha Kak — lihat dulu aja, nggak ada kewajiban beli. Santai aja ya 😊</div>
+        <div class="msg-tip">💡 Ganti [nama bisnis] dengan nama usaha calon klien. Tambah detail spesifik kalau bisa — sebut produknya atau lokasinya biar terasa personal.</div>
+        <button class="copy-btn" onclick="salin('t-cold', this)">📋 Salin pesan</button>
+      </div>
+    </div>
+
+    <div id="gmaps" class="msg-wrap">
+      <div class="msg-card">
+        <div class="msg-label">Pesan pembuka — ketemu di Google Maps</div>
+        <div class="msg-text" id="t-gmaps">Halo Kak, salam kenal — saya Widya dari TeraWeb 😊
+
+Tadi saya nemuin [nama bisnis] di Google Maps, reviewnya bagus-bagus! Cuma sayang belum ada websitenya — padahal itu bisa bikin calon pelanggan makin yakin sebelum datang.
+
+Saya bikin website profil usaha yang ringan, ngebut, dan skornya tinggi di Google. Kalau Kak mau, saya kirimkan contoh websitenya dulu — lihat-lihat aja, nggak ada kewajiban beli. Boleh?</div>
+        <div class="msg-tip">💡 Sebutkan review positif spesifik kalau sempat baca — bikin pesanmu terasa bukan blast massal.</div>
+        <button class="copy-btn" onclick="salin('t-gmaps', this)">📋 Salin pesan</button>
+      </div>
+    </div>
+
+    <div id="ig" class="msg-wrap">
+      <div class="msg-card">
+        <div class="msg-label">Pesan pembuka — lihat dari Instagram</div>
+        <div class="msg-text" id="t-ig">Halo Kak, saya Widya dari TeraWeb 😊
+
+Sering lihat konten [nama bisnis] di Instagram — keren banget, produk/servisnya menarik! Cuma kayaknya belum ada website ya?
+
+Banyak calon pelanggan yang sebenernya googling dulu sebelum hubungi. Nah, saya spesialis bikin website profil usaha yang ngebut dan gampang ditemukan di Google — cocok banget buat usaha kayak Kak.
+
+Mau saya kirimin contoh websitenya sekalian info paketnya?</div>
+        <div class="msg-tip">💡 Sebutkan konten spesifik yang kamu suka (foto produk, reel tertentu, dsb) — kesan pertama jauh lebih hangat.</div>
+        <button class="copy-btn" onclick="salin('t-ig', this)">📋 Salin pesan</button>
+      </div>
+    </div>
+
+    <div id="followup" class="msg-wrap">
+      <div class="msg-card">
+        <div class="msg-label">Follow-up setelah kirim proposal</div>
+        <div class="msg-text" id="t-followup">Halo Kak, Widya dari TeraWeb lagi nih 😊
+
+Mau follow-up proposal yang kemarin saya kirim — ada yang mau ditanyain atau perlu saya jelasin lebih lanjut? Nggak apa-apa kalau belum sempat baca, saya siap bantu kapan aja.
+
+Kalau ada kekhawatiran soal budget atau fitur, bisa kita obrolin santai — banyak kok yang bisa kita sesuaikan.</div>
+        <div class="msg-tip">💡 Kirim follow-up maksimal 3 hari setelah proposal. Jangan tanya "jadi atau tidak" — tanya "ada yang bisa saya bantu jelaskan?"</div>
+        <button class="copy-btn" onclick="salin('t-followup', this)">📋 Salin pesan</button>
+      </div>
+    </div>
+
+    <div id="kirimdemo" class="msg-wrap">
+      <div class="msg-card">
+        <div class="msg-label">Kirim contoh demo ke prospek</div>
+        <div class="msg-text" id="t-kirimdemo">Halo Kak [nama], ini contoh website TeraWeb untuk usaha sejenis [jenis usaha] 😊
+
+👉 [link demo]
+
+Ini versi website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), dengan tombol WhatsApp dan Google Maps di setiap halaman. Silakan dilihat-lihat dulu ya — belum ada pembayaran dan nggak ada kewajiban beli.
+
+Kalau cocok, tinggal kita sesuaikan dengan logo, foto, dan info usaha Kak. Ada yang mau ditanyakan?</div>
+        <div class="msg-tip">💡 Ambil link demo yang paling mirip dengan usaha prospek dari tab "Link Demo". Kalau prospeknya jalan iklan/promo, tawarkan juga versi landing page.</div>
+        <button class="copy-btn" onclick="salin('t-kirimdemo', this)">📋 Salin pesan</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="sec-title" style="margin-bottom:4px">Tips pengiriman</div>
+    <p class="sec-desc" style="margin-bottom:16px">Biar pesan kamu makin efektif.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px">Waktu terbaik kirim</div>
+        <div style="font-size:13px;color:var(--text-2)">Selasa–Kamis, jam 09.00–11.00 atau 13.00–15.00. Hindari Senin pagi dan Jumat sore.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px">Personalisasi dulu</div>
+        <div style="font-size:13px;color:var(--text-2)">Luangkan 2 menit cek nama owner, jenis usaha, dan satu hal menarik dari bisnis mereka sebelum kirim.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px">Maks 5 prospek/hari</div>
+        <div style="font-size:13px;color:var(--text-2)">Lebih baik 5 pesan personal daripada 50 pesan generik. Kualitas lebih penting dari kuantitas di tahap awal.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL: PROPOSAL ===== -->
+  <div id="proposal" class="panel">
+    <div class="sec-title">Template Proposal</div>
+    <p class="sec-desc">Isi bagian yang dikurung [ ] sebelum dikirim ke calon klien. Template ini untuk paket Website Multi-Halaman (Rp750.000). Untuk Landing Page (Rp450.000), cukup ganti baris paket dan halamannya.</p>
+
+    <div class="proposal">
+      <div class="prop-top">
+        <div>
+          <div class="prop-brand">TeraWeb</div>
+          <div class="prop-tagline">Website profil usaha — kilat, sekali bayar, sepenuhnya milik Kak</div>
+        </div>
+        <div class="prop-meta">
+          Penawaran untuk: <strong>[Nama Bisnis / Kak ...]</strong><br>
+          Tanggal: [isi tanggal]<br>
+          Berlaku sampai: [tanggal + 7 hari]
+        </div>
+      </div>
+
+      <div class="prop-body">
+        <div class="prop-intro">
+          Sebagian besar calon pelanggan googling dulu sebelum menghubungi atau datang ke tempat. Kalau usaha Kak belum punya website — atau websitenya lambat — mereka bisa berpaling ke kompetitor yang lebih mudah ditemukan. TeraWeb hadir untuk mengubah itu — website yang kilat, rapi, dan bikin calon pelanggan langsung percaya.
+        </div>
+
+        <div class="prop-sec-title">Yang Kak dapatkan</div>
+        <div class="prop-rows">
+          <div class="prop-row">Website HTML statis — tanpa WordPress, tanpa plugin <span class="val">✓</span></div>
+          <div class="prop-row">4 halaman: Beranda, Layanan, Tentang Kami, Kontak <span class="val">✓</span></div>
+          <div class="prop-row">Desain responsif — HP &amp; desktop <span class="val">✓</span></div>
+          <div class="prop-row">Penulisan teks dengan kata kunci kota/kecamatan <span class="val">✓</span></div>
+          <div class="prop-row">Galeri foto, Google Maps &amp; tombol WhatsApp di tiap halaman <span class="val">✓</span></div>
+          <div class="prop-row">HTTPS, kecepatan dioptimalkan, SEO on-page <span class="val">✓</span></div>
+          <div class="prop-row">Skor PageSpeed Insights 90+ <span class="val"><span class="badge badge-green">Terukur &amp; terbukti</span></span></div>
+          <div class="prop-row">Domain milik Kak (kami bantu pilih &amp; sambungkan) <span class="val">✓</span></div>
+          <div class="prop-row">Semua file diserahkan ke Kak <span class="val">✓</span></div>
+          <div class="prop-row">Tanpa biaya perpanjangan tahunan ke TeraWeb <span class="val">✓</span></div>
+          <div class="prop-row">Revisi sampai Kak puas <span class="val">✓</span></div>
+          <div class="prop-row">Selesai 3–5 hari kerja (sejak materi lengkap) <span class="val">✓</span></div>
+        </div>
+
+        <div class="prop-highlight">
+          ⚡ Website TeraWeb rata-rata loading di bawah 1 detik dengan skor PSI 90–100. Google lebih sering merekomendasikan website cepat — artinya usaha Kak lebih mudah ditemukan calon pelanggan baru.
+        </div>
+
+        <div class="prop-sec-title">Investasi</div>
+        <div class="prop-rows">
+          <div class="prop-row">Website Multi-Halaman (4 halaman) — sekali bayar <span class="val">Rp750.000</span></div>
+          <div class="prop-row">Hosting &amp; perpanjangan dari TeraWeb <span class="val">Rp0</span></div>
+          <div class="prop-row">Domain .com / .id (1 tahun) — dibayar langsung ke penyedia domain, tanpa markup <span class="val">± Rp200.000</span></div>
+        </div>
+
+        <div class="prop-total">
+          <span class="t-label">Total paket website (belum termasuk domain)</span>
+          <span class="t-price">Rp750.000</span>
+        </div>
+
+        <div class="prop-sec-title">Cara kerja sama</div>
+        <ul class="prop-steps">
+          <li><div class="step-num">1</div> Kak lihat contoh demo yang sesuai — belum ada pembayaran</li>
+          <li><div class="step-num">2</div> Deal &amp; DP 50% — proyek dimulai</li>
+          <li><div class="step-num">3</div> Kak kirim materi: info usaha, foto, logo (kami bantu susun)</li>
+          <li><div class="step-num">4</div> TeraWeb mengerjakan dalam 3–5 hari kerja</li>
+          <li><div class="step-num">5</div> Preview &amp; sesi revisi sampai Kak setuju</li>
+          <li><div class="step-num">6</div> Pelunasan 50% → website tayang &amp; semua file diserahkan</li>
+        </ul>
+
+        <div class="prop-footer">
+          Pertanyaan? Hubungi Widya langsung:<br>
+          WA: [nomor kamu] &nbsp;|&nbsp; teraweb.id<br><br>
+          Penawaran berlaku 7 hari sejak tanggal di atas. Harga belum termasuk PPN jika dikenakan, dan belum termasuk biaya domain, email bisnis, serta produksi foto/video profesional. Dengan melanjutkan kerja sama, Kak menyetujui syarat dan ketentuan TeraWeb yang berlaku.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL: FAQ ===== -->
+  <div id="faq" class="panel">
+    <div class="sec-title">FAQ — Pertanyaan yang Sering Muncul</div>
+    <p class="sec-desc">Jawaban siap pakai untuk calon klien. Bisa dipasang di link bio, highlight IG, atau dikirim langsung via WA.</p>
+
+    <div class="faq-list">
+
+      <div class="faq-cat">Harga & pembayaran</div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Harganya berapa? Mahal nggak?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-1">Ada dua pilihan, Kak: Landing Page mulai Rp450.000 (1 halaman) dan Website Multi-Halaman Rp750.000 (4 halaman: Beranda, Layanan, Tentang Kami, Kontak). Dua-duanya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb, dan sudah termasuk penulisan teks, tampilan HP, HTTPS, dan SEO on-page. Kalau Kak mau, saya kirim contoh websitenya dulu — belum ada pembayaran 😊</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-1', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Bisa bayar bertahap?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-2">Bisa. Sistemnya DP 50% di awal, pelunasan 50% setelah website selesai dan Kak sudah setuju. Jadi Kak bisa lihat hasilnya dulu sebelum lunas.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-2', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Ada biaya bulanan setelah website jadi?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-3">Nggak ada, Kak. Biaya pembuatan itu sekali bayar — tidak ada biaya perpanjangan tahunan maupun hosting bulanan dari TeraWeb. Satu-satunya biaya berulang cuma nama domain (misalnya usahakak.com), yang dibayar langsung ke penyedia domain sesuai harga mereka tanpa tambahan dari kami (kisarannya ± Rp200.000 per tahun, beda-beda tiap penyedia). Domainnya kami bantu pilihkan dan sambungkan.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-3', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-cat">Paket &amp; contoh demo</div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Landing page atau website 4 halaman, pilih mana?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-15">Kalau Kak jalanin iklan atau promo dengan satu ajakan, landing page (mulai Rp450.000) biasanya cukup dan lebih hemat. Kalau pelanggan sering bandingin beberapa penyedia dulu, atau Kak punya beberapa layanan yang perlu dijelaskan, website 4 halaman (Rp750.000) lebih meyakinkan dan lebih mudah ditemukan di Google. Ceritain usaha Kak ya, nanti saya sarankan yang paling masuk akal — termasuk kalau yang termurah sudah cukup 😄</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-15', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Bisa lihat contoh websitenya dulu?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-16">Bisa banget, Kak. Sebutkan jenis usahanya, nanti saya kirim demo yang paling sesuai — belum ada pembayaran dan nggak ada kewajiban beli. Kalau mau lihat-lihat sendiri dulu, daftar demo website 4 halaman ada di https://teraweb.id/demo/ dan demo landing page di https://teraweb.id/demolanding/</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-16', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Apa saja yang tidak termasuk di paket?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-17">Biar nggak ada kejutan, Kak: biaya nama domain, email bisnis, produksi foto/video profesional, halaman tambahan di luar paket, dan fitur toko online dengan keranjang belanja. Selain itu semuanya sudah termasuk.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-17', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Bisa dipakai jualan online (ada keranjang belanja)?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-18">Fitur toko online dengan keranjang belanja nggak termasuk di paket ini, Kak. Untuk penjualan, pelanggan diarahkan langsung ke WhatsApp Kak lewat tombol di setiap halaman — simpel dan cocok buat usaha jasa maupun UMKM lokal. Kalau butuh yang lebih luas (katalog produk, daftar harga), bisa lewat Website Kustom, harganya disepakati dulu sebelum mulai.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-18', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Usaha saya di luar Purwokerto, bisa?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-19">Bisa, Kak. Semua prosesnya online lewat WhatsApp, jadi lokasi usaha di mana pun di Indonesia nggak masalah.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-19', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-cat">Proses & waktu pengerjaan</div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Berapa lama selesainya?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-4">Umumnya 3–5 hari kerja sejak materi (logo, foto, info usaha) lengkap. Biasanya yang bikin lama itu nunggu materi dari klien — jadi semakin cepat Kak siapkan, semakin cepat juga selesainya.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-4', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Saya harus siapkan apa aja?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-5">Cukup tiga hal: (1) foto usaha/produk, (2) info singkat tentang usaha dan layanan, (3) logo kalau ada. Kalau belum punya semuanya, santai — kami bantu susun dari materi yang ada dan kasih tahu apa saja yang sebaiknya disiapkan.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-5', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Kalau saya nggak suka hasilnya gimana?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-6">Kak lihat dulu contoh demo yang sesuai sebelum bayar apa pun. Setelah itu ada sesi revisi sampai Kak puas, dan saya tunjukkan preview-nya dulu sebelum website tayang. Nggak ada yang dipaksakan.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-6', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-cat">Teknis & fitur</div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Skor PSI 90 itu artinya apa?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-7">PSI (PageSpeed Insights) itu alat dari Google buat ngukur seberapa cepat dan bagus kualitas sebuah website. Skor 90–100 artinya website-nya ngebut dan optimal — dan Google memang lebih suka merekomendasikan website yang cepat di hasil pencarian. Jadi ini langsung berpengaruh ke seberapa mudah usaha Kak ditemukan orang.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-7', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Apa bedanya HTML statis sama website biasa?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-8">Bayangin nasi padang, Kak: lauknya sudah tertata di etalase, jadi begitu ada yang datang langsung tersaji. Website HTML statis juga begitu — nggak pakai WordPress, tema, atau plugin, jadi loading-nya super cepat, jarang error, dan nggak ada plugin usang yang bisa jadi celah peretas. Cocok banget untuk web profil usaha yang isinya nggak berubah setiap hari.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-8', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Bisa muncul di Google nggak?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-9">Bisa. Setiap halaman kami susun dengan judul, deskripsi, struktur halaman, dan kata kunci lokal (kota atau kecamatan Kak), plus Google Maps. Posisi di Google tetap tergantung persaingan, jadi kami nggak menjanjikan peringkat tertentu — tapi website yang cepat dan terstruktur itu fondasi yang benar.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-9', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Bisa diedit sendiri nanti?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-10">Website TeraWeb nggak pakai dashboard, jadi Kak nggak perlu login atau belajar WordPress. Kalau mau ubah teks atau foto, tinggal kirim lewat WhatsApp dan kami yang kerjakan. Untuk perubahan minor biasanya saya bantu tanpa biaya tambahan; untuk update besar bisa kita diskusikan.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-10', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Tampil bagus di HP juga kan?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-11">Iya, semua website TeraWeb responsif — artinya tampilannya otomatis menyesuaikan layar HP, tablet, maupun laptop. Ini sudah standar, bukan fitur tambahan.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-11', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-cat">Keraguan umum</div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Usaha saya kecil, perlu website juga?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-12">Justru usaha kecil yang paling butuh. Calon pelanggan sekarang googling dulu sebelum memutuskan — kalau nama usaha Kak muncul dengan website yang rapi, kepercayaan mereka langsung naik. Website profil itu bukan kemewahan, tapi fondasi kepercayaan digital.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-12', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Instagram saya sudah aktif, masih perlu website?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-13">Instagram bagus untuk engagement, tapi beda fungsinya. Website itu yang muncul di Google saat orang cari usaha Kak. Selain itu, website tidak bergantung pada algoritma Instagram yang bisa berubah kapan saja — Kak punya kendali penuh atas kontennya.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-13', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Apa bedanya TeraWeb sama yang lain?
+          <div class="faq-icon">+</div>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner"><div class="faq-a-text" id="faq-a-14">Ada beberapa hal, Kak: (1) kami kirim demo yang sesuai jenis usaha Kak sebelum Kak bayar, bukan portofolio umum; (2) HTML statis tanpa WordPress, jadi kilat dan minim perawatan; (3) sekali bayar, tanpa perpanjangan tahunan ke TeraWeb; (4) semua file diserahkan ke Kak; (5) harga tertulis jelas, termasuk yang tidak termasuk — tanpa hitung mundur palsu atau harga coret.</div><button class="faq-copy-btn" onclick="salinFaq('faq-a-14', this, event)" title="Salin jawaban">📋</button></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== PANEL: LINK DEMO ===== -->
+  <div id="demo" class="panel">
+    <div class="sec-title">Link Demo</div>
+    <p class="sec-desc">Demo yang sudah siap lengkap dengan gambar. Pilih yang paling mirip dengan usaha prospek, lalu salin linknya.</p>
+
+    <div class="sec-title" style="font-size:15px;margin-bottom:10px">Daftar lengkap demo</div>
+    <div class="demo-index">
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Website 4 halaman</div>
+            <div class="demo-name">Daftar isi semua demo website</div>
+            <div class="demo-url">https://teraweb.id/demo/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Landing page</div>
+            <div class="demo-name">Daftar isi semua demo landing page</div>
+            <div class="demo-url">https://teraweb.id/demolanding/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demolanding/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demolanding/', this)">📋 Salin</button>
+          </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="sec-title" style="font-size:15px;margin-bottom:10px">Demo website 4 halaman — siap kirim</div>
+    <div class="demo-grid">
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Klinik gigi</div>
+            <div class="demo-name">Amara Dental Studio</div>
+            <div class="demo-url">https://teraweb.id/demo/klinik-gigi-1/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/klinik-gigi-1/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/klinik-gigi-1/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Klinik kecantikan</div>
+            <div class="demo-name">LUMORA Aesthetic Clinic</div>
+            <div class="demo-url">https://teraweb.id/demo/klinik-kecantikan-1/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/klinik-kecantikan-1/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/klinik-kecantikan-1/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Kontraktor &amp; arsitek</div>
+            <div class="demo-name">Karsa Studio</div>
+            <div class="demo-url">https://teraweb.id/demo/kontraktor-arsitek-1/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/kontraktor-arsitek-1/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/kontraktor-arsitek-1/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Jasa cuci karpet</div>
+            <div class="demo-name">ANYAM Karpet &amp; Sofa Care</div>
+            <div class="demo-url">https://teraweb.id/demo/cuci-karpet/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/cuci-karpet/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/cuci-karpet/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Barbershop</div>
+            <div class="demo-name">GARIS. Barbershop</div>
+            <div class="demo-url">https://teraweb.id/demo/barbershop/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/barbershop/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/barbershop/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Wedding organizer</div>
+            <div class="demo-name">Suvarna &amp; Co</div>
+            <div class="demo-url">https://teraweb.id/demo/wedding-organizer-1/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/wedding-organizer-1/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/wedding-organizer-1/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Klinik hewan &amp; pet shop</div>
+            <div class="demo-name">Griya Satwa</div>
+            <div class="demo-url">https://teraweb.id/demo/klinik-hewan-petshop/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/klinik-hewan-petshop/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/klinik-hewan-petshop/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Katering</div>
+            <div class="demo-name">SAJI Catering &amp; Event</div>
+            <div class="demo-url">https://teraweb.id/demo/catering-1/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/catering-1/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/catering-1/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Jasa hukum &amp; notaris</div>
+            <div class="demo-name">Notaris &amp; PPAT Adiwangsa</div>
+            <div class="demo-url">https://teraweb.id/demo/notaris-ppat-1/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/notaris-ppat-1/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/notaris-ppat-1/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Sekolah &amp; PAUD</div>
+            <div class="demo-name">Ceria Kids</div>
+            <div class="demo-url">https://teraweb.id/demo/tk-paud/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/tk-paud/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/tk-paud/', this)">📋 Salin</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Rental mobil</div>
+            <div class="demo-name">Laju Rental Mobil</div>
+            <div class="demo-url">https://teraweb.id/demo/rental-mobil/</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demo/rental-mobil/" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demo/rental-mobil/', this)">📋 Salin</button>
+          </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="sec-title" style="font-size:15px;margin-bottom:10px">Demo landing page — contoh</div>
+    <div class="demo-grid">
+        <div class="demo-card">
+          <div class="demo-info">
+            <div class="demo-niche">Klinik gigi</div>
+            <div class="demo-name">Klinik Gigi Senyum Indah</div>
+            <div class="demo-url">https://teraweb.id/demolanding/05-klinik-gigi.html</div>
+          </div>
+          <div class="demo-actions">
+            <a class="open-btn" href="https://teraweb.id/demolanding/05-klinik-gigi.html" target="_blank" rel="noopener">Buka</a>
+            <button class="copy-btn" onclick="salinLink('https://teraweb.id/demolanding/05-klinik-gigi.html', this)">📋 Salin</button>
+          </div>
+        </div>
+    </div>
+    <p class="sec-desc" style="margin-top:12px">Usaha prospek belum ada di daftar? Cari di daftar lengkap di atas, atau tawarkan: "Sebutkan usahanya, nanti kami siapkan contoh yang sesuai."</p>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setScenario(id, btn) {
+  document.querySelectorAll('.msg-wrap').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function salin(id, btn) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Tersalin!';
+    btn.classList.add('ok');
+    setTimeout(() => {
+      btn.innerHTML = '📋 Salin pesan';
+      btn.classList.remove('ok');
+    }, 2000);
+  });
+}
+
+function salinLink(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    btn.textContent = '✓ Tersalin!';
+    btn.classList.add('ok');
+    setTimeout(() => {
+      btn.innerHTML = '📋 Salin';
+      btn.classList.remove('ok');
+    }, 2000);
+  });
+}
+
+function salinFaq(id, btn, ev) {
+  if (ev) ev.stopPropagation();
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓';
+    btn.classList.add('ok');
+    setTimeout(() => {
+      btn.textContent = '📋';
+      btn.classList.remove('ok');
+    }, 1500);
+  });
+}
+
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>
