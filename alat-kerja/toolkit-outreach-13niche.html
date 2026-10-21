@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toolkit Outreach — 13 Niche TeraWeb</title>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
+
+  :root{
+    --paper: #F6F5F1;
+    --card: #FFFFFF;
+    --ink: #1D1E1B;
+    --ink-soft: rgba(29,30,27,0.64);
+    --accent: #3D4FE0;
+    --accent-dim: #2C3AB0;
+    --success: #2FA84F;
+    --line: rgba(29,30,27,0.12);
+    --tab-w: 260px;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background: var(--paper); color: var(--ink); font-family:'Inter', sans-serif; line-height:1.55; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  button{ font-family: inherit; cursor:pointer; }
+  input, textarea{ font-family: inherit; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce){ *{ transition-duration:0.001ms !important; } }
+
+  /* ===== APP SHELL ===== */
+  .app{ display:flex; min-height:100vh; max-width:1200px; margin:0 auto; }
+
+  /* ===== SIDEBAR (index tabs) ===== */
+  .sidebar{ width: var(--tab-w); flex-shrink:0; border-right:1px solid var(--line); padding: 24px 0; }
+  .sidebar-head{ padding: 0 20px 18px; border-bottom:1px solid var(--line); margin-bottom: 10px; }
+  .sidebar-head h1{ font-size:1.05rem; font-weight:700; }
+  .sidebar-head p{ font-size:0.78rem; color: var(--ink-soft); margin-top:4px; }
+  .sidebar-me{ padding: 16px 20px; border-bottom:1px solid var(--line); margin-bottom: 4px; }
+  .sidebar-me label{ display:block; font-size:0.74rem; color: var(--ink-soft); margin-bottom:6px; font-weight:500; }
+  .sidebar-me input{
+    width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:6px; font-size:0.86rem;
+    background: var(--paper); color: var(--ink);
+  }
+  .sidebar-me input:focus{ background:#fff; }
+
+  .mobile-me{ display:none; padding: 14px 20px; border-bottom:1px solid var(--line); }
+  .mobile-me label{ display:block; font-size:0.76rem; color: var(--ink-soft); margin-bottom:6px; font-weight:500; }
+  .mobile-me input{
+    width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:0.88rem;
+    background: var(--card); color: var(--ink);
+  }
+  .tab-list{ list-style:none; max-height: calc(100vh - 200px); overflow-y:auto; }
+  .tab-item{ position:relative; }
+  .tab-btn{
+    width:100%; text-align:left; background:none; border:none; padding: 12px 20px 12px 24px;
+    font-size:0.86rem; color: var(--ink-soft); border-left: 3px solid transparent;
+  }
+  .tab-btn:hover{ background: rgba(61,79,224,0.05); color: var(--ink); }
+  .tab-btn.active{ background: rgba(61,79,224,0.08); color: var(--accent); border-left-color: var(--accent); font-weight:600; }
+  .tab-num{ font-family:'JetBrains Mono', monospace; font-size:0.7rem; opacity:0.6; margin-right:8px; }
+
+  /* Mobile select */
+  .mobile-select{ display:none; }
+
+  /* ===== MAIN ===== */
+  main{ flex:1; padding: 32px 36px 80px; min-width:0; }
+  .niche-title{ font-size:1.5rem; font-weight:700; margin-bottom: 4px; }
+  .niche-sub{ font-size:0.86rem; color: var(--ink-soft); margin-bottom: 28px; }
+
+  /* Keywords */
+  .block{ margin-bottom: 34px; }
+  .block-label{ font-family:'JetBrains Mono', monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color: var(--ink-soft); margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+  .kw-list{ display:flex; flex-wrap:wrap; gap:8px; }
+  .kw-chip{
+    background: var(--card); border:1px solid var(--line); border-radius:20px; padding: 7px 14px;
+    font-size:0.82rem; display:flex; align-items:center; gap:8px;
+  }
+  .kw-copy{ background:none; border:none; color: var(--accent); font-size:0.78rem; font-weight:600; padding:0; }
+
+  /* Editable fields */
+  .fields{ background: var(--card); border:1px solid var(--line); border-radius:12px; padding: 20px 22px; display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
+  @media (max-width: 720px){ .fields{ grid-template-columns:1fr; } }
+  .field label{ display:block; font-size:0.76rem; color: var(--ink-soft); margin-bottom:6px; font-weight:500; }
+  .field input{
+    width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:0.88rem;
+    background: var(--paper); color: var(--ink);
+  }
+  .field input:focus{ background:#fff; }
+  .field-link-stack{ display:flex; flex-direction:column; gap:12px; }
+
+  .hint{ font-size:0.78rem; color: var(--ink-soft); margin-top:10px; }
+
+  /* Message cards */
+  .msg-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+  @media (max-width: 860px){ .msg-grid{ grid-template-columns:1fr; } }
+  .msg-card{ background: var(--card); border:1px solid var(--line); border-radius:12px; padding: 20px 20px 18px; display:flex; flex-direction:column; }
+  .msg-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .msg-label{ font-size:0.86rem; font-weight:700; }
+  .copy-btn{
+    background: var(--accent); color:#fff; border:none; border-radius:6px; padding:7px 14px;
+    font-size:0.78rem; font-weight:600; transition: background 0.15s;
+  }
+  .copy-btn:hover{ background: var(--accent-dim); }
+  .copy-btn.copied{ background: var(--success); }
+  .msg-preview{
+    display:block; width:100%; box-sizing:border-box; font-family:inherit;
+    white-space:pre-wrap; font-size:0.86rem; color: var(--ink); background: var(--paper);
+    border:1px solid var(--line); border-radius:8px; padding: 14px; min-height:150px;
+    resize:vertical; overflow-y:hidden;
+  }
+  .msg-preview:focus{ outline:none; border-color: var(--accent); background:#fff; }
+  .msg-preview .ph{ background: rgba(61,79,224,0.15); border-radius:3px; padding:0 2px; }
+  .msg-head-actions{ display:flex; align-items:center; gap:10px; }
+  .reset-btn{
+    background:none; border:none; color: var(--ink-soft); font-size:0.76rem; font-weight:500;
+    padding:0; text-decoration:underline;
+  }
+  .reset-btn:hover{ color: var(--accent); }
+
+  footer{ padding: 26px 36px; text-align:center; font-size:0.78rem; color: var(--ink-soft); border-top:1px solid var(--line); }
+
+  @media (max-width: 860px){
+    .app{ flex-direction:column; }
+    .sidebar{ display:none; }
+    .mobile-select{ display:block; padding: 18px 20px 0; }
+    .mobile-select select{
+      width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-size:0.9rem;
+      background: var(--card);
+    }
+    .mobile-me{ display:block; }
+    main{ padding: 0 20px 60px; }
+  }
+
+  .fields{ grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); }
+  .demo-row{ display:flex; gap:8px; align-items:center; }
+  .demo-row input{ flex:1; min-width:0; }
+  .open-btn{ background:none; border:1px solid var(--line); border-radius:6px; padding:8px 10px; font-size:0.78rem; font-weight:600; color:var(--accent); text-decoration:none; white-space:nowrap; }
+  .open-btn:hover{ background:rgba(61,79,224,0.06); }
+  .group-head{ grid-column:1/-1; font-family:'JetBrains Mono',monospace; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); margin-top:14px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+  .group-head:first-child{ margin-top:0; }
+  .note{ background:#FFF6E0; border:1px solid #F0DDA8; border-radius:8px; padding:10px 14px; font-size:0.82rem; margin-bottom:22px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <h1>Toolkit Outreach</h1>
+      <p>13 niche TeraWeb &middot; demo &amp; pesan</p>
+    </div>
+    <div class="sidebar-me">
+      <label for="fPengirim">Nama pengirim (kamu)</label>
+      <input type="text" id="fPengirim" placeholder="cth. Didik">
+    </div>
+    <ul class="tab-list" id="tabList"></ul>
+  </aside>
+  <main>
+    <div class="mobile-select"><select id="mobileSelect"></select></div>
+    <div class="mobile-me">
+      <label for="fPengirimMobile">Nama pengirim (kamu)</label>
+      <input type="text" id="fPengirimMobile" placeholder="cth. Didik">
+    </div>
+    <div id="content"></div>
+  </main>
+</div>
+<footer>Toolkit internal TeraWeb &middot; isi nama usaha dan sebut satu hal spesifik dari akun target sebelum mengirim</footer>
+<script>
+const DATA = [
+ {
+  "id": "fotografer-wedding",
+  "name": "Fotografer wedding",
+  "link": "https://teraweb.id/demo/fotografer-wedding",
+  "sap": "Kak",
+  "note": "",
+  "keywords": [
+   "fotografer wedding {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Kak {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Saya sempat lihat karya {{nama}} di Instagram, hasil foto prewedding outdoor-nya bagus banget 😍\n\nBoleh tanya, Kak: selama ini calon pengantin lebih banyak kenal karya Kakak lewat Instagram saja, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website portofolio khusus fotografer wedding, supaya galeri, paket, dan kontak ada di satu tempat dan bisa muncul di Google saat orang cari \"fotografer wedding {{kota}}\". \n\nIni contoh tampilannya, Kak: {{link}}\nSilakan dilihat dulu, Kak, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Kak {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website fotografer tadi sudah sempat dibuka belum, Kak?\nKalau mau, galeri bisa disesuaikan dengan karya Kakak, misalnya dipisah per kategori: wedding, prewedding, engagement. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Portofolio/Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Kak. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah foto dan materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Instagram sudah cukup”",
+    "template": "Betul, Kak, Instagram memang bagus untuk memamerkan karya 👍\nWebsite biasanya jadi pelengkapnya: calon klien yang cari lewat Google atau yang dikasih rekomendasi teman bisa langsung lihat portofolio lengkap dan paket tanpa harus scroll feed.\nKakak bisa lihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "wedding-organizer",
+  "name": "Wedding organizer",
+  "link": "https://teraweb.id/demo/wedding-organizer-1/",
+  "sap": "Kak",
+  "note": "",
+  "keywords": [
+   "wedding organizer {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Kak {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat {{nama}} di Instagram, dekorasi pelaminannya cantik banget 😍\n\nBoleh tanya, Kak: selama ini calon pengantin kenal WO Kakak lewat Instagram dan rekomendasi saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus wedding organizer, supaya paket, galeri acara yang pernah ditangani, dan kontak ada di satu tempat yang rapi, dan bisa muncul di Google waktu orang cari \"wedding organizer {{kota}}\".\n\nIni contoh tampilannya, Kak: {{link}}\nSilakan dilihat dulu, Kak, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Kak {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website WO tadi sudah sempat dibuka belum, Kak?\nKalau mau, bagian paket bisa disesuaikan dengan layanan Kakak, misalnya full planning, partial planning, atau day-of coordinator. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Kak. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Instagram sudah cukup”",
+    "template": "Betul, Kak, Instagram memang efektif untuk menunjukkan hasil acara 👍\nTapi calon pengantin biasanya juga ingin lihat paket, alur kerja, dan profil WO secara lengkap sebelum memutuskan. Website bisa jadi tempat yang menjawab semua itu, sekaligus terlihat lebih meyakinkan untuk acara sebesar pernikahan.\nKakak bisa lihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "catering",
+  "name": "Catering",
+  "link": "https://teraweb.id/demo/catering-1/",
+  "sap": "Kak",
+  "note": "",
+  "keywords": [
+   "catering {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Kak {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat catering {{nama}} di Instagram, [sebut satu menu spesifik, misal nasi box ayam bakarnya / tumpeng-nya] kelihatan menggugah selera banget 😍\n\nBoleh tanya, Kak: selama ini calon pelanggan tanya menu dan harga lewat WhatsApp/Instagram saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus catering, supaya paket, menu, dan harga bisa langsung dilihat tanpa harus dijelaskan satu-satu lewat chat, dan bisa muncul di Google waktu orang cari \"catering {{kota}}\".\n\nIni contoh tampilannya, Kak: {{link}}\nSilakan dilihat dulu, Kak, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Kak {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website catering tadi sudah sempat dibuka belum, Kak?\nKalau mau, paket bisa disesuaikan, misalnya nasi box, prasmanan, atau tumpeng. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Kak. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Instagram/WhatsApp sudah cukup”",
+    "template": "Betul, Kak, Instagram dan WhatsApp memang praktis untuk terima pesanan 👍\nWebsite biasanya jadi pelengkapnya: menu, paket, dan harga bisa dilihat langsung tanpa Kakak jelaskan satu-satu lewat chat, dan orang yang cari \"catering {{kota}}\" di Google bisa menemukan usaha Kakak.\nKakak bisa lihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "agen-properti",
+  "name": "Agen properti independen",
+  "link": "https://teraweb.id/demo/kontraktor-arsitek-1/",
+  "sap": "Kak",
+  "note": "Link demo ini masih niche kontraktor-arsitek. Ganti dengan demo agen properti kalau sudah ada, supaya calon klien tidak bingung.",
+  "keywords": [
+   "agen properti {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Kak {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat profil Kakak sebagai agen properti di Instagram, konten tur propertinya menarik banget 😍\n\nBoleh tanya, Kak: selama ini calon pembeli atau penyewa lihat listing Kakak lewat Instagram dan portal properti saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus agen properti independen, supaya listing, layanan, dan kontak Kakak ada di satu tempat yang rapi dan jadi milik Kakak sendiri, bukan numpang di portal yang isinya bersaing dengan agen lain. Dan bisa muncul di Google waktu orang cari \"agen properti {{kota}}\".\n\nIni contoh tampilannya, Kak: {{link}}\nSilakan dilihat dulu, Kak, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Kak {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website agen properti tadi sudah sempat dibuka belum, Kak?\nKalau mau, bagian listing dan layanan bisa disesuaikan, misalnya jual, sewa, atau perumahan tertentu yang Kakak tangani. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Kak. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Instagram dan portal sudah cukup”",
+    "template": "Betul, Kak, Instagram dan portal properti memang ramai calon pembeli 👍\nTapi di portal, listing Kakak berdampingan dengan agen lain. Website sendiri jadi tempat Kakak tampil sebagai pribadi dan merek, dan bisa ditemukan lewat Google.\nKakak bisa lihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "notaris-ppat",
+  "name": "Notaris / PPAT",
+  "link": "https://teraweb.id/demo/notaris-ppat-1/",
+  "sap": "Pak/Bu",
+  "note": "Sumber observasi di pesan ini Google Maps. Pakai hanya kalau memang dari sana kamu menemukan targetnya. Hindari klaim promosi sesuai kode etik.",
+  "keywords": [
+   "notaris {{kota}}",
+   "PPAT {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Selamat siang Pak/Bu {{panggil}}, perkenalkan saya {{pengirim}} dari TeraWeb 🙏\nTadi saya sempat lihat kantor {{nama}} di Google Maps, dan kebetulan ada yang ingin saya tanyakan.\n\nBoleh tanya, Pak/Bu: selama ini klien baru mengenal kantor Bapak/Ibu lewat rekomendasi, bank, atau developer saja ya, atau ada juga yang mencari lewat Google?\n\nKebetulan saya bikin website khusus notaris dan PPAT, supaya informasi layanan, persyaratan dokumen, jam kerja, lokasi, dan kontak ada di satu tempat yang rapi, dan bisa muncul di Google waktu orang mencari \"notaris {{kota}}\" atau \"PPAT {{kota}}\".\n\nIni contoh tampilannya, Pak/Bu: {{link}}\nSilakan dilihat dulu, Pak/Bu, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Pak/Bu {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website notaris/PPAT tadi sudah sempat dibuka belum, Pak/Bu?\nKalau mau, bagian layanan dan persyaratan dokumen bisa disesuaikan dengan layanan kantor Bapak/Ibu, misalnya akta jual beli, waris, atau pendirian PT. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Pak/Bu. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Klien sudah cukup dari rekomendasi”",
+    "template": "Betul, Pak/Bu, rekomendasi serta rujukan bank dan developer memang sumber utama klien 👍\nWebsite biasanya hanya jadi pelengkap: klien yang sudah dirujuk pun sering mengecek Google dulu, dan di sana mereka bisa langsung melihat layanan, persyaratan dokumen, jam kerja, dan lokasi kantor.\nSilakan dilihat dulu contohnya, siapa tahu cocok 🙏 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "travel-umrah",
+  "name": "Travel umrah",
+  "link": "https://teraweb.id/demo/travel-umroh-1/",
+  "sap": "Pak/Bu",
+  "note": "Pilih target yang punya izin resmi (PPIU). Hapus \"informasi izin resmi\" kalau demo tidak punya bagian itu.",
+  "keywords": [
+   "travel umrah {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Assalamualaikum Pak/Bu {{panggil}}, selamat siang 🙏\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat akun Instagram {{nama}}, dokumentasi keberangkatan jamaahnya terasa hangat dan menenangkan sekali.\n\nBoleh tanya, Pak/Bu: selama ini calon jamaah mengenal travel Bapak/Ibu lewat Instagram dan rekomendasi jamaah sebelumnya saja ya, atau ada juga yang mencari lewat Google?\n\nKebetulan saya bikin website khusus travel umrah, supaya jadwal keberangkatan, paket, informasi izin resmi, dan kontak bisa dilihat lengkap di satu tempat, dan bisa muncul di Google waktu orang mencari \"travel umrah {{kota}}\".\n\nIni contoh tampilannya, Pak/Bu: {{link}}\nSilakan dilihat dulu, Pak/Bu, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Pak/Bu {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website travel umrah tadi sudah sempat dibuka belum, Pak/Bu?\nKalau mau, bagian paket dan jadwal keberangkatan bisa disesuaikan, begitu juga informasi izin resminya. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Pak/Bu. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Jamaah sudah cukup dari rekomendasi”",
+    "template": "Betul, Pak/Bu, rekomendasi jamaah memang yang paling kuat 👍\nTapi calon jamaah yang direkomendasikan pun biasanya tetap mengecek jadwal, paket, dan izin resmi travel dulu sebelum mendaftar. Website bisa jadi tempat yang menjawab semua itu.\nSilakan dilihat dulu contohnya, siapa tahu cocok 🙏 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "klinik-gigi",
+  "name": "Klinik / dokter gigi",
+  "link": "https://teraweb.id/demo/klinik-gigi-1/",
+  "sap": "Dok",
+  "note": "",
+  "keywords": [
+   "dokter gigi {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Dok {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat {{nama}} di Instagram, tampilan kliniknya bersih dan nyaman bagus banget 😍\n\nBoleh tanya, Dok: selama ini pasien baru kenal klinik Dokter lewat rekomendasi dan Instagram saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus klinik gigi, supaya layanan, jadwal praktik, lokasi, dan kontak untuk buat janji ada di satu tempat yang rapi, dan bisa muncul di Google waktu orang cari \"dokter gigi {{kota}}\".\n\nIni contoh tampilannya, Dok: {{link}}\nSilakan dilihat dulu, Dok, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Dok {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website klinik gigi tadi sudah sempat dibuka belum, Dok?\nKalau mau, bagian layanan dan jadwal praktik bisa disesuaikan dengan praktik Dokter. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Dok. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Instagram/Google Maps sudah cukup”",
+    "template": "Betul, Dok, Instagram dan Google Maps memang membantu pasien menemukan klinik 👍\nWebsite jadi pelengkap yang memuat layanan, jadwal praktik, dan cara membuat janji secara lengkap, yang tidak muat di Maps.\nSilakan dilihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "rental-mobil",
+  "name": "Rental mobil",
+  "link": "https://teraweb.id/demo/rental-mobil/",
+  "sap": "Kak",
+  "note": "",
+  "keywords": [
+   "rental mobil {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Kak {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat akun Instagram {{nama}}, foto armada Innova dan Alphard-nya bagus banget 😍\n\nBoleh tanya, Kak: selama ini calon penyewa tanya unit dan harga lewat WhatsApp atau Instagram saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus rental mobil, supaya daftar armada, tarif sewa, dan kontak untuk pesan bisa dilihat lengkap di satu tempat, dan bisa muncul di Google waktu orang cari \"rental mobil {{kota}}\".\n\nIni contoh tampilannya, Kak: {{link}}\nSilakan dilihat dulu, Kak, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Kak {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website rental mobil tadi sudah sempat dibuka belum, Kak?\nKalau mau, daftar armada dan tarif bisa disesuaikan, misalnya dengan sopir, lepas kunci, atau paket mudik. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Kak. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Instagram/WhatsApp sudah cukup”",
+    "template": "Betul, Kak, Instagram dan WhatsApp memang cepat untuk terima pesanan 👍\nWebsite biasanya jadi pelengkapnya: daftar armada, tarif, dan syarat sewa bisa dilihat langsung tanpa Kakak jawab chat yang sama berkali-kali, dan orang yang cari \"rental mobil {{kota}}\" di Google bisa menemukan usaha Kakak.\nKakak bisa lihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "klinik-kecantikan",
+  "name": "Klinik kecantikan",
+  "link": "https://teraweb.id/demo/klinik-kecantikan-1/",
+  "sap": "Kak",
+  "note": "",
+  "keywords": [
+   "klinik kecantikan {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Kak {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat {{nama}} di Instagram, tampilan kliniknya elegan dan menarik banget 😍\n\nBoleh tanya, Kak: selama ini calon pasien kenal klinik Kakak lewat Instagram dan rekomendasi saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus klinik kecantikan, supaya layanan perawatan, daftar treatment, dan kontak untuk buat janji ada di satu tempat yang rapi, dan bisa muncul di Google waktu orang cari \"klinik kecantikan {{kota}}\".\n\nIni contoh tampilannya, Kak: {{link}}\nSilakan dilihat dulu, Kak, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Kak {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website klinik kecantikan tadi sudah sempat dibuka belum, Kak?\nKalau mau, daftar treatment bisa disesuaikan dengan layanan klinik Kakak. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Kak. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Instagram sudah cukup”",
+    "template": "Betul, Kak, Instagram memang efektif untuk menunjukkan suasana dan layanan klinik 👍\nTapi orang yang mau perawatan biasanya riset dulu dan membandingkan beberapa klinik. Website jadi tempat informasi layanan yang lengkap dan tenang, dan bisa ditemukan lewat Google oleh orang yang belum mengenal klinik Kakak.\nKakak bisa lihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "barbershop",
+  "name": "Barbershop",
+  "link": "https://teraweb.id/demo/barbershop/",
+  "sap": "Bang",
+  "note": "",
+  "keywords": [
+   "barbershop {{kota}}",
+   "barbershop dekat {{daerah}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Bang {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat akun Instagram {{nama}}, foto suasana tempatnya keren banget 🔥\n\nBoleh tanya, Bang: selama ini pelanggan tanya harga, jam buka, dan booking lewat WhatsApp atau Instagram saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus barbershop, supaya daftar layanan, harga, jam buka, lokasi, dan kontak untuk booking bisa dilihat lengkap di satu tempat, dan bisa muncul di Google waktu orang cari \"barbershop {{kota}}\" atau \"barbershop dekat {{daerah}}\".\n\nIni contoh tampilannya, Bang: {{link}}\nSilakan dilihat dulu, Bang, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Bang {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website barbershop tadi sudah sempat dibuka belum, Bang?\nKalau mau, daftar layanan dan harga potong bisa disesuaikan dengan barbershop Abang. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Bang. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Instagram/booking WA sudah cukup”",
+    "template": "Betul, Bang, Instagram dan booking lewat WA memang sudah jalan 👍\nWebsite bukan pengganti, tapi tempat info lengkap (layanan, harga, jam buka, lokasi) yang bisa ditemukan orang baru lewat Google waktu cari \"barbershop dekat {{daerah}}\".\nSilakan dilihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "cuci-karpet",
+  "name": "Jasa cuci karpet",
+  "link": "https://teraweb.id/demo/cuci-karpet/",
+  "sap": "Kak",
+  "note": "",
+  "keywords": [
+   "cuci karpet {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Kak {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat akun Instagram {{nama}}, foto dokumentasi proses cucinya bagus banget 😍\n\nBoleh tanya, Kak: selama ini pelanggan tanya layanan dan harga lewat WhatsApp atau Instagram saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus jasa cuci karpet, supaya daftar layanan, tarif per meter, area jangkauan, dan kontak untuk pesan bisa dilihat lengkap di satu tempat, dan bisa muncul di Google waktu orang cari \"cuci karpet {{kota}}\".\n\nIni contoh tampilannya, Kak: {{link}}\nSilakan dilihat dulu, Kak, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Kak {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website cuci karpet tadi sudah sempat dibuka belum, Kak?\nKalau mau, daftar layanan, tarif per meter, dan area jangkauan bisa disesuaikan dengan usaha Kakak. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Kak. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Pelanggan sudah dari langganan”",
+    "template": "Betul, Kak, pelanggan langganan memang aset terbesar 👍\nTapi pelanggan baru dan orang yang butuh mendadak biasanya cari lewat Google dulu. Website bisa jadi tempat mereka langsung lihat layanan, tarif, dan area jangkauan.\nSilakan dilihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "tk-paud",
+  "name": "Sekolah TK & PAUD",
+  "link": "https://teraweb.id/demo/tk-paud/",
+  "sap": "Bapak/Ibu",
+  "note": "Foto anak: pastikan yang dipuji memang dipublikasikan sekolah sendiri.",
+  "keywords": [
+   "PAUD {{kota}}",
+   "TK dekat {{daerah}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Assalamualaikum Bapak/Ibu {{panggil}}, selamat siang 🙏\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat akun Instagram {{nama}}, dokumentasi kegiatan belajar anak-anaknya terlihat menyenangkan sekali.\n\nBoleh tanya, Bapak/Ibu: selama ini orang tua calon murid mengenal sekolah ini lewat rekomendasi sesama orang tua dan Instagram saja ya, atau ada juga yang mencari lewat Google?\n\nKebetulan saya bikin website khusus TK dan PAUD, supaya program belajar, biaya pendaftaran, jadwal, lokasi, dan kontak bisa dilihat lengkap di satu tempat, dan bisa muncul di Google waktu orang tua mencari \"PAUD {{kota}}\" atau \"TK dekat {{daerah}}\".\n\nIni contoh tampilannya, Bapak/Ibu: {{link}}\nSilakan dilihat dulu, Bapak/Ibu, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Bapak/Ibu {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website TK/PAUD tadi sudah sempat dibuka belum, Bapak/Ibu?\nKalau mau, bagian program belajar dan informasi pendaftaran bisa disesuaikan dengan sekolah Bapak/Ibu. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Bapak/Ibu. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Pendaftar sudah dari rekomendasi”",
+    "template": "Betul, Bapak/Ibu, rekomendasi sesama orang tua memang yang paling dipercaya 👍\nTapi orang tua yang direkomendasikan pun biasanya tetap mengecek Google dan Instagram dulu, dan di website mereka bisa langsung lihat program, biaya pendaftaran, jadwal, dan lokasi.\nSilakan dilihat dulu contohnya, siapa tahu cocok 🙏 {{link}}"
+   }
+  ]
+ },
+ {
+  "id": "klinik-hewan-petshop",
+  "name": "Klinik hewan & pet shop",
+  "link": "https://teraweb.id/demo/klinik-hewan-petshop/",
+  "sap": "Kak",
+  "note": "Demo ini gabungan klinik dan pet shop. Untuk pet shop murni pakai versi \"Pet shop saja\".",
+  "keywords": [
+   "dokter hewan {{kota}}",
+   "pet shop dekat {{daerah}}",
+   "pet shop {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Klinik hewan + pet shop",
+    "template": "Halo Kak {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat akun Instagram {{nama}}, foto hewan-hewan yang dirawat dan hasil grooming kucing dan anjingnya lucu-lucu banget 😍\n\nBoleh tanya, Kak: selama ini pemilik hewan tanya layanan, jam buka, dan harga lewat WhatsApp atau Instagram saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus klinik hewan dan pet shop, supaya daftar layanan, produk, jam buka, lokasi, dan kontak bisa dilihat lengkap di satu tempat, dan bisa muncul di Google waktu orang cari \"dokter hewan {{kota}}\" atau \"pet shop dekat {{daerah}}\".\n\nIni contoh tampilannya, Kak: {{link}}\nSilakan dilihat dulu, Kak, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "label": "Pet shop saja",
+    "template": "Halo Kak {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat akun Instagram {{nama}}, display produknya bagus dan foto hewan-hewan yang dijual lucu-lucu banget 😍\n\nBoleh tanya, Kak: selama ini pelanggan tanya produk, stok, dan harga lewat WhatsApp atau Instagram saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus pet shop, supaya daftar produk, layanan grooming, jam buka, lokasi, dan kontak bisa dilihat lengkap di satu tempat, dan bisa muncul di Google waktu orang cari \"pet shop {{kota}}\" atau \"pet shop dekat {{daerah}}\".\n\nIni contoh tampilannya, Kak: {{link}}\nSilakan dilihat dulu, Kak, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Kak {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website klinik hewan/pet shop tadi sudah sempat dibuka belum, Kak?\nKalau mau, daftar layanan atau produk bisa disesuaikan, misalnya grooming, vaksin, atau stok makanan. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Kak. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Instagram/WhatsApp sudah cukup”",
+    "template": "Betul, Kak, Instagram dan WhatsApp memang praktis untuk melayani pelanggan 👍\nWebsite biasanya jadi pelengkapnya: layanan, produk, jam buka, dan lokasi bisa dilihat langsung, dan orang yang cari \"pet shop dekat {{daerah}}\" atau \"dokter hewan {{kota}}\" di Google bisa menemukan usaha Kakak.\nKakak bisa lihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
+   }
+  ]
+ }
+];
+let currentId = DATA[0].id;
+const state = {};
+let pengirim = 'Didik';
+try{ pengirim = localStorage.getItem('tw_pengirim') || 'Didik'; }catch(e){}
+DATA.forEach(n => { state[n.id] = { panggil:'[Nama]', nama:'[nama usaha]', kota:'[kota]', daerah:'[daerah]', link:n.link }; });
+const tabList = document.getElementById('tabList');
+const mobileSelect = document.getElementById('mobileSelect');
+const content = document.getElementById('content');
+const esc = s => s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+DATA.forEach((n,i) => {
+  const li = document.createElement('li'); li.className = 'tab-item';
+  const b = document.createElement('button');
+  b.className = 'tab-btn' + (n.id===currentId ? ' active' : ''); b.dataset.id = n.id;
+  b.innerHTML = `<span class="tab-num mono">${String(i+1).padStart(2,'0')}</span>${n.name}`;
+  b.addEventListener('click', () => selectNiche(n.id));
+  li.appendChild(b); tabList.appendChild(li);
+  const o = document.createElement('option'); o.value = n.id; o.textContent = n.name; mobileSelect.appendChild(o);
+});
+mobileSelect.addEventListener('change', e => selectNiche(e.target.value));
+
+function fill(t, s){
+  return t.replaceAll('{{pengirim}}', pengirim||'[nama pengirim]').replaceAll('{{panggil}}', s.panggil||'[Nama]').replaceAll('{{nama}}', s.nama||'[nama usaha]').replaceAll('{{kota}}', s.kota||'[kota]')
+          .replaceAll('{{daerah}}', s.daerah||'[daerah]').replaceAll('{{link}}', (s.link||'').trim()||'[link demo]');
+}
+function autoGrow(el){ el.style.height='auto'; el.style.height=(el.scrollHeight+3)+'px'; }
+function selectNiche(id){
+  currentId = id;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.id===id));
+  mobileSelect.value = id; render();
+}
+function copyText(text, btn){
+  const done = () => { const o = btn.textContent; btn.textContent='Disalin ✓'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent=o; btn.classList.remove('copied'); },1600); };
+  const fb = () => { const ta=document.createElement('textarea'); ta.value=text; ta.style.cssText='position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} document.body.removeChild(ta); };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(fb); } else fb();
+}
+function render(){
+  const n = DATA.find(x => x.id===currentId), s = state[n.id];
+  const usesDaerah = JSON.stringify(n).includes('{{daerah}}');
+  content.innerHTML = `
+    <div class="niche-title">${n.name}</div>
+    <div class="niche-sub">Demo, keyword pencarian &amp; draft pesan outreach &middot; sapaan: ${n.sap}</div>
+    ${n.note ? `<div class="note">${esc(n.note)}</div>` : ''}
+    <div class="block">
+      <div class="block-label"><span>Isian</span></div>
+      <div class="fields">
+        <div class="field"><label for="fPanggil">Nama calon klien (nama panggilan)</label><input type="text" id="fPanggil" value="${esc(s.panggil)}"></div>
+        <div class="field"><label for="fNama">Nama usaha target</label><input type="text" id="fNama" value="${esc(s.nama)}"></div>
+        <div class="field"><label for="fKota">Kota</label><input type="text" id="fKota" value="${esc(s.kota)}"></div>
+        ${usesDaerah ? `<div class="field"><label for="fDaerah">Daerah (untuk "dekat ...")</label><input type="text" id="fDaerah" value="${esc(s.daerah)}"></div>` : ''}
+        <div class="field" style="grid-column:1/-1"><label for="fLink">Link demo</label>
+          <div class="demo-row"><input type="text" id="fLink" value="${esc(s.link)}"><button class="copy-btn" id="copyLink">Copy link</button><a class="open-btn" id="openLink" href="${esc(s.link)}" target="_blank" rel="noopener">Buka demo ↗</a></div></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-label"><span>Keyword Pencarian</span><button class="kw-copy" id="copyAllKw">Copy semua</button></div>
+      <div class="kw-list" id="kwList"></div>
+    </div>
+    <div class="hint">Placeholder lain dalam kurung siku (misal hal spesifik yang dipuji) diedit langsung di kotak pesan.</div>
+    <div class="msg-grid" id="msgGrid"></div>`;
+  const kwList = document.getElementById('kwList');
+  const kws = () => n.keywords.map(k => fill(k, state[n.id]));
+  const drawKw = () => { kwList.innerHTML=''; kws().forEach(k => {
+    const c=document.createElement('div'); c.className='kw-chip'; c.innerHTML=`<span class="mono">${esc(k)}</span>`;
+    const b=document.createElement('button'); b.className='kw-copy'; b.textContent='Copy'; b.addEventListener('click',()=>copyText(k,b));
+    c.appendChild(b); kwList.appendChild(c); }); };
+  drawKw();
+  document.getElementById('copyAllKw').addEventListener('click', e => copyText(kws().join('\n'), e.target));
+  const grid = document.getElementById('msgGrid');
+  let lastGroup='';
+  n.variants.forEach(v => {
+    if(v.group!==lastGroup){ lastGroup=v.group; const h=document.createElement('div'); h.className='group-head'; h.textContent=v.group; grid.appendChild(h); }
+    const card = document.createElement('div'); card.className='msg-card';
+    card.innerHTML = `<div class="msg-head"><div class="msg-label">${v.label}</div><div class="msg-head-actions"><button class="reset-btn">Reset ke template</button><button class="copy-btn">Copy Pesan</button></div></div><textarea class="msg-preview"></textarea>`;
+    const ta = card.querySelector('.msg-preview'); let dirty=false;
+    const upd = () => { if(!dirty) ta.value = fill(v.template, state[n.id]); autoGrow(ta); };
+    ta.addEventListener('input', () => { dirty=true; autoGrow(ta); });
+    card.querySelector('.reset-btn').addEventListener('click', () => { dirty=false; upd(); });
+    card.querySelector('.copy-btn').addEventListener('click', e => copyText(ta.value, e.target));
+    grid.appendChild(card); upd(); card._update = upd;
+  });
+  const ids = {panggil:'fPanggil', nama:'fNama', kota:'fKota', daerah:'fDaerah', link:'fLink'};
+  Object.entries(ids).filter(([k,id]) => document.getElementById(id)).forEach(([k,id]) => document.getElementById(id).addEventListener('input', e => {
+    state[n.id][k] = e.target.value;
+    if(k==='link') document.getElementById('openLink').href = e.target.value.trim() || '#';
+    drawKw(); document.querySelectorAll('.msg-card').forEach(c => c._update());
+  }));
+  document.getElementById('copyLink').addEventListener('click', e => copyText(state[n.id].link, e.target));
+}
+render();
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>document.querySelectorAll('.msg-preview').forEach(autoGrow)); }
+
+const fPeng = document.getElementById('fPengirim'), fPengM = document.getElementById('fPengirimMobile');
+fPeng.value = fPengM.value = pengirim;
+function onPengirim(v){
+  pengirim = v; fPeng.value = v; fPengM.value = v;
+  try{ localStorage.setItem('tw_pengirim', v); }catch(e){}
+  document.querySelectorAll('.msg-card').forEach(c => c._update && c._update());
+}
+fPeng.addEventListener('input', e => onPengirim(e.target.value));
+fPengM.addEventListener('input', e => onPengirim(e.target.value));
+
+</script>
+</body>
+</html>
