@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Toolkit Outreach — 13 Niche TeraWeb</title>
+<title>Toolkit Outreach — 14 Niche TeraWeb</title>
 <style>
 
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
@@ -147,7 +147,7 @@
   <aside class="sidebar">
     <div class="sidebar-head">
       <h1>Toolkit Outreach</h1>
-      <p>13 niche TeraWeb &middot; demo &amp; pesan</p>
+      <p>14 niche TeraWeb &middot; demo &amp; pesan</p>
     </div>
     <div class="sidebar-me">
       <label for="fPengirim">Nama pengirim (kamu)</label>
@@ -171,6 +171,7 @@ const DATA = [
   "id": "fotografer-wedding",
   "name": "Fotografer wedding",
   "link": "https://teraweb.id/demo/fotografer-wedding",
+  "link2": "",
   "sap": "Kak",
   "note": "",
   "keywords": [
@@ -203,6 +204,7 @@ const DATA = [
   "id": "wedding-organizer",
   "name": "Wedding organizer",
   "link": "https://teraweb.id/demo/wedding-organizer-1/",
+  "link2": "",
   "sap": "Kak",
   "note": "",
   "keywords": [
@@ -235,6 +237,7 @@ const DATA = [
   "id": "catering",
   "name": "Catering",
   "link": "https://teraweb.id/demo/catering-1/",
+  "link2": "",
   "sap": "Kak",
   "note": "",
   "keywords": [
@@ -266,9 +269,10 @@ const DATA = [
  {
   "id": "agen-properti",
   "name": "Agen properti independen",
-  "link": "https://teraweb.id/demo/kontraktor-arsitek-1/",
+  "link": "https://teraweb.id/demo/agen-properti-1/",
+  "link2": "https://teraweb.id/demo/agen-properti-2/",
   "sap": "Kak",
-  "note": "Link demo ini masih niche kontraktor-arsitek. Ganti dengan demo agen properti kalau sudah ada, supaya calon klien tidak bingung.",
+  "note": "Ada 2 demo agen properti, keduanya otomatis dicantumkan di pesan. Kosongkan Link demo 2 kalau hanya mau mengirim satu contoh.",
   "keywords": [
    "agen properti {{kota}}"
   ],
@@ -299,6 +303,7 @@ const DATA = [
   "id": "notaris-ppat",
   "name": "Notaris / PPAT",
   "link": "https://teraweb.id/demo/notaris-ppat-1/",
+  "link2": "",
   "sap": "Pak/Bu",
   "note": "Sumber observasi di pesan ini Google Maps. Pakai hanya kalau memang dari sana kamu menemukan targetnya. Hindari klaim promosi sesuai kode etik.",
   "keywords": [
@@ -332,6 +337,7 @@ const DATA = [
   "id": "travel-umrah",
   "name": "Travel umrah",
   "link": "https://teraweb.id/demo/travel-umroh-1/",
+  "link2": "",
   "sap": "Pak/Bu",
   "note": "Pilih target yang punya izin resmi (PPIU). Hapus \"informasi izin resmi\" kalau demo tidak punya bagian itu.",
   "keywords": [
@@ -364,6 +370,7 @@ const DATA = [
   "id": "klinik-gigi",
   "name": "Klinik / dokter gigi",
   "link": "https://teraweb.id/demo/klinik-gigi-1/",
+  "link2": "",
   "sap": "Dok",
   "note": "",
   "keywords": [
@@ -396,6 +403,7 @@ const DATA = [
   "id": "rental-mobil",
   "name": "Rental mobil",
   "link": "https://teraweb.id/demo/rental-mobil/",
+  "link2": "",
   "sap": "Kak",
   "note": "",
   "keywords": [
@@ -428,6 +436,7 @@ const DATA = [
   "id": "klinik-kecantikan",
   "name": "Klinik kecantikan",
   "link": "https://teraweb.id/demo/klinik-kecantikan-1/",
+  "link2": "",
   "sap": "Kak",
   "note": "",
   "keywords": [
@@ -460,6 +469,7 @@ const DATA = [
   "id": "barbershop",
   "name": "Barbershop",
   "link": "https://teraweb.id/demo/barbershop/",
+  "link2": "",
   "sap": "Bang",
   "note": "",
   "keywords": [
@@ -493,6 +503,7 @@ const DATA = [
   "id": "cuci-karpet",
   "name": "Jasa cuci karpet",
   "link": "https://teraweb.id/demo/cuci-karpet/",
+  "link2": "",
   "sap": "Kak",
   "note": "",
   "keywords": [
@@ -525,6 +536,7 @@ const DATA = [
   "id": "tk-paud",
   "name": "Sekolah TK & PAUD",
   "link": "https://teraweb.id/demo/tk-paud/",
+  "link2": "",
   "sap": "Bapak/Ibu",
   "note": "Foto anak: pastikan yang dipuji memang dipublikasikan sekolah sendiri.",
   "keywords": [
@@ -558,6 +570,7 @@ const DATA = [
   "id": "klinik-hewan-petshop",
   "name": "Klinik hewan & pet shop",
   "link": "https://teraweb.id/demo/klinik-hewan-petshop/",
+  "link2": "",
   "sap": "Kak",
   "note": "Demo ini gabungan klinik dan pet shop. Untuk pet shop murni pakai versi \"Pet shop saja\".",
   "keywords": [
@@ -592,13 +605,48 @@ const DATA = [
     "template": "Betul, Kak, Instagram dan WhatsApp memang praktis untuk melayani pelanggan 👍\nWebsite biasanya jadi pelengkapnya: layanan, produk, jam buka, dan lokasi bisa dilihat langsung, dan orang yang cari \"pet shop dekat {{daerah}}\" atau \"dokter hewan {{kota}}\" di Google bisa menemukan usaha Kakak.\nKakak bisa lihat dulu contohnya, siapa tahu cocok 😊 {{link}}"
    }
   ]
+ },
+ {
+  "id": "kontraktor-arsitek",
+  "name": "Kontraktor & arsitek",
+  "link": "https://teraweb.id/demo/kontraktor-arsitek-1/",
+  "link2": "",
+  "sap": "Pak/Bu",
+  "note": "Pastikan demo punya bagian portofolio proyek. Untuk studio arsitek atau interior yang muda dan aktif di Instagram, ganti sapaan ke \"Kak\".",
+  "keywords": [
+   "kontraktor {{kota}}",
+   "jasa renovasi rumah {{kota}}",
+   "arsitek {{kota}}"
+  ],
+  "variants": [
+   {
+    "label": "Pesan pembuka",
+    "template": "Halo Pak/Bu {{panggil}}, selamat siang 👋\nSaya {{pengirim}} dari TeraWeb. Tadi saya lihat akun Instagram {{nama}}, [sebut satu proyek spesifik, misal renovasi rumah di perumahan tertentu / desain ruang tamunya / progres pembangunan rumah dua lantainya] hasilnya bagus banget 😍\n\nBoleh tanya, Pak/Bu: selama ini calon klien melihat proyek-proyek Bapak/Ibu lewat Instagram dan rekomendasi saja ya, atau ada juga yang cari lewat Google?\n\nKebetulan saya bikin website khusus kontraktor dan arsitek, supaya layanan, portofolio proyek, dan kontak untuk konsultasi bisa dilihat lengkap di satu tempat, dan bisa muncul di Google waktu orang cari \"kontraktor {{kota}}\", \"jasa renovasi rumah {{kota}}\", atau \"arsitek {{kota}}\".\n\nIni contoh tampilannya, Pak/Bu: {{link}}\nSilakan dilihat dulu, Pak/Bu, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏",
+    "group": "1. Pembuka"
+   },
+   {
+    "group": "2. Follow-up kalau belum dibalas (1-2 hari kemudian)",
+    "label": "Follow-up",
+    "template": "Halo Pak/Bu {{panggil}}, mohon maaf mengganggu lagi 🙏\nCuma mau memastikan link demo website kontraktor/arsitek tadi sudah sempat dibuka belum, Pak/Bu?\nKalau mau, bagian layanan dan portofolio proyek bisa disesuaikan, misalnya renovasi rumah, bangun baru, atau desain arsitek. Harganya sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb."
+   },
+   {
+    "group": "3. Kalau mereka tanya harga",
+    "label": "Jawaban harga",
+    "template": "Untuk website 4 halaman (Beranda, Layanan, Tentang Kami, Kontak), investasinya Rp750.000 ya, Pak/Bu. Sudah termasuk [isi paket yang dikonfirmasi]. Sekali bayar, tanpa biaya perpanjangan tahunan ke TeraWeb.\nPengerjaannya sekitar 3-5 hari kerja setelah materi lengkap.\nKalau berkenan, saya kirimkan rincian paketnya dulu ya 😊"
+   },
+   {
+    "group": "4. Kalau ada keberatan",
+    "label": "“Proyek sudah cukup dari rekomendasi”",
+    "template": "Betul, Pak/Bu, rekomendasi memang sumber proyek yang paling kuat 👍\nTapi calon klien yang direkomendasikan pun biasanya tetap mengecek Google dan Instagram dulu, dan di website mereka bisa langsung lihat layanan, portofolio proyek, dan cara menghubungi untuk konsultasi.\nSilakan dilihat dulu contohnya, siapa tahu cocok 🙏 {{link}}"
+   }
+  ]
  }
 ];
 let currentId = DATA[0].id;
 const state = {};
 let pengirim = 'Didik';
 try{ pengirim = localStorage.getItem('tw_pengirim') || 'Didik'; }catch(e){}
-DATA.forEach(n => { state[n.id] = { panggil:'[Nama]', nama:'[nama usaha]', kota:'[kota]', daerah:'[daerah]', link:n.link }; });
+DATA.forEach(n => { state[n.id] = { panggil:'[Nama]', nama:'[nama usaha]', kota:'[kota]', daerah:'[daerah]', link:n.link, link2:n.link2||'' }; });
 const tabList = document.getElementById('tabList');
 const mobileSelect = document.getElementById('mobileSelect');
 const content = document.getElementById('content');
@@ -616,8 +664,11 @@ DATA.forEach((n,i) => {
 mobileSelect.addEventListener('change', e => selectNiche(e.target.value));
 
 function fill(t, s){
+  const links=[s.link,s.link2].map(x=>(x||'').trim()).filter(Boolean);
+  if(links.length>1) t=t.replace(/(:|😊|🙏) \{\{link\}\}/g,'$1\n{{link}}');
+  if(links.length>1) t=t.replaceAll('Ini contoh tampilannya','Ini '+links.length+' contoh tampilannya');
   return t.replaceAll('{{pengirim}}', pengirim||'[nama pengirim]').replaceAll('{{panggil}}', s.panggil||'[Nama]').replaceAll('{{nama}}', s.nama||'[nama usaha]').replaceAll('{{kota}}', s.kota||'[kota]')
-          .replaceAll('{{daerah}}', s.daerah||'[daerah]').replaceAll('{{link}}', (s.link||'').trim()||'[link demo]');
+          .replaceAll('{{daerah}}', s.daerah||'[daerah]').replaceAll('{{link}}', links.join('\n')||'[link demo]');
 }
 function autoGrow(el){ el.style.height='auto'; el.style.height=(el.scrollHeight+3)+'px'; }
 function selectNiche(id){
@@ -648,6 +699,8 @@ function render(){
         ${usesDaerah ? `<div class="field"><label for="fDaerah">Daerah (untuk "dekat ...")</label><input type="text" id="fDaerah" value="${esc(s.daerah)}"></div>` : ''}
         <div class="field" style="grid-column:1/-1"><label for="fLink">Link demo</label>
           <div class="demo-row"><input type="text" id="fLink" value="${esc(s.link)}"><button class="copy-btn" id="copyLink">Copy link</button><a class="open-btn" id="openLink" href="${esc(s.link)}" target="_blank" rel="noopener">Buka demo ↗</a></div></div>
+        <div class="field" style="grid-column:1/-1"><label for="fLink2">Link demo 2 (opsional)</label>
+          <div class="demo-row"><input type="text" id="fLink2" value="${esc(s.link2)}"><a class="open-btn" id="openLink2" href="${esc(s.link2)}" target="_blank" rel="noopener">Buka demo ↗</a></div></div>
       </div>
     </div>
     <div class="block">
@@ -677,10 +730,11 @@ function render(){
     card.querySelector('.copy-btn').addEventListener('click', e => copyText(ta.value, e.target));
     grid.appendChild(card); upd(); card._update = upd;
   });
-  const ids = {panggil:'fPanggil', nama:'fNama', kota:'fKota', daerah:'fDaerah', link:'fLink'};
+  const ids = {panggil:'fPanggil', nama:'fNama', kota:'fKota', daerah:'fDaerah', link:'fLink', link2:'fLink2'};
   Object.entries(ids).filter(([k,id]) => document.getElementById(id)).forEach(([k,id]) => document.getElementById(id).addEventListener('input', e => {
     state[n.id][k] = e.target.value;
     if(k==='link') document.getElementById('openLink').href = e.target.value.trim() || '#';
+    if(k==='link2') document.getElementById('openLink2').href = e.target.value.trim() || '#';
     drawKw(); document.querySelectorAll('.msg-card').forEach(c => c._update());
   }));
   document.getElementById('copyLink').addEventListener('click', e => copyText(state[n.id].link, e.target));
