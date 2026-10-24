@@ -64,7 +64,7 @@ body {
   line-height: 1.6;
   -webkit-text-size-adjust: 100%;
 }
-.wrap { max-width: 44rem; margin: 0 auto; padding: 2rem 1.1rem 4rem; }
+.wrap { max-width: 44rem; margin: 0 auto; padding: 2rem 1.1rem 6rem; }
 
 header h1 {
   font-family: var(--font-head);
@@ -167,6 +167,40 @@ header p { margin: 0; color: var(--muted); max-width: 36rem; }
 }
 .sets button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
 
+.rest {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 20;
+  background: var(--surface);
+  box-shadow: 0 -3px 14px rgba(0, 0, 0, 0.12);
+  padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+}
+.rest.done { background: var(--accent-soft); }
+.rest-bar { position: absolute; left: 0; right: 0; top: 0; height: 0.28rem; background: var(--line); }
+.rest-bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s linear; }
+.rest-inner {
+  max-width: 44rem; margin: 0 auto;
+  display: flex; align-items: center; gap: 0.45rem;
+}
+.rest-time {
+  flex: 1;
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 1.7rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.rest-opt, .rest-go {
+  font: inherit; font-size: 0.85rem; font-weight: 600;
+  min-height: 2.75rem; padding: 0 0.7rem;
+  border-radius: 0.7rem; cursor: pointer;
+}
+.rest-opt { border: 2px solid var(--line); background: transparent; color: var(--ink); }
+.rest-opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.rest-go { border: 0; background: var(--accent); color: var(--on-accent); font-size: 0.95rem; font-weight: 700; padding: 0 1.1rem; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
 section.guide { margin-top: 2.4rem; }
 section.guide h2 {
   font-family: var(--font-head);
@@ -199,7 +233,7 @@ noscript { display: block; padding: 1rem; background: var(--surface); border-rad
   .ex .muscle, .ex .why, .ex .dose { margin-left: 0; }
 }
 @media print {
-  .switch, .progress, .sets { display: none; }
+  .switch, .progress, .sets, .rest { display: none; }
   .ex { break-inside: avoid; }
   html, body { background: #fff; }
 }
@@ -235,6 +269,17 @@ noscript { display: block; padding: 1rem; background: var(--surface); border-rad
 
   <ol class="list" id="list"></ol>
   <noscript>Aktifkan JavaScript untuk melihat daftar gerakan dan menandai set.</noscript>
+
+  <div class="rest" id="rest" role="region" aria-label="Timer istirahat">
+    <div class="rest-bar" aria-hidden="true"><i id="rest-fill"></i></div>
+    <div class="rest-inner">
+      <output class="rest-time" id="rest-time">01:30</output>
+      <button type="button" class="rest-opt" id="rest-dur" aria-label="Durasi istirahat, ketuk untuk ganti">90 dtk</button>
+      <button type="button" class="rest-opt" id="rest-auto" aria-pressed="true" aria-label="Mulai otomatis saat set ditandai selesai">Auto</button>
+      <button type="button" class="rest-go" id="rest-go">Mulai</button>
+    </div>
+    <span class="sr" id="rest-status" aria-live="polite"></span>
+  </div>
 
   <section class="guide" aria-labelledby="tempo-h">
     <h2 id="tempo-h">Tempo 3-1-1 untuk beban 4 kg</h2>
@@ -290,7 +335,7 @@ noscript { display: block; padding: 1rem; background: var(--surface); border-rad
   };
 
   var KEY = "latihan-dumbbell-v1";
-  var state = { day: "A", done: { A: {}, B: {} } };
+  var state = { day: "A", done: { A: {}, B: {} }, rest: 90, auto: true };
 
   function load() {
     try {
@@ -299,6 +344,8 @@ noscript { display: block; padding: 1rem; background: var(--surface); border-rad
         var p = JSON.parse(raw);
         if (p && p.done) { state.done = { A: p.done.A || {}, B: p.done.B || {} }; }
         if (p && (p.day === "A" || p.day === "B")) { state.day = p.day; }
+        if (p && (p.rest === 60 || p.rest === 75 || p.rest === 90)) { state.rest = p.rest; }
+        if (p && typeof p.auto === "boolean") { state.auto = p.auto; }
       }
     } catch (e) {}
   }
@@ -352,6 +399,7 @@ noscript { display: block; padding: 1rem; background: var(--surface); border-rad
     state.done[state.day][i] = arr;
     save();
     render();
+    if (arr[s] && state.auto) { restStart(); }
     var again = list.querySelector('button[data-i="' + i + '"][data-s="' + s + '"]');
     if (again) again.focus();
   });
@@ -370,8 +418,124 @@ noscript { display: block; padding: 1rem; background: var(--surface); border-rad
     render();
   });
 
+  /* ---------- Timer istirahat ---------- */
+  var box = document.getElementById("rest");
+  var tTime = document.getElementById("rest-time");
+  var tStatus = document.getElementById("rest-status");
+  var tFill = document.getElementById("rest-fill");
+  var tGo = document.getElementById("rest-go");
+  var tDur = document.getElementById("rest-dur");
+  var tAuto = document.getElementById("rest-auto");
+  var DURS = [60, 75, 90];
+  var rest = { end: 0, id: null, ctx: null, running: false };
+
+  function fmt(sec) {
+    var m = Math.floor(sec / 60), s = sec % 60;
+    return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function unlockAudio() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!rest.ctx) { rest.ctx = new AC(); }
+      if (rest.ctx.state === "suspended") { rest.ctx.resume(); }
+    } catch (e) {}
+  }
+
+  function beep() {
+    try {
+      if (rest.ctx) {
+        [0, 0.28, 0.56].forEach(function (delay) {
+          var o = rest.ctx.createOscillator();
+          var g = rest.ctx.createGain();
+          o.type = "sine";
+          o.frequency.value = 880;
+          g.gain.setValueAtTime(0.0001, rest.ctx.currentTime + delay);
+          g.gain.exponentialRampToValueAtTime(0.35, rest.ctx.currentTime + delay + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.0001, rest.ctx.currentTime + delay + 0.22);
+          o.connect(g);
+          g.connect(rest.ctx.destination);
+          o.start(rest.ctx.currentTime + delay);
+          o.stop(rest.ctx.currentTime + delay + 0.25);
+        });
+      }
+    } catch (e) {}
+    try { if (navigator.vibrate) { navigator.vibrate([250, 100, 250, 100, 250]); } } catch (e) {}
+  }
+
+  function paintOpts() {
+    tDur.textContent = state.rest + " dtk";
+    tAuto.setAttribute("aria-pressed", state.auto ? "true" : "false");
+  }
+
+  function restIdle() {
+    clearInterval(rest.id);
+    rest.running = false;
+    box.classList.remove("done");
+    tTime.textContent = fmt(state.rest);
+    tFill.style.width = "0%";
+    tStatus.textContent = "";
+    tGo.textContent = "Mulai";
+  }
+
+  function restTick() {
+    var left = Math.ceil((rest.end - Date.now()) / 1000);
+    if (left <= 0) { restFinish(); return; }
+    tTime.textContent = fmt(left);
+    tFill.style.width = (100 - (left / state.rest) * 100) + "%";
+  }
+
+  function restStart() {
+    unlockAudio();
+    clearInterval(rest.id);
+    rest.running = true;
+    rest.end = Date.now() + state.rest * 1000;
+    box.classList.remove("done");
+    tStatus.textContent = "Istirahat dimulai";
+    tGo.textContent = "Berhenti";
+    restTick();
+    rest.id = setInterval(restTick, 250);
+  }
+
+  function restFinish() {
+    clearInterval(rest.id);
+    rest.running = false;
+    tTime.textContent = "00:00";
+    tFill.style.width = "100%";
+    box.classList.add("done");
+    tStatus.textContent = "Istirahat selesai, lanjut set berikutnya";
+    tGo.textContent = "Lagi";
+    beep();
+  }
+
+  tGo.addEventListener("click", function () {
+    if (rest.running) { restIdle(); } else { restStart(); }
+  });
+
+  tDur.addEventListener("click", function () {
+    var i = DURS.indexOf(state.rest);
+    state.rest = DURS[(i + 1) % DURS.length];
+    save();
+    paintOpts();
+    restIdle();
+  });
+
+  tAuto.addEventListener("click", function () {
+    state.auto = !state.auto;
+    save();
+    paintOpts();
+  });
+
+  /* Hitungan tetap akurat setelah layar HP sempat mati atau tab di latar belakang */
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && rest.running) { restTick(); }
+  });
+
   load();
   render();
+  paintOpts();
+  restIdle();
 })();
 </script>
 </body>
