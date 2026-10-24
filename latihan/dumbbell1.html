@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dumbbell 4kg Workout Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-24 select-none">
+
+  <!-- Top App Bar & Session Control -->
+  <header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur border-b border-slate-800 shadow-lg">
+    <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div>
+        <h1 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-dumbbell text-indigo-400"></i> Dumbbell 4kg Tracker
+        </h1>
+        <p class="text-xs text-slate-400">Pola Rotasi 2 Hari Sekali</p>
+      </div>
+      
+      <!-- Session Timer Widget -->
+      <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+        <i class="fa-solid fa-stopwatch text-indigo-400 text-sm"></i>
+        <span id="session-timer-display" class="font-mono text-sm font-semibold tracking-wider text-slate-200">00:00</span>
+        <button id="session-toggle-btn" onclick="toggleSessionTimer()" class="ml-1 text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded transition-colors">
+          Start
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-xl mx-auto px-4 pt-4">
+
+    <!-- Progress Overview Bar -->
+    <div class="bg-slate-900 rounded-xl p-4 border border-slate-800 mb-4 shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400" id="workout-type-title">Latihan A Progress</span>
+        <span class="text-xs font-bold text-indigo-400" id="progress-percentage">0% Selesai</span>
+      </div>
+      <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+        <div id="progress-bar-fill" class="bg-indigo-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Workout Selector Tabs -->
+    <div class="grid grid-cols-2 gap-2 mb-5">
+      <button id="tab-btn-A" onclick="switchWorkout('A')" class="py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all border border-indigo-500/50 bg-indigo-950/40 text-indigo-300">
+        <i class="fa-solid fa-bolt"></i> Latihan A (Push & Legs)
+      </button>
+      <button id="tab-btn-B" onclick="switchWorkout('B')" class="py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all border border-slate-800 bg-slate-900 text-slate-400 hover:bg-slate-800">
+        <i class="fa-solid fa-shield-halved"></i> Latihan B (Pull & Hinge)
+      </button>
+    </div>
+
+    <!-- Workout Exercises List Container -->
+    <div id="exercises-container" class="space-y-4">
+      <!-- Dynamic Exercises will be injected here via JavaScript -->
+    </div>
+
+    <!-- Workout Guidelines & Tempo Info -->
+    <div class="mt-8 bg-slate-900/60 rounded-xl p-4 border border-slate-800/80 text-xs text-slate-300 space-y-2">
+      <h3 class="font-semibold text-amber-400 flex items-center gap-1.5 text-sm">
+        <i class="fa-solid fa-lightbulb"></i> Kunci Efektivitas Beban 4kg
+      </h3>
+      <ul class="list-disc list-inside space-y-1 text-slate-400">
+        <li><strong class="text-slate-200">Tempo 3-1-1:</strong> Turunkan beban dalam 3 detik, tahan 1 detik, angkat 1 detik.</li>
+        <li><strong class="text-slate-200">Mind-Muscle Connection:</strong> Rasakan otot target berkontraksi maksimal di tiap repetisi.</li>
+        <li><strong class="text-slate-200">Istirahat Cukup:</strong> Gunakan timer istirahat 60–90 detik untuk menjaga respon metabolisme.</li>
+      </ul>
+    </div>
+
+    <!-- Reset Data Control -->
+    <div class="mt-6 text-center">
+      <button onclick="resetCurrentWorkout()" class="text-xs text-slate-500 hover:text-slate-300 underline transition-colors">
+        Reset Seluruh Progress <span id="reset-workout-name">Latihan A</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Sticky Bottom Rest Timer Floating Control -->
+  <div id="rest-timer-bar" class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 border-t border-slate-800 p-3 shadow-2xl transition-transform transform translate-y-full">
+    <div class="max-w-xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="relative w-10 h-10 flex items-center justify-center bg-slate-800 rounded-full border border-indigo-500/30">
+          <i class="fa-solid fa-hourglass-half text-indigo-400 animate-pulse"></i>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400">Waktu Istirahat</p>
+          <span id="rest-timer-display" class="font-mono text-xl font-bold text-indigo-400">01:00</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="addRestTime(15)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg border border-slate-700 font-medium">
+          +15s
+        </button>
+        <button onclick="skipRestTimer()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition-colors">
+          Skip
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio elements for Timer Alerts (Web Audio API synth fallback integrated) -->
+
+  <script>
+    // --- WORKOUT DATA DEFINITION ---
+    const workoutsData = {
+      A: {
+        title: "Latihan A",
+        subtitle: "Paha Depan, Dada, Bahu, & Tricep",
+        exercises: [
+          {
+            id: "a1",
+            name: "Goblet Squat",
+            target: "Paha Depan & Bokong",
+            badge: "Otot Besar",
+            sets: 4,
+            reps: "15–20 Reps",
+            rest: 90,
+            desc: "Pegang 1 dumbbell secara vertikal di dada. Turunkan paha sejajar lantai."
+          },
+          {
+            id: "a2",
+            name: "Dumbbell Lunges",
+            target: "Paha & Keseimbangan",
+            badge: "Kaki",
+            sets: 3,
+            reps: "10–12 Reps / Kaki",
+            rest: 60,
+            desc: "Melangkah ke depan bergantian. Jaga badan tetap tegap."
+          },
+          {
+            id: "a3",
+            name: "Dumbbell Floor Press",
+            target: "Dada & Tricep",
+            badge: "Dada",
+            sets: 4,
+            reps: "12–15 Reps",
+            rest: 90,
+            desc: "Berbaring di lantai, dorong dumbbell tegak lurus ke atas dada."
+          },
+          {
+            id: "a4",
+            name: "Dumbbell Shoulder Press",
+            target: "Bahu Depan / Atas",
+            badge: "Bahu",
+            sets: 3,
+            reps: "12–15 Reps",
+            rest: 60,
+            desc: "Duduk/berdiri tegap, dorong dumbbell dari samping telinga ke atas."
+          },
+          {
+            id: "a5",
+            name: "Side Lateral Raise",
+            target: "Bahu Samping",
+            badge: "Bahu",
+            sets: 3,
+            reps: "12–15 Reps",
+            rest: 60,
+            desc: "Angkat dumbbell ke samping hingga sejajar bahu, siku sedikit ditekuk."
+          },
+          {
+            id: "a6",
+            name: "Overhead Tricep Extension",
+            target: "Tricep / Lengan Belakang",
+            badge: "Tricep",
+            sets: 3,
+            reps: "12–15 Reps",
+            rest: 60,
+            desc: "Pegang 1 dumbbell di belakang kepala dengan kedua tangan, dorong ke atas."
+          }
+        ]
+      },
+      B: {
+        title: "Latihan B",
+        subtitle: "Paha Belakang, Punggung, Bahu Belakang, Bicep, & Traps",
+        exercises: [
+          {
+            id: "b1",
+            name: "Romanian Deadlift (RDL)",
+            target: "Paha Belakang & Bokong",
+            badge: "Paha Belakang",
+            sets: 4,
+            reps: "15–20 Reps",
+            rest: 90,
+            desc: "Dorong pinggul ke belakang, turunkan dumbbell di depan tulang kering."
+          },
+          {
+            id: "b2",
+            name: "Bent-Over Dumbbell Row",
+            target: "Punggung Tengah",
+            badge: "Punggung",
+            sets: 4,
+            reps: "12–15 Reps",
+            rest: 90,
+            desc: "Bungkukkan badan 45°, tarik dumbbell ke arah pinggang sambil melempar belikat."
+          },
+          {
+            id: "b3",
+            name: "Dumbbell Pullover",
+            target: "Punggung Samping (Lats) & Dada",
+            badge: "Lats",
+            sets: 3,
+            reps: "12–15 Reps",
+            rest: 60,
+            desc: "Berbaring, angkat 1 dumbbell dari belakang kepala melintasi atas dada."
+          },
+          {
+            id: "b4",
+            name: "Rear Delt Fly",
+            target: "Bahu Belakang & Postur",
+            badge: "Bahu Belakang",
+            sets: 3,
+            reps: "12–15 Reps",
+            rest: 60,
+            desc: "Bungkukkan badan, buka tangan ke samping seperti mengepakkan sayap."
+          },
+          {
+            id: "b5",
+            name: "Hammer Curls",
+            target: "Bicep & Lengan Bawah",
+            badge: "Bicep",
+            sets: 3,
+            reps: "12–15 Reps",
+            rest: 60,
+            desc: "Tekuk siku mengangkat dumbbell dengan posisi telapak tangan saling berhadapan."
+          },
+          {
+            id: "b6",
+            name: "Dumbbell Shrugs",
+            target: "Trapezius / Pundak",
+            badge: "Traps",
+            sets: 3,
+            reps: "15–20 Reps",
+            rest: 60,
+            desc: "Angkat pundak ke arah telinga tanpa menekuk siku."
+          }
+        ]
+      }
+    };
+
+    // --- STATE MANAGEMENT ---
+    let currentWorkoutKey = 'A';
+    let workoutState = JSON.parse(localStorage.getItem('dumbbell_workout_state_v1')) || {
+      A: {},
+      B: {}
+    };
+
+    // Session Timer States
+    let sessionSeconds = parseInt(localStorage.getItem('dumbbell_session_seconds')) || 0;
+    let isSessionRunning = false;
+    let sessionInterval = null;
+
+    // Rest Timer States
+    let restSecondsLeft = 0;
+    let restInterval = null;
+
+    // Web Audio Beep Producer
+    function playBeepSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 880; // A5 note
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.8);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.8);
+      } catch (e) {
+        console.log("Audio play blocked or unsupported");
+      }
+    }
+
+    // --- INITIALIZATION ---
+    window.onload = function() {
+      renderWorkout();
+      updateSessionTimerDisplay();
+    };
+
+    // Save Progress to LocalStorage
+    function saveState() {
+      localStorage.setItem('dumbbell_workout_state_v1', JSON.stringify(workoutState));
+    }
+
+    // --- TAB SWITCHING ---
+    function switchWorkout(key) {
+      currentWorkoutKey = key;
+      
+      const tabA = document.getElementById('tab-btn-A');
+      const tabB = document.getElementById('tab-btn-B');
+      
+      if (key === 'A') {
+        tabA.className = "py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all border border-indigo-500/50 bg-indigo-950/40 text-indigo-300";
+        tabB.className = "py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all border border-slate-800 bg-slate-900 text-slate-400 hover:bg-slate-800";
+      } else {
+        tabB.className = "py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all border border-emerald-500/50 bg-emerald-950/40 text-emerald-300";
+        tabA.className = "py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all border border-slate-800 bg-slate-900 text-slate-400 hover:bg-slate-800";
+      }
+
+      document.getElementById('reset-workout-name').innerText = workoutsData[key].title;
+      renderWorkout();
+    }
+
+    // --- RENDER EXERCISES & PROGRESS ---
+    function renderWorkout() {
+      const data = workoutsData[currentWorkoutKey];
+      const container = document.getElementById('exercises-container');
+      container.innerHTML = '';
+
+      let totalSetsCount = 0;
+      let completedSetsCount = 0;
+
+      document.getElementById('workout-type-title').innerText = `${data.title} (${data.subtitle})`;
+
+      data.exercises.forEach((ex, exIndex) => {
+        totalSetsCount += ex.sets;
+        const exState = workoutState[currentWorkoutKey][ex.id] || [];
+
+        // Exercise Card Container
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 rounded-xl p-4 border border-slate-800 shadow-sm transition-all";
+
+        // Card Header
+        let setsHTML = '';
+        for (let i = 0; i < ex.sets; i++) {
+          const isChecked = exState[i] === true;
+          if (isChecked) completedSetsCount++;
+
+          setsHTML += `
+            <button 
+              onclick="toggleSet('${ex.id}', ${i}, ${ex.rest})"
+              class="flex-1 py-2 rounded-lg font-mono text-xs font-bold transition-all border flex items-center justify-center gap-1.5 ${
+                isChecked 
+                  ? 'bg-indigo-600 border-indigo-500 text-white shadow-sm' 
+                  : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
+              }"
+            >
+              <i class="fa-solid ${isChecked ? 'fa-check' : 'fa-circle-thin'} text-[10px]"></i>
+              Set ${i + 1}
+            </button>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <div>
+              <h3 class="font-bold text-slate-100 text-base">${exIndex + 1}. ${ex.name}</h3>
+              <p class="text-xs text-indigo-400 font-medium">${ex.target}</p>
+            </div>
+            <span class="text-[10px] font-semibold bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">
+              ${ex.badge}
+            </span>
+          </div>
+
+          <p class="text-xs text-slate-400 mb-3 leading-relaxed">${ex.desc}</p>
+
+          <div class="flex items-center justify-between text-xs text-slate-300 bg-slate-950/60 p-2 rounded-lg border border-slate-800/80 mb-3">
+            <span>Target: <strong class="text-white">${ex.reps}</strong></span>
+            <span>Istirahat: <strong class="text-indigo-300">${ex.rest}s</strong></span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            ${setsHTML}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      // Update Overall Progress Bar
+      const percentage = totalSetsCount > 0 ? Math.round((completedSetsCount / totalSetsCount) * 100) : 0;
+      document.getElementById('progress-percentage').innerText = `${percentage}% Selesai (${completedSetsCount}/${totalSetsCount} Set)`;
+      document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
+      
+      if (currentWorkoutKey === 'B') {
+        document.getElementById('progress-bar-fill').className = "bg-emerald-500 h-2.5 rounded-full transition-all duration-300";
+      } else {
+        document.getElementById('progress-bar-fill').className = "bg-indigo-500 h-2.5 rounded-full transition-all duration-300";
+      }
+    }
+
+    // --- TOGGLE SET COMPLETION & START REST TIMER ---
+    function toggleSet(exerciseId, setIndex, restSeconds) {
+      if (!workoutState[currentWorkoutKey][exerciseId]) {
+        workoutState[currentWorkoutKey][exerciseId] = [];
+      }
+
+      const currentState = !!workoutState[currentWorkoutKey][exerciseId][setIndex];
+      workoutState[currentWorkoutKey][exerciseId][setIndex] = !currentState;
+      saveState();
+      renderWorkout();
+
+      // Auto start session timer if not started
+      if (!isSessionRunning && sessionSeconds === 0) {
+        toggleSessionTimer();
+      }
+
+      // If user checked the set (not unchecking), trigger rest timer
+      if (!currentState) {
+        startRestTimer(restSeconds);
+      }
+    }
+
+    // --- SESSION TIMER LOGIC ---
+    function toggleSessionTimer() {
+      const btn = document.getElementById('session-toggle-btn');
+      if (isSessionRunning) {
+        clearInterval(sessionInterval);
+        isSessionRunning = false;
+        btn.innerText = 'Start';
+        btn.className = "ml-1 text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded transition-colors";
+      } else {
+        isSessionRunning = true;
+        btn.innerText = 'Pause';
+        btn.className = "ml-1 text-xs bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded transition-colors";
+        sessionInterval = setInterval(() => {
+          sessionSeconds++;
+          localStorage.setItem('dumbbell_session_seconds', sessionSeconds);
+          updateSessionTimerDisplay();
+        }, 1000);
+      }
+    }
+
+    function updateSessionTimerDisplay() {
+      const mins = Math.floor(sessionSeconds / 60);
+      const secs = sessionSeconds % 60;
+      document.getElementById('session-timer-display').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // --- REST TIMER LOGIC ---
+    function startRestTimer(seconds) {
+      clearInterval(restInterval);
+      restSecondsLeft = seconds;
+      updateRestTimerDisplay();
+
+      const timerBar = document.getElementById('rest-timer-bar');
+      timerBar.classList.remove('translate-y-full');
+
+      restInterval = setInterval(() => {
+        restSecondsLeft--;
+        if (restSecondsLeft <= 0) {
+          clearInterval(restInterval);
+          playBeepSound();
+          hideRestTimer();
+        } else {
+          updateRestTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function addRestTime(seconds) {
+      restSecondsLeft += seconds;
+      updateRestTimerDisplay();
+    }
+
+    function skipRestTimer() {
+      clearInterval(restInterval);
+      hideRestTimer();
+    }
+
+    function hideRestTimer() {
+      const timerBar = document.getElementById('rest-timer-bar');
+      timerBar.classList.add('translate-y-full');
+    }
+
+    function updateRestTimerDisplay() {
+      const mins = Math.floor(restSecondsLeft / 60);
+      const secs = restSecondsLeft % 60;
+      document.getElementById('rest-timer-display').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // --- RESET CURRENT WORKOUT DATA ---
+    function resetCurrentWorkout() {
+      if (confirm(`Reset semua progress ${workoutsData[currentWorkoutKey].title}?`)) {
+        workoutState[currentWorkoutKey] = {};
+        saveState();
+        renderWorkout();
+      }
+    }
+  </script>
+</body>
+</html>

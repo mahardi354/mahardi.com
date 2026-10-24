@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Program Latihan Dumbbell 4 kg: Latihan A dan B</title>
+<meta name="description" content="Program latihan dumbbell 4 kg dibagi dua hari: Latihan A (kaki depan, dada, bahu, tricep) dan Latihan B (paha belakang, punggung, bahu belakang, bicep, traps).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #eef2f5;
+  --surface: #ffffff;
+  --ink: #18262f;
+  --muted: #55656f;
+  --line: #d5dde3;
+  --a: #2c4ba0;
+  --a-soft: #e3e9f7;
+  --b: #9a2c66;
+  --b-soft: #f6e4ed;
+  --accent: var(--a);
+  --accent-soft: var(--a-soft);
+  --on-accent: #ffffff;
+  --font-head: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11181d;
+    --surface: #1b252c;
+    --ink: #e9eff3;
+    --muted: #9fb0bb;
+    --line: #2e3c45;
+    --a: #8fa8f0;
+    --a-soft: #232e4f;
+    --b: #ef8fbd;
+    --b-soft: #4a2237;
+    --on-accent: #11181d;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11181d;
+  --surface: #1b252c;
+  --ink: #e9eff3;
+  --muted: #9fb0bb;
+  --line: #2e3c45;
+  --a: #8fa8f0;
+  --a-soft: #232e4f;
+  --b: #ef8fbd;
+  --b-soft: #4a2237;
+  --on-accent: #11181d;
+}
+body[data-day="B"] { --accent: var(--b); --accent-soft: var(--b-soft); }
+
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 44rem; margin: 0 auto; padding: 2rem 1.1rem 4rem; }
+
+header h1 {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: clamp(2rem, 7vw, 3.1rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.6rem;
+}
+header p { margin: 0; color: var(--muted); max-width: 36rem; }
+
+.switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin: 1.8rem 0 1.2rem;
+}
+.switch button {
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  padding: 0.8rem 1rem;
+  border-radius: 0.9rem;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+.switch button strong {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+.switch button span { display: block; font-size: 0.85rem; color: var(--muted); line-height: 1.35; }
+.switch button[data-day="A"][aria-pressed="true"] { border-color: var(--a); background: var(--a-soft); }
+.switch button[data-day="B"][aria-pressed="true"] { border-color: var(--b); background: var(--b-soft); }
+.switch button[data-day="A"] strong { color: var(--a); }
+.switch button[data-day="B"] strong { color: var(--b); }
+
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.bar { flex: 1; height: 0.5rem; background: var(--line); border-radius: 1rem; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s ease; }
+.reset {
+  font: inherit; font-size: 0.85rem; cursor: pointer;
+  background: none; border: 0; color: var(--muted); text-decoration: underline; padding: 0.3rem;
+}
+
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
+.ex {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--accent);
+  border-radius: 0.9rem;
+  padding: 1rem 1rem 0.9rem;
+}
+.ex-top { display: flex; gap: 0.8rem; align-items: baseline; }
+.ex-n {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--accent);
+  min-width: 1.4rem;
+}
+.ex h2 {
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  line-height: 1.25;
+  margin: 0;
+  font-weight: 700;
+}
+.ex .tag { font-weight: 500; font-size: 0.8rem; color: var(--muted); font-family: var(--font-body); }
+.ex .muscle { margin: 0.4rem 0 0 2.2rem; font-weight: 600; font-size: 0.95rem; }
+.ex .why { margin: 0.1rem 0 0 2.2rem; font-size: 0.92rem; color: var(--muted); }
+.ex .dose { margin: 0.7rem 0 0 2.2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; }
+.dose .chip {
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 2rem;
+}
+.sets { display: flex; gap: 0.4rem; }
+.sets button {
+  width: 2.75rem; height: 2.75rem;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font: inherit; font-weight: 700; cursor: pointer;
+}
+.sets button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+
+section.guide { margin-top: 2.4rem; }
+section.guide h2 {
+  font-family: var(--font-head);
+  font-size: 1.5rem;
+  margin: 0 0 0.4rem;
+  letter-spacing: -0.01em;
+}
+section.guide > p { margin: 0 0 1rem; color: var(--muted); }
+
+.tempo { display: grid; grid-template-columns: 3fr 1fr 1fr; gap: 0.4rem; margin: 0 0 0.6rem; }
+.tempo div {
+  background: var(--accent-soft);
+  border-radius: 0.7rem;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+.tempo b { display: block; font-family: var(--font-head); font-size: 1.6rem; line-height: 1.1; color: var(--accent); }
+.note { font-size: 0.95rem; }
+
+.reasons { display: grid; gap: 0.9rem; margin: 0; padding: 0; list-style: none; }
+.reasons li { background: var(--surface); border: 1px solid var(--line); border-radius: 0.9rem; padding: 0.9rem 1rem; }
+.reasons strong { display: block; font-family: var(--font-head); font-size: 1.05rem; margin-bottom: 0.15rem; }
+.reasons span { color: var(--muted); font-size: 0.95rem; }
+
+footer { margin-top: 2.5rem; font-size: 0.85rem; color: var(--muted); }
+noscript { display: block; padding: 1rem; background: var(--surface); border-radius: 0.8rem; margin-top: 1rem; }
+
+@media (max-width: 30rem) {
+  .ex .muscle, .ex .why, .ex .dose { margin-left: 0; }
+}
+@media print {
+  .switch, .progress, .sets { display: none; }
+  .ex { break-inside: avoid; }
+  html, body { background: #fff; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar > i { transition: none; }
+}
+</style>
+</head>
+<body data-day="A">
+<div class="wrap">
+
+  <header>
+    <h1>Program latihan dumbbell 4 kg</h1>
+    <p>Dua hari latihan yang bergantian. Pilih hari di bawah, lalu tandai tiap set yang sudah selesai.</p>
+  </header>
+
+  <div class="switch" role="group" aria-label="Pilih hari latihan">
+    <button type="button" data-day="A" aria-pressed="true">
+      <strong>Latihan A</strong>
+      <span>Kaki depan, dada, bahu, tricep</span>
+    </button>
+    <button type="button" data-day="B" aria-pressed="false">
+      <strong>Latihan B</strong>
+      <span>Paha belakang, punggung, bahu belakang, bicep, traps</span>
+    </button>
+  </div>
+
+  <div class="progress">
+    <span id="count" aria-live="polite">0 dari 0 set</span>
+    <div class="bar" aria-hidden="true"><i id="fill"></i></div>
+    <button type="button" class="reset" id="reset">Ulangi dari awal</button>
+  </div>
+
+  <ol class="list" id="list"></ol>
+  <noscript>Aktifkan JavaScript untuk melihat daftar gerakan dan menandai set.</noscript>
+
+  <section class="guide" aria-labelledby="tempo-h">
+    <h2 id="tempo-h">Tempo 3-1-1 untuk beban 4 kg</h2>
+    <p>Gerakan lambat membuat dumbbell 4 kg terasa jauh lebih berat bagi otot.</p>
+    <div class="tempo">
+      <div><b>3 detik</b>Turunkan beban pelan-pelan</div>
+      <div><b>1 detik</b>Tahan di bawah</div>
+      <div><b>1 detik</b>Angkat</div>
+    </div>
+    <p class="note">Istirahat 60 sampai 90 detik antar set pada gerakan yang sama.</p>
+  </section>
+
+  <section class="guide" aria-labelledby="why-h">
+    <h2 id="why-h">Kenapa tiga gerakan tambahan ini penting</h2>
+    <ul class="reasons">
+      <li>
+        <strong>Dumbbell Pullover (Latihan B)</strong>
+        <span>Daftar awal belum punya gerakan yang melatih lats, otot punggung samping, secara vertikal. Pullover melatih lats sekaligus memperluas ruang dada, sehingga tubuh atas makin berbentuk V.</span>
+      </li>
+      <li>
+        <strong>Dumbbell RDL (Latihan B)</strong>
+        <span>Squat dan lunges berfokus pada paha depan. Tanpa RDL, paha belakang dan pinggul tidak mendapat tegangan yang seimbang.</span>
+      </li>
+      <li>
+        <strong>Overhead Tricep Extension (Latihan A)</strong>
+        <span>Daftar awal punya 4 variasi bicep curl, tetapi tidak ada gerakan isolasi tricep. Padahal sekitar 60% ukuran lengan atas diisi tricep, bukan bicep.</span>
+      </li>
+    </ul>
+  </section>
+
+  <footer>Program ini bersifat umum. Kalau ada gerakan yang terasa sakit (bukan sekadar pegal), hentikan dan sesuaikan.</footer>
+</div>
+
+<script>
+(function () {
+  var PLAN = {
+    A: [
+      { n: "Goblet Squat", m: "Paha depan dan bokong", w: "Otot terbesar tubuh, memicu respon hormon dan metabolisme tinggi.", s: 4, r: "15–20 rep" },
+      { n: "Dumbbell Lunges", m: "Paha dan keseimbangan", w: "Melatih tiap kaki secara independen agar tidak ada ketimpangan.", s: 3, r: "10–12 rep per kaki" },
+      { n: "Dumbbell Floor Press", m: "Dada dan tricep", w: "Sinyal untuk otot dada dan penekan tubuh bagian atas.", s: 4, r: "12–15 rep" },
+      { n: "Dumbbell Shoulder Press", m: "Bahu depan/atas dan lengan", w: "Sinyal dorong vertikal.", s: 3, r: "12–15 rep" },
+      { n: "Side Lateral Raise", m: "Bahu samping", w: "Membentuk bahu yang lebih lebar dan tegap.", s: 3, r: "12–15 rep" },
+      { n: "Dumbbell Overhead Tricep Extension", tag: "tambahan baru", m: "Tricep / lengan belakang", w: "Melatih kepala panjang tricep yang tidak kena saat curl.", s: 3, r: "12–15 rep" }
+    ],
+    B: [
+      { n: "Dumbbell Romanian Deadlift (RDL)", tag: "tambahan baru", m: "Paha belakang dan pinggul/bokong", w: "Pola hip hinge yang wajib untuk otot paha belakang.", s: 4, r: "15–20 rep" },
+      { n: "Bent-Over Dumbbell Row", m: "Punggung tengah/bawah", w: "Sinyal otot penarik horizontal dan postur tubuh.", s: 4, r: "12–15 rep" },
+      { n: "Dumbbell Pullover", tag: "tambahan baru", m: "Punggung samping (lats) dan otot rusuk", w: "Memperluas dinding dada dan otot punggung samping.", s: 3, r: "12–15 rep" },
+      { n: "Back Lateral / Rear Delt Fly", m: "Bahu belakang dan punggung atas", w: "Mencegah bahu bungkuk ke depan.", s: 3, r: "12–15 rep" },
+      { n: "Hammer Curls", m: "Bicep dan lengan bawah", w: "Melatih bicep sekaligus kekuatan genggaman.", s: 3, r: "12–15 rep" },
+      { n: "Dumbbell Shrugs", m: "Trapezius / pundak", w: "Sinyal otot leher dan pundak bagian atas.", s: 3, r: "15–20 rep" }
+    ]
+  };
+
+  var KEY = "latihan-dumbbell-v1";
+  var state = { day: "A", done: { A: {}, B: {} } };
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) {
+        var p = JSON.parse(raw);
+        if (p && p.done) { state.done = { A: p.done.A || {}, B: p.done.B || {} }; }
+        if (p && (p.day === "A" || p.day === "B")) { state.day = p.day; }
+      }
+    } catch (e) {}
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  var list = document.getElementById("list");
+  var count = document.getElementById("count");
+  var fill = document.getElementById("fill");
+
+  function render() {
+    var day = state.day;
+    document.body.setAttribute("data-day", day);
+    var btns = document.querySelectorAll(".switch button");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-day") === day ? "true" : "false");
+    }
+    list.innerHTML = "";
+    var total = 0, done = 0;
+    PLAN[day].forEach(function (ex, idx) {
+      var li = document.createElement("li");
+      li.className = "ex";
+      var marks = state.done[day][idx] || [];
+      var setsHtml = "";
+      for (var s = 0; s < ex.s; s++) {
+        total++;
+        var on = !!marks[s];
+        if (on) done++;
+        setsHtml += '<button type="button" data-i="' + idx + '" data-s="' + s + '" aria-pressed="' + on + '" aria-label="Set ' + (s + 1) + ' ' + ex.n + '">' + (s + 1) + '</button>';
+      }
+      li.innerHTML =
+        '<div class="ex-top"><span class="ex-n">' + (idx + 1) + '</span>' +
+        '<h2>' + ex.n + (ex.tag ? ' <span class="tag">(' + ex.tag + ')</span>' : '') + '</h2></div>' +
+        '<p class="muscle">' + ex.m + '</p>' +
+        '<p class="why">' + ex.w + '</p>' +
+        '<div class="dose"><span class="chip">' + ex.s + ' set × ' + ex.r + '</span>' +
+        '<div class="sets" role="group" aria-label="Tandai set selesai">' + setsHtml + '</div></div>';
+      list.appendChild(li);
+    });
+    count.textContent = done + " dari " + total + " set";
+    fill.style.width = (total ? (done / total) * 100 : 0) + "%";
+  }
+
+  list.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-i]");
+    if (!b) return;
+    var i = +b.getAttribute("data-i"), s = +b.getAttribute("data-s");
+    var arr = state.done[state.day][i] || [];
+    arr[s] = !arr[s];
+    state.done[state.day][i] = arr;
+    save();
+    render();
+    var again = list.querySelector('button[data-i="' + i + '"][data-s="' + s + '"]');
+    if (again) again.focus();
+  });
+
+  document.querySelector(".switch").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-day]");
+    if (!b) return;
+    state.day = b.getAttribute("data-day");
+    save();
+    render();
+  });
+
+  document.getElementById("reset").addEventListener("click", function () {
+    state.done[state.day] = {};
+    save();
+    render();
+  });
+
+  load();
+  render();
+})();
+</script>
+</body>
+</html>
