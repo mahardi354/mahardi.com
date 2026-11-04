@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visceral Fat Burner - Versi Usia 50</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 3px;
+    }
+    /* Pastikan semua elemen bisa disorot dan diblok teksnya */
+    *, body, html {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-28">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-xl">
+    <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
+          <i class="fa-solid fa-fire text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-extrabold text-white leading-tight flex items-center gap-1.5">
+            Visceral Fat Burner <span class="text-[10px] bg-orange-500/20 text-orange-400 font-semibold px-2 py-0.5 rounded-full border border-orange-500/30">HIRT</span>
+          </h1>
+          <p class="text-xs text-slate-400">Versi Disesuaikan untuk Usia 50</p>
+        </div>
+      </div>
+
+      <!-- Session Stopwatch -->
+      <div class="flex items-center gap-2 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-800">
+        <i class="fa-solid fa-stopwatch text-orange-400 text-xs"></i>
+        <span id="session-timer-display" class="font-mono text-xs font-bold tracking-wider text-slate-200">00:00</span>
+        <button id="session-toggle-btn" onclick="toggleSessionTimer()" class="ml-1 text-[11px] bg-orange-600 hover:bg-orange-500 text-white font-medium px-2 py-0.5 rounded-lg transition-colors">
+          Start
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App Layout -->
+  <main class="max-w-xl mx-auto px-4 pt-5 space-y-5">
+
+    <!-- Science Explanation Banner -->
+    <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-4 shadow-lg relative overflow-hidden">
+      <div class="flex items-start gap-3">
+        <div class="p-2.5 bg-orange-500/10 border border-orange-500/20 text-orange-400 rounded-xl mt-0.5 shrink-0">
+          <i class="fa-solid fa-bolt-lightning text-lg"></i>
+        </div>
+        <div>
+          <h2 class="text-xs font-bold text-orange-400 uppercase tracking-wider">Cara Kerja untuk Lemak Visceral</h2>
+          <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+            Gerakan <strong class="text-white">compound multi-joint</strong> membakar kalori lebih banyak dan menjaga otot saat kamu mengurangi lemak. Lemak visceral turun saat <strong class="text-orange-300">lemak tubuh turun secara keseluruhan</strong>, jadi padukan latihan ini dengan defisit kalori moderat, protein cukup, jalan cepat rutin, dan tidur 7–8 jam.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weight Level Selector -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-md space-y-3">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-indigo-400"></i> Pilih Level Pengalaman Latihan
+        </h3>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800/80">
+        <button id="level-beginner" onclick="setLevel('beginner')" class="py-2 text-xs font-semibold rounded-lg transition-all bg-indigo-600 text-white shadow">
+          Pemula (0–6 Bulan)
+        </button>
+        <button id="level-intermediate" onclick="setLevel('intermediate')" class="py-2 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-slate-200">
+          Menengah (>6 Bulan)
+        </button>
+      </div>
+    </div>
+
+    <!-- Workout Progress Header -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-xs font-bold text-slate-300 uppercase tracking-wider" id="workout-type-title">Latihan A Progress</span>
+        <span class="text-xs font-extrabold text-orange-400" id="progress-percentage">0% Selesai</span>
+      </div>
+      <div class="w-full bg-slate-950 rounded-full h-3 p-0.5 border border-slate-800 overflow-hidden">
+        <div id="progress-bar-fill" class="bg-gradient-to-r from-orange-500 to-amber-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Workout Selector Tabs (Rotasi 2 Hari) -->
+    <div class="grid grid-cols-2 gap-2.5">
+      <button id="tab-btn-A" onclick="switchWorkout('A')" class="py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all border border-orange-500/50 bg-orange-950/30 text-orange-300 shadow-md">
+        <i class="fa-solid fa-person-running"></i> Latihan A (Full Body Strength)
+      </button>
+      <button id="tab-btn-B" onclick="switchWorkout('B')" class="py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all border border-slate-800 bg-slate-900 text-slate-400 hover:bg-slate-800">
+        <i class="fa-solid fa-dumbbell"></i> Latihan B (Metabolic Strength)
+      </button>
+    </div>
+
+    <!-- Exercises Container -->
+    <div id="exercises-container" class="space-y-4">
+      <!-- Dynamic Exercises Injected via JS -->
+    </div>
+
+    <!-- Important Tool Usage Notes -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3">
+      <h3 class="font-bold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-2">
+        <i class="fa-solid fa-circle-exclamation"></i> Catatan Penting Penggunaan Alat
+      </h3>
+      <div class="space-y-2 text-xs text-slate-300 leading-relaxed">
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800/80">
+          <strong class="text-amber-400">🏋️‍♂️ Barbel:</strong> pakai untuk <em>Romanian Deadlift</em> dan <em>Bent-Over Row</em>. Squat atau press dengan barbel hanya jika ada rak penyangga atau pengaman; tanpa itu, pakai dumbbell.
+        </div>
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800/80">
+          <strong class="text-indigo-400">🤸‍♂️ Dumbbell:</strong> pakai untuk gerakan satu sisi, bahu, split squat, dan rotasi. Lebih mudah dikontrol dan lebih ramah sendi bahu.
+        </div>
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800/80">
+          <strong class="text-emerald-400">🛡️ Keamanan (usia 50):</strong> pemanasan 5–10 menit, istirahat 60–90 detik untuk gerakan besar, minimal 1 hari penuh istirahat per minggu, jangan menahan napas lama. Periksa tekanan darah, gula darah, dan keluhan sendi atau jantung sebelum memulai. Hentikan jika ada nyeri tajam, pusing, atau sesak.
+        </div>
+        </div>
+      </div>
+
+    <!-- Reset Progress Action -->
+    <div class="text-center pt-1">
+      <button onclick="resetCurrentWorkout()" class="text-xs text-slate-500 hover:text-red-400 underline transition-colors">
+        Reset Progress <span id="reset-workout-name">Latihan A</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Rest Timer Floating Overlay Controls -->
+  <div id="rest-timer-bar" class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 p-3.5 shadow-2xl transition-transform transform translate-y-full">
+    <div class="max-w-xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="relative w-11 h-11 flex items-center justify-center bg-orange-500/10 rounded-2xl border border-orange-500/30 text-orange-400">
+          <i class="fa-solid fa-hourglass-half text-lg animate-pulse"></i>
+        </div>
+        <div>
+          <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Resting / Recovery</p>
+          <span id="rest-timer-display" class="font-mono text-2xl font-black text-orange-400">00:45</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="addRestTime(15)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-xl border border-slate-700 font-semibold transition-colors">
+          +15s
+        </button>
+        <button onclick="skipRestTimer()" class="bg-orange-600 hover:bg-orange-500 text-white text-xs px-4 py-2 rounded-xl font-bold transition-colors shadow-md shadow-orange-600/30">
+          Lanjut
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- WORKOUT DATA DEFINITION WITH TOOL EFFECTIVENESS ---
+    const BAR={toolBadge:"🏋️‍♂️ BARBEL",badgeClass:"bg-amber-500/10 text-amber-400 border-amber-500/30"};
+    const DUM={toolBadge:"🤸‍♂️ DUMBBELL",badgeClass:"bg-indigo-500/10 text-indigo-400 border-indigo-500/30"};
+    const EQL={toolBadge:"⚖️ SEIMBANG",badgeClass:"bg-teal-500/10 text-teal-400 border-teal-500/30"};
+    const NOW={toolBadge:"🧘 TANPA BEBAN",badgeClass:"bg-slate-500/10 text-slate-300 border-slate-500/30"};
+    const wt=(b1,d1,b2,d2)=>({beginner:{barbell:b1,dumbbell:d1},intermediate:{barbell:b2,dumbbell:d2}});
+    const workoutsData = {
+      A: {
+        title: "Latihan A: Full Body Strength & Core Stability",
+        subtitle: "Rotasi Hari 1",
+        exercises: [
+          {id:"a1",name:"Thruster Terkontrol (Squat to Press)",target:"Paha, Bokong, Bahu, & Heart Rate",...DUM,
+           reason:"Dumbbell lebih mudah dikontrol dan lebih ramah bahu dan pergelangan dibanding barbel. Tempo terkontrol, tidak eksplosif.",
+           sets:3,reps:"10 Reps",rest:90,
+           desc:"Squat sampai paha sejajar lantai, lalu dorong dumbbell ke atas kepala saat berdiri. Jika belum nyaman, lakukan goblet squat dan press terpisah.",
+           weight:wt("Belum disarankan","4–6 kg / tangan","20–30 kg (total, setelah squat & press terpisah mahir)","8–10 kg / tangan")},
+          {id:"a2",name:"One-Arm Dumbbell Row (Bertumpu Bangku)",target:"Punggung Tengah, Lats, & Biceps",...DUM,
+           reason:"Tumpuan bangku menjaga punggung bawah tetap aman dan stabil, jauh lebih mudah dikontrol daripada Renegade Row.",
+           sets:3,reps:"10–12 Reps / Sisi",rest:60,
+           desc:"Satu tangan dan satu lutut bertumpu di bangku, punggung rata, tarik dumbbell ke arah pinggang tanpa memutar badan.",
+           weight:wt("Tidak Cocok","8–12 kg (1 DB)","Tidak Cocok","12–18 kg (1 DB)")},
+          {id:"a3",name:"Romanian Deadlift",target:"Paha Belakang, Bokong, & Punggung Bawah",...BAR,
+           reason:"Beban paling berat bisa dipakai pada gerakan ini, sehingga merekrut otot besar yang membakar kalori. Mulai ringan dan pastikan punggung tetap lurus.",
+           sets:3,reps:"8–10 Reps",rest:90,
+           desc:"Dorong pinggul ke belakang, turunkan beban dekat tulang kering dengan punggung lurus, lalu berdiri sambil mengencangkan bokong.",
+           weight:wt("25–35 kg (total)","6–10 kg / tangan","40–60 kg (total)","10–14 kg / tangan")},
+          {id:"a4",name:"Woodchopper (Diagonal Rotational Pull)",target:"Obliques & Transverse Abdominis",...DUM,
+           reason:"Satu dumbbell dua tangan memberi rotasi diagonal yang terkontrol. Pakai beban ringan dan jangan menghentak.",
+           sets:3,reps:"12 Reps / Sisi",rest:60,
+           desc:"Tarik 1 dumbbell dari atas bahu ke arah luar lutut berlawanan, seperti memotong kayu. Lewati jika punggung bawah terasa nyeri.",
+           weight:wt("Kurang Ideal","3–5 kg (1 DB)","Kurang Ideal","6–8 kg (1 DB)")},
+          {id:"a5",name:"Split Squat / Reverse Lunge (Tanpa Twist)",target:"Paha, Bokong, & Keseimbangan",...DUM,
+           reason:"Gerakan satu kaki yang efektif untuk kaki, tanpa tambahan putaran badan yang menyulitkan di awal.",
+           sets:3,reps:"10 Reps / Kaki",rest:60,
+           desc:"Satu kaki di depan, turunkan lutut belakang mendekati lantai, badan tegak, lalu dorong kembali. Boleh berpegangan pada dinding.",
+           weight:wt("Kurang Aman","4–8 kg / tangan","Kurang Aman","8–12 kg / tangan")}
+        ]
+      },
+      B: {
+        title: "Latihan B: Metabolic Strength & Core Control",
+        subtitle: "Rotasi Hari 2",
+        exercises: [
+          {id:"b1",name:"Overhead Press",target:"Bahu, Triceps, & Core",...DUM,
+           reason:"Pengganti Clean & Press yang terlalu teknis. Dumbbell lebih ramah sendi bahu dan lebih natural bagi pemula.",
+           sets:3,reps:"8–10 Reps",rest:90,
+           desc:"Berdiri tegap, perut dan bokong kencang, dorong dumbbell lurus ke atas tanpa melengkungkan punggung bawah.",
+           weight:wt("20–25 kg (total)","5–8 kg / tangan","30–40 kg (total)","8–12 kg / tangan")},
+          {id:"b2",name:"Goblet Squat (Press Opsional)",target:"Paha, Bokong, & Core",...DUM,
+           reason:"Dumbbell di depan dada membantu badan tetap tegak dan postur squat lebih benar. Tambahkan press setelah nyaman.",
+           sets:3,reps:"12 Reps",rest:60,
+           desc:"Pegang 1 dumbbell vertikal di dada, squat sampai paha sejajar lantai, lalu berdiri. Opsional: dorong dumbbell ke atas di akhir gerakan.",
+           weight:wt("20–30 kg (back squat, butuh rak)","8–14 kg (1 DB)","35–50 kg (butuh rak)","14–20 kg (1 DB)")},
+          {id:"b3",name:"Bent-Over Row (Barbel / Dumbbell)",target:"Punggung Tengah, Lats, & Lower Back Support",...EQL,
+           reason:"Barbel unggul untuk beban lebih berat, dumbbell lebih nyaman di pergelangan. Jika punggung bawah sensitif, pakai one-arm row dengan bangku.",
+           sets:3,reps:"10–12 Reps",rest:75,
+           desc:"Bungkukkan badan sekitar 45 derajat dengan punggung lurus, tarik beban ke arah pinggang sambil membusungkan dada.",
+           weight:wt("20–30 kg (total)","6–10 kg / tangan","35–50 kg (total)","10–14 kg / tangan")},
+          {id:"b4",name:"Dead Bug",target:"Transverse Abdominis & Core Control",...NOW,
+           reason:"Pengganti Russian Twist. Melatih otot perut dalam sambil menjaga punggung bawah tetap menempel di lantai, tanpa membebani tulang belakang.",
+           sets:3,reps:"8–10 Reps / Sisi",rest:45,
+           desc:"Telentang, lengan lurus ke atas, lutut 90°. Turunkan lengan kanan dan kaki kiri perlahan tanpa mengangkat punggung bawah, lalu gantian.",
+           weight:wt("Tidak Cocok","Tanpa beban","Tidak Cocok","1–2 kg (opsional)")},
+          {id:"b5",name:"Plank",target:"Seluruh Dinding Otot Perut & Stabilitas",...NOW,
+           reason:"Pengganti Ab Rollout barbel yang tidak stabil. Plank aman, mudah dikontrol, dan melatih seluruh otot inti.",
+           sets:3,reps:"30–45 Detik",rest:45,
+           desc:"Tumpu pada lengan bawah dan ujung kaki, tubuh lurus dari kepala ke tumit, perut dan bokong kencang, napas tetap mengalir.",
+           weight:wt("Tidak Cocok","Tanpa beban","Tidak Cocok","Tanpa beban (45–60 detik)")}
+        ]
+      }
+    };
+
+    // --- GLOBAL STATE ---
+    let currentWorkoutKey = 'A';
+    let currentLevel = 'beginner';
+    let workoutState = JSON.parse(localStorage.getItem('visceral_fat_workout_state_v4')) || { A: {}, B: {} };
+
+    // Session Stopwatch State
+    let sessionSeconds = parseInt(localStorage.getItem('visceral_session_seconds_v4')) || 0;
+    let isSessionRunning = false;
+    let sessionInterval = null;
+
+    // Rest Timer State
+    let restSecondsLeft = 0;
+    let restInterval = null;
+
+    // Audio Beep
+    function playBeepSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(660, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+      } catch (e) {
+        console.log("Audio waiting for user gesture");
+      }
+    }
+
+    // --- INIT ---
+    window.onload = function() {
+      renderWorkout();
+      updateSessionTimerDisplay();
+    };
+
+    function saveState() {
+      localStorage.setItem('visceral_fat_workout_state_v4', JSON.stringify(workoutState));
+    }
+
+    // --- LEVEL TOGGLE ---
+    function setLevel(level) {
+      currentLevel = level;
+      const btnBeg = document.getElementById('level-beginner');
+      const btnInt = document.getElementById('level-intermediate');
+
+      if (level === 'beginner') {
+        btnBeg.className = "py-2 text-xs font-semibold rounded-lg transition-all bg-indigo-600 text-white shadow";
+        btnInt.className = "py-2 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-slate-200";
+      } else {
+        btnInt.className = "py-2 text-xs font-semibold rounded-lg transition-all bg-indigo-600 text-white shadow";
+        btnBeg.className = "py-2 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-slate-200";
+      }
+      renderWorkout();
+    }
+
+    // --- SWITCH TAB ---
+    function switchWorkout(key) {
+      currentWorkoutKey = key;
+      const tabA = document.getElementById('tab-btn-A');
+      const tabB = document.getElementById('tab-btn-B');
+
+      if (key === 'A') {
+        tabA.className = "py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all border border-orange-500/50 bg-orange-950/30 text-orange-300 shadow-md";
+        tabB.className = "py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all border border-slate-800 bg-slate-900 text-slate-400 hover:bg-slate-800";
+      } else {
+        tabB.className = "py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all border border-orange-500/50 bg-orange-950/30 text-orange-300 shadow-md";
+        tabA.className = "py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all border border-slate-800 bg-slate-900 text-slate-400 hover:bg-slate-800";
+      }
+
+      document.getElementById('reset-workout-name').innerText = workoutsData[key].title;
+      renderWorkout();
+    }
+
+    // --- RENDER EXERCISES ---
+    function renderWorkout() {
+      const data = workoutsData[currentWorkoutKey];
+      const container = document.getElementById('exercises-container');
+      container.innerHTML = '';
+
+      let totalSetsCount = 0;
+      let completedSetsCount = 0;
+
+      document.getElementById('workout-type-title').innerText = data.title;
+
+      data.exercises.forEach((ex, exIndex) => {
+        totalSetsCount += ex.sets;
+        const exState = workoutState[currentWorkoutKey][ex.id] || [];
+        const weightRec = ex.weight[currentLevel];
+
+        let setsHTML = '';
+        for (let i = 0; i < ex.sets; i++) {
+          const isChecked = exState[i] === true;
+          if (isChecked) completedSetsCount++;
+
+          setsHTML += `
+            <button 
+              onclick="toggleSet('${ex.id}', ${i}, ${ex.rest})"
+              class="flex-1 py-2.5 rounded-xl font-mono text-xs font-bold transition-all border flex items-center justify-center gap-1.5 ${
+                isChecked 
+                  ? 'bg-orange-600 border-orange-500 text-white shadow-lg shadow-orange-600/30' 
+                  : 'bg-slate-800 hover:bg-slate-700 border-slate-700/80 text-slate-300'
+              }"
+            >
+              <i class="fa-solid ${isChecked ? 'fa-check' : 'fa-circle-thin'} text-[11px]"></i>
+              Set ${i + 1}
+            </button>
+          `;
+        }
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 rounded-2xl p-4 border border-slate-800 shadow-md space-y-3";
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-white text-base leading-tight">${exIndex + 1}. ${ex.name}</h3>
+              <p class="text-xs text-orange-400 font-medium mt-0.5">${ex.target}</p>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold border shrink-0 ${ex.badgeClass}">
+              ${ex.toolBadge}
+            </span>
+          </div>
+
+          <p class="text-xs text-slate-400 leading-relaxed">${ex.desc}</p>
+
+          <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800/80 text-xs text-slate-300 space-y-1.5">
+            <p class="text-[11px] text-amber-300/90 leading-normal"><i class="fa-solid fa-lightbulb text-amber-400"></i> <strong>Alasan Biomekanik:</strong> ${ex.reason}</p>
+            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/80 text-[11px]">
+              <div><span class="text-slate-500">Barbel:</span> <strong class="text-slate-200">${weightRec.barbell}</strong></div>
+              <div><span class="text-slate-500">Dumbbell:</span> <strong class="text-slate-200">${weightRec.dumbbell}</strong></div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-slate-300 px-1">
+            <span class="text-slate-400">Target: <strong class="text-white">${ex.reps}</strong></span>
+            <span class="text-slate-400">Istirahat: <strong class="text-orange-400">${ex.rest} Detik</strong></span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            ${setsHTML}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      const percentage = totalSetsCount > 0 ? Math.round((completedSetsCount / totalSetsCount) * 100) : 0;
+      document.getElementById('progress-percentage').innerText = `${percentage}% Selesai (${completedSetsCount}/${totalSetsCount} Set)`;
+      document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
+    }
+
+    // --- TOGGLE SET ---
+    function toggleSet(exerciseId, setIndex, restSeconds) {
+      if (!workoutState[currentWorkoutKey][exerciseId]) {
+        workoutState[currentWorkoutKey][exerciseId] = [];
+      }
+
+      const currentState = !!workoutState[currentWorkoutKey][exerciseId][setIndex];
+      workoutState[currentWorkoutKey][exerciseId][setIndex] = !currentState;
+      saveState();
+      renderWorkout();
+
+      if (!isSessionRunning && sessionSeconds === 0) {
+        toggleSessionTimer();
+      }
+
+      if (!currentState) {
+        startRestTimer(restSeconds);
+      }
+    }
+
+    // --- STOPWATCH ---
+    function toggleSessionTimer() {
+      const btn = document.getElementById('session-toggle-btn');
+      if (isSessionRunning) {
+        clearInterval(sessionInterval);
+        isSessionRunning = false;
+        btn.innerText = 'Start';
+        btn.className = "ml-1 text-[11px] bg-orange-600 hover:bg-orange-500 text-white font-medium px-2 py-0.5 rounded-lg transition-colors";
+      } else {
+        isSessionRunning = true;
+        btn.innerText = 'Pause';
+        btn.className = "ml-1 text-[11px] bg-amber-600 hover:bg-amber-500 text-white font-medium px-2 py-0.5 rounded-lg transition-colors";
+        sessionInterval = setInterval(() => {
+          sessionSeconds++;
+          localStorage.setItem('visceral_session_seconds_v4', sessionSeconds);
+          updateSessionTimerDisplay();
+        }, 1000);
+      }
+    }
+
+    function updateSessionTimerDisplay() {
+      const mins = Math.floor(sessionSeconds / 60);
+      const secs = sessionSeconds % 60;
+      document.getElementById('session-timer-display').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // --- REST TIMER ---
+    function startRestTimer(seconds) {
+      clearInterval(restInterval);
+      restSecondsLeft = seconds;
+      updateRestTimerDisplay();
+
+      const timerBar = document.getElementById('rest-timer-bar');
+      timerBar.classList.remove('translate-y-full');
+
+      restInterval = setInterval(() => {
+        restSecondsLeft--;
+        if (restSecondsLeft <= 0) {
+          clearInterval(restInterval);
+          playBeepSound();
+          hideRestTimer();
+        } else {
+          updateRestTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function addRestTime(seconds) {
+      restSecondsLeft += seconds;
+      updateRestTimerDisplay();
+    }
+
+    function skipRestTimer() {
+      clearInterval(restInterval);
+      hideRestTimer();
+    }
+
+    function hideRestTimer() {
+      const timerBar = document.getElementById('rest-timer-bar');
+      timerBar.classList.add('translate-y-full');
+    }
+
+    function updateRestTimerDisplay() {
+      const mins = Math.floor(restSecondsLeft / 60);
+      const secs = restSecondsLeft % 60;
+      document.getElementById('rest-timer-display').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // --- RESET ---
+    function resetCurrentWorkout() {
+      if (confirm(`Reset semua progress pencatatan set pada ${workoutsData[currentWorkoutKey].title}?`)) {
+        workoutState[currentWorkoutKey] = {};
+        saveState();
+        renderWorkout();
+      }
+    }
+  </script>
+</body>
+</html>
