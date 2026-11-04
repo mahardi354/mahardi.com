@@ -22,9 +22,16 @@
       background: #1e293b;
       border-radius: 3px;
     }
+    /* Pastikan semua elemen bisa disorot dan diblok teksnya */
+    *, body, html {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-28 select-none">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-28">
 
   <!-- Top Navigation Header -->
   <header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-xl">
