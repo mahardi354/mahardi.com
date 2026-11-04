@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Template WA Agen Properti | TeraWeb</title>
+<style>
+:root{
+  --bg:#f3f6fb; --card:#ffffff; --ink:#14213d; --muted:#5b6b86; --line:#d9e1ee;
+  --brand:#1e5bd8; --brand-ink:#ffffff; --wa:#1fa855; --soft:#eaf1fd; --bubble:#e7f7d9;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#0e1522; --card:#162033; --ink:#e8eefb; --muted:#9bacc8; --line:#27344d; --brand:#5b8def; --brand-ink:#0b1220; --soft:#1b2a45; --bubble:#1f3a2a;}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.6rem;line-height:1.25;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 20px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:22px}
+.panel h2{font-size:1.05rem;margin:0 0 4px}
+.panel p.hint{margin:0 0 14px;color:var(--muted);font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,select:focus,button:focus-visible,a.btn:focus-visible{outline:3px solid var(--brand);outline-offset:1px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.tab{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit;font-size:.9rem}
+.tab[aria-selected="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink);font-weight:600}
+.group-title{font-size:.8rem;color:var(--muted);margin:14px 0 6px}
+.msg{display:none}
+.msg.active{display:block}
+.when{font-size:.9rem;color:var(--muted);margin:0 0 10px}
+.bubble{background:var(--bubble);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere;max-width:640px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button.copy,a.btn{border:0;border-radius:10px;padding:11px 18px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+button.copy{background:var(--brand);color:var(--brand-ink)}
+a.btn{background:var(--wa);color:#fff}
+a.btn.off{opacity:.45;pointer-events:none}
+button.copy.done{background:var(--wa);color:#fff}
+.tip{background:var(--soft);border-radius:10px;padding:12px 14px;font-size:.9rem;margin-top:6px}
+.tip b{display:block;margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Template WA Agen Properti</h1>
+  <p class="sub">Isi parameter di bawah, semua pesan otomatis ikut berubah. Tinggal klik Salin.</p>
+
+  <section class="panel" aria-labelledby="h-param">
+    <h2 id="h-param">Parameter</h2>
+    <p class="hint">Kolom yang masih kosong akan tampil sebagai [Nama], [Kota], dan seterusnya di pesan.</p>
+    <div class="grid">
+      <div><label for="f-nama">Nama agen</label><input id="f-nama" placeholder="mis. Budi" autocomplete="off"></div>
+      <div><label for="f-sapaan">Sapaan</label>
+        <select id="f-sapaan">
+          <option value="Pak/Bu">Pak/Bu (belum tahu gender)</option>
+          <option value="Pak">Pak</option>
+          <option value="Bu">Bu</option>
+          <option value="Kak">Kak</option>
+        </select></div>
+      <div><label for="f-kota">Kota / area</label><input id="f-kota" placeholder="mis. Semarang" autocomplete="off"></div>
+      <div><label for="f-salam">Salam pembuka</label>
+        <select id="f-salam">
+          <option>Selamat pagi</option>
+          <option>Selamat siang</option>
+          <option>Selamat sore</option>
+          <option>Selamat malam</option>
+          <option>Halo</option>
+        </select></div>
+      <div><label for="f-nomor">Nomor WA agen (opsional)</label><input id="f-nomor" inputmode="tel" placeholder="mis. 0812xxxxxxx" autocomplete="off"></div>
+      <div><label for="f-pengirim">Nama pengirim</label><input id="f-pengirim" value="Didik" autocomplete="off"></div>
+      <div><label for="f-brand">Nama brand</label><input id="f-brand" value="TeraWeb" autocomplete="off"></div>
+      <div><label for="f-harga">Harga</label><input id="f-harga" value="Rp750.000" autocomplete="off"></div>
+      <div><label for="f-tayang">Waktu tayang</label><input id="f-tayang" value="3-5 hari kerja" autocomplete="off"></div>
+      <div><label for="f-demo1">Link demo 1</label><input id="f-demo1" value="https://teraweb.id/demo/agen-properti-1/" autocomplete="off"></div>
+      <div><label for="f-demo2">Link demo 2</label><input id="f-demo2" value="https://teraweb.id/demo/agen-properti-2/" autocomplete="off"></div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-pesan">
+    <h2 id="h-pesan">Pesan</h2>
+    <div class="group-title">Pesan pertama</div>
+    <div class="tabs" role="tablist" id="tabs-1"></div>
+    <div class="group-title">Setelah dibalas atau tidak dibalas</div>
+    <div class="tabs" role="tablist" id="tabs-2"></div>
+    <div id="msgs"></div>
+    <div class="tip">
+      <b>Catatan kirim</b>
+      Kirim pagi (09.00-11.00) atau sore (16.00-18.00). Jangan kirim ke ratusan nomor sekaligus agar nomor tidak diblokir WA. Sisipkan satu kalimat spesifik tentang listing agen kalau Anda tahu, balasannya jauh lebih tinggi.
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var MESSAGES = [
+    {id:"google", group:1, label:"Pancing Google",
+     when:"Untuk agen yang aktif jualan tapi belum punya website.",
+     text:"{{salam}}, {{sapaan}} {{nama}} 🙏\n\nSaya {{pengirim}} dari {{brand}}. Maaf mengganggu, saya cuma mau tanya satu hal.\n\nKalau calon pembeli mengetik \"rumah dijual di {{kota}}\" di Google, apakah listing {{sapaanLong}} muncul di sana?\n\nBanyak agen properti yang kehilangan pembeli bukan karena rumahnya kurang bagus, tapi karena pembeli yang mencari di Google justru ketemu agen lain. Padahal pembeli yang cari sendiri itu biasanya yang paling serius.\n\nSaya sudah siapkan contoh tampilan website untuk agen properti, lengkap dengan katalog listing dan tombol WhatsApp di setiap properti:\n{{demo1}}\n\nSilakan dilihat dulu, {{sapaan}}, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏"},
+    {id:"ig", group:1, label:"Pancing Instagram",
+     when:"Untuk agen yang ditemukan lewat Instagram atau katalog di WA.",
+     text:"Halo {{sapaan}} {{nama}}, salam kenal 🙏\n\nSaya {{pengirim}} dari {{brand}}. Tadi saya lihat profil {{sapaanLong}}, listingnya menarik-menarik.\n\nSaya penasaran: kalau ada calon pembeli yang minta \"lihat semua properti yang {{sapaanLong}} jual\", biasanya dikirimnya lewat apa? Foto satu-satu di chat, atau ada satu link yang rapi?\n\nBayangkan cukup kirim satu link, dan pembeli bisa lihat semua listing, foto, harga, lokasi, lalu langsung klik tombol WhatsApp ke {{sapaanLong}}. Kesannya jadi jauh lebih profesional, dan pembeli lebih percaya.\n\nIni contoh tampilannya untuk agen properti:\n{{demo2}}\n\nSilakan dilihat dulu, {{sapaan}}, santai saja. Kalau tertarik, nanti saya kasih tahu paket dan harganya 🙏"},
+    {id:"singkat", group:1, label:"Singkat",
+     when:"Untuk agen yang sibuk, atau saat mengirim ke banyak nomor.",
+     text:"Halo {{sapaan}} {{nama}} 🙏\n\nSaya {{pengirim}} dari {{brand}}. Saya bikin website khusus agen properti: ada katalog listing, tombol WhatsApp di tiap properti, dan bisa ditemukan di Google.\n\nContoh jadinya seperti ini:\n{{demo1}}\n\nKalau {{sapaanLong}} mau punya yang seperti itu atas nama sendiri, kabari saya ya. Silakan dilihat dulu 🙏"},
+    {id:"harga", group:2, label:"Balasan setelah tertarik",
+     when:"Kirim hanya jika agen membalas atau bilang sudah melihat demo.",
+     text:"Terima kasih sudah dilihat, {{sapaan}} 🙏\n\nUntuk websitenya, paketnya:\n✅ {{harga}} sekali bayar\n✅ Tanpa biaya perpanjangan tahunan\n✅ Tayang {{tayang}}\n✅ Revisi 2 kali sebelum tayang\n✅ Tombol WhatsApp di setiap listing\n\nSatu transaksi saja dari website ini sudah jauh melebihi biayanya, {{sapaan}}. Kalau cocok, tinggal kirim nama usaha dan beberapa foto listing, sisanya saya yang kerjakan.\n\nMau saya mulai dari nama usaha {{sapaanLong}}?"},
+    {id:"fu1", group:2, label:"Follow-up 1",
+     when:"Kirim 2-3 hari setelah pesan pertama kalau belum ada balasan.",
+     text:"Halo {{sapaan}} {{nama}} 🙏\n\n{{pengirim}} dari {{brand}} lagi, mau menyapa sebentar. Kemarin saya sempat kirim contoh website untuk agen properti.\n\nKalau sempat, boleh dilihat 1 menit saja ya:\n{{demo1}}\n\nKalau memang belum butuh, tidak apa-apa sama sekali, {{sapaan}}. Terima kasih sudah membaca 🙏"},
+    {id:"fu2", group:2, label:"Follow-up 2 (penutup)",
+     when:"Pesan terakhir, 4-5 hari setelah follow-up 1. Setelah ini jangan dikejar lagi.",
+     text:"Permisi {{sapaan}} {{nama}}, ini pesan terakhir dari saya supaya tidak mengganggu 🙏\n\nKalau suatu saat {{sapaanLong}} ingin punya website listing sendiri, tinggal balas chat ini, dengan senang hati saya bantu.\n\nSukses terus penjualannya di {{kota}}, {{sapaan}}!"}
+  ];
+
+  var fields = ["nama","sapaan","kota","salam","nomor","pengirim","brand","harga","tayang","demo1","demo2"];
+  function el(id){return document.getElementById(id);}
+  function val(k){return el("f-"+k).value.trim();}
+
+  function longForm(s){
+    return ({"Pak":"Bapak","Bu":"Ibu","Pak/Bu":"Bapak/Ibu","Kak":"Kakak"})[s] || s;
+  }
+  function params(){
+    var p = {};
+    fields.forEach(function(k){ p[k] = val(k); });
+    p.sapaanLong = longForm(p.sapaan);
+    var ph = {nama:"[Nama]", kota:"[Kota]"};
+    Object.keys(ph).forEach(function(k){ if(!p[k]) p[k] = ph[k]; });
+    return p;
+  }
+  function render(text){
+    var p = params();
+    return text.replace(/\{\{(\w+)\}\}/g, function(_, k){ return p[k] !== undefined ? p[k] : ""; });
+  }
+  function waLink(text){
+    var n = val("nomor").replace(/[^\d]/g,"");
+    if(!n) return null;
+    if(n.indexOf("0")===0) n = "62"+n.slice(1);
+    else if(n.indexOf("8")===0) n = "62"+n;
+    return "https://wa.me/"+n+"?text="+encodeURIComponent(text);
+  }
+  function copyText(text, btn){
+    function ok(){
+      var old = btn.textContent;
+      btn.textContent = "Tersalin ✓";
+      btn.classList.add("done");
+      setTimeout(function(){ btn.textContent = old; btn.classList.remove("done"); }, 1600);
+    }
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(ok, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); ok(); }catch(e){ alert("Gagal menyalin, silakan blok teks lalu salin manual."); }
+      document.body.removeChild(ta);
+    }
+  }
+
+  var active = MESSAGES[0].id;
+  var tabs1 = el("tabs-1"), tabs2 = el("tabs-2"), msgs = el("msgs");
+
+  MESSAGES.forEach(function(m){
+    var t = document.createElement("button");
+    t.className = "tab"; t.type = "button"; t.setAttribute("role","tab");
+    t.textContent = m.label; t.dataset.id = m.id;
+    t.addEventListener("click", function(){ active = m.id; refresh(); });
+    (m.group===1 ? tabs1 : tabs2).appendChild(t);
+
+    var box = document.createElement("div");
+    box.className = "msg"; box.id = "msg-"+m.id;
+    box.innerHTML =
+      '<p class="when"></p><div class="bubble"></div>' +
+      '<div class="actions"><button type="button" class="copy">Salin pesan</button>' +
+      '<a class="btn off" target="_blank" rel="noopener">Buka di WhatsApp</a></div>';
+    box.querySelector(".when").textContent = m.when;
+    box.querySelector(".copy").addEventListener("click", function(e){
+      copyText(render(m.text), e.currentTarget);
+    });
+    msgs.appendChild(box);
+  });
+
+  function refresh(){
+    MESSAGES.forEach(function(m){
+      var box = el("msg-"+m.id);
+      box.classList.toggle("active", m.id===active);
+      var txt = render(m.text);
+      box.querySelector(".bubble").textContent = txt;
+      var a = box.querySelector("a.btn");
+      var link = waLink(txt);
+      if(link){ a.href = link; a.classList.remove("off"); }
+      else { a.removeAttribute("href"); a.classList.add("off"); }
+    });
+    document.querySelectorAll(".tab").forEach(function(t){
+      t.setAttribute("aria-selected", t.dataset.id===active ? "true" : "false");
+    });
+  }
+
+  fields.forEach(function(k){
+    el("f-"+k).addEventListener("input", refresh);
+    el("f-"+k).addEventListener("change", refresh);
+  });
+  refresh();
+})();
+</script>
+</body>
+</html>

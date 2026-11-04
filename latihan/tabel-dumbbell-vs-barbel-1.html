@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dumbbell vs Barbel - Perbandingan Efektivitas & Beban Ideal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+  <div class="max-w-6xl mx-auto space-y-6">
+    
+    <!-- Header Section -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-white flex items-center gap-3">
+            <i class="fa-solid fa-dumbbell text-indigo-400"></i> Dumbbell vs Barbel: Perbandingan Efektivitas
+          </h1>
+          <p class="text-sm text-slate-400 mt-1">
+            Analisis efektivitas gerakan latihan dan rekomendasi berat ideal berdasarkan data program latihan.
+          </p>
+        </div>
+        
+        <!-- Filter/Search Bar -->
+        <div class="relative w-full md:w-64">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Cari gerakan atau otot..." 
+            onkeyup="filterTable()"
+            class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-xl pl-9 pr-4 py-2 focus:outline-none focus:border-indigo-500 transition-colors"
+          />
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-sm"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Overview Badges -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex items-start gap-3">
+        <div class="p-3 bg-indigo-500/10 rounded-lg border border-indigo-500/20 text-indigo-400">
+          <i class="fa-solid fa-dumbbell text-xl"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-200 text-sm">Keunggulan Dumbbell</h3>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Rentang gerak (*Range of Motion*) lebih luas, aman untuk sendi, mengisolasi otot target, dan memperbaiki ketidakseimbangan kekuatan antara sisi kanan & kiri.
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex items-start gap-3">
+        <div class="p-3 bg-amber-500/10 rounded-lg border border-amber-500/20 text-amber-400">
+          <i class="fa-solid fa-weight-hanging text-xl"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-200 text-sm">Keunggulan Barbel</h3>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Sangat ideal untuk mengangkat beban maksimal, melatih kekuatan mendasar (*progressive overload*), dan efisien untuk gerakan senyawa (*compound movements*).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Comparison Table Container -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-300">
+          <thead class="bg-slate-950 text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-slate-800">
+            <tr>
+              <th scope="col" class="py-3.5 px-4 text-center w-12">No</th>
+              <th scope="col" class="py-3.5 px-4">Gerakan Latihan</th>
+              <th scope="col" class="py-3.5 px-4">Target Otot</th>
+              <th scope="col" class="py-3.5 px-4">Mana yang Lebih Efektif?</th>
+              <th scope="col" class="py-3.5 px-4">Berat Dumbbell Ideal</th>
+              <th scope="col" class="py-3.5 px-4">Berat Barbel Ideal</th>
+            </tr>
+          </thead>
+          <tbody id="table-body" class="divide-y divide-slate-800/60 font-normal">
+            
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">1</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Goblet Squat / Squat</td>
+              <td class="py-3.5 px-4 text-slate-400">Paha Depan & Bokong</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <i class="fa-solid fa-bars"></i> Barbel (Hypertrophy & Beban Berat)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg</span> <span class="text-xs text-slate-500">(halaman)</span> / 8–16 kg <span class="text-xs text-slate-500">(umum)</span></td>
+              <td class="py-3.5 px-4 text-amber-300 font-medium">20–60+ kg</td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">2</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Dumbbell Lunges</td>
+              <td class="py-3.5 px-4 text-slate-400">Paha & Keseimbangan</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <i class="fa-solid fa-dumbbell"></i> Dumbbell (Keseimbangan)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg/tangan</span> <span class="text-xs text-slate-500">(halaman)</span> / 6–12 kg</td>
+              <td class="py-3.5 px-4 text-slate-300">15–30 kg</td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">3</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Floor Press / Bench Press</td>
+              <td class="py-3.5 px-4 text-slate-400">Dada & Tricep</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                  <i class="fa-solid fa-scale-balanced"></i> Barbel (Kekuatan) / Dumbbell (ROM)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg/tangan</span> <span class="text-xs text-slate-500">(halaman)</span> / 8–16 kg</td>
+              <td class="py-3.5 px-4 text-amber-300 font-medium">30–60+ kg</td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">4</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Shoulder Press</td>
+              <td class="py-3.5 px-4 text-slate-400">Bahu Depan / Atas</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <i class="fa-solid fa-dumbbell"></i> Dumbbell (Lebih Aman Sendi)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg/tangan</span> <span class="text-xs text-slate-500">(halaman)</span> / 6–12 kg</td>
+              <td class="py-3.5 px-4 text-slate-300">15–35 kg</td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">5</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Side Lateral Raise</td>
+              <td class="py-3.5 px-4 text-slate-400">Bahu Samping</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <i class="fa-solid fa-dumbbell"></i> Dumbbell (Sangat Efektif Isolasi)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg/tangan</span> <span class="text-xs text-slate-500">(halaman)</span> / 2–6 kg</td>
+              <td class="py-3.5 px-4 text-slate-500 italic">Tidak disarankan</td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">6</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Overhead Tricep Extension</td>
+              <td class="py-3.5 px-4 text-slate-400">Tricep / Lengan Belakang</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <i class="fa-solid fa-dumbbell"></i> Dumbbell (Fokus Isolasi)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg</span> <span class="text-xs text-slate-500">(halaman)</span> / 6–12 kg</td>
+              <td class="py-3.5 px-4 text-slate-300">10–20 kg <span class="text-xs text-slate-500">(EZ Bar)</span></td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">7</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Romanian Deadlift (RDL)</td>
+              <td class="py-3.5 px-4 text-slate-400">Paha Belakang & Bokong</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <i class="fa-solid fa-bars"></i> Barbel (Beban Sangat Berat)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg/tangan</span> <span class="text-xs text-slate-500">(halaman)</span> / 8–16 kg</td>
+              <td class="py-3.5 px-4 text-amber-300 font-medium">30–70+ kg</td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">8</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Bent-Over Row</td>
+              <td class="py-3.5 px-4 text-slate-400">Punggung Tengah</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                  <i class="fa-solid fa-scale-balanced"></i> Barbel (Berat) / Dumbbell (Simetri)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg/tangan</span> <span class="text-xs text-slate-500">(halaman)</span> / 6–14 kg</td>
+              <td class="py-3.5 px-4 text-slate-300">20–50 kg</td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">9</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Dumbbell Pullover</td>
+              <td class="py-3.5 px-4 text-slate-400">Punggung Samping & Dada</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <i class="fa-solid fa-dumbbell"></i> Dumbbell ( Lebih Nyaman & Aman)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg</span> <span class="text-xs text-slate-500">(halaman)</span> / 8–14 kg</td>
+              <td class="py-3.5 px-4 text-slate-300">10–20 kg</td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">10</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Rear Delt Fly</td>
+              <td class="py-3.5 px-4 text-slate-400">Bahu Belakang & Postur</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <i class="fa-solid fa-dumbbell"></i> Dumbbell (Sangat Efektif)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg/tangan</span> <span class="text-xs text-slate-500">(halaman)</span> / 2–5 kg</td>
+              <td class="py-3.5 px-4 text-slate-500 italic">Tidak disarankan</td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">11</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Hammer Curls</td>
+              <td class="py-3.5 px-4 text-slate-400">Bicep & Lengan Bawah</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <i class="fa-solid fa-dumbbell"></i> Dumbbell (Pegangan Netral)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg/tangan</span> <span class="text-xs text-slate-500">(halaman)</span> / 5–10 kg</td>
+              <td class="py-3.5 px-4 text-slate-300">Memerlukan <span class="text-xs text-slate-500">Swiss Bar</span></td>
+            </tr>
+
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3.5 px-4 text-center font-mono text-slate-500">12</td>
+              <td class="py-3.5 px-4 font-semibold text-white">Dumbbell Shrugs</td>
+              <td class="py-3.5 px-4 text-slate-400">Trapezius / Pundak</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <i class="fa-solid fa-dumbbell"></i> Dumbbell (Gerakan Alami)
+                </span>
+              </td>
+              <td class="py-3.5 px-4"><span class="text-indigo-400 font-medium">4 kg/tangan</span> <span class="text-xs text-slate-500">(halaman)</span> / 10–20 kg</td>
+              <td class="py-3.5 px-4 text-amber-300 font-medium">30–60+ kg</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Key Takeaway Footnote -->
+    <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 text-xs text-slate-400 space-y-2">
+      <h4 class="font-semibold text-amber-400 flex items-center gap-2 text-sm">
+        <i class="fa-solid fa-circle-info"></i> Catatan Pembacaan Tabel:
+      </h4>
+      <ul class="list-disc list-inside space-y-1 leading-relaxed">
+        <li><strong class="text-slate-200">Berat Dumbbell 4kg (pada halaman):</strong> Mengoptimalkan teknik tempo melambat (3-1-1) untuk memicu pertumbuhan otot tanpa butuh beban berat.</li>
+        <li><strong class="text-slate-200">Berat Ideal Umum:</strong> Standard acuan untuk individu tingkat pemula hingga menengah dengan target pembentukan otot (hypertrophy).</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script>
+    function filterTable() {
+      const input = document.getElementById('search-input');
+      const filter = input.value.toLowerCase();
+      const tbody = document.getElementById('table-body');
+      const rows = tbody.getElementsByTagName('tr');
+
+      for (let i = 0; i < rows.length; i++) {
+        const text = rows[i].textContent || rows[i].innerText;
+        if (text.toLowerCase().indexOf(filter) > -1) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+  </script>
+</body>
+</html>

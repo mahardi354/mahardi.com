@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Program Latihan A/B untuk Lemak Perut</title>
+<style>
+:root{--bg:#F1F3F1;--card:#fff;--ink:#1B2A2F;--mute:#5B6B70;--line:#CBD5D3;--petrol:#17566B;--on-petrol:#fff;--plate:#F2B705;--on-plate:#1B2A2F;--db:#E3F0F4;--bb:#FBF0CC;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#121C20;--card:#1B2A2F;--ink:#E8EEEC;--mute:#9DB0B4;--line:#2E434A;--petrol:#5FB3C9;--on-petrol:#0E1A1E;--db:#1F3A44;--bb:#463C14;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:24px 16px 56px}
+h1{font-size:30px;line-height:1.15;margin:0 0 6px}
+h2{font-size:21px;margin:30px 0 8px}
+.sub{color:var(--mute);margin:0 0 16px}
+.note{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--plate);border-radius:10px;padding:12px 14px;margin-bottom:18px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:0 0 20px;text-align:center;font-size:13px}
+.week div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 2px}
+.week b{display:block;font-size:18px}
+.week .r{color:var(--mute)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--line);padding:4px;border-radius:12px;margin-bottom:12px}
+.tabs button{border:0;border-radius:9px;padding:10px;background:transparent;color:var(--ink);font:700 17px system-ui,sans-serif;cursor:pointer}
+.tabs button small{display:block;font:400 13px system-ui,sans-serif;color:var(--mute)}
+.tabs button[aria-selected=true]{background:var(--card)}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:880px}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--petrol);color:var(--on-petrol);font-size:14px}
+tr:last-child td{border-bottom:0}
+td:nth-child(2){font-weight:600}
+td small{display:block;color:var(--mute);font-weight:400;margin-top:2px}
+.d{background:var(--db)}.b{background:var(--bb)}
+.fin{margin-top:10px;font-size:15px}
+ul{padding-left:20px}li{margin-bottom:7px}
+button:focus-visible{outline:3px solid var(--petrol);outline-offset:2px}
+@media(max-width:560px){.week{font-size:11px}.week b{font-size:15px}}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700}
+.t-d{background:var(--db)}.t-b{background:var(--bb)}.t-n{background:var(--line)}
+.legend{margin:0 0 12px;font-size:15px}
+</style>
+</head>
+<body>
+<main>
+<h1>Program A/B untuk menurunkan lemak perut</h1>
+<p class="sub">Dumbbell dan barbel, selang-seling per hari. Berat dihitung sebagai titik awal untuk pria 50 tahun, 73 kg, 168 cm.</p>
+
+<div class="note"><strong>Yang perlu diketahui dulu:</strong> tidak ada gerakan yang membakar lemak perut secara khusus. Lemak viseral turun saat <em>seluruh</em> lemak tubuh turun, dan ia termasuk yang paling responsif terhadap latihan beban gerakan besar, defisit kalori, dan aktivitas aerobik rutin. Karena itu program ini memakai gerakan yang melibatkan otot terbesar. Lemak viseral juga tidak bisa "habis" dalam hitungan hari. Targetnya turun ke batas sehat, realistisnya 8-12 minggu untuk perubahan yang jelas.</div>
+
+<div class="week" aria-label="Pola mingguan">
+  <div><b>A</b>Sen</div><div><b>B</b>Sel</div><div><b>A</b>Rab</div><div><b>B</b>Kam</div><div><b>A</b>Jum</div><div><b>B</b>Sab</div><div class="r"><b>Off</b>Min</div>
+</div>
+<p class="sub">Selang-seling A dan B memang bisa dilakukan tiap hari karena fokus ototnya berbeda, tapi sisakan minimal 1 hari istirahat penuh per minggu (jalan santai saja). Pemulihan di usia 50 lebih lambat, dan otot tumbuh saat istirahat.</p>
+
+<p class="legend">Kolom <strong>Lebih efektif</strong> menunjukkan alat yang paling cocok untuk tiap gerakan: <span class="tag t-d">Dumbbell</span> <span class="tag t-b">Barbel</span> <span class="tag t-n">Tanpa beban</span>. Barbel unggul di gerakan besar yang butuh beban berat, dumbbell unggul di gerakan satu sisi dan bahu.</p>
+<div class="tabs" role="tablist" id="tabs">
+  <button role="tab" data-t="A" aria-selected="true">Latihan A<small>Kaki depan, dorong, core</small></button>
+  <button role="tab" data-t="B" aria-selected="false">Latihan B<small>Kaki belakang, tarik, core</small></button>
+</div>
+
+<section id="A">
+<div class="wrap"><table>
+<thead><tr><th>#</th><th>Gerakan</th><th>Lebih efektif</th><th>Set × repetisi</th><th>Istirahat</th><th>Dumbbell (per tangan)</th><th>Barbel (total + batang)</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Squat<small>Goblet squat / back squat. Turun sampai paha sejajar lantai.</small></td><td><span class="tag t-b">Barbel</span><small>Beban bisa jauh lebih berat. Butuh rak; tanpa rak pakai goblet squat.</small></td><td>4 × 8-12</td><td>90 dtk</td><td class="d">12-20 kg (satu dumbbell di dada)</td><td class="b">30-40 kg (butuh rak dan pengaman)</td></tr>
+<tr><td>2</td><td>Bench press<small>Di bangku, atau floor press di lantai jika tidak ada bangku.</small></td><td><span class="tag t-b">Barbel</span><small>Beban lebih berat. Jika sendirian tanpa pengaman, pakai dumbbell.</small></td><td>4 × 8-12</td><td>90 dtk</td><td class="d">8-12 kg</td><td class="b">25-35 kg (butuh pengaman)</td></tr>
+<tr><td>3</td><td>Lunges / split squat<small>Badan tegak, lutut depan tidak runtuh ke dalam.</small></td><td><span class="tag t-d">Dumbbell</span><small>Keseimbangan lebih mudah, tanpa rak.</small></td><td>3 × 10 per kaki</td><td>60 dtk</td><td class="d">6-10 kg</td><td class="b">20-30 kg (versi dumbbell lebih aman)</td></tr>
+<tr><td>4</td><td>Overhead press<small>Perut dan bokong kencang, punggung tidak melengkung.</small></td><td><span class="tag t-d">Dumbbell</span><small>Lebih ramah sendi bahu, gerak lebih alami.</small></td><td>3 × 8-12</td><td>60-75 dtk</td><td class="d">5-8 kg</td><td class="b">20-25 kg</td></tr>
+<tr><td>5</td><td>Thruster<small>Squat lalu langsung dorong ke atas. Pembakar kalori tinggi, kerjakan lancar.</small></td><td><span class="tag t-d">Dumbbell</span><small>Lebih lancar dan aman untuk gerakan seluruh tubuh.</small></td><td>3 × 10-12</td><td>60 dtk</td><td class="d">4-6 kg</td><td class="b">15-20 kg</td></tr>
+<tr><td>6</td><td>Farmer carry<small>Jalan tegak dengan genggaman kuat, bahu turun.</small></td><td><span class="tag t-d">Dumbbell</span><small>Barbel tidak cocok untuk gerakan ini.</small></td><td>3 × 30-40 dtk</td><td>60 dtk</td><td class="d">10-14 kg</td><td class="b">Pakai dumbbell</td></tr>
+<tr><td>7</td><td>Plank<small>Tanpa beban. Tubuh lurus, napas tetap mengalir.</small></td><td><span class="tag t-n">Tanpa beban</span><small>Cukup berat badan.</small></td><td>3 × 30-45 dtk</td><td>45 dtk</td><td>-</td><td>-</td></tr>
+</tbody></table></div>
+<p class="fin"><strong>Penutup:</strong> jalan cepat 20-30 menit (tempo yang masih memungkinkan mengobrol).</p>
+</section>
+
+<section id="B" hidden>
+<div class="wrap"><table>
+<thead><tr><th>#</th><th>Gerakan</th><th>Lebih efektif</th><th>Set × repetisi</th><th>Istirahat</th><th>Dumbbell (per tangan)</th><th>Barbel (total + batang)</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Romanian deadlift<small>Pinggul ke belakang, punggung lurus, beban dekat tulang kering.</small></td><td><span class="tag t-b">Barbel</span><small>Paha belakang dan bokong butuh beban berat.</small></td><td>4 × 8-12</td><td>90 dtk</td><td class="d">8-12 kg</td><td class="b">30-40 kg</td></tr>
+<tr><td>2</td><td>Bent-over row<small>Badan condong sekitar 45°, tarik siku ke pinggang. One-arm row jika punggung bawah sensitif.</small></td><td><span class="tag t-b">Barbel</span><small>Beban lebih besar. Punggung bawah sensitif: one-arm row dumbbell.</small></td><td>4 × 8-12</td><td>90 dtk</td><td class="d">8-12 kg (one-arm 10-14 kg)</td><td class="b">25-35 kg</td></tr>
+<tr><td>3</td><td>Hip thrust / glute bridge<small>Punggung atas di bangku, dorong pinggul, kencangkan bokong 1 detik di atas.</small></td><td><span class="tag t-b">Barbel</span><small>Dumbbell cepat terlalu ringan untuk bokong.</small></td><td>3 × 10-15</td><td>60 dtk</td><td class="d">10-15 kg (satu dumbbell di pinggul)</td><td class="b">30-40 kg (pakai bantalan)</td></tr>
+<tr><td>4</td><td>Step-up<small>Bangku atau tangga yang kokoh. Dorong dengan kaki depan, bukan hentakan.</small></td><td><span class="tag t-d">Dumbbell</span><small>Barbel di punggung berisiko tanpa rak.</small></td><td>3 × 10 per kaki</td><td>60 dtk</td><td class="d">6-10 kg</td><td class="b">Tidak disarankan</td></tr>
+<tr><td>5</td><td>Reverse fly<small>Badan condong, buka tangan ke samping. Baik untuk postur.</small></td><td><span class="tag t-d">Dumbbell</span><small>Barbel tidak bisa dipakai.</small></td><td>3 × 12-15</td><td>45 dtk</td><td class="d">2-4 kg</td><td class="b">Tidak berlaku</td></tr>
+<tr><td>6</td><td>Suitcase carry<small>Satu dumbbell di satu sisi, badan tetap tegak (melatih otot samping perut).</small></td><td><span class="tag t-d">Dumbbell</span><small>Beban satu sisi, hanya bisa dengan dumbbell.</small></td><td>3 × 30 dtk per sisi</td><td>45 dtk</td><td class="d">10-14 kg</td><td class="b">Pakai dumbbell</td></tr>
+<tr><td>7</td><td>Dead bug<small>Tanpa beban. Punggung bawah menempel lantai, gerakkan pelan.</small></td><td><span class="tag t-n">Tanpa beban</span><small>Cukup berat badan.</small></td><td>3 × 8-10 per sisi</td><td>45 dtk</td><td>-</td><td>-</td></tr>
+</tbody></table></div>
+<p class="fin"><strong>Penutup:</strong> jalan cepat 20-30 menit (tempo yang masih memungkinkan mengobrol).</p>
+</section>
+
+<h2>Cara menaikkan beban</h2>
+<ul>
+<li>Angka di tabel adalah titik awal. Tes: pilih beban yang membuatmu bisa 10 repetisi dengan sisa 1-3 repetisi di akhir set.</li>
+<li>Jika semua set sudah mencapai batas atas repetisi, naikkan beban: 1-2 kg untuk gerakan atas, 2,5-5 kg untuk kaki dan punggung.</li>
+<li>Minggu pertama pakai bagian bawah rentang berat dan fokus pada teknik. Pemanasan 5-10 menit sebelum mulai.</li>
+</ul>
+
+<h2>Yang menentukan lemak perut turun</h2>
+<ul>
+<li><strong>Defisit kalori moderat:</strong> sekitar 300-500 kkal di bawah kebutuhan harian. Defisit terlalu besar membuat otot ikut hilang.</li>
+<li><strong>Protein cukup:</strong> sekitar 1,6 g per kg berat badan, atau kira-kira 115-120 g per hari, tersebar di tiap makan.</li>
+<li><strong>Aktivitas aerobik rutin:</strong> jalan cepat di akhir latihan, dan di hari istirahat sasar minimal 150 menit per minggu secara total.</li>
+<li><strong>Kurangi gula tambahan, minuman manis, dan gorengan,</strong> dan tidur 7-8 jam. Kurang tidur dan stres tinggi mendorong penumpukan lemak perut.</li>
+<li><strong>Ukur lingkar perut</strong> setinggi pusar tiap 2 minggu. Untuk pria Asia, lingkar di atas 90 cm menandakan risiko. Angka ini lebih jujur daripada timbangan.</li>
+</ul>
+
+<h2>Keamanan</h2>
+<ul>
+<li>Squat dan bench dengan barbel wajib memakai rak penyangga atau pengaman. Tanpa itu, pakai versi dumbbell.</li>
+<li>Jangan menahan napas lama saat mengangkat. Hembuskan napas saat mendorong atau menarik.</li>
+<li>Jika ada tekanan darah tinggi, gula darah tinggi, keluhan jantung, atau nyeri sendi, periksakan dulu sebelum menaikkan intensitas.</li>
+</ul>
+</main>
+<script>
+document.getElementById("tabs").addEventListener("click",function(e){
+  var b=e.target.closest("button"); if(!b) return;
+  ["A","B"].forEach(function(k){
+    document.getElementById(k).hidden=(k!==b.dataset.t);
+  });
+  document.querySelectorAll("#tabs button").forEach(function(x){
+    x.setAttribute("aria-selected",x===b?"true":"false");
+  });
+});
+</script>
+</body>
+</html>

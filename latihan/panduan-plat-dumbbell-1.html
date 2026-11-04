@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panduan Kombinasi Lempengan Dumbbell</title>
+<style>
+:root{--bg:#F1F3F1;--card:#fff;--ink:#1B2A2F;--mute:#5B6B70;--line:#CBD5D3;--petrol:#17566B;--on-petrol:#fff;--plate:#F2B705;--hi:#FBF0CC;--g:#D9F0E1;--y:#FBF0CC;--o:#F8DCCB;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#121C20;--card:#1B2A2F;--ink:#E8EEEC;--mute:#9DB0B4;--line:#2E434A;--petrol:#5FB3C9;--on-petrol:#0E1A1E;--hi:#463C14;--g:#1E3B2B;--y:#463C14;--o:#4A2C20;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 56px}
+h1{font-size:28px;line-height:1.15;margin:0 0 6px}
+h2{font-size:20px;margin:26px 0 8px}
+.sub{color:var(--mute);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.note{border-left:5px solid var(--plate)}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:4px}
+input,select{padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:600 17px system-ui,sans-serif}
+input{width:130px}
+.hint{color:var(--mute);font-size:13px;margin:4px 0 0;max-width:250px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--line);padding:4px;border-radius:12px;margin-bottom:12px}
+.tabs button{border:0;border-radius:9px;padding:10px;background:transparent;color:var(--ink);font:700 16px system-ui,sans-serif;cursor:pointer}
+.tabs button small{display:block;font:400 12px system-ui,sans-serif;color:var(--mute)}
+.tabs button[aria-selected=true]{background:var(--card)}
+.res{background:var(--petrol);color:var(--on-petrol);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-weight:600}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--petrol);color:var(--on-petrol);font-size:14px}
+tr:last-child td{border-bottom:0}
+td.w{font-weight:700;white-space:nowrap}
+tr.hi td{background:var(--hi)}
+.alt{color:var(--mute);font-size:13px}
+.chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap}
+.c0{background:var(--g)}.c1{background:var(--y)}.c2{background:var(--o)}
+ul,ol{padding-left:20px}li{margin-bottom:7px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--petrol);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+<h1>Panduan lempengan dumbbell</h1>
+<p class="sub">Lempengan: 1,25 kg × 4, 1,5 kg × 4, 2 kg × 4 (total 19 kg). Hanya kombinasi yang seimbang: kedua ujung tiap dumbbell sama berat.</p>
+
+<div class="card note">
+<strong>Cara membaca:</strong> setiap dumbbell punya 2 ujung, dan semua susunan di bawah memberi berat yang <strong>sama persis di kedua ujung</strong>. Untuk gerakan yang tangan kanan dan kirinya harus sama berat (press, curl, lateral), pakai mode <strong>Sepasang</strong>. Untuk gerakan satu dumbbell (goblet squat, one-arm row, triceps overhead, hip thrust), pakai mode <strong>Satu dumbbell</strong>.
+</div>
+
+<div class="card"><div class="row">
+<div><label for="h">Berat handle + kunci (kg)</label><input id="h" type="number" inputmode="decimal" min="0" step="0.1" placeholder="mis. 1.5"><p class="hint">Timbang satu dumbbell tanpa lempeng. Jika kosong, kolom total disembunyikan.</p></div>
+<div><label for="t">Target berat (kg)</label><input id="t" type="number" inputmode="decimal" min="0" step="0.5" placeholder="mis. 8"><p class="hint">Opsional. Baris terdekat disorot. Dibandingkan dengan total jika handle diisi, atau berat lempeng jika kosong.</p></div>
+
+</div></div>
+
+<div class="tabs" role="tablist" id="tabs">
+<button role="tab" data-m="1" aria-selected="true">Sepasang<small>Kanan = kiri</small></button>
+<button role="tab" data-m="2" aria-selected="false">Satu dumbbell<small>Semua lempeng di satu sisi</small></button>
+</div>
+
+<div class="res" id="res" aria-live="polite"></div>
+<div class="wrap"><table>
+<thead id="head"></thead>
+<tbody id="body"></tbody>
+</table></div>
+
+<h2>Langkah memasang</h2>
+<ol>
+<li>Cari berat yang diinginkan di tabel, lihat susunan ujung 1 dan ujung 2.</li>
+<li>Pasang lempeng sesuai susunan, kencangkan kunci, dan goyangkan sedikit untuk memastikan tidak longgar.</li>
+<li>Mode sepasang: jika tertulis "Kanan = kiri", ulangi susunan yang sama di dumbbell satunya. Jika berbeda, ikuti susunan masing-masing.</li>
+</ol>
+</main>
+
+<script>
+var U=[5,6,8], mode=1, KEY="lempengan-h";   /* satuan 0,25 kg: 1,25=5, 1,5=6, 2=8 */
+function f(u){return String(+(u/4).toFixed(2)).replace(".",",");}
+function wt(c){return c[0]*5+c[1]*6+c[2]*8;}
+function endTxt(c){var p=[];for(var i=0;i<3;i++)if(c[i])p.push((c[i]>1?c[i]+" × ":"")+f(U[i]));return p.length?p.join(" + "):"kosong";}
+var SP={};
+function split(t){
+  var k=t.join(); if(SP[k]) return SP[k];
+  var best=null;
+  for(var a=0;a<=t[0];a++)for(var b=0;b<=t[1];b++)for(var c=0;c<=t[2];c++){
+    var e1=[a,b,c], e2=[t[0]-a,t[1]-b,t[2]-c], d=Math.abs(wt(e1)-wt(e2));
+    if(wt(e1)<wt(e2)) continue;
+    if(!best||d<best.d) best={d:d,e:[e1,e2]};
+  }
+  return SP[k]=best;
+}
+function pairRows(){
+  var best={};
+  for(var a1=0;a1<=4;a1++)for(var b1=0;b1<=4;b1++)for(var c1=0;c1<=4;c1++){
+    var t1=[a1,b1,c1], w=wt(t1); if(!w) continue;
+    for(var a2=0;a2<=4-a1;a2++)for(var b2=0;b2<=4-b1;b2++)for(var c2=0;c2<=4-c1;c2++){
+      var t2=[a2,b2,c2]; if(wt(t2)!==w) continue;
+      var d=Math.max(split(t1).d,split(t2).d), same=(t1.join()===t2.join()), cur=best[w];
+      if(!cur||d<cur.d||(d===cur.d&&same&&!cur.same)) best[w]={w:w,t:[t1,t2],d:d,same:same};
+    }
+  }
+  return Object.keys(best).map(function(k){return best[k];}).sort(function(x,y){return x.w-y.w;});
+}
+function singleRows(){
+  var best={};
+  for(var a=0;a<=4;a++)for(var b=0;b<=4;b++)for(var c=0;c<=4;c++){
+    var t=[a,b,c], w=wt(t); if(!w) continue;
+    var d=split(t).d, cur=best[w];
+    if(!cur||d<cur.d) best[w]={w:w,t:[t],d:d,same:false};
+  }
+  return Object.keys(best).map(function(k){return best[k];}).sort(function(x,y){return x.w-y.w;});
+}
+var PAIR=pairRows(), SINGLE=singleRows();
+function ends(t){var s=split(t);return "ujung 1: "+endTxt(s.e[0])+" | ujung 2: "+endTxt(s.e[1]);}
+function render(){
+  var hv=document.getElementById("h").value, h=parseFloat(hv)||0, hasH=h>0;
+  var t=parseFloat(document.getElementById("t").value), tol=0;
+  try{localStorage.setItem(KEY,hv);}catch(e){}
+  var rows=(mode===1?PAIR:SINGLE).filter(function(r){return r.d<=tol;});
+  var best=null,bd=1e9;
+  rows.forEach(function(r){var d=Math.abs(h+r.w/4-t); if(!isNaN(t)&&d<bd){bd=d;best=r;}});
+  document.getElementById("head").innerHTML="<tr>"+(hasH?"<th>Total 1 dumbbell</th>":"")+"<th>Lempeng 1 dumbbell</th><th>Susunan lempeng (tiap ujung sama berat)</th></tr>";
+  var html="";
+  rows.forEach(function(r){
+    var used=r.t.reduce(function(s,x){return s+x[0]+x[1]+x[2];},0), body;
+    if(mode===1) body=r.same?"<strong>Kanan = kiri</strong><br>"+ends(r.t[0]):"<strong>Kanan</strong> "+ends(r.t[0])+"<br><strong>Kiri</strong> "+ends(r.t[1]);
+    else body=ends(r.t[0]);
+    html+="<tr"+(r===best?' class="hi"':"")+">"+(hasH?'<td class="w">'+f(h*4+r.w)+" kg</td>":"")+'<td class="w">'+f(r.w)+" kg</td><td>"+body+'<div class="alt">memakai '+used+" lempeng</div></td></tr>";
+  });
+  if(!rows.length) html='<tr><td colspan="3">Tidak ada kombinasi.</td></tr>';
+  document.getElementById("body").innerHTML=html;
+  var res=document.getElementById("res"), unit=hasH?"total":"lempeng";
+  res.textContent=best?"Paling dekat ke "+fmt2(t)+" kg: "+f(h*4+best.w)+" kg ("+unit+").":
+    (mode===1?"Sepasang: ":"Satu dumbbell: ")+rows.length+" pilihan berat. Maksimal "+f(h*4+(mode===1?38:76))+" kg"+(hasH?" total.":" lempeng per dumbbell. Isi berat handle untuk melihat total.");
+}
+function fmt2(x){return String(x).replace(".",",");}
+document.getElementById("tabs").addEventListener("click",function(e){
+  var b=e.target.closest("button"); if(!b) return;
+  mode=+b.dataset.m;
+  document.querySelectorAll("#tabs button").forEach(function(x){x.setAttribute("aria-selected",x===b?"true":"false");});
+  render();
+});
+["h","t"].forEach(function(id){document.getElementById(id).addEventListener("input",render);});
+try{var s=localStorage.getItem(KEY); if(s) document.getElementById("h").value=s;}catch(e){}
+render();
+</script>
+</body>
+</html>
